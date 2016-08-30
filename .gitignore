@@ -6,6 +6,11 @@ nbproject/
 test/
 build.xml
 
+#idea
+*.iml
+.idea
+out
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
