@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.WorkerOverviewController">
+   <children>
+      <Label fx:id="currentWorkerLabel" layoutX="97.0" layoutY="61.0" prefHeight="21.0" prefWidth="40.0" text="Name" />
+      <Label layoutX="97.0" layoutY="99.0" text="Striking" />
+      <Label layoutX="97.0" layoutY="140.0" text="Wrestling" />
+      <Label layoutX="97.0" layoutY="179.0" text="Flying" />
+      <Label fx:id="nameLabel" layoutX="171.0" layoutY="61.0" prefHeight="21.0" prefWidth="148.0" text="Label" />
+      <Label fx:id="strikingLabel" layoutX="171.0" layoutY="99.0" text="Label" />
+      <Label fx:id="wrestlingLabel" layoutX="171.0" layoutY="140.0" text="Label" />
+      <Label fx:id="flyingLabel" layoutX="171.0" layoutY="179.0" text="Label" />
+      <Label fx:id="contractLabel" layoutX="100.0" layoutY="260.0" text="Label" />
+      <Label layoutX="100.0" layoutY="223.0" text="Contracts" />
+      <Label layoutX="330.0" layoutY="61.0" text="Popularity" />
+      <Label layoutX="330.0" layoutY="99.0" text="Reputation" />
+      <Label layoutX="330.0" layoutY="140.0" text="Proficiency" />
+      <Label fx:id="popularityLabel" layoutX="422.0" layoutY="61.0" text="Label" />
+      <Label fx:id="reputationLabel" layoutX="422.0" layoutY="99.0" text="Label" />
+      <Label fx:id="proficiencyLabel" layoutX="422.0" layoutY="140.0" text="Label" />
+   </children>
+</AnchorPane>

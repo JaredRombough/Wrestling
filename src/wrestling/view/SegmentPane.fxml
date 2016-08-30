@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.SegmentPaneController">
+   <children>
+      <ListView fx:id="teamSorter" layoutX="457.0" layoutY="402.0" prefHeight="306.0" prefWidth="341.0" AnchorPane.bottomAnchor="0.0" />
+      <Pane fx:id="stipulationsPane" layoutX="457.0" layoutY="33.0" prefHeight="348.0" prefWidth="341.0" />
+      <Pane fx:id="summaryPane" layoutX="831.0" layoutY="33.0" prefHeight="675.0" prefWidth="341.0" />
+      <ScrollPane layoutX="9.0" layoutY="53.0" prefHeight="656.0" prefWidth="406.0" AnchorPane.leftAnchor="0.0">
+         <content>
+            <VBox fx:id="teamsPane" prefHeight="654.0" prefWidth="396.0" />
+         </content></ScrollPane>
+      <Button fx:id="addTeamButton" layoutX="14.0" layoutY="18.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Add" />
+      <Button fx:id="removeTeamButton" layoutX="88.0" layoutY="18.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Remove" />
+   </children>
+</AnchorPane>
