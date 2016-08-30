@@ -5,27 +5,17 @@
  */
 package wrestling;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import wrestling.model.GameController;
-import wrestling.view.RootLayoutController;
-import wrestling.view.TitleScreenController;
 import wrestling.model.Event;
-import wrestling.view.BrowserController;
-import wrestling.view.EventScreenController;
-import wrestling.view.StartGameScreenController;
-import wrestling.view.WorkerOverviewController;
-import static javafx.application.Application.launch;
+import wrestling.model.GameController;
+import wrestling.view.controller.*;
+
+import java.io.*;
 
 public class MainApp extends Application {
 
@@ -104,7 +94,7 @@ public class MainApp extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
 
             // Show the scene containing the root layout.
@@ -136,7 +126,7 @@ public class MainApp extends Application {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/WorkerOverview.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/WorkerOverview.fxml"));
             workerOverviewPane = (AnchorPane) loader.load();
 
             WorkerOverviewController controller = loader.getController();
@@ -156,7 +146,7 @@ public class MainApp extends Application {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/Browser.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/Browser.fxml"));
             browserPane = (AnchorPane) loader.load();
 
             browserController = loader.getController();
@@ -202,7 +192,7 @@ public class MainApp extends Application {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/EventScreen.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/EventScreen.fxml"));
             eventScreenPane = (AnchorPane) loader.load();
 
             EventScreenController controller = loader.getController();
@@ -222,7 +212,7 @@ public class MainApp extends Application {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/StartGameScreen.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/StartGameScreen.fxml"));
             AnchorPane startGameScreen = (AnchorPane) loader.load();
 
             StartGameScreenController controller = loader.getController();
@@ -243,7 +233,7 @@ public class MainApp extends Application {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/TitleScreen.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/fxml/TitleScreen.fxml"));
             AnchorPane titleScreen = (AnchorPane) loader.load();
 
             rootLayout.setCenter(titleScreen);

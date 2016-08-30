@@ -79,7 +79,7 @@ public class Worker implements Serializable {
     public String contractString() {
         String string = new String();
         for (Contract current : contracts) {
-            string += current.getTerms();
+            string += current;
             string += "\n";
         }
         return string;

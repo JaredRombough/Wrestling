@@ -47,12 +47,11 @@ public class Contract implements Serializable {
         promotion.addContract(this);
         
     }
-    
-    public String getTerms() {
-        String string = getPromotion() + " Length: " + getLength() + " days Expires: " + getExpirationDate() 
+
+    @Override
+    public String toString() {
+        return getPromotion() + " Length: " + getLength() + " days Expires: " + getExpirationDate()
                 + " Appearance Cost: $" + getAppearanceCost();
-        
-        return string;
     }
 
     /**
