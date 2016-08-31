@@ -20,7 +20,10 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import wrestling.MainApp;
 import wrestling.model.Match;
@@ -39,11 +42,6 @@ public class SegmentPaneController implements Initializable {
     @FXML
     private ListView<String> teamSorter;
 
-    @FXML
-    private Pane stipulationsPane;
-
-    @FXML
-    private Pane summaryPane;
 
     @FXML
     private Button addTeamButton;
@@ -51,6 +49,9 @@ public class SegmentPaneController implements Initializable {
     @FXML
     private Button removeTeamButton;
 
+    @FXML
+    private GridPane gridPane;
+    
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
     private int defaultTeams = 2;
@@ -74,6 +75,7 @@ public class SegmentPaneController implements Initializable {
         }
 
         initializeTeamSorter();
+       
     }
 
     private void initializeTeamSorter() {
@@ -105,7 +107,7 @@ public class SegmentPaneController implements Initializable {
 
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/TeamPane.fxml"));
-            Pane teamPane = (Pane) loader.load();
+            AnchorPane teamPane = (AnchorPane) loader.load();
             teamPanes.add(teamPane);
 
             //keep a list of the controllers too

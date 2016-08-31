@@ -2,21 +2,35 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.SegmentPaneController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.SegmentPaneController">
    <children>
-      <ListView fx:id="teamSorter" layoutX="457.0" layoutY="402.0" prefHeight="306.0" prefWidth="341.0" AnchorPane.bottomAnchor="0.0" />
-      <Pane fx:id="stipulationsPane" layoutX="457.0" layoutY="33.0" prefHeight="348.0" prefWidth="341.0" />
-      <Pane fx:id="summaryPane" layoutX="831.0" layoutY="33.0" prefHeight="675.0" prefWidth="341.0" />
-      <ScrollPane layoutX="9.0" layoutY="53.0" prefHeight="656.0" prefWidth="406.0" AnchorPane.leftAnchor="0.0">
-         <content>
-            <VBox fx:id="teamsPane" prefHeight="654.0" prefWidth="396.0" />
-         </content></ScrollPane>
-      <Button fx:id="addTeamButton" layoutX="14.0" layoutY="18.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Add" />
-      <Button fx:id="removeTeamButton" layoutX="88.0" layoutY="18.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Remove" />
+      <GridPane fx:id="gridPane" prefHeight="120.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ListView fx:id="teamSorter" GridPane.rowIndex="3" />
+            <VBox fx:id="teamsPane" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+            <HBox>
+               <children>
+                  <Button fx:id="addTeamButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Add" />
+                  <Button fx:id="removeTeamButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Remove" />
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
    </children>
 </AnchorPane>

@@ -2,22 +2,21 @@ package wrestling.view;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
 import java.util.ResourceBundle;
-import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.util.Callback;
 import wrestling.model.Worker;
 
@@ -31,6 +30,9 @@ public class TeamPaneController implements Initializable {
 
     @FXML
     private Label teamNameLabel;
+    
+    @FXML
+    private GridPane gridPane;
 
     private double cellHeight = 30;
     private double defaultMainPaneHeight;
@@ -75,8 +77,6 @@ public class TeamPaneController implements Initializable {
         @Override
         public void handle(DragEvent event) {
 
-            System.out.println("dragdrophandler handle called");
-
             LocalDragboard ldb = LocalDragboard.getInstance();
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
@@ -84,8 +84,9 @@ public class TeamPaneController implements Initializable {
                 itemList.add(worker);
 
                 double height = cellHeight * itemList.size();
-                teamListView.setPrefHeight(height);
-                mainPane.setPrefHeight(defaultMainPaneHeight + cellHeight + height);
+                
+                mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
+                teamListView.setMinHeight(height);
 
                 updateTeamNameLabel();
                 eventScreenController.updateEvent();
@@ -108,6 +109,9 @@ public class TeamPaneController implements Initializable {
     }
 
     public void initializeMore() {
+        
+        
+    
 
         final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
             @Override

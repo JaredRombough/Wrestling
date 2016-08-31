@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.MainApp;
@@ -59,9 +60,12 @@ public class EventScreenController implements Initializable {
 
     @FXML
     private ListView<Worker> workersListView;
-
+    
     @FXML
-    private BorderPane segmentBorderPane;
+    private GridPane gridPane;
+
+    //@FXML
+    //private BorderPane segmentBorderPane;
 
     private List<Pane> segmentPanes = new ArrayList<>();
     private List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
@@ -73,11 +77,15 @@ public class EventScreenController implements Initializable {
     public Number getCurrentSegmentNumber() { return currentSegmentNumber; }
 
     private void setCurrentSegmentNumber(Number number) {
-
+        
+        //remove the previous segment pane from the grid first
+        gridPane.getChildren().remove(segmentPanes.get(currentSegmentNumber.intValue()));
+        
         currentSegmentNumber = number;
         
         //here we  update the central pane to show the corresponding segment
-        segmentBorderPane.setCenter(segmentPanes.get(number.intValue()));
+        gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
+        GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
 
     }
 
@@ -229,7 +237,7 @@ public class EventScreenController implements Initializable {
         }*/
 
         segmentListView.setItems(items);
-        segmentListView.setMinWidth(segmentListViewWidth);
+        //segmentListView.setMinWidth(segmentListViewWidth);
 
         segmentListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
