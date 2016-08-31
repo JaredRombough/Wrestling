@@ -7,7 +7,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.RootLayoutController">
    <top>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ButtonBar fx:id="buttonBar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
             <Button fx:id="browserButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Browser" />
           <Button fx:id="eventButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Book Event" />

@@ -11,7 +11,9 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
 import wrestling.model.GameController;
@@ -42,7 +44,14 @@ public class RootLayoutController implements Initializable {
     @FXML
     private Button browserButton;
     
+    @FXML
+    private ButtonBar buttonBar;
     
+    public double rootLayoutMinWidth() { 
+        return buttonBar.getButtonMinWidth() * buttonBar.getButtons().size();
+            
+        
+    }
     
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException{

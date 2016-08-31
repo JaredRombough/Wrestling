@@ -14,7 +14,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import wrestling.MainApp;
 import wrestling.model.GameController;
@@ -24,7 +27,7 @@ import wrestling.model.Worker;
 public class StartGameScreenController implements Initializable {
 
     @FXML
-    private Pane rosterPane;
+    private AnchorPane rosterPane;
 
     @FXML
     private ListView promotionListView;
@@ -37,6 +40,9 @@ public class StartGameScreenController implements Initializable {
 
     @FXML
     private Button loadGameButton;
+    
+    @FXML
+    private GridPane gridPane;
 
     private GameController gameController;
     private MainApp mainApp;
@@ -82,7 +88,9 @@ public class StartGameScreenController implements Initializable {
                     rosterList.add(current);
                 }
                 rosterListView.setItems(rosterList);
-                rosterPane.getChildren().add(rosterListView);
+               
+                gridPane.add(rosterListView, 1, 1);
+                
                 selectedPromotion = newValue;
             }
         });

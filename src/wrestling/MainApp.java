@@ -45,7 +45,8 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
-        this.primaryStage.setMaximized(true);
+        
+        
         gameController = new GameController();
 
         initRootLayout();
@@ -74,9 +75,8 @@ public class MainApp extends Application {
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             gameController = null;
             gameController = (GameController) objectInputStream.readObject();
-            System.out.println("after load");
-            System.out.println(gameController.promotions);
-            System.out.println(gameController.playerPromotion());
+            
+            
             objectInputStream.close();
 
             //now we need to update the rootlayoutcontroller with the newly
@@ -111,10 +111,19 @@ public class MainApp extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
-
+            
+            //load and store the controller
             rootLayoutController = loader.getController();
             rootLayoutController.setMainApp(this);
             rootLayoutController.setGameController(this.gameController);
+            
+            //set the minum size of the main window based on the root layout
+            primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
+            primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
+            
+            primaryStage.centerOnScreen();
+            //this.primaryStage.setMaximized(true);
+
 
         } catch (IOException e) {
             e.printStackTrace();
