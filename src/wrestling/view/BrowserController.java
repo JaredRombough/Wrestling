@@ -10,13 +10,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.GameController;
@@ -45,21 +45,21 @@ public class BrowserController implements Initializable {
     private Button rosterButton;
 
     @FXML
-    private Button eventsButton;
+    private GridPane gridPane;
 
     @FXML
-    private Pane mainListViewPane;
+    private Button eventsButton;
 
     @FXML
     private ComboBox promotionComboBox;
 
-    @FXML
-    private BorderPane displayPane;
-
-    @FXML
-    private Pane categoryPane;
-
     private Button lastButton;
+
+    //for keeping track of the last nodes displayed 
+    //so we can find it and remove it from the gridpane before replacing it
+    private Node lastDisplayNode;
+    private ListView lastListView;
+
     private AnchorPane workerOverviewPane;
     private WorkerOverviewController workerOverviewPaneController;
     private Label eventSummary;
@@ -80,9 +80,8 @@ public class BrowserController implements Initializable {
 
         categoryButton.setText(newPromotion.toString());
 
-        categoryPane.getChildren().clear();
-        categoryPane.getChildren().add(categoryButton);
-
+        //categoryPane.getChildren().clear();
+        //categoryPane.getChildren().add(categoryButton);
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
         //for the newly selected promotion
@@ -96,19 +95,25 @@ public class BrowserController implements Initializable {
         if (event.getSource() == rosterButton) {
 
             setListViewToWorkers();
-            displayPane.setCenter(workerOverviewPane);
-            //displayPane = workerOverviewPane;
+            gridPane.getChildren().remove(lastDisplayNode);
+            gridPane.add(workerOverviewPane, 1, 1);
+
             lastButton = rosterButton;
+            lastDisplayNode = workerOverviewPane;
         } else if (event.getSource() == eventsButton) {
-            //displayPane.setCenter(null);
+
             setListViewToEvents();
-            displayPane.setCenter(eventSummary);
+            gridPane.getChildren().remove(lastDisplayNode);
+            gridPane.add(eventSummary, 1, 0);
+            GridPane.setRowSpan(eventSummary, 3);
+
             lastButton = eventsButton;
+            lastDisplayNode = eventSummary;
         }
     }
 
     private void setListViewToEvents() {
-        mainListViewPane.getChildren().clear();
+        gridPane.getChildren().remove(lastListView);
 
         eventsListView.setItems(FXCollections.observableArrayList(currentPromotion.events));
 
@@ -126,7 +131,9 @@ public class BrowserController implements Initializable {
             }
         });
         eventsListView.getSelectionModel().selectFirst();
-        mainListViewPane.getChildren().add(eventsListView);
+        GridPane.setRowSpan(eventsListView, 2);
+        gridPane.add(eventsListView, 0, 2);
+        lastListView = eventsListView;
     }
 
     public void showEvent(Event event) {
@@ -139,7 +146,7 @@ public class BrowserController implements Initializable {
 
     private void setListViewToWorkers() {
 
-        mainListViewPane.getChildren().clear();
+        gridPane.getChildren().remove(lastListView);
 
         workersListView.setItems(FXCollections.observableArrayList(currentPromotion.roster));
         workersListView.getSelectionModel().selectFirst();
@@ -155,7 +162,9 @@ public class BrowserController implements Initializable {
             }
         });
 
-        mainListViewPane.getChildren().add(workersListView);
+        gridPane.add(workersListView, 0, 2);
+        GridPane.setRowSpan(workersListView, 2);
+        lastListView = workersListView;
 
     }
 
@@ -165,8 +174,7 @@ public class BrowserController implements Initializable {
         eventsListView = new ListView<Event>();
         eventSummary = new Label();
         categoryButton = new Label();
-        
-        
+
     }
 
     private void initializeMore() {
@@ -174,6 +182,7 @@ public class BrowserController implements Initializable {
         //set whatever we want the default view to be to the lastbutton
         //so it will fire later
         lastButton = rosterButton;
+        lastDisplayNode = workerOverviewPane;
 
         //set up the promotion combobox
         promotionComboBox.getItems().addAll(gameController.promotions);
@@ -191,17 +200,16 @@ public class BrowserController implements Initializable {
             workerOverviewPane = (AnchorPane) loader.load();
 
             workerOverviewPaneController = (WorkerOverviewController) loader.getController();
-            System.out.println("in browserController init more" + loader.getController().toString());
+
             workerOverviewPaneController.setMainApp(this.mainApp);
             workerOverviewPaneController.setGameController(this.gameController);
-
-            displayPane.setCenter(workerOverviewPane);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         promotionComboBox.setValue(gameController.playerPromotion());
+
         lastButton.fire();
 
     }

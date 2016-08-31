@@ -4,28 +4,53 @@
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.BrowserController">
    <children>
-      <ComboBox fx:id="promotionComboBox" layoutX="48.0" layoutY="94.0" />
-      <ButtonBar layoutX="26.0" layoutY="160.0">
-        <buttons>
-          <Button fx:id="eventsButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Events" />
-            <Button fx:id="rosterButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Roster" />
-            <Button mnemonicParsing="false" text="Teams" />
-        </buttons>
-      </ButtonBar>
-      <ButtonBar layoutX="26.0" layoutY="200.0">
-        <buttons>
-          <Button mnemonicParsing="false" text="Titles" />
-            <Button mnemonicParsing="false" text="Staff" />
-            <Button mnemonicParsing="false" text="Stables" />
-        </buttons>
-      </ButtonBar>
-      <BorderPane fx:id="displayPane" layoutX="358.0" layoutY="94.0" />
-      <Pane fx:id="mainListViewPane" layoutX="48.0" layoutY="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="48.0" />
-      <Pane fx:id="categoryPane" layoutX="48.0" layoutY="14.0" />
+      <GridPane fx:id="gridPane" prefHeight="231.0" prefWidth="358.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox>
+               <children>
+                  <ComboBox fx:id="promotionComboBox" />
+                  <HBox>
+                     <children>
+                        <ButtonBar>
+                          <buttons>
+                            <Button mnemonicParsing="false" text="Titles" />
+                              <Button mnemonicParsing="false" text="Staff" />
+                              <Button mnemonicParsing="false" text="Stables" />
+                          </buttons>
+                        </ButtonBar>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <ButtonBar>
+                          <buttons>
+                            <Button fx:id="eventsButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Events" />
+                              <Button fx:id="rosterButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Roster" />
+                              <Button mnemonicParsing="false" text="Teams" />
+                          </buttons>
+                        </ButtonBar>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
    </children>
 </AnchorPane>
