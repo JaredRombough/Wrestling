@@ -26,8 +26,7 @@ import wrestling.model.Worker;
 
 public class StartGameScreenController implements Initializable {
 
-    @FXML
-    private AnchorPane rosterPane;
+
 
     @FXML
     private ListView promotionListView;
@@ -89,7 +88,7 @@ public class StartGameScreenController implements Initializable {
                 }
                 rosterListView.setItems(rosterList);
                
-                gridPane.add(rosterListView, 1, 1);
+                gridPane.add(rosterListView, 3, 1);
                 
                 selectedPromotion = newValue;
             }

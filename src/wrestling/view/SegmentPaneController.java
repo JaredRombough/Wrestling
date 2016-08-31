@@ -23,6 +23,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import wrestling.MainApp;
@@ -75,6 +76,8 @@ public class SegmentPaneController implements Initializable {
         }
 
         initializeTeamSorter();
+        
+        
        
     }
 
