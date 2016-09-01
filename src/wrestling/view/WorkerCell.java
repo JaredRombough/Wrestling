@@ -29,7 +29,7 @@ public class WorkerCell extends ListCell<Worker> {
                     @Override
                     public void handle(MouseEvent event) {
                         
-                        System.out.println("allprojectlistcell handle");
+                        
                         
                          // Set up dummy data on the dragboard else drag and drop won't be initiated
                          Dragboard db = startDragAndDrop(TransferMode.MOVE);

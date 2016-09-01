@@ -103,7 +103,7 @@ public class TeamPaneController implements Initializable {
         String string = getTeamName();
         
         segmentPaneController.updateTeamsSorter(oldLabel, string);
-        eventScreenController.updateLabels();
+        
         teamNameLabel.setText(getTeamName());
         
     }

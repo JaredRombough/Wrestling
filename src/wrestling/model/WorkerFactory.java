@@ -105,7 +105,7 @@ public class WorkerFactory implements Serializable {
             while ((nextLine = reader.readNext()) != null) {
                 firstNames.add(nextLine[0]);
                 if (nextLine[1].length() != 0) {
-                    lastNames.add(nextLine[1]);
+                    lastNames.add(nextLine[1].replace(";", ""));
                 }
                 
                 

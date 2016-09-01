@@ -4,16 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * 
- */
 public class Match extends Segment implements Serializable {
 
     private List<List<Worker>> teams = new ArrayList<List<Worker>>();
 
     private List<Worker> teamA;
-    
+
     private List<Worker> winner;
 
     public List<Worker> teamA() {
@@ -28,16 +24,17 @@ public class Match extends Segment implements Serializable {
     @Override
     public List<Worker> allWorkers() {
         List<Worker> allWorkersList = new ArrayList<Worker>();
-        
+
         for (List<Worker> team : teams) {
             allWorkersList.addAll(team);
         }
-        
-        
+
         return allWorkersList;
     }
-    
-    private boolean isDraw;
+
+    private boolean hasWinner;
+    private boolean hasTeams;
+
     private int matchRating;
 
     public int segmentRating() {
@@ -45,36 +42,26 @@ public class Match extends Segment implements Serializable {
     }
 
     /*
-    get rid of this constructor eventually? it only handles two teams
-    */
-    public Match(final List<Worker> teamA, final List<Worker> teamB, boolean isDraw) {
-        this.teamA = teamA;
-        this.teamB = teamB;
-        this.isDraw = isDraw;
-        if (teamA.size() != 0 && teamB.size() != 0) {
-            calculateMatchRating();
-        }
-        this.teams = new ArrayList<List<Worker>>();
-        this.teams.add(teamA);
-        this.teams.add(teamB);
-
-    }
-
-    /*
-    this is the more flexible constructor, takes an arbitrary number of teams
-    */
+    this constructor takes an arbitrary number of teams
+     */
     public Match(final List<List<Worker>> teams) {
-        
-        
-        if (teams.size() <= 1) {
-            System.out.println("tried to make a match with not enough teams");
+
+        this.hasWinner = false;
+        this.hasTeams = false;
+
+        if (teams.size() == 1) {
+            this.winner = teams.get(0);
+            this.hasWinner = true;
+            this.hasTeams = false;
 
         } else if (teams.size() > 1) {
             this.winner = teams.get(0);
+            this.hasWinner = true;
             this.teams.addAll(teams);
+            this.hasTeams = true;
             calculateMatchRating();
         }
-        
+
     }
 
     @Override
@@ -89,35 +76,42 @@ public class Match extends Segment implements Serializable {
 
         String string = new String();
 
-        for (int t = 0; t < teams.size(); t++) {
-            List<Worker> team = teams.get(t);
+        if (this.hasTeams) {
+            for (int t = 0; t < teams.size(); t++) {
+                List<Worker> team = teams.get(t);
 
-            for (int i = 0; i < team.size(); i++) {
-                string += team.get(i).getShortName();
-                if (team.size() > 1 && i < team.size() - 1) {
-                    string += "/";
+                for (int i = 0; i < team.size(); i++) {
+                    string += team.get(i).getShortName();
+                    if (team.size() > 1 && i < team.size() - 1) {
+                        string += "/";
+                    }
+
+                }
+
+                if (t == 0 && !string.isEmpty()) {
+                    string += " def. ";
+
                 }
 
             }
-
-            if (t == 0) {
-                string += " def. ";
-
-            }
-
+        } else {
+            string += getWinner();
         }
-        
+        if (string.isEmpty()) {
+
+            string += "Empty Segment";
+        }
+
         return string;
     }
 
-  
     public List<Worker> getWinner() {
 
-        return this.teamA;
+        return this.winner;
     }
 
     private void calculateMatchRating() {
-        
+
         float ratingsTotal = 0;
 
         for (List<Worker> team : teams) {
@@ -132,7 +126,7 @@ public class Match extends Segment implements Serializable {
         }
 
         matchRating = Math.round(ratingsTotal / teams.size());
-        
+
     }
 
 }

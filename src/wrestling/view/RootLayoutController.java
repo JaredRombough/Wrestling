@@ -18,10 +18,6 @@ import javafx.scene.control.Label;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 
-/**
- *
- * @author jared
- */
 public class RootLayoutController implements Initializable {
     
     private MainApp mainApp;
@@ -57,7 +53,7 @@ public class RootLayoutController implements Initializable {
     private void handleButtonAction(ActionEvent event) throws IOException{
         
         if(event.getSource() == eventButton) {
-            //System.out.println("eventButton pushed");
+            
             mainApp.showEventScreen();
             
        } else if (event.getSource() == nextDayButton) {
@@ -73,37 +69,30 @@ public class RootLayoutController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        
         setButtonsDisable(true);
     }    
     
     public void initializeMore() {
         updateCurrentDateLabel();
-        //updateCurrentFundsLabel();
+        
     }
     
     public void updateCurrentDateLabel() {
         currentDateLabel.setText("Day " + gameController.date());
     }
-    
+
     public void updateCurrentFundsLabel() {
-        System.out.println("update current funds label");
-        System.out.println(gameController.playerPromotion());
         currentFundsLabel.setText("Funds: $" + gameController.playerPromotion().getFunds());
     }
-    
+
     public void setButtonsDisable(boolean disable) {
         browserButton.setDisable(disable);
         nextDayButton.setDisable(disable);
         eventButton.setDisable(disable);
     }
     
-    
-    /**
-     * Is called by the main application to give a reference back to itself.
-     * 
-     * @param mainApp
-     */
+
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 

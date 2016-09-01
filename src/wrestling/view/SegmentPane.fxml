@@ -23,7 +23,7 @@
         </rowConstraints>
          <children>
             <ListView fx:id="teamSorter" GridPane.rowIndex="3" />
-            <VBox fx:id="teamsPane" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+            <VBox fx:id="teamsPane" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP" />
             <HBox>
                <children>
                   <Button fx:id="addTeamButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Add" />

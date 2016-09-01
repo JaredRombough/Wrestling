@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -37,7 +36,6 @@ public class MainApp extends Application {
     private AnchorPane eventScreenPane;
     private EventScreenController eventScreenController;
     private AnchorPane workerOverviewPane;
-    private AnchorPane eventArchiveScreenPane;
     private AnchorPane browserPane;
     private BrowserController browserController;
 
@@ -131,7 +129,7 @@ public class MainApp extends Application {
     }
 
     /**
-     * Shows the person overview inside the root layout.
+     * Shows the worker overview
      */
     public void showWorkerOverview() {
         rootLayout.setCenter(workerOverviewPane);
@@ -182,7 +180,7 @@ public class MainApp extends Application {
     shows the browser
      */
     public void showBrowser() {
-        //System.out.println(browserPane);
+        
         rootLayout.setCenter(browserPane);
     }
 

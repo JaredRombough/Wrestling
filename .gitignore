@@ -5,6 +5,7 @@ dist/
 nbproject/
 test/
 build.xml
+wrestlingsavegame.ser
 
 #idea
 *.iml

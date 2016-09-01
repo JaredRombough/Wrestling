@@ -132,7 +132,7 @@ public class BrowserController implements Initializable {
         });
         eventsListView.getSelectionModel().selectFirst();
         GridPane.setRowSpan(eventsListView, 2);
-        gridPane.add(eventsListView, 0, 2);
+        gridPane.add(eventsListView, 0, 1);
         lastListView = eventsListView;
     }
 
@@ -162,7 +162,7 @@ public class BrowserController implements Initializable {
             }
         });
 
-        gridPane.add(workersListView, 0, 2);
+        gridPane.add(workersListView, 0, 1);
         GridPane.setRowSpan(workersListView, 2);
         lastListView = workersListView;
 

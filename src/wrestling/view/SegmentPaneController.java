@@ -124,6 +124,8 @@ public class SegmentPaneController implements Initializable {
 
             teamsPane.getChildren().add(teamPane);
             teamSorter.getItems().add(controller.getTeamName());
+            
+            eventScreenController.updateEvent();
 
         } catch (IOException e) {
 
@@ -156,6 +158,10 @@ public class SegmentPaneController implements Initializable {
             teamPanes.remove(teamPanes.size() - 1);
             teamPaneControllers.remove(teamPaneControllers.size() - 1);
             teamsPane.getChildren().remove(teamsPane.getChildren().size() - 1);
+            
+            //tell the event screen to update particularly the segment listView
+            //because we have changed the segment name
+            eventScreenController.updateEvent();
 
         }
 
@@ -164,8 +170,11 @@ public class SegmentPaneController implements Initializable {
     public Segment getSegment() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
+        
+
 
         Match match = new Match(getTeams());
+
 
         return match;
     }
