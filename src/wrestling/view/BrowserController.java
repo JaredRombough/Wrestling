@@ -2,6 +2,7 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -80,13 +81,24 @@ public class BrowserController implements Initializable {
 
         categoryButton.setText(newPromotion.toString());
 
-        //categoryPane.getChildren().clear();
-        //categoryPane.getChildren().add(categoryButton);
+        //update listviews with relevant items
+        setListViewContent(workersListView, currentPromotion.roster);
+        setListViewContent(eventsListView, currentPromotion.events);
+        
+        //make sure the combobox is on the correct promotion
+        //in case we have called this from some
+        promotionComboBox.getSelectionModel().select(currentPromotion);
+        
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
         //for the newly selected promotion
         //might not work for more complex situations
         lastButton.fire();
+    }
+    
+    private void setListViewContent(ListView listView, List list) {
+        listView.getItems().clear();
+        listView.setItems(FXCollections.observableArrayList(list));
     }
 
     @FXML
@@ -94,77 +106,64 @@ public class BrowserController implements Initializable {
 
         if (event.getSource() == rosterButton) {
 
-            setListViewToWorkers();
-            gridPane.getChildren().remove(lastDisplayNode);
-            gridPane.add(workerOverviewPane, 1, 1);
+            browseWorkers();
 
             lastButton = rosterButton;
-            lastDisplayNode = workerOverviewPane;
+
         } else if (event.getSource() == eventsButton) {
 
-            setListViewToEvents();
-            gridPane.getChildren().remove(lastDisplayNode);
-            gridPane.add(eventSummary, 1, 0);
-            GridPane.setRowSpan(eventSummary, 3);
+            browseEvents();
 
             lastButton = eventsButton;
-            lastDisplayNode = eventSummary;
+
         }
-    }
-
-    private void setListViewToEvents() {
-        gridPane.getChildren().remove(lastListView);
-
-        eventsListView.setItems(FXCollections.observableArrayList(currentPromotion.events));
-
-        eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
-            @Override
-            public void changed(ObservableValue<? extends Event> observable, Event oldValue, Event newValue) {
-                //for switching between promotions we may get a null value
-                //keep the old worker and wait until we're called again
-                if (newValue != null) {
-
-                    eventSummary.setText(newValue.getSummary());
-
-                }
-
-            }
-        });
-        eventsListView.getSelectionModel().selectFirst();
-        GridPane.setRowSpan(eventsListView, 2);
-        gridPane.add(eventsListView, 0, 1);
-        lastListView = eventsListView;
     }
 
     public void showEvent(Event event) {
         //this would take an event, find the promotion, select it properly
         //ie so another screen can send to the browser with a particular event already selected on open
         //might want this with workers, etc
-        eventsButton.fire();
+        setCurrentPromotion(event.getPromotion());
         eventsListView.getSelectionModel().select(event);
+        eventSummary.setText(event.getSummary());
+        eventsButton.fire();
+
     }
 
-    private void setListViewToWorkers() {
-
+    /*
+    clear the last listview and display node
+     */
+    private void clearLast() {
         gridPane.getChildren().remove(lastListView);
+        gridPane.getChildren().remove(lastDisplayNode);
+    }
 
-        workersListView.setItems(FXCollections.observableArrayList(currentPromotion.roster));
-        workersListView.getSelectionModel().selectFirst();
-        workersListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Worker>() {
-            @Override
-            public void changed(ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) {
-                //for switching between promotions we may get a null value
-                //keep the old worker and wait until we're called again
-                if (newValue != null) {
-                    workerOverviewPaneController.setCurrentWorker(newValue);
-                }
+    private void browseEvents() {
+        clearLast();
 
-            }
-        });
+        gridPane.add(eventSummary, 1, 1);
+        GridPane.setRowSpan(eventSummary, 2);
+        gridPane.add(eventsListView, 0, 1);
+        GridPane.setRowSpan(eventsListView, 2);
+
+        lastListView = eventsListView;
+        lastDisplayNode = eventSummary;
+
+        eventsListView.getSelectionModel().selectFirst();
+    }
+
+    private void browseWorkers() {
+
+        clearLast();
 
         gridPane.add(workersListView, 0, 1);
         GridPane.setRowSpan(workersListView, 2);
+        gridPane.add(workerOverviewPane, 1, 1);
+
         lastListView = workersListView;
+        lastDisplayNode = workerOverviewPane;
+
+        workersListView.getSelectionModel().selectFirst();
 
     }
 
@@ -177,12 +176,7 @@ public class BrowserController implements Initializable {
 
     }
 
-    private void initializeMore() {
-        //right now this acts as the default view for the screen
-        //set whatever we want the default view to be to the lastbutton
-        //so it will fire later
-        lastButton = rosterButton;
-        lastDisplayNode = workerOverviewPane;
+    private void initializePromotionCombobox() {
 
         //set up the promotion combobox
         promotionComboBox.getItems().addAll(gameController.promotions);
@@ -193,7 +187,11 @@ public class BrowserController implements Initializable {
             }
         });
 
-        //load the workeroverview pane (should be its own method)
+    }
+
+    private void prepareWorkerBrowsing() {
+
+        //load the workeroverview pane
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/WorkerOverview.fxml"));
@@ -208,8 +206,57 @@ public class BrowserController implements Initializable {
             e.printStackTrace();
         }
 
-        promotionComboBox.setValue(gameController.playerPromotion());
+        //get the listview ready
+        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().roster));
 
+        workersListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Worker>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) {
+                //for switching between promotions we may get a null value
+                //keep the old worker and wait until we're called again
+                if (newValue != null) {
+                    workerOverviewPaneController.setCurrentWorker(newValue);
+                }
+
+            }
+        });
+
+    }
+
+    private void prepareEventBrowsing() {
+
+        //get the listview ready
+        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().events));
+        
+        eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
+            @Override
+            public void changed(ObservableValue<? extends Event> observable, Event oldValue, Event newValue) {
+                //for switching between promotions we may get a null value
+                //keep the old worker and wait until we're called again
+                if (newValue != null) {
+
+                    eventSummary.setText(newValue.getSummary());
+
+                }
+
+            }
+        });
+
+    }
+
+    private void initializeMore() {
+        //right now this acts as the default view for the screen
+        //set whatever we want the default view to be to the lastbutton
+        //so it will fire later
+        lastButton = rosterButton;
+        lastDisplayNode = workerOverviewPane;
+
+        initializePromotionCombobox();
+
+        prepareWorkerBrowsing();
+        prepareEventBrowsing();
+
+        promotionComboBox.setValue(gameController.playerPromotion());
         lastButton.fire();
 
     }

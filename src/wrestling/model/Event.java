@@ -18,6 +18,7 @@ public class Event implements Serializable {
     private Integer date;
 
     private Promotion promotion;
+    public Promotion getPromotion() { return this.promotion; }
 
     private boolean completed;
 

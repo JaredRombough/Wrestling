@@ -320,9 +320,8 @@ public class EventScreenController implements Initializable {
     }
 
     /*
-    special cell for the teamsorter
-    converted to sort segments
-    possibly instead of getText() we need to getItem()
+    special cell for the segment sorter that handles sorting by drag
+    and drop
      */
     private class SorterCell extends ListCell<SegmentNameItem> {
 
@@ -481,11 +480,7 @@ public class EventScreenController implements Initializable {
 
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param mainApp
-     */
+  
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 
