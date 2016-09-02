@@ -8,6 +8,7 @@ package wrestling.view;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
@@ -20,6 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,6 +29,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
@@ -35,7 +42,6 @@ import wrestling.model.Event;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
-
 
 public class EventScreenController implements Initializable {
 
@@ -88,17 +94,18 @@ public class EventScreenController implements Initializable {
     private void setCurrentSegmentNumber(Number number) {
 
         //remove the previous segment pane from the grid first if it's still there
-        
-        if(gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
+        if (gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
             gridPane.getChildren().remove(segmentPanes.get(currentSegmentNumber.intValue()));
         }
-        
 
         currentSegmentNumber = number;
 
         //here we  update the central pane to show the new current segment
-        gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
-        GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
+        //but first make sure it isn't there already!
+        if (!gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
+            gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
+            GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
+        }
 
     }
 
@@ -156,7 +163,6 @@ public class EventScreenController implements Initializable {
     //like labels and listview content from the item
     public void updateEvent() {
 
-
         segments.clear();
         for (SegmentPaneController currentController : segmentPaneControllers) {
             segments.add(currentController.getSegment());
@@ -164,13 +170,11 @@ public class EventScreenController implements Initializable {
 
         currentEvent.setSegments(segments);
 
-
         updateLabels();
     }
 
     //updates lists and labels
     public void updateLabels() {
-
 
         totalCostLabel.setText("Total Cost: $" + currentEvent.totalCost());
 
@@ -179,8 +183,6 @@ public class EventScreenController implements Initializable {
             current.segment.set(segments.get(segmentListView.getItems().indexOf(current)));
             current.name.set(current.segment.get().toString());
         }
-        
-
 
     }
 
@@ -234,27 +236,27 @@ public class EventScreenController implements Initializable {
         }
 
         if (segments.size() > 1) {
-            
+
             int indexToRemove = segmentListView.getItems().indexOf(currentSegment);
 
             segmentListView.getItems().remove(currentSegment);
-            
+
             /*
             if removing the segment from the listview hasn't changed the index selected,
             we need to to update it ourselves
-            */
+             */
             if (segmentListView.getSelectionModel().getSelectedIndex() == indexToRemove) {
                 gridPane.getChildren().remove(segmentPanes.get(indexToRemove));
                 segmentPanes.remove(indexToRemove);
                 //set the current segment to itself to get the new segment pane
                 //at the index we have just removed
                 setCurrentSegmentNumber(currentSegmentNumber);
-                
+
             } else {
                 //else just remove the segment pane from the segment pane list
                 segmentPanes.remove(indexToRemove);
             }
-            
+
             //remove the controller too
             segmentPaneControllers.remove(indexToRemove);
 
@@ -272,6 +274,8 @@ public class EventScreenController implements Initializable {
 
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
+        segmentListView.setCellFactory(param -> new SorterCell());
+
         segmentListView.setItems(items);
 
         segmentListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -282,7 +286,7 @@ public class EventScreenController implements Initializable {
                 //when we clear the list and refresh it
                 if (newValue.intValue() >= 0) {
                     setCurrentSegmentNumber(newValue);
-                    
+
                 }
 
             }
@@ -316,6 +320,112 @@ public class EventScreenController implements Initializable {
     }
 
     /*
+    special cell for the teamsorter
+    converted to sort segments
+    possibly instead of getText() we need to getItem()
+     */
+    private class SorterCell extends ListCell<SegmentNameItem> {
+
+        public SorterCell() {
+            ListCell thisCell = this;
+
+            setOnDragDetected(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (getItem() == null) {
+
+                        return;
+                    }
+
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(getText());
+                    LocalDragboard.getInstance().putValue(SegmentNameItem.class, getItem());
+                    content.putString(getItem().name.get());
+
+                    dragboard.setContent(content);;
+
+                    event.consume();
+                }
+            });
+
+            setOnDragOver(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            });
+
+            setOnDragEntered(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    setOpacity(0.3);
+                }
+            });
+
+            setOnDragExited(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    setOpacity(1);
+                }
+            });
+
+            setOnDragDropped(new EventHandler<DragEvent>() {
+                @Override
+                public void handle(DragEvent event) {
+                    if (getText() == null) {
+
+                        return;
+
+                    }
+
+                    boolean success = false;
+
+                    LocalDragboard ldb = LocalDragboard.getInstance();
+                    if (ldb.hasType(SegmentNameItem.class)) {
+                        SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
+                        ObservableList<SegmentNameItem> items = getListView().getItems();
+                        int draggedIdx = items.indexOf(segmentNameItem);
+                        int thisIdx = items.indexOf(getItem());
+
+                        //swap all parallel arrays associated with the segment
+                        Collections.swap(items, thisIdx, draggedIdx);
+                        Collections.swap(segmentPanes, thisIdx, draggedIdx);
+                        Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
+                        Collections.swap(segments, thisIdx, draggedIdx);
+
+                        setCurrentSegmentNumber(thisIdx);
+                        
+                        segmentListView.getSelectionModel().select(segmentNameItem);
+                        success = true;
+                    }
+
+                    event.setDropCompleted(success);
+
+                    event.consume();
+                }
+            });
+
+            setOnDragDone(DragEvent::consume);
+        }
+
+        @Override
+        protected void updateItem(SegmentNameItem item, boolean empty) {
+
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                setText(item.name.get());
+            }
+        }
+    }
+
+    /*
     additional initialization to be called externally after we have our mainApp etc.
      */
     private void initializeMore() {
@@ -344,9 +454,7 @@ public class EventScreenController implements Initializable {
             addSegment();
         }
 
-        
         segmentListView.getSelectionModel().selectFirst();
-        
 
     }
 
