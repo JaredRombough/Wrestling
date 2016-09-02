@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -36,10 +36,7 @@ import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-/**
- *
- *
- */
+
 public class EventScreenController implements Initializable {
 
     private MainApp mainApp;
@@ -68,8 +65,6 @@ public class EventScreenController implements Initializable {
     @FXML
     private GridPane gridPane;
 
-    //@FXML
-    //private BorderPane segmentBorderPane;
     private List<Pane> segmentPanes = new ArrayList<>();
     private List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private List<Segment> segments = new ArrayList<>();
@@ -82,14 +77,26 @@ public class EventScreenController implements Initializable {
         return currentSegmentNumber;
     }
 
+    private void setCurrentSegmentNumber(int number) {
+
+        Integer intObject = new Integer(number);
+
+        Number newNumber = (Number) intObject;
+        setCurrentSegmentNumber(newNumber);
+    }
+
     private void setCurrentSegmentNumber(Number number) {
 
-        //remove the previous segment pane from the grid first
-        gridPane.getChildren().remove(segmentPanes.get(currentSegmentNumber.intValue()));
+        //remove the previous segment pane from the grid first if it's still there
+        
+        if(gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
+            gridPane.getChildren().remove(segmentPanes.get(currentSegmentNumber.intValue()));
+        }
+        
 
         currentSegmentNumber = number;
 
-        //here we  update the central pane to show the corresponding segment
+        //here we  update the central pane to show the new current segment
         gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
         GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
 
@@ -138,35 +145,43 @@ public class EventScreenController implements Initializable {
 
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
+        } else if (event.getSource() == removeSegmentButton) {
+            removeSegment();
         }
     }
 
     //this updates the segment list associated with the controller
     //and calls to update everything on the screen to reflect this
+    //this should perhaps be more primary/streamlined, update this and get everything else
+    //like labels and listview content from the item
     public void updateEvent() {
 
-        
+
         segments.clear();
         for (SegmentPaneController currentController : segmentPaneControllers) {
             segments.add(currentController.getSegment());
         }
-        
+
         currentEvent.setSegments(segments);
+
+
         updateLabels();
     }
 
     //updates lists and labels
     public void updateLabels() {
 
+
         totalCostLabel.setText("Total Cost: $" + currentEvent.totalCost());
 
-        //update the segmentListView
-        for (SegmentNameItem item : segmentListView.getItems()) {
-                
-                item.name.set(segments.get(item.number.getValue() - 1).toString());
-            
-             
+        for (SegmentNameItem current : segmentListView.getItems()) {
+
+            current.segment.set(segments.get(segmentListView.getItems().indexOf(current)));
+            current.name.set(current.segment.get().toString());
         }
+        
+
+
     }
 
     private int segmentListViewWidth = 300;
@@ -196,7 +211,7 @@ public class EventScreenController implements Initializable {
             //update the segment listview
             SegmentNameItem item = new SegmentNameItem();
             segmentListView.getItems().add(item);
-            item.number.set(segments.size());
+            item.segment.set(controller.getSegment());
             item.name.set("Segment " + segments.size());
 
             updateEvent();
@@ -210,6 +225,43 @@ public class EventScreenController implements Initializable {
 
     private void removeSegment() {
 
+        SegmentNameItem currentSegment = segmentListView.getSelectionModel().getSelectedItem();
+
+        if (currentSegment == null) {
+            System.out.println("removeSegment() called but no segment selected!");
+            segmentListView.getSelectionModel().selectLast();
+            currentSegment = segmentListView.getSelectionModel().getSelectedItem();
+        }
+
+        if (segments.size() > 1) {
+            
+            int indexToRemove = segmentListView.getItems().indexOf(currentSegment);
+
+            segmentListView.getItems().remove(currentSegment);
+            
+            /*
+            if removing the segment from the listview hasn't changed the index selected,
+            we need to to update it ourselves
+            */
+            if (segmentListView.getSelectionModel().getSelectedIndex() == indexToRemove) {
+                gridPane.getChildren().remove(segmentPanes.get(indexToRemove));
+                segmentPanes.remove(indexToRemove);
+                //set the current segment to itself to get the new segment pane
+                //at the index we have just removed
+                setCurrentSegmentNumber(currentSegmentNumber);
+                
+            } else {
+                //else just remove the segment pane from the segment pane list
+                segmentPanes.remove(indexToRemove);
+            }
+            
+            //remove the controller too
+            segmentPaneControllers.remove(indexToRemove);
+
+            //update the event since we have changed the number of segments
+            updateEvent();
+        }
+
     }
 
     /*
@@ -221,33 +273,38 @@ public class EventScreenController implements Initializable {
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
         segmentListView.setItems(items);
-        
 
         segmentListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                
 
                 //check that we have a valid newValue, because strange things happen otherwise
                 //when we clear the list and refresh it
                 if (newValue.intValue() >= 0) {
                     setCurrentSegmentNumber(newValue);
+                    
                 }
 
             }
         });
     }
 
+    /*
+    used for the segment listview, instead of strings we keep an observable list
+    of SegmentNameItems. This forces the listview to update everytime we update
+    a SegmentNameItem.
+     */
     private static class SegmentNameItem {
 
         StringProperty name = new SimpleStringProperty();
-        IntegerProperty number = new SimpleIntegerProperty();
+
+        ObjectProperty<Segment> segment = new SimpleObjectProperty();
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {
             return new Callback<SegmentNameItem, Observable[]>() {
                 @Override
                 public Observable[] call(SegmentNameItem param) {
-                    return new Observable[]{param.number, param.name};
+                    return new Observable[]{param.segment, param.name};
                 }
             };
         }
@@ -287,9 +344,9 @@ public class EventScreenController implements Initializable {
             addSegment();
         }
 
-        //hardcoded zeros, not great
-        segmentListView.getSelectionModel().select(0);
-        setCurrentSegmentNumber(0);
+        
+        segmentListView.getSelectionModel().selectFirst();
+        
 
     }
 
