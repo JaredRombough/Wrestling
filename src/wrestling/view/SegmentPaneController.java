@@ -3,23 +3,14 @@ package wrestling.view;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -39,9 +30,6 @@ public class SegmentPaneController implements Initializable {
     private VBox teamsPane;
 
     @FXML
-    private ListView<String> teamSorter;
-
-    @FXML
     private Button addTeamButton;
 
     @FXML
@@ -49,7 +37,7 @@ public class SegmentPaneController implements Initializable {
 
     @FXML
     private GridPane gridPane;
-    
+
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
     private int defaultTeams = 2;
@@ -72,16 +60,6 @@ public class SegmentPaneController implements Initializable {
 
         }
 
-        initializeTeamSorter();
-        
-        
-       
-    }
-
-    private void initializeTeamSorter() {
-
-        teamSorter.setCellFactory(param -> new SorterCell());
-
     }
 
     public void setEventScreenController(EventScreenController eventScreenController) {
@@ -91,6 +69,7 @@ public class SegmentPaneController implements Initializable {
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
+
         if (event.getSource() == addTeamButton) {
 
             addTeam();
@@ -116,12 +95,11 @@ public class SegmentPaneController implements Initializable {
 
             controller.setEventScreenController(eventScreenController);
             controller.setSegmentPaneController(this);
-            controller.setTeamNumber(teamPaneControllers.size());
+            controller.setTeamNumber(teamPaneControllers.size() - 1);
             controller.initializeMore();
 
             teamsPane.getChildren().add(teamPane);
-            teamSorter.getItems().add(controller.getTeamName());
-            
+
             eventScreenController.updateEvent();
 
         } catch (IOException e) {
@@ -137,25 +115,10 @@ public class SegmentPaneController implements Initializable {
         //we may want an alternate method where a minimum of one team is kept
         if (teamPanes.size() > 0 && teamPaneControllers.size() > 0) {
 
-            String teamName = teamPaneControllers.get(teamPaneControllers.size() - 1).getTeamName();
-
-            ObservableList<String> newList = FXCollections.observableArrayList();
-
-            //only keep the entries that aren't the one we want to remove
-            for (String string : teamSorter.getItems()) {
-                if (!string.equals(teamName)) {
-                    newList.add(string);
-
-                }
-
-            }
-
-            teamSorter.setItems(newList);
-
             teamPanes.remove(teamPanes.size() - 1);
             teamPaneControllers.remove(teamPaneControllers.size() - 1);
             teamsPane.getChildren().remove(teamsPane.getChildren().size() - 1);
-            
+
             //tell the event screen to update particularly the segment listView
             //because we have changed the segment name
             eventScreenController.updateEvent();
@@ -164,34 +127,22 @@ public class SegmentPaneController implements Initializable {
 
     }
 
+    //called by a team pane from drag dropped to update the team priority
+    public void swapTeamIndices(int indexA, int indexB) {
+        Collections.swap(teamPanes, indexA, indexB);
+        Collections.swap(teamPaneControllers, indexA, indexB);
+        //tell the event screen to update the event to reflect the new team priorirty
+        eventScreenController.updateEvent();
+
+    }
+
     public Segment getSegment() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-        
-
 
         Match match = new Match(getTeams());
 
-
         return match;
-    }
-
-    public void updateTeamsSorter(String oldText, String newText) {
-
-        ObservableList<String> newList = FXCollections.observableArrayList();
-
-        for (String string : teamSorter.getItems()) {
-
-            if (string.equals(oldText)) {
-                string = newText;
-            }
-
-            newList.add(string);
-        }
-
-        teamSorter.setItems(null);
-        teamSorter.setItems(newList);
-
     }
 
     /*
@@ -218,101 +169,6 @@ public class SegmentPaneController implements Initializable {
         }
 
         return teams;
-    }
-
-    /*
-    special cell for the teamsorter
-     */
-    private class SorterCell extends ListCell<String> {
-
-        public SorterCell() {
-            ListCell thisCell = this;
-
-            setOnDragDetected(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (getText() == null) {
-
-                        return;
-                    }
-
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(getText());
-
-                    dragboard.setContent(content);
-
-                    event.consume();
-                }
-            });
-
-            setOnDragOver(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-
-                event.consume();
-            });
-
-            setOnDragEntered(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(0.3);
-                }
-            });
-
-            setOnDragExited(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(1);
-                }
-            });
-
-            setOnDragDropped(new EventHandler<DragEvent>() {
-                @Override
-                public void handle(DragEvent event) {
-                    if (getText() == null) {
-                        return;
-                    }
-
-                    Dragboard db = event.getDragboard();
-                    boolean success = false;
-
-                    if (db.hasString()) {
-                        ObservableList<String> items = getListView().getItems();
-                        int draggedIdx = items.indexOf(db.getString());
-                        int thisIdx = items.indexOf(getText());
-
-                        items.set(draggedIdx, getText());
-                        items.set(thisIdx, db.getString());
-
-                        List<String> itemscopy = new ArrayList<>(getListView().getItems());
-                        getListView().getItems().setAll(itemscopy);
-
-                        success = true;
-                    }
-                    event.setDropCompleted(success);
-
-                    event.consume();
-                }
-            });
-
-            setOnDragDone(DragEvent::consume);
-        }
-
-        @Override
-        protected void updateItem(String item, boolean empty) {
-
-            super.updateItem(item, empty);
-
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                setText(item.toString());
-            }
-        }
     }
 
 }

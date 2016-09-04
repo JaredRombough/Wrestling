@@ -50,6 +50,19 @@ public class BrowserController implements Initializable {
 
     @FXML
     private Button eventsButton;
+    
+    @FXML
+    private Button staffButton;
+    
+    @FXML
+    private Button titlesButton;
+    
+    @FXML
+    private Button stablesButton;
+    
+    @FXML
+    private Button teamsButton;
+    
 
     @FXML
     private ComboBox promotionComboBox;
@@ -173,6 +186,12 @@ public class BrowserController implements Initializable {
         eventsListView = new ListView<Event>();
         eventSummary = new Label();
         categoryButton = new Label();
+        
+        stablesButton.setDisable(true);
+        staffButton.setDisable(true);
+        teamsButton.setDisable(true);
+        titlesButton.setDisable(true);
+                
 
     }
 

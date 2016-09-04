@@ -91,6 +91,8 @@ public class Match extends Segment implements Serializable {
                 if (t == 0 && !string.isEmpty()) {
                     string += " def. ";
 
+                } else if (t < teams.size() - 1 && !string.isEmpty()) {
+                    string += ", ";
                 }
 
             }

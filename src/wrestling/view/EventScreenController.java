@@ -230,7 +230,7 @@ public class EventScreenController implements Initializable {
         SegmentNameItem currentSegment = segmentListView.getSelectionModel().getSelectedItem();
 
         if (currentSegment == null) {
-            System.out.println("removeSegment() called but no segment selected!");
+            
             segmentListView.getSelectionModel().selectLast();
             currentSegment = segmentListView.getSelectionModel().getSelectedItem();
         }
