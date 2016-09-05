@@ -20,10 +20,6 @@ import wrestling.model.Match;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-/**
- *
- *
- */
 public class SegmentPaneController implements Initializable {
 
     @FXML
@@ -108,6 +104,12 @@ public class SegmentPaneController implements Initializable {
 
         }
 
+    }
+    
+    public void updateLabels() {
+        for (TeamPaneController controller : teamPaneControllers) {
+            controller.updateLabels();
+        }
     }
 
     private void removeTeam() {

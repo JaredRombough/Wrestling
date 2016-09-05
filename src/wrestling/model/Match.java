@@ -66,9 +66,10 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public boolean isComplete() {
-        //make sure we have two teams in order to have a match
-        //this may become more complex
-        return (teams.size() > 1);
+        
+        //consider a match completed if it has any workers (placeholder)
+        
+        return !allWorkers().isEmpty();
     }
 
     @Override

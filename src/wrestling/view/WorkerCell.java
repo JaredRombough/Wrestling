@@ -5,6 +5,7 @@
  */
 package wrestling.view;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
@@ -14,23 +15,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import wrestling.model.Worker;
 
-/**
- *
- * @author jared
- */
 public class WorkerCell extends ListCell<Worker> {
                     
           private TextField textField ;
           
           private final EventHandler<MouseEvent> dragDetectedHandler ;
           
-          WorkerCell() {               
+          
+          WorkerCell(ObservableList<Worker> items) {               
                this.dragDetectedHandler = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         
                         
-                        
+                         
                          // Set up dummy data on the dragboard else drag and drop won't be initiated
                          Dragboard db = startDragAndDrop(TransferMode.MOVE);
                          ClipboardContent cc = new ClipboardContent();
@@ -41,7 +39,8 @@ public class WorkerCell extends ListCell<Worker> {
                          */
                          LocalDragboard.getInstance().putValue(Worker.class, getItem());
                          
-                         
+                         //remove the worker from the listView whence it came
+                         items.remove(getItem());
                          
                          event.consume();
                     }

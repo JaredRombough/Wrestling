@@ -74,6 +74,10 @@ public class EventScreenController implements Initializable {
     private List<Pane> segmentPanes = new ArrayList<>();
     private List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private List<Segment> segments = new ArrayList<>();
+    
+    private Segment currentSegment() {
+        return segments.get(currentSegmentNumber.intValue());
+    }
 
     //this would be for keeping track of the index number of the currently
     //selected segment
@@ -106,6 +110,8 @@ public class EventScreenController implements Initializable {
             gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
             GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
         }
+        
+        updateLabels();
 
     }
 
@@ -183,6 +189,8 @@ public class EventScreenController implements Initializable {
             current.segment.set(segments.get(segmentListView.getItems().indexOf(current)));
             current.name.set(current.segment.get().toString());
         }
+        
+        updateWorkerListView();
 
     }
 
@@ -433,15 +441,7 @@ public class EventScreenController implements Initializable {
         //ideally
         this.currentEvent = new Event(gameController.date(), gameController.playerPromotion());
 
-        //get the workers and add them to the listview on the left
-        ObservableList<Worker> workersList = FXCollections.observableArrayList();
-
-        List<Worker> roster = gameController.playerPromotion().roster;
-        for (Worker worker : roster) {
-            workersList.add(worker);
-        }
-
-        workersListView.setItems(workersList);
+        
 
         initializeSegmentListView();
 
@@ -453,8 +453,31 @@ public class EventScreenController implements Initializable {
             addSegment();
         }
 
+        
+        
         segmentListView.getSelectionModel().selectFirst();
+        
+        //do this last as it is dependent on currentSegment
+        updateWorkerListView();
 
+    }
+    
+    private void updateWorkerListView() {
+        
+        //get the workers and add them to the listview on the left
+        ObservableList<Worker> workersList = FXCollections.observableArrayList();
+        
+        List<Worker> roster = gameController.playerPromotion().roster;
+        
+        for (Worker worker : roster) {
+            //we only want to include workers that aren't already in the segment
+            if(!currentSegment().allWorkers().contains(worker)) {
+                workersList.add(worker);
+            }
+            
+        }
+
+        workersListView.setItems(workersList);
     }
 
     @Override
@@ -474,7 +497,7 @@ public class EventScreenController implements Initializable {
 
             @Override
             public ListCell<Worker> call(ListView<Worker> listView) {
-                return new WorkerCell();
+                return new WorkerCell(listView.getItems());
             }
         });
 

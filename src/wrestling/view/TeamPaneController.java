@@ -36,7 +36,7 @@ public class TeamPaneController implements Initializable {
 
     @FXML
     private Label teamNameLabel;
-    
+
     @FXML
     private GridPane gridPane;
 
@@ -70,8 +70,6 @@ public class TeamPaneController implements Initializable {
 
     }
 
-    
-
     private class DragDropHandler implements EventHandler<DragEvent> {
 
         private final ObservableList<Worker> itemList;
@@ -91,14 +89,10 @@ public class TeamPaneController implements Initializable {
 
                 itemList.add(worker);
 
-                double height = cellHeight * itemList.size();
-                
-                mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
-                teamListView.setMinHeight(height);
-
-                updateTeamNameLabel();
+                updateLabels();
+                segmentPaneController.updateLabels();
                 eventScreenController.updateEvent();
-                
+
                 //Clear, otherwise we end up with the worker stuck on the dragboard?
                 ldb.clearAll();
 
@@ -106,20 +100,29 @@ public class TeamPaneController implements Initializable {
         }
 
     }
+    
+    public void updateLabels() {
+        
+        updateTeamNameLabel();
+        updateTeamListViewHeight();
+    }
 
     private void updateTeamNameLabel() {
-        /**
-        String oldLabel = teamNameLabel.getText();
-       
-        String string = getTeamName();
-        
-        //segmentPaneController.updateTeamsSorter(oldLabel, string);
-        */
+
         teamNameLabel.setText(getTeamName());
+
+    }
+    
+    private void updateTeamListViewHeight() {
+        
+        double height = cellHeight * teamListView.getItems().size();
+
+                mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
+                teamListView.setMinHeight(height);
         
     }
     
-    
+
     private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
 
@@ -135,7 +138,7 @@ public class TeamPaneController implements Initializable {
                 draggingTab.set(mainPane);
                 event.consume();
             }
-        }); 
+        });
         mainPane.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
@@ -156,9 +159,9 @@ public class TeamPaneController implements Initializable {
                     Pane parent = (Pane) mainPane.getParent();
                     Object source = event.getGestureSource();
                     int sourceIndex = parent.getChildren().indexOf(source);
-                    //System.out.println(sourceIndex);
+
                     int targetIndex = parent.getChildren().indexOf(mainPane);
-                    //System.out.println(targetIndex);
+
                     List<Node> nodes = new ArrayList<Node>(parent.getChildren());
                     if (sourceIndex < targetIndex) {
                         Collections.rotate(
@@ -171,7 +174,7 @@ public class TeamPaneController implements Initializable {
                     parent.getChildren().addAll(nodes);
                     //tell the segmentPaneControlller that the team priority has changed
                     segmentPaneController.swapTeamIndices(sourceIndex, targetIndex);
-                    
+
                     success = true;
                 }
                 event.setDropCompleted(success);
@@ -181,11 +184,8 @@ public class TeamPaneController implements Initializable {
     }
 
     public void initializeMore() {
-        
-        
-        
+
         preparePaneForSorting();
-    
 
         final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
             @Override
@@ -216,7 +216,7 @@ public class TeamPaneController implements Initializable {
 
             @Override
             public ListCell<Worker> call(ListView<Worker> listView) {
-                return new WorkerCell();
+                return new WorkerCell(listView.getItems());
             }
         });
 
