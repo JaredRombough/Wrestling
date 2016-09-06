@@ -20,6 +20,12 @@ public class GameController implements Serializable {
     }
 
     public void nextDay() {
+        for (Promotion promotion : promotions) {
+            if (promotion.getAi() != null) {
+                promotion.getAi().dailyUpdate();
+            }
+
+        }
         date++;
     }
 
@@ -33,6 +39,8 @@ public class GameController implements Serializable {
 
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
+        //set the Ai for non-player promotions
+        setAi();
     }
 
     public Promotion playerPromotion() {
@@ -81,6 +89,22 @@ public class GameController implements Serializable {
             } while (current.roster.size() < rosterSize);
         }
 
+        //keep track of all workers as thier own 'promotion' roster for now
+        Promotion freeAgents = new Promotion();
+        freeAgents.setName("All Workers");
+        freeAgents.roster = workers;
+        promotions.add(freeAgents);
+
+    }
+
+    private void setAi() {
+        //add ai where necessary
+        for (Promotion promotion : promotions) {
+            if (!promotion.equals(playerPromotion) && !promotion.getName().equals("All Workers")) {
+                promotion.setAi(new PromotionAi(promotion, this));
+            }
+
+        }
     }
 
     /*

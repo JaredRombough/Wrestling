@@ -18,31 +18,30 @@ public class Event implements Serializable {
     private Integer date;
 
     private Promotion promotion;
-    public Promotion getPromotion() { return this.promotion; }
+
+    public Promotion getPromotion() {
+        return this.promotion;
+    }
 
     private boolean completed;
 
-    public Event(Integer date, Promotion promotion) {
+    public boolean completed() {
+        return completed;
+    }
 
+    public Event(Integer date, Promotion promotion) {
+        this.completed = false;
         this.segments = new ArrayList<Segment>();
         this.date = date;
         this.promotion = promotion;
-        this.completed = false;
 
     }
 
     public Event(final List<Segment> segments, Integer date, Promotion promotion) {
+        this.completed = false;
         this.segments = new ArrayList<Segment>(segments);
         this.date = date;
         this.promotion = promotion;
-
-        //currently this is how we maintain a reference to the event
-        //is this a good idea?
-        this.promotion.events.add(this);
-
-        this.completed = false;
-
-        processEvent();
 
     }
 
@@ -63,13 +62,17 @@ public class Event implements Serializable {
 
         completed = true;
 
+        //this is important, adds the event to the promotions' list
+        //otherwise the event will be lost
+        this.promotion.events.add(this);
+
     }
 
     /*
     runs through all contracts associated with the event
     and takes money from the promotion accordingly
      */
-    public void processContracts() {
+    private void processContracts() {
 
         for (Worker worker : allWorkers()) {
             promotion.removeFunds(worker.getContract(promotion).getAppearanceCost());
@@ -133,7 +136,7 @@ public class Event implements Serializable {
         return totalCost;
     }
 
-    public int grossProfit() {
+    private int grossProfit() {
         int grossProfit = 0;
 
         for (Segment s : segments) {

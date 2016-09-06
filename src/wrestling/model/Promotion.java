@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- *
- */
+
 public class Promotion implements Serializable {
+
 
     public Promotion() {
         this.contracts = new ArrayList<>();
@@ -19,10 +17,16 @@ public class Promotion implements Serializable {
         name = "Promotion #" + serialNumber;
         serialNumber++;
     }
+    
+    private PromotionAi ai;
+    public void setAi(PromotionAi ai) { this.ai = ai; }
+    public PromotionAi getAi() { return ai; }
 
     public List<Worker> roster;
 
     private String name;
+    public void setName(String name) { this.name = name; }
+    public String getName() { return name; }
     private static int serialNumber = 0;
 
     public List<Event> events;

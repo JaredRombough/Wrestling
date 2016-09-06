@@ -136,7 +136,8 @@ public class EventScreenController implements Initializable {
 
             //create a new event with the updated segment list, date, player promotion
             Event finishedEvent = new Event(segments, gameController.date(), gameController.playerPromotion());
-
+            finishedEvent.processEvent();
+            
             //clear the segments, so when we come back to do a new event
             //it will be empty again
             segments.clear();

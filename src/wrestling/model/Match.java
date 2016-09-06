@@ -8,14 +8,14 @@ public class Match extends Segment implements Serializable {
 
     private List<List<Worker>> teams = new ArrayList<List<Worker>>();
 
-    private List<Worker> teamA;
+    private List<Worker> teamA = new ArrayList<>();
 
     private List<Worker> winner;
 
     public List<Worker> teamA() {
         return teamA;
     }
-    private List<Worker> teamB;
+    private List<Worker> teamB = new ArrayList<>();
 
     public List<Worker> teamB() {
         return teamB;
@@ -39,6 +39,18 @@ public class Match extends Segment implements Serializable {
 
     public int segmentRating() {
         return matchRating;
+    }
+
+    public Match(final Worker workerA, final Worker workerB) {
+        teamA.add(workerA);
+        teamB.add(workerB);
+        teams.add(teamA);
+        teams.add(teamB);
+        this.hasWinner = true;
+        this.hasTeams = true;
+        this.winner = teamA;
+        calculateMatchRating();
+
     }
 
     /*
@@ -66,9 +78,8 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public boolean isComplete() {
-        
+
         //consider a match completed if it has any workers (placeholder)
-        
         return !allWorkers().isEmpty();
     }
 
