@@ -44,19 +44,30 @@ public class PromotionAi implements Serializable {
                 return Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
             }
         });
+        
+        //check for workers that are already booked on this date
+        List<Worker> eventRoster = promotion.roster;
+        List<Worker> alreadyBooked = new ArrayList<>();
+        for(Worker worker : eventRoster) {
+            if (worker.isBooked(gameController.date())) {
+                alreadyBooked.add(worker);
+            }
+        }
+        
+        eventRoster.removeAll(alreadyBooked);
 
         List<Segment> segments = new ArrayList<>();
         
         //go through the roster by popularity and make singles matches
-        for (int i = 0; i < promotion.roster.size(); i+=2) {
-            if(promotion.roster.size() > i + 1) {
-                Match match = new Match(promotion.roster.get(i), promotion.roster.get(i + 1));
+        for (int i = 0; i < eventRoster.size(); i+=2) {
+            if(eventRoster.size() > i + 1) {
+                Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
                 segments.add(match);
             }
         }
         
         Event event = new Event(segments, gameController.date(), promotion);
-        event.processEvent();
+        event.scheduleEvent(gameController.date());
         
     }
 

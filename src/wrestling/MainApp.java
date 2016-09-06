@@ -270,8 +270,15 @@ public class MainApp extends Application {
     in labels outside of their screens it can be handled here
      */
     public void updateLabels() {
-        rootLayoutController.updateCurrentDateLabel();
-        rootLayoutController.updateCurrentFundsLabel();
+        rootLayoutController.updateLabels();
+        browserController.updateLabels();
+        
+    }
+    
+    public void nextDay() {
+        gameController.nextDay();
+        saveGame();
+        updateLabels();
     }
 
     /*

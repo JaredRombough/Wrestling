@@ -57,14 +57,20 @@ public class RootLayoutController implements Initializable {
             mainApp.showEventScreen();
             
        } else if (event.getSource() == nextDayButton) {
-           gameController.nextDay();
-           updateCurrentDateLabel();
-           mainApp.saveGame();
+           mainApp.nextDay();
+           
+           
        } else if (event.getSource() == browserButton) {
            
            mainApp.showBrowser();
        }
            
+    }
+    
+    public void updateLabels() {
+        
+        updateCurrentDateLabel();
+        updateCurrentFundsLabel();
     }
     
     @Override

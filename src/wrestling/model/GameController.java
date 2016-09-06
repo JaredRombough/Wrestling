@@ -19,13 +19,21 @@ public class GameController implements Serializable {
         date = newDate;
     }
 
+    //only called by MainApp
     public void nextDay() {
         for (Promotion promotion : promotions) {
             if (promotion.getAi() != null) {
                 promotion.getAi().dailyUpdate();
             }
 
+            //see if the promotion has an event scheduled today, if so process it
+            if (promotion.getEventByDate(date) != null) {
+
+                promotion.getEventByDate(date).processEvent();
+            }
+
         }
+
         date++;
     }
 

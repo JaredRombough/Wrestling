@@ -62,7 +62,6 @@ public class BrowserController implements Initializable {
     
     @FXML
     private Button teamsButton;
-    
 
     @FXML
     private ComboBox promotionComboBox;
@@ -96,7 +95,7 @@ public class BrowserController implements Initializable {
 
         //update listviews with relevant items
         setListViewContent(workersListView, currentPromotion.roster);
-        setListViewContent(eventsListView, currentPromotion.events);
+        setListViewContent(eventsListView, currentPromotion.getEvents());
         
         //make sure the combobox is on the correct promotion
         //in case we have called this from some
@@ -112,6 +111,10 @@ public class BrowserController implements Initializable {
     private void setListViewContent(ListView listView, List list) {
         listView.getItems().clear();
         listView.setItems(FXCollections.observableArrayList(list));
+    }
+    
+    public void updateLabels() {
+        setCurrentPromotion(currentPromotion);
     }
 
     @FXML
@@ -245,7 +248,7 @@ public class BrowserController implements Initializable {
     private void prepareEventBrowsing() {
 
         //get the listview ready
-        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().events));
+        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEvents()));
         
         eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
             @Override

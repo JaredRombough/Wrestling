@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Worker implements Serializable {
 
     /**
@@ -20,13 +19,12 @@ public class Worker implements Serializable {
     public static void setSerialNumber(int aSerialNumber) {
         serialNumber = aSerialNumber;
     }
-    
+
     private String name;
     private String shortName;
-    
-    
+
     private static int serialNumber = 0;
-    
+
     private int striking;
     private int flying;
     private int wrestling;
@@ -37,33 +35,35 @@ public class Worker implements Serializable {
     private int proficiency;
     private int reputation;
     private int popularity;
-    
+
     private List<Contract> contracts;
-    
-   
-    
-    
+    private List<Event> bookings;
+
     public Worker() {
         this.contracts = new ArrayList<>();
-        
+        this.bookings = new ArrayList<>();
+
         name = "Worker #" + serialNumber;
         serialNumber++;
-        
-        
+
     }
-    
+
+    public void addBooking(Event event) {
+        bookings.add(event);
+    }
+
     public void addContract(Contract contract) {
         this.contracts.add(contract);
     }
-    
+
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
     }
-    
+
     public List getContracts() {
         return contracts;
     }
-    
+
     public Contract getContract(Promotion promotion) {
         Contract thisContract = null;
         for (Contract current : contracts) {
@@ -71,11 +71,10 @@ public class Worker implements Serializable {
                 thisContract = current;
             }
         }
-        
-        
+
         return thisContract;
     }
-    
+
     public String contractString() {
         String string = new String();
         for (Contract current : contracts) {
@@ -84,10 +83,23 @@ public class Worker implements Serializable {
         }
         return string;
     }
-    
+
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    public boolean isBooked(int date) {
+        boolean isBooked = false;
+
+        for (Event event : bookings) {
+            if (event.getDate() == date) {
+                isBooked = true;
+            }
+        }
+
+        return isBooked;
+
     }
 
     /**
@@ -257,5 +269,5 @@ public class Worker implements Serializable {
     public void setShortName(String shortName) {
         this.shortName = shortName;
     }
-    
+
 }

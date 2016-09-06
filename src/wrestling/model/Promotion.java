@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -29,7 +30,42 @@ public class Promotion implements Serializable {
     public String getName() { return name; }
     private static int serialNumber = 0;
 
-    public List<Event> events;
+    private List<Event> events;
+    public List<Event> getEvents() { return Collections.unmodifiableList(events); }
+    public List<Event> getPastEvents() {
+        List<Event> pastEvents = new ArrayList<>();
+        for (Event event : events) {
+            if(event.isComplete()) {
+                pastEvents.add(event);
+            }
+        }
+        return pastEvents;
+    }
+    public List<Event> getFutureEvents() {
+        List<Event> futureEvents = new ArrayList<>();
+        for (Event event : events) {
+            if(!event.isComplete()) {
+                futureEvents.add(event);
+            }
+        }
+        return futureEvents;
+        
+    }
+    public Event getEventByDate(int date) {
+        Event event = null;
+        for (Event e : events) {
+            if (e.getDate() == date) {
+                event = e;
+                break;
+            }
+        }
+        
+        return event;
+    }
+    public void addEvent(Event event) {
+        events.add(event);
+    }
+    
     private List<Contract> contracts;
 
     private Integer funds;

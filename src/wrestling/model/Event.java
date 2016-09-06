@@ -16,6 +16,7 @@ public class Event implements Serializable {
     private List<Segment> segments;
 
     private Integer date;
+    public int getDate() { return date; }
 
     private Promotion promotion;
 
@@ -23,14 +24,14 @@ public class Event implements Serializable {
         return this.promotion;
     }
 
-    private boolean completed;
+    private boolean isComplete;
 
-    public boolean completed() {
-        return completed;
+    public boolean isComplete() {
+        return isComplete;
     }
 
     public Event(Integer date, Promotion promotion) {
-        this.completed = false;
+        this.isComplete = false;
         this.segments = new ArrayList<Segment>();
         this.date = date;
         this.promotion = promotion;
@@ -38,7 +39,7 @@ public class Event implements Serializable {
     }
 
     public Event(final List<Segment> segments, Integer date, Promotion promotion) {
-        this.completed = false;
+        this.isComplete = false;
         this.segments = new ArrayList<Segment>(segments);
         this.date = date;
         this.promotion = promotion;
@@ -49,6 +50,17 @@ public class Event implements Serializable {
         this.segments = segments;
     }
 
+    public void scheduleEvent(int date) {
+        this.date = date;
+        for (Worker worker : allWorkers()) {
+            worker.addBooking(this);
+        }
+        
+        //this is important, adds the event to the promotions' list
+        //otherwise the event will be lost
+        this.promotion.addEvent(this);
+    }
+    
     /*
     to be run once only when the event actually happens
     process money and anything else
@@ -60,11 +72,9 @@ public class Event implements Serializable {
 
         promotion.addFunds(grossProfit());
 
-        completed = true;
+        isComplete = true;
 
-        //this is important, adds the event to the promotions' list
-        //otherwise the event will be lost
-        this.promotion.events.add(this);
+        
 
     }
 

@@ -136,7 +136,7 @@ public class EventScreenController implements Initializable {
 
             //create a new event with the updated segment list, date, player promotion
             Event finishedEvent = new Event(segments, gameController.date(), gameController.playerPromotion());
-            finishedEvent.processEvent();
+            finishedEvent.scheduleEvent(gameController.date());
             
             //clear the segments, so when we come back to do a new event
             //it will be empty again
@@ -152,10 +152,7 @@ public class EventScreenController implements Initializable {
             mainApp.showBrowser(finishedEvent);
 
             //advance the day
-            gameController.nextDay();
-
-            //tell the main app to update labels
-            mainApp.updateLabels();
+            mainApp.nextDay();
 
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
@@ -472,7 +469,8 @@ public class EventScreenController implements Initializable {
         
         for (Worker worker : roster) {
             //we only want to include workers that aren't already in the segment
-            if(!currentSegment().allWorkers().contains(worker)) {
+            //as well as workers who aren't already booked on the event date
+            if(!currentSegment().allWorkers().contains(worker) && !worker.isBooked(currentEvent.getDate())) {
                 workersList.add(worker);
             }
             
