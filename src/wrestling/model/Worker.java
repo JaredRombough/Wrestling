@@ -3,6 +3,7 @@ package wrestling.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Worker implements Serializable {
 
@@ -50,6 +51,10 @@ public class Worker implements Serializable {
 
     public void addBooking(Event event) {
         bookings.add(event);
+    }
+    
+    public List<Event> getBookings() {
+        return bookings;
     }
 
     public void addContract(Contract contract) {
@@ -100,6 +105,35 @@ public class Worker implements Serializable {
 
         return isBooked;
 
+    }
+    
+    public void gainPopularity() {
+        int rand = rand3();
+        
+        if (rand == 1) {
+             
+        } else if (rand == 2) {
+            this.popularity += 2;
+        } else {
+            this.popularity += 1;
+        }
+    }
+    
+    public void losePopularity() {
+        int rand = rand3();
+        
+        if (rand == 1) {
+             
+        } else if (rand == 2) {
+            this.popularity -= 2;
+        } else {
+            this.popularity -= 1;
+        }
+    }
+    
+    private int rand3() {
+        Random r = new Random(); 
+        return r.nextInt(3 - 0) + 0;
     }
 
     /**

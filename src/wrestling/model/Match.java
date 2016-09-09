@@ -143,4 +143,16 @@ public class Match extends Segment implements Serializable {
 
     }
 
+    public void processSegment() {
+        for (List<Worker> team : teams) {
+            for (Worker worker : team) {
+                if (team.equals(winner)) {
+                    worker.gainPopularity();
+                } else {
+                    worker.losePopularity();
+                }
+            }
+        }
+    }
+
 }

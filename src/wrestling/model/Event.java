@@ -69,6 +69,8 @@ public class Event implements Serializable {
     public void processEvent() {
 
         processContracts();
+        
+        processSegments();
 
         promotion.addFunds(grossProfit());
 
@@ -88,6 +90,13 @@ public class Event implements Serializable {
             promotion.removeFunds(worker.getContract(promotion).getAppearanceCost());
         }
 
+    }
+    
+    private void processSegments() {
+        for (Segment segment : segments) {
+            segment.processSegment();
+        }
+        
     }
 
     //this will return a list of all workers currently booked

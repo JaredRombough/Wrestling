@@ -74,7 +74,7 @@ public class EventScreenController implements Initializable {
     private List<Pane> segmentPanes = new ArrayList<>();
     private List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private List<Segment> segments = new ArrayList<>();
-    
+
     private Segment currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
     }
@@ -110,7 +110,7 @@ public class EventScreenController implements Initializable {
             gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
             GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
         }
-        
+
         updateLabels();
 
     }
@@ -137,7 +137,7 @@ public class EventScreenController implements Initializable {
             //create a new event with the updated segment list, date, player promotion
             Event finishedEvent = new Event(segments, gameController.date(), gameController.playerPromotion());
             finishedEvent.scheduleEvent(gameController.date());
-            
+
             //clear the segments, so when we come back to do a new event
             //it will be empty again
             segments.clear();
@@ -153,6 +153,10 @@ public class EventScreenController implements Initializable {
 
             //advance the day
             mainApp.nextDay();
+
+            //reset the current event
+            newCurrentEvent();
+            updateLabels();
 
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
@@ -187,7 +191,7 @@ public class EventScreenController implements Initializable {
             current.segment.set(segments.get(segmentListView.getItems().indexOf(current)));
             current.name.set(current.segment.get().toString());
         }
-        
+
         updateWorkerListView();
 
     }
@@ -236,7 +240,7 @@ public class EventScreenController implements Initializable {
         SegmentNameItem currentSegment = segmentListView.getSelectionModel().getSelectedItem();
 
         if (currentSegment == null) {
-            
+
             segmentListView.getSelectionModel().selectLast();
             currentSegment = segmentListView.getSelectionModel().getSelectedItem();
         }
@@ -402,7 +406,7 @@ public class EventScreenController implements Initializable {
                         Collections.swap(segments, thisIdx, draggedIdx);
 
                         setCurrentSegmentNumber(thisIdx);
-                        
+
                         segmentListView.getSelectionModel().select(segmentNameItem);
                         success = true;
                     }
@@ -430,16 +434,19 @@ public class EventScreenController implements Initializable {
         }
     }
 
+    private void newCurrentEvent() {
+
+        this.currentEvent = new Event(gameController.date(), gameController.playerPromotion());
+    }
+
     /*
     additional initialization to be called externally after we have our mainApp etc.
      */
     private void initializeMore() {
 
         //here we set a blank event, this will have to take an event from somewhere else
-        //ideally
-        this.currentEvent = new Event(gameController.date(), gameController.playerPromotion());
-
-        
+        //ideally?
+        newCurrentEvent();
 
         initializeSegmentListView();
 
@@ -451,29 +458,29 @@ public class EventScreenController implements Initializable {
             addSegment();
         }
 
-        
-        
         segmentListView.getSelectionModel().selectFirst();
-        
+
         //do this last as it is dependent on currentSegment
         updateWorkerListView();
 
     }
-    
+
     private void updateWorkerListView() {
-        
+
         //get the workers and add them to the listview on the left
         ObservableList<Worker> workersList = FXCollections.observableArrayList();
-        
+
         List<Worker> roster = gameController.playerPromotion().roster;
-        
+
         for (Worker worker : roster) {
+
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date
-            if(!currentSegment().allWorkers().contains(worker) && !worker.isBooked(currentEvent.getDate())) {
+            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(currentEvent.getDate())) {
+
                 workersList.add(worker);
             }
-            
+
         }
 
         workersListView.setItems(workersList);
@@ -502,7 +509,6 @@ public class EventScreenController implements Initializable {
 
     }
 
-  
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 
