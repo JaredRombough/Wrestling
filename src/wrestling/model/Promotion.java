@@ -16,6 +16,10 @@ public class Promotion implements Serializable {
         events = new ArrayList<Event>();
         funds = 0;
         name = "Promotion #" + serialNumber;
+        
+        //default popularity of 50 for now
+        popularity = 50;
+        
         serialNumber++;
     }
     
@@ -29,6 +33,28 @@ public class Promotion implements Serializable {
     public void setName(String name) { this.name = name; }
     public String getName() { return name; }
     private static int serialNumber = 0;
+    
+    private int popularity;
+    public int getPopulatirty() { return popularity; }
+    public void setPopularity(int popularity) { 
+        if (popularity > 100) {
+            popularity = 100;
+        } else if (popularity < 1) {
+            popularity = 1;
+        }
+        this.popularity = popularity; 
+        
+    }
+    private int level;
+    public int getLevel() { return level; }
+    public void setLevel(int level) {
+        if (level > 5) {
+            level = 5;
+        } if (level < 0) {
+            level = 0;
+        }
+        this.level = level; 
+    }
 
     private List<Event> events;
     public List<Event> getEvents() { return Collections.unmodifiableList(events); }

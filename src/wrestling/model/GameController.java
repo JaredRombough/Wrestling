@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -56,45 +57,84 @@ public class GameController implements Serializable {
     }
 
     private List<Worker> workers;
-
+    
     public GameController() {
 
-        Integer numberOfPromotions = 10;
-        Integer rosterSize = 15;
-        Integer startingFunds = 10000;
-
+        //set the initial date here
         date = 1;
 
         //create a worker factory
         workerFactory = new WorkerFactory();
+
+        //initialize the main lists
         workers = new ArrayList<Worker>();
-
-        //create the workers
-        workers = workerFactory.createRoster(1000);
-
         promotions = new ArrayList<Promotion>();
 
-        //create the promotions
-        for (int i = 0; i < numberOfPromotions; i++) {
-            Promotion newPromotion = new Promotion();
+        //prepare the promotions (and workers)
+        preparePromotions();
 
-            promotions.add(newPromotion);
-        }
+    }
 
-        for (Promotion current : promotions) {
+    private void preparePromotions() {
+        int numberOfPromotions = 20;
+        int rosterSize = 15;
+        int startingFunds = 10000;
+        int workersPerPromotion = 50;
 
-            //add funds
-            current.addFunds(startingFunds);
+        //keeps track of what proportion of our promotions
+        //should be at each level
+        List<Double> levelRatios = Arrays.asList(
+                0.3, //level 0
+                0.2, //level 1
+                0.2, //level 2
+                0.2, //level 3
+                0.1 //level 4
+        );
 
-            //assign workers
+        for (Double ratio : levelRatios) {
+
+            double promotionCount = 0;
+            double currentRatio;
+            int currentLevel = levelRatios.indexOf(ratio);
+            List<Worker> currentLevelWorkers = new ArrayList<Worker>();
+            List<Promotion> currentLevelPromotions = new ArrayList<Promotion>();
+
             do {
-                Worker worker = getRandomFromList(workers);
-                if (!current.roster.contains(worker)) {
-                    current.roster.add(worker);
-                    new Contract(worker, current, 90, date);
-                }
 
-            } while (current.roster.size() < rosterSize);
+                currentRatio = (double) promotionCount / numberOfPromotions;
+                promotionCount++;
+
+                Promotion newPromotion = new Promotion();
+
+                newPromotion.setLevel(currentLevel);
+
+                currentLevelPromotions.add(newPromotion);
+
+                //add workers to the game in proportion to the current promotion
+                currentLevelWorkers.addAll(workerFactory.createRoster(workersPerPromotion, currentLevel));
+
+            } while (currentRatio < ratio);
+
+            for (Promotion current : currentLevelPromotions) {
+
+                //add funds (this could be based on promotion level)
+                current.addFunds(startingFunds);
+
+                //assign workers based on promotion level
+                do {
+                    Worker worker = getRandomFromList(currentLevelWorkers);
+                    if (!current.roster.contains(worker)) {
+                        current.roster.add(worker);
+                        new Contract(worker, current, 90, date);
+                    }
+
+                } while (current.roster.size() < rosterSize);
+            }
+
+            //add all the workers and promotions we have generated for this
+            //level to the main lists
+            workers.addAll(currentLevelWorkers);
+            promotions.addAll(currentLevelPromotions);
         }
 
         //keep track of all workers as thier own 'promotion' roster for now

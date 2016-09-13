@@ -65,6 +65,9 @@ public class BrowserController implements Initializable {
 
     @FXML
     private ComboBox promotionComboBox;
+    
+    @FXML
+    private Label currentPromotionLabel;
 
     private Button lastButton;
 
@@ -80,6 +83,8 @@ public class BrowserController implements Initializable {
     private ListView eventsListView;
     private ListView workersListView;
     private Label categoryButton;
+    
+    
 
     private Promotion currentPromotion;
 
@@ -100,6 +105,12 @@ public class BrowserController implements Initializable {
         //make sure the combobox is on the correct promotion
         //in case we have called this from some
         promotionComboBox.getSelectionModel().select(currentPromotion);
+        
+        currentPromotionLabel.setText(currentPromotion.getName() + "\n" 
+                + "Level " + currentPromotion.getLevel()
+                + "\tPopularity " + currentPromotion.getPopulatirty());
+        
+        
         
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
@@ -196,6 +207,7 @@ public class BrowserController implements Initializable {
         titlesButton.setDisable(true);
                 
 
+        
     }
 
     private void initializePromotionCombobox() {
@@ -206,6 +218,7 @@ public class BrowserController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
                 setCurrentPromotion(newValue);
+                
             }
         });
 
@@ -277,6 +290,8 @@ public class BrowserController implements Initializable {
 
         prepareWorkerBrowsing();
         prepareEventBrowsing();
+        
+        
 
         promotionComboBox.setValue(gameController.playerPromotion());
         lastButton.fire();
