@@ -38,7 +38,7 @@ public class PromotionAi implements Serializable {
     private void bookEvent() {
         
         //sort roster by popularity
-        Collections.sort(promotion.roster, new Comparator<Worker>() {
+        Collections.sort(promotion.getRoster(), new Comparator<Worker>() {
             @Override
             public int compare(Worker w1, Worker w2) {
                 return Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
@@ -46,7 +46,7 @@ public class PromotionAi implements Serializable {
         });
         
         //check for workers that are already booked on this date
-        List<Worker> eventRoster = promotion.roster;
+        List<Worker> eventRoster = promotion.getRoster();
         List<Worker> alreadyBooked = new ArrayList<>();
         for(Worker worker : eventRoster) {
             if (worker.isBooked(gameController.date())) {

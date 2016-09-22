@@ -191,8 +191,6 @@ public class MainApp extends Application {
      */
     public void showBrowser(Event event) {
         showBrowser();
-        //push the event button or something
-        //or have a method that finds the last evnt properly?
         browserController.showEvent(event);
 
     }
@@ -215,6 +213,7 @@ public class MainApp extends Application {
             EventScreenController controller = loader.getController();
             controller.setMainApp(this);
             controller.setGameController(this.gameController);
+            eventScreenController = controller;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -272,6 +271,7 @@ public class MainApp extends Application {
     public void updateLabels() {
         rootLayoutController.updateLabels();
         browserController.updateLabels();
+        eventScreenController.updateLabels();
         
     }
     

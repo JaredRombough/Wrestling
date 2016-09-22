@@ -60,7 +60,11 @@ public class StartGameScreenController implements Initializable {
         ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
 
         for (Promotion current : gameController.promotions) {
-            promotionsObservableList.add(current);
+            //dont' want the player to pick the free agents. probably want a cleaner solution though.
+            if(!current.getName().equals("All Workers")) {
+                promotionsObservableList.add(current);
+            }
+            
         }
 
         promotionListView.setItems(promotionsObservableList);
@@ -78,7 +82,7 @@ public class StartGameScreenController implements Initializable {
 
                 ListView<Worker> rosterListView = new ListView<Worker>();
                 ObservableList<Worker> rosterList = FXCollections.observableArrayList();
-                for (Worker current : newValue.roster) {
+                for (Worker current : newValue.getRoster()) {
                     rosterList.add(current);
                 }
                 rosterListView.setItems(rosterList);

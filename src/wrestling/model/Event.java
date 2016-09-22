@@ -72,6 +72,7 @@ public class Event implements Serializable {
         
         processSegments();
 
+        promotion.gainPopularity();
         promotion.addFunds(grossProfit());
 
         isComplete = true;
@@ -83,11 +84,14 @@ public class Event implements Serializable {
     /*
     runs through all contracts associated with the event
     and takes money from the promotion accordingly
+    also notifies contracts of appearances
      */
     private void processContracts() {
 
         for (Worker worker : allWorkers()) {
-            promotion.removeFunds(worker.getContract(promotion).getAppearanceCost());
+            promotion.removeFunds(worker.getContract(promotion).getUnitCost());
+            worker.getContract(promotion).appearance();
+            
         }
 
     }
@@ -149,7 +153,7 @@ public class Event implements Serializable {
         int totalCost = 0;
 
         for (Worker currentWorker : allWorkers()) {
-            totalCost += currentWorker.getContract(promotion).getAppearanceCost();
+            totalCost += currentWorker.getContract(promotion).getUnitCost();
         }
 
         return totalCost;

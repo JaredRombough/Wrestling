@@ -1,10 +1,14 @@
 package wrestling.view;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Worker;
@@ -23,6 +27,12 @@ public class WorkerOverviewController implements Initializable {
 
         initializeMore();
     }
+    
+    private AnchorPane contractPane;
+    private ContractPaneController contractPaneController;
+    
+    @FXML
+    private GridPane gridPane;
 
     @FXML
     private Label nameLabel;
@@ -51,7 +61,12 @@ public class WorkerOverviewController implements Initializable {
     private Worker currentWorker;
 
     public void setCurrentWorker(Worker newWorker) {
+        
+        
+        
         this.currentWorker = newWorker;
+        contractPaneController.setWorker(newWorker);
+        
 
         updateLabels();
     }
@@ -62,7 +77,27 @@ public class WorkerOverviewController implements Initializable {
     }
 
     private void initializeMore() {
+        loadContractPane();
+    }
+    
+    private void loadContractPane() {
+         //load the contract pane
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/ContractPane.fxml"));
+            contractPane = (AnchorPane) loader.load();
+            
+            contractPaneController = (ContractPaneController) loader.getController();
 
+            contractPaneController.setMainApp(this.mainApp);
+            
+            contractPaneController.setGameController(this.gameController);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        gridPane.add(contractPane, 0, 6, 4, 1);
     }
 
     private void updateLabels() {
@@ -75,6 +110,10 @@ public class WorkerOverviewController implements Initializable {
         popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
         contractLabel.setText(currentWorker.contractString());
+        
+        contractPaneController.updateLabels();
+        
+        
     }
 
 }

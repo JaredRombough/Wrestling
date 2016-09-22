@@ -99,7 +99,7 @@ public class BrowserController implements Initializable {
         categoryButton.setText(newPromotion.toString());
 
         //update listviews with relevant items
-        setListViewContent(workersListView, currentPromotion.roster);
+        setListViewContent(workersListView, currentPromotion.getRoster());
         setListViewContent(eventsListView, currentPromotion.getEvents());
         
         //make sure the combobox is on the correct promotion
@@ -240,9 +240,11 @@ public class BrowserController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+        
 
         //get the listview ready
-        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().roster));
+        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getRoster()));
 
         workersListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Worker>() {
             @Override

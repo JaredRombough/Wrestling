@@ -13,44 +13,59 @@ public class Contract implements Serializable {
     
     private Promotion promotion;
     private Worker worker;
+
     
-    //an int that corresponds to the day that the contract will expire
-    private int expirationDate;
-    
-    //total number of days
-    private int length;
+    //total number of days/appearances left
+    private int duration;
     
     private int startDate;
     
-    private boolean written;
+    private boolean monthly;
     
     private boolean exclusive;
     
-    private int appearanceCost;
-    private int monthlyCost;
-    
-    public Contract(Worker worker, Promotion promotion, int length, int currentDay) {
+    private int unitCost;
+   
+    public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
         this.worker = worker;
-        
         this.promotion = promotion;
-        this.length = length;
-        this.expirationDate = length + currentDay;
-        this.startDate = currentDay;
-        this.exclusive = false;
-        this.written = false;
-        this.monthlyCost = 0;
-        this.appearanceCost = worker.getProficiency() * 5;
+        this.monthly = monthly;
+        this.exclusive = exclusive;
+        this.duration = duration;
+        this.unitCost = cost;
+
+    }
+
+    //depreciates monthly contracts
+    public void nextDay() {
+        if (monthly) {
+            duration--;
+        }
         
-        //we need to give the worker and the promotion a link to the contract
-        //but maybe this is not the best place to do it?
-        worker.addContract(this);
-        promotion.addContract(this);
+        if (duration <= 0) {
+            terminateContract();
+        }
+    }
+    
+    //depreciates appearance contracts
+    public void appearance() {
+        if(!monthly) {
+            duration--;
+        }
         
+        if (duration <= 0) {
+            terminateContract();
+        }
+    }
+    
+    private void terminateContract() {
+        this.worker.removeContract(this);
+        this.promotion.removeContract(this);
     }
     
     public String getTerms() {
-        String string = getPromotion() + " Length: " + getLength() + " days Expires: " + getExpirationDate() 
-                + " Appearance Cost: $" + getAppearanceCost();
+        String string = getPromotion() + " Length: " + getDuration()
+                + " Appearance Cost: $" + getUnitCost();
         
         return string;
     }
@@ -83,32 +98,20 @@ public class Contract implements Serializable {
         this.worker = worker;
     }
 
-    /**
-     * @return the expirationDate
-     */
-    public int getExpirationDate() {
-        return expirationDate;
-    }
-
-    /**
-     * @param expirationDate the expirationDate to set
-     */
-    public void setExpirationDate(int expirationDate) {
-        this.expirationDate = expirationDate;
-    }
 
     /**
      * @return the length
      */
-    public int getLength() {
-        return length;
+    public int getDuration() {
+        return duration;
     }
 
     /**
-     * @param length the length to set
+     * @param duration the length to set
      */
-    public void setLength(int length) {
-        this.length = length;
+    public void setDuration(int duration) {
+
+        this.duration = duration;
     }
 
     /**
@@ -128,15 +131,15 @@ public class Contract implements Serializable {
     /**
      * @return the written
      */
-    public boolean isWritten() {
-        return written;
+    public boolean isMonthly() {
+        return monthly;
     }
 
     /**
-     * @param written the written to set
+     * @param monthly the written to set
      */
-    public void setWritten(boolean written) {
-        this.written = written;
+    public void setMonthly(boolean monthly) {
+        this.monthly = monthly;
     }
 
     /**
@@ -156,29 +159,15 @@ public class Contract implements Serializable {
     /**
      * @return the appearanceCost
      */
-    public int getAppearanceCost() {
-        return appearanceCost;
+    public int getUnitCost() {
+        return unitCost;
     }
 
     /**
-     * @param appearanceCost the appearanceCost to set
+     * @param unitCost the appearanceCost to set
      */
-    public void setAppearanceCost(int appearanceCost) {
-        this.appearanceCost = appearanceCost;
+    public void setUnitCost(int unitCost) {
+        this.unitCost = unitCost;
     }
 
-    /**
-     * @return the monthlyCost
-     */
-    public int getMonthlyCost() {
-        return monthlyCost;
-    }
-
-    /**
-     * @param monthlyCost the monthlyCost to set
-     */
-    public void setMonthlyCost(int monthlyCost) {
-        this.monthlyCost = monthlyCost;
-    }
-    
 }

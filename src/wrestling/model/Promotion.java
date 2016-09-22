@@ -27,8 +27,9 @@ public class Promotion implements Serializable {
     public void setAi(PromotionAi ai) { this.ai = ai; }
     public PromotionAi getAi() { return ai; }
 
-    public List<Worker> roster;
-
+    private List<Worker> roster;
+    public List<Worker> getRoster() { return this.roster; }
+    
     private String name;
     public void setName(String name) { this.name = name; }
     public String getName() { return name; }
@@ -45,6 +46,25 @@ public class Promotion implements Serializable {
         this.popularity = popularity; 
         
     }
+    
+    public void gainPopularity(int score) {
+        if(score > (level * 20)) {
+            gainPopularity();
+        }
+    }
+    
+    public void gainPopularity() {
+        popularity += 1;
+        if(popularity >= 100) {
+            if (level != 4) {
+                level += 1;
+                popularity = 10;
+            } else {
+                popularity = 100;
+            }
+        }
+    }
+    
     private int level;
     public int getLevel() { return level; }
     public void setLevel(int level) {
@@ -115,13 +135,17 @@ public class Promotion implements Serializable {
 
     public void addContract(Contract contract) {
         this.contracts.add(contract);
+        this.roster.add(contract.getWorker());
+        
     }
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
+        this.roster.remove(contract.getWorker());
+        
     }
 
-    public List getContracts() {
+    public List<Contract> getContracts() {
         return contracts;
     }
 }

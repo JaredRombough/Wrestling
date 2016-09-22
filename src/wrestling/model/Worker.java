@@ -68,6 +68,30 @@ public class Worker implements Serializable {
     public List getContracts() {
         return contracts;
     }
+    
+    public boolean canNegotiate(Promotion promotion) {
+        //this would have to be more robust
+        //such as checking how much time is left on our contract
+        boolean canNegotiate = true;
+        
+        if(this.hasContract()) {
+            for (Contract contract : contracts) {
+                if(contract.isExclusive()) {
+                    canNegotiate = false;
+                } 
+                
+                if(contract.getPromotion().equals(promotion)) {
+                    canNegotiate = false;
+                }
+            }
+        }
+        
+        return canNegotiate;
+    }
+    
+    private boolean hasContract() {
+        return (this.contracts.size() > 0);
+    }
 
     public Contract getContract(Promotion promotion) {
         Contract thisContract = null;

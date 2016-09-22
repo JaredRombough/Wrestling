@@ -3,6 +3,8 @@ package wrestling.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import static java.util.Collections.list;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -22,7 +24,10 @@ public class GameController implements Serializable {
 
     //only called by MainApp
     public void nextDay() {
+
         for (Promotion promotion : promotions) {
+
+            
             if (promotion.getAi() != null) {
                 promotion.getAi().dailyUpdate();
             }
@@ -32,6 +37,13 @@ public class GameController implements Serializable {
 
                 promotion.getEventByDate(date).processEvent();
             }
+            
+            
+            List<Contract> contractList = new ArrayList(promotion.getContracts());
+            for(Contract contract : contractList) {
+                contract.nextDay();
+            }
+
 
         }
 
@@ -57,7 +69,7 @@ public class GameController implements Serializable {
     }
 
     private List<Worker> workers;
-    
+
     public GameController() {
 
         //set the initial date here
@@ -115,20 +127,22 @@ public class GameController implements Serializable {
 
             } while (currentRatio < ratio);
 
-            for (Promotion current : currentLevelPromotions) {
+            for (Promotion promotion : currentLevelPromotions) {
 
                 //add funds (this could be based on promotion level)
-                current.addFunds(startingFunds);
+                promotion.addFunds(startingFunds);
 
                 //assign workers based on promotion level
                 do {
                     Worker worker = getRandomFromList(currentLevelWorkers);
-                    if (!current.roster.contains(worker)) {
-                        current.roster.add(worker);
-                        new Contract(worker, current, 90, date);
+                    if (!promotion.getRoster().contains(worker)) {
+                        //current.getRoster().add(worker);
+                        Contract contract = new Contract(worker, promotion, true, true, 9, (worker.getPopularity() * 10));
+                        worker.addContract(contract);
+                        promotion.addContract(contract);
                     }
 
-                } while (current.roster.size() < rosterSize);
+                } while (promotion.getRoster().size() < rosterSize);
             }
 
             //add all the workers and promotions we have generated for this
@@ -140,7 +154,7 @@ public class GameController implements Serializable {
         //keep track of all workers as thier own 'promotion' roster for now
         Promotion freeAgents = new Promotion();
         freeAgents.setName("All Workers");
-        freeAgents.roster = workers;
+        freeAgents.getRoster().addAll(workers);
         promotions.add(freeAgents);
 
     }
