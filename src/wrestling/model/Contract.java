@@ -4,28 +4,27 @@ import java.io.Serializable;
 
 /**
  *
- * A contract is a link between a worker and a promotion
- * that also knows the conditions (pay for appearance, length, etc)
- * 
- * 
+ * A contract is a link between a worker and a promotion that also knows the
+ * conditions (pay for appearance, length, etc)
+ *
+ *
  */
 public class Contract implements Serializable {
-    
+
     private Promotion promotion;
     private Worker worker;
 
-    
     //total number of days/appearances left
     private int duration;
-    
+
     private int startDate;
-    
+
     private boolean monthly;
-    
+
     private boolean exclusive;
-    
+
     private int unitCost;
-   
+
     public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
         this.worker = worker;
         this.promotion = promotion;
@@ -41,32 +40,32 @@ public class Contract implements Serializable {
         if (monthly) {
             duration--;
         }
-        
+
         if (duration <= 0) {
             terminateContract();
         }
     }
-    
+
     //depreciates appearance contracts
     public void appearance() {
-        if(!monthly) {
+        if (!monthly) {
             duration--;
         }
-        
+
         if (duration <= 0) {
             terminateContract();
         }
     }
-    
+
     private void terminateContract() {
         this.worker.removeContract(this);
         this.promotion.removeContract(this);
     }
-    
+
     public String getTerms() {
         String string = getPromotion() + " Length: " + getDuration()
                 + " Appearance Cost: $" + getUnitCost();
-        
+
         return string;
     }
 
@@ -97,7 +96,6 @@ public class Contract implements Serializable {
     public void setWorker(Worker worker) {
         this.worker = worker;
     }
-
 
     /**
      * @return the length

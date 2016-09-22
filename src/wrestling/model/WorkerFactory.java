@@ -54,7 +54,7 @@ public class WorkerFactory implements Serializable {
     //to generate a random worker at a given popularity level
     public Worker randomWorker(int level) {
         Worker worker = new Worker();
-        
+
         //set the popularity to be proportionate to the level requested
         worker.setPopularity(rand20() + (level * 20));
 

@@ -50,22 +50,28 @@ public class BrowserController implements Initializable {
 
     @FXML
     private Button eventsButton;
-    
+
     @FXML
     private Button staffButton;
-    
+
     @FXML
     private Button titlesButton;
-    
+
     @FXML
     private Button stablesButton;
-    
+
     @FXML
     private Button teamsButton;
 
     @FXML
+    private Button freeAgentsButton;
+
+    @FXML
+    private Button myPromotionButton;
+
+    @FXML
     private ComboBox promotionComboBox;
-    
+
     @FXML
     private Label currentPromotionLabel;
 
@@ -83,8 +89,6 @@ public class BrowserController implements Initializable {
     private ListView eventsListView;
     private ListView workersListView;
     private Label categoryButton;
-    
-    
 
     private Promotion currentPromotion;
 
@@ -98,34 +102,30 @@ public class BrowserController implements Initializable {
 
         categoryButton.setText(newPromotion.toString());
 
-        //update listviews with relevant items
-        setListViewContent(workersListView, currentPromotion.getRoster());
-        setListViewContent(eventsListView, currentPromotion.getEvents());
-        
         //make sure the combobox is on the correct promotion
         //in case we have called this from some
         promotionComboBox.getSelectionModel().select(currentPromotion);
-        
-        currentPromotionLabel.setText(currentPromotion.getName() + "\n" 
+
+        currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                 + "Level " + currentPromotion.getLevel()
                 + "\tPopularity " + currentPromotion.getPopulatirty());
-        
-        
-        
+
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
         //for the newly selected promotion
         //might not work for more complex situations
         lastButton.fire();
+
     }
-    
+
     private void setListViewContent(ListView listView, List list) {
         listView.getItems().clear();
         listView.setItems(FXCollections.observableArrayList(list));
     }
-    
+
     public void updateLabels() {
         setCurrentPromotion(currentPromotion);
+        workerOverviewPaneController.updateLabels();
     }
 
     @FXML
@@ -142,6 +142,14 @@ public class BrowserController implements Initializable {
             browseEvents();
 
             lastButton = eventsButton;
+
+        } else if (event.getSource() == freeAgentsButton) {
+
+            browseFreeAgents();
+
+        } else if (event.getSource() == myPromotionButton) {
+            
+            setCurrentPromotion(gameController.playerPromotion());
 
         }
     }
@@ -168,6 +176,8 @@ public class BrowserController implements Initializable {
     private void browseEvents() {
         clearLast();
 
+        setListViewContent(eventsListView, currentPromotion.getEvents());
+
         gridPane.add(eventSummary, 1, 1);
         GridPane.setRowSpan(eventSummary, 2);
         gridPane.add(eventsListView, 0, 1);
@@ -183,6 +193,8 @@ public class BrowserController implements Initializable {
 
         clearLast();
 
+        setListViewContent(workersListView, currentPromotion.getRoster());
+
         gridPane.add(workersListView, 0, 1);
         GridPane.setRowSpan(workersListView, 2);
         gridPane.add(workerOverviewPane, 1, 1);
@@ -194,20 +206,27 @@ public class BrowserController implements Initializable {
 
     }
 
+    private void browseFreeAgents() {
+
+        browseWorkers();
+        //slight inefficient hack, updates the sets the listview content after we've already
+        //set it in browseFreeAgents()
+        setListViewContent(workersListView, gameController.freeAgents(gameController.playerPromotion()));
+
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         workersListView = new ListView<Worker>();
         eventsListView = new ListView<Event>();
         eventSummary = new Label();
         categoryButton = new Label();
-        
+
         stablesButton.setDisable(true);
         staffButton.setDisable(true);
         teamsButton.setDisable(true);
         titlesButton.setDisable(true);
-                
 
-        
     }
 
     private void initializePromotionCombobox() {
@@ -218,7 +237,7 @@ public class BrowserController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
                 setCurrentPromotion(newValue);
-                
+
             }
         });
 
@@ -240,8 +259,6 @@ public class BrowserController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        
 
         //get the listview ready
         workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getRoster()));
@@ -264,7 +281,7 @@ public class BrowserController implements Initializable {
 
         //get the listview ready
         eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEvents()));
-        
+
         eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
             @Override
             public void changed(ObservableValue<? extends Event> observable, Event oldValue, Event newValue) {
@@ -292,8 +309,6 @@ public class BrowserController implements Initializable {
 
         prepareWorkerBrowsing();
         prepareEventBrowsing();
-        
-        
 
         promotionComboBox.setValue(gameController.playerPromotion());
         lastButton.fire();

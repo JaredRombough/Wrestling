@@ -3,8 +3,6 @@ package wrestling.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static java.util.Collections.list;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +12,7 @@ import java.util.Random;
  */
 public class GameController implements Serializable {
 
-    private WorkerFactory workerFactory;
+    private final WorkerFactory workerFactory;
 
     private Integer date;
 
@@ -27,7 +25,6 @@ public class GameController implements Serializable {
 
         for (Promotion promotion : promotions) {
 
-            
             if (promotion.getAi() != null) {
                 promotion.getAi().dailyUpdate();
             }
@@ -37,13 +34,11 @@ public class GameController implements Serializable {
 
                 promotion.getEventByDate(date).processEvent();
             }
-            
-            
+
             List<Contract> contractList = new ArrayList(promotion.getContracts());
-            for(Contract contract : contractList) {
+            for (Contract contract : contractList) {
                 contract.nextDay();
             }
-
 
         }
 
@@ -69,6 +64,32 @@ public class GameController implements Serializable {
     }
 
     private List<Worker> workers;
+
+    public List<Worker> allWorkers() {
+        return workers;
+    }
+
+    public List<Worker> freeAgents(Promotion promotion) {
+        List<Worker> freeAgents = new ArrayList<>();
+        for (Worker worker : workers) {
+            if (worker.canNegotiate(promotion)) {
+                freeAgents.add(worker);
+            }
+        }
+
+        return freeAgents;
+    }
+    
+    public List<Worker> freeAgents() {
+        List<Worker> freeAgents = new ArrayList<>();
+        for (Worker worker : workers) {
+            if (worker.canNegotiate()) {
+                freeAgents.add(worker);
+            }
+        }
+
+        return freeAgents;
+    }
 
     public GameController() {
 
@@ -150,12 +171,6 @@ public class GameController implements Serializable {
             workers.addAll(currentLevelWorkers);
             promotions.addAll(currentLevelPromotions);
         }
-
-        //keep track of all workers as thier own 'promotion' roster for now
-        Promotion freeAgents = new Promotion();
-        freeAgents.setName("All Workers");
-        freeAgents.getRoster().addAll(workers);
-        promotions.add(freeAgents);
 
     }
 

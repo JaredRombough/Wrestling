@@ -52,7 +52,7 @@ public class Worker implements Serializable {
     public void addBooking(Event event) {
         bookings.add(event);
     }
-    
+
     public List<Event> getBookings() {
         return bookings;
     }
@@ -68,27 +68,44 @@ public class Worker implements Serializable {
     public List getContracts() {
         return contracts;
     }
+
+    public boolean canNegotiate() {
+        
+        boolean canNegotiate = true;
+
+        if (this.hasContract()) {
+            for (Contract contract : contracts) {
+                if (contract.isExclusive()) {
+                    canNegotiate = false;
+                }
+
+            }
+        }
+
+        return canNegotiate;
+        
+    }
     
     public boolean canNegotiate(Promotion promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
-        
-        if(this.hasContract()) {
+
+        if (this.hasContract()) {
             for (Contract contract : contracts) {
-                if(contract.isExclusive()) {
+                if (contract.isExclusive()) {
                     canNegotiate = false;
-                } 
-                
-                if(contract.getPromotion().equals(promotion)) {
+                }
+
+                if (contract.getPromotion().equals(promotion)) {
                     canNegotiate = false;
                 }
             }
         }
-        
+
         return canNegotiate;
     }
-    
+
     private boolean hasContract() {
         return (this.contracts.size() > 0);
     }
@@ -130,33 +147,33 @@ public class Worker implements Serializable {
         return isBooked;
 
     }
-    
+
     public void gainPopularity() {
         int rand = rand3();
-        
+
         if (rand == 1) {
-             
+
         } else if (rand == 2) {
             this.popularity += 2;
         } else {
             this.popularity += 1;
         }
     }
-    
+
     public void losePopularity() {
         int rand = rand3();
-        
+
         if (rand == 1) {
-             
+
         } else if (rand == 2) {
             this.popularity -= 2;
         } else {
             this.popularity -= 1;
         }
     }
-    
+
     private int rand3() {
-        Random r = new Random(); 
+        Random r = new Random();
         return r.nextInt(3 - 0) + 0;
     }
 

@@ -16,7 +16,10 @@ public class Event implements Serializable {
     private List<Segment> segments;
 
     private Integer date;
-    public int getDate() { return date; }
+
+    public int getDate() {
+        return date;
+    }
 
     private Promotion promotion;
 
@@ -55,12 +58,12 @@ public class Event implements Serializable {
         for (Worker worker : allWorkers()) {
             worker.addBooking(this);
         }
-        
+
         //this is important, adds the event to the promotions' list
         //otherwise the event will be lost
         this.promotion.addEvent(this);
     }
-    
+
     /*
     to be run once only when the event actually happens
     process money and anything else
@@ -69,15 +72,13 @@ public class Event implements Serializable {
     public void processEvent() {
 
         processContracts();
-        
+
         processSegments();
 
         promotion.gainPopularity();
         promotion.addFunds(grossProfit());
 
         isComplete = true;
-
-        
 
     }
 
@@ -91,16 +92,16 @@ public class Event implements Serializable {
         for (Worker worker : allWorkers()) {
             promotion.removeFunds(worker.getContract(promotion).getUnitCost());
             worker.getContract(promotion).appearance();
-            
+
         }
 
     }
-    
+
     private void processSegments() {
         for (Segment segment : segments) {
             segment.processSegment();
         }
-        
+
     }
 
     //this will return a list of all workers currently booked

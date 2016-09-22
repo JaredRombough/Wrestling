@@ -27,10 +27,10 @@ public class WorkerOverviewController implements Initializable {
 
         initializeMore();
     }
-    
+
     private AnchorPane contractPane;
     private ContractPaneController contractPaneController;
-    
+
     @FXML
     private GridPane gridPane;
 
@@ -61,12 +61,9 @@ public class WorkerOverviewController implements Initializable {
     private Worker currentWorker;
 
     public void setCurrentWorker(Worker newWorker) {
-        
-        
-        
+
         this.currentWorker = newWorker;
         contractPaneController.setWorker(newWorker);
-        
 
         updateLabels();
     }
@@ -79,41 +76,58 @@ public class WorkerOverviewController implements Initializable {
     private void initializeMore() {
         loadContractPane();
     }
-    
+
     private void loadContractPane() {
-         //load the contract pane
+        //load the contract pane
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/ContractPane.fxml"));
             contractPane = (AnchorPane) loader.load();
-            
+
             contractPaneController = (ContractPaneController) loader.getController();
 
             contractPaneController.setMainApp(this.mainApp);
-            
+
             contractPaneController.setGameController(this.gameController);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         gridPane.add(contractPane, 0, 6, 4, 1);
     }
 
-    private void updateLabels() {
-        nameLabel.setText(currentWorker.getName());
-        wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
-        flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
-        strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
-        proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
-        reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
-        popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
+    public void updateLabels() {
 
-        contractLabel.setText(currentWorker.contractString());
+        if (gameController.playerPromotion().getRoster().contains(currentWorker)) {
+            nameLabel.setText(currentWorker.getName());
+            wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
+            flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
+            strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
+            proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
+            reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
+            popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
+            contractLabel.setText(currentWorker.contractString());
+            
+            contractPaneController.updateLabels();
+        } else if (!gameController.playerPromotion().getRoster().contains(currentWorker)) {
+            //probably our roster is empty for some reason, should be a rare situation
+            currentWorker = null;
+            
+            nameLabel.setText("");
+            wrestlingLabel.setText("");
+            flyingLabel.setText("");
+            strikingLabel.setText("");
+            proficiencyLabel.setText("");
+            reputationLabel.setText("");
+            popularityLabel.setText("");
+            contractLabel.setText("");
+            
+            contractPaneController.updateLabels();
+        }
+
         
-        contractPaneController.updateLabels();
-        
-        
+
     }
 
 }

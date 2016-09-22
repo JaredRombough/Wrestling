@@ -40,6 +40,8 @@
                 <Button fx:id="eventsButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Events" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                   <Button fx:id="rosterButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Roster" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                   <Button fx:id="teamsButton" mnemonicParsing="false" text="Teams" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                  <Button fx:id="freeAgentsButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Free Agents" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Button fx:id="myPromotionButton" mnemonicParsing="false" onAction="#handleButtonAction" text="My Promotion" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
             <Label fx:id="currentPromotionLabel" alignment="CENTER" text="Label" GridPane.columnIndex="1" />

@@ -71,9 +71,9 @@ public class EventScreenController implements Initializable {
     @FXML
     private GridPane gridPane;
 
-    private List<Pane> segmentPanes = new ArrayList<>();
-    private List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
-    private List<Segment> segments = new ArrayList<>();
+    private final List<Pane> segmentPanes = new ArrayList<>();
+    private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
+    private final List<Segment> segments = new ArrayList<>();
 
     private Segment currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
@@ -193,6 +193,8 @@ public class EventScreenController implements Initializable {
         }
 
         updateWorkerListView();
+        
+        
 
     }
 
