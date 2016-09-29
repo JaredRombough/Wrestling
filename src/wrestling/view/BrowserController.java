@@ -19,7 +19,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.MainApp;
-import wrestling.model.Event;
+import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
@@ -154,7 +154,7 @@ public class BrowserController implements Initializable {
         }
     }
 
-    public void showEvent(Event event) {
+    public void showEvent(EventArchive event) {
         //this would take an event, find the promotion, select it properly
         //ie so another screen can send to the browser with a particular event already selected on open
         //might want this with workers, etc
@@ -218,7 +218,7 @@ public class BrowserController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         workersListView = new ListView<Worker>();
-        eventsListView = new ListView<Event>();
+        eventsListView = new ListView<EventArchive>();
         eventSummary = new Label();
         categoryButton = new Label();
 
@@ -282,9 +282,9 @@ public class BrowserController implements Initializable {
         //get the listview ready
         eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEvents()));
 
-        eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
+        eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EventArchive>() {
             @Override
-            public void changed(ObservableValue<? extends Event> observable, Event oldValue, Event newValue) {
+            public void changed(ObservableValue<? extends EventArchive> observable, EventArchive oldValue, EventArchive newValue) {
                 //for switching between promotions we may get a null value
                 //keep the old worker and wait until we're called again
                 if (newValue != null) {

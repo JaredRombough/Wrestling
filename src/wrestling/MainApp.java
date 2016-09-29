@@ -25,6 +25,7 @@ import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
 import static javafx.application.Application.launch;
+import wrestling.model.EventArchive;
 
 public class MainApp extends Application {
 
@@ -43,8 +44,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
-        
-        
+
         gameController = new GameController();
 
         initRootLayout();
@@ -73,8 +73,7 @@ public class MainApp extends Application {
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             gameController = null;
             gameController = (GameController) objectInputStream.readObject();
-            
-            
+
             objectInputStream.close();
 
             //now we need to update the rootlayoutcontroller with the newly
@@ -109,19 +108,18 @@ public class MainApp extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
-            
+
             //load and store the controller
             rootLayoutController = loader.getController();
             rootLayoutController.setMainApp(this);
             rootLayoutController.setGameController(this.gameController);
-            
+
             //set the minum size of the main window based on the root layout
             primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
             primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
-            
+
             primaryStage.centerOnScreen();
             //this.primaryStage.setMaximized(true);
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,7 +178,7 @@ public class MainApp extends Application {
     shows the browser
      */
     public void showBrowser() {
-        
+
         rootLayout.setCenter(browserPane);
     }
 
@@ -189,7 +187,7 @@ public class MainApp extends Application {
     such as when we have just run an event and go straight to the
     results of it
      */
-    public void showBrowser(Event event) {
+    public void showBrowser(EventArchive event) {
         showBrowser();
         browserController.showEvent(event);
 
@@ -272,9 +270,9 @@ public class MainApp extends Application {
         rootLayoutController.updateLabels();
         browserController.updateLabels();
         eventScreenController.updateLabels();
-        
+
     }
-    
+
     public void nextDay() {
         gameController.nextDay();
         saveGame();

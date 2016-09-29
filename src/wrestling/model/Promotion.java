@@ -11,7 +11,8 @@ public class Promotion implements Serializable {
         this.contracts = new ArrayList<>();
 
         roster = new ArrayList<Worker>();
-        events = new ArrayList<Event>();
+        events = new ArrayList<EventArchive>();
+        eventQueue = new ArrayList<Event>();
         funds = 0;
         name = "Promotion #" + serialNumber;
 
@@ -98,12 +99,16 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-    private List<Event> events;
+    private List<EventArchive> events;
 
-    public List<Event> getEvents() {
+    private List<Event> eventQueue;
+
+    //used for browsing events
+    public List<EventArchive> getEvents() {
         return Collections.unmodifiableList(events);
     }
 
+    /* not currently used
     public List<Event> getPastEvents() {
         List<Event> pastEvents = new ArrayList<>();
         for (Event event : events) {
@@ -113,7 +118,8 @@ public class Promotion implements Serializable {
         }
         return pastEvents;
     }
-
+     */
+ /* not currently used
     public List<Event> getFutureEvents() {
         List<Event> futureEvents = new ArrayList<>();
         for (Event event : events) {
@@ -124,10 +130,11 @@ public class Promotion implements Serializable {
         return futureEvents;
 
     }
-
+     */
+    //called by game controller to see if there is an event scheduled today
     public Event getEventByDate(int date) {
         Event event = null;
-        for (Event e : events) {
+        for (Event e : eventQueue) {
             if (e.getDate() == date) {
                 event = e;
                 break;
@@ -137,7 +144,11 @@ public class Promotion implements Serializable {
         return event;
     }
 
-    public void addEvent(Event event) {
+    public void scheduleEvent(Event event) {
+        eventQueue.add(event);
+    }
+
+    public void archiveEvent(EventArchive event) {
         events.add(event);
     }
 
@@ -176,5 +187,15 @@ public class Promotion implements Serializable {
 
     public List<Contract> getContracts() {
         return contracts;
+    }
+
+    //the maximum popularity worker the promotion can hire
+    public int maxPopularity() {
+        int max = (level * 20) + 10;
+
+        if (max > 100) {
+            max = 100;
+        }
+        return max;
     }
 }

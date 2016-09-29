@@ -35,6 +35,30 @@ public class Contract implements Serializable {
 
     }
 
+    public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration) {
+        this.worker = worker;
+        this.promotion = promotion;
+        this.monthly = monthly;
+        this.exclusive = exclusive;
+        this.duration = duration;
+        calculateCost();
+
+    }
+
+    private void calculateCost() {
+
+        unitCost = 0;
+
+        unitCost = worker.getPopularity() * 10;
+
+        if (exclusive) {
+            unitCost *= 1.5;
+        }
+
+        unitCost *= duration;
+
+    }
+
     //depreciates monthly contracts
     public void nextDay() {
         if (monthly) {

@@ -26,27 +26,48 @@ public class PromotionAi implements Serializable {
     public void dailyUpdate() {
 
         //book a show if we have one scheduled today
-        if (gameController.date() == nextEvent) {
+        if (gameController.date() == nextEvent && promotion.getRoster().size() >= 2) {
             bookEvent();
             //schedule another match for next week
             nextEvent += 7;
         }
-        
-        if(promotion.getRoster().size() < (promotion.getLevel() * 10) + 10) {
-            
+
+        if (promotion.getRoster().size() < (promotion.getLevel() * 2) + 10) {
+            signContract();
+
+        }
+
+    }
+
+    private void sortByPopularity(List<Worker> workerList) {
+        //sort roster by popularity
+        Collections.sort(workerList, new Comparator<Worker>() {
+            @Override
+            public int compare(Worker w1, Worker w2) {
+                return Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
+            }
+        });
+    }
+
+    //sign a contract with the most popular worker available
+    private void signContract() {
+
+        sortByPopularity(gameController.freeAgents(promotion));
+
+        for (Worker worker : gameController.freeAgents(promotion)) {
+            if (worker.getPopularity() <= promotion.maxPopularity()) {
+                Contract contract = new Contract(worker, promotion, true, true, 12);
+                worker.addContract(contract);
+                promotion.addContract(contract);
+                break;
+            }
         }
 
     }
 
     private void bookEvent() {
 
-        //sort roster by popularity
-        Collections.sort(promotion.getRoster(), new Comparator<Worker>() {
-            @Override
-            public int compare(Worker w1, Worker w2) {
-                return Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
-            }
-        });
+        sortByPopularity(promotion.getRoster());
 
         //check for workers that are already booked on this date
         List<Worker> eventRoster = promotion.getRoster();

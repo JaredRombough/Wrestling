@@ -149,8 +149,9 @@ public class EventScreenController implements Initializable {
 
             //tell the main app to show the browser and pass the event
             //so it can be selected by the corresponding controller
-            mainApp.showBrowser(finishedEvent);
-
+            //mainApp.showBrowser(finishedEvent);
+            
+            
             //advance the day
             mainApp.nextDay();
 
@@ -184,7 +185,7 @@ public class EventScreenController implements Initializable {
     //updates lists and labels
     public void updateLabels() {
 
-        totalCostLabel.setText("Total Cost: $" + currentEvent.totalCost());
+        totalCostLabel.setText("Total Cost: $" + currentEvent.currentCost());
 
         for (SegmentNameItem current : segmentListView.getItems()) {
 
@@ -193,8 +194,6 @@ public class EventScreenController implements Initializable {
         }
 
         updateWorkerListView();
-        
-        
 
     }
 

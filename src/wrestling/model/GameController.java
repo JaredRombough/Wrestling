@@ -79,7 +79,7 @@ public class GameController implements Serializable {
 
         return freeAgents;
     }
-    
+
     public List<Worker> freeAgents() {
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
