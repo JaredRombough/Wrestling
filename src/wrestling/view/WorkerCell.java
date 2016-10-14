@@ -39,8 +39,6 @@ public class WorkerCell extends ListCell<Worker> {
                          */
                          LocalDragboard.getInstance().putValue(Worker.class, getItem());
                          
-                         //remove the worker from the listView whence it came
-                         items.remove(getItem());
                          
                          event.consume();
                     }

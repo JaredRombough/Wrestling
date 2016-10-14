@@ -70,6 +70,14 @@ public class TeamPaneController implements Initializable {
 
     }
 
+    public void removeWorker(Worker worker) {
+
+        if (teamListView.getItems().contains(worker)) {
+            teamListView.getItems().remove(worker);
+        }
+
+    }
+
     private class DragDropHandler implements EventHandler<DragEvent> {
 
         private final ObservableList<Worker> itemList;
@@ -87,6 +95,7 @@ public class TeamPaneController implements Initializable {
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
 
+                segmentPaneController.removeWorker(worker);
                 itemList.add(worker);
 
                 updateLabels();
@@ -100,9 +109,9 @@ public class TeamPaneController implements Initializable {
         }
 
     }
-    
+
     public void updateLabels() {
-        
+
         updateTeamNameLabel();
         updateTeamListViewHeight();
     }
@@ -112,16 +121,15 @@ public class TeamPaneController implements Initializable {
         teamNameLabel.setText(getTeamName());
 
     }
-    
+
     private void updateTeamListViewHeight() {
-        
+
         double height = cellHeight * teamListView.getItems().size();
 
-                mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
-                teamListView.setMinHeight(height);
-        
+        mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
+        teamListView.setMinHeight(height);
+
     }
-    
 
     private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
@@ -200,7 +208,7 @@ public class TeamPaneController implements Initializable {
 
         teamListView.setOnDragOver(dragOverHandler);
 
-        teamListView.setOnDragDropped(new TeamPaneController.DragDropHandler(teamListView.getItems()));
+        teamListView.setOnDragDropped(new DragDropHandler(teamListView.getItems()));
 
         double height = cellHeight;
         teamListView.setPrefHeight(height);

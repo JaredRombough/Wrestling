@@ -461,8 +461,23 @@ public class EventScreenController implements Initializable {
 
         segmentListView.getSelectionModel().selectFirst();
 
+        //for the workersListView to accept dragged items
+        final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+
+            }
+        };
+        
+        workersListView.setOnDragOver(dragOverHandler);
+        
         //do this last as it is dependent on currentSegment
         updateWorkerListView();
+        
+        //add the special DragDropHanlder
+        workersListView.setOnDragDropped(new WorkersListViewDragDropHandler());
 
     }
 
@@ -485,6 +500,7 @@ public class EventScreenController implements Initializable {
         }
 
         workersListView.setItems(workersList);
+        
     }
 
     @Override
@@ -509,6 +525,40 @@ public class EventScreenController implements Initializable {
         });
 
     }
+    
+    /*
+    to be used by the workersListView on the left of the screen
+    should only be needed for when the user is dropping a worker
+    on the listView that has been dragged from one of the teams
+    */
+    private class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
+
+
+        @Override
+        public void handle(DragEvent event) {
+
+            LocalDragboard ldb = LocalDragboard.getInstance();
+            if (ldb.hasType(Worker.class)) {
+                Worker worker = ldb.getValue(Worker.class);
+
+                if(!workersListView.getItems().contains(worker)) {
+                    segmentPaneControllers.get(currentSegmentNumber.intValue()).removeWorker(worker);
+                    workersListView.getItems().add(worker);
+                }
+                
+                
+
+                updateLabels();
+                segmentPaneControllers.get(currentSegmentNumber.intValue()).updateLabels();
+                updateEvent();
+
+                //Clear, otherwise we end up with the worker stuck on the dragboard?
+                ldb.clearAll();
+
+            }
+        }
+
+        }
 
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;

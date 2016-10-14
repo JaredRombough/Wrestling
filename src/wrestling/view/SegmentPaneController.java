@@ -75,6 +75,15 @@ public class SegmentPaneController implements Initializable {
 
         }
     }
+    
+    //removes a worker from any teams he might be on
+    //called from a teamPaneController when adding a worker
+    //from another team to avoid duplicates
+    public void removeWorker(Worker worker) {
+        for(TeamPaneController controller : teamPaneControllers) {
+            controller.removeWorker(worker);
+        }
+    }
 
     private void addTeam() {
 

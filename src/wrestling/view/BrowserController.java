@@ -108,7 +108,8 @@ public class BrowserController implements Initializable {
 
         currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                 + "Level " + currentPromotion.getLevel()
-                + "\tPopularity " + currentPromotion.getPopulatirty());
+                + "\tPopularity " + currentPromotion.getPopulatirty()
+                + "\tFunds: " + currentPromotion.getFunds());
 
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
@@ -270,6 +271,7 @@ public class BrowserController implements Initializable {
                 //keep the old worker and wait until we're called again
                 if (newValue != null) {
                     workerOverviewPaneController.setCurrentWorker(newValue);
+                    
                 }
 
             }

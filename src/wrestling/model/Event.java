@@ -82,6 +82,9 @@ public class Event implements Serializable {
         
         isComplete = true;
         
+       
+        
+        //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(promotion, segments, currentCost(), grossProfit(), date);
         promotion.archiveEvent(eventArchive);
         
