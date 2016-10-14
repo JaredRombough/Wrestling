@@ -111,6 +111,8 @@ public class BrowserController implements Initializable {
                 + "\tPopularity " + currentPromotion.getPopulatirty()
                 + "\tFunds: " + currentPromotion.getFunds());
 
+        workerOverviewPaneController.setCurrentPromotion(currentPromotion);
+
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
         //for the newly selected promotion
@@ -149,7 +151,7 @@ public class BrowserController implements Initializable {
             browseFreeAgents();
 
         } else if (event.getSource() == myPromotionButton) {
-            
+
             setCurrentPromotion(gameController.playerPromotion());
 
         }
@@ -271,7 +273,7 @@ public class BrowserController implements Initializable {
                 //keep the old worker and wait until we're called again
                 if (newValue != null) {
                     workerOverviewPaneController.setCurrentWorker(newValue);
-                    
+
                 }
 
             }

@@ -150,8 +150,6 @@ public class EventScreenController implements Initializable {
             //tell the main app to show the browser and pass the event
             //so it can be selected by the corresponding controller
             //mainApp.showBrowser(finishedEvent);
-            
-            
             //advance the day
             mainApp.nextDay();
 
@@ -470,13 +468,13 @@ public class EventScreenController implements Initializable {
 
             }
         };
-        
+
         workersListView.setOnDragOver(dragOverHandler);
-        
+
         //do this last as it is dependent on currentSegment
         updateWorkerListView();
-        
-        //add the special DragDropHanlder
+
+        //add the special DragDropHandlder
         workersListView.setOnDragDropped(new WorkersListViewDragDropHandler());
 
     }
@@ -500,7 +498,7 @@ public class EventScreenController implements Initializable {
         }
 
         workersListView.setItems(workersList);
-        
+
     }
 
     @Override
@@ -525,14 +523,13 @@ public class EventScreenController implements Initializable {
         });
 
     }
-    
+
     /*
     to be used by the workersListView on the left of the screen
     should only be needed for when the user is dropping a worker
     on the listView that has been dragged from one of the teams
-    */
+     */
     private class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
-
 
         @Override
         public void handle(DragEvent event) {
@@ -541,12 +538,10 @@ public class EventScreenController implements Initializable {
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
 
-                if(!workersListView.getItems().contains(worker)) {
+                if (!workersListView.getItems().contains(worker)) {
                     segmentPaneControllers.get(currentSegmentNumber.intValue()).removeWorker(worker);
                     workersListView.getItems().add(worker);
                 }
-                
-                
 
                 updateLabels();
                 segmentPaneControllers.get(currentSegmentNumber.intValue()).updateLabels();
@@ -558,7 +553,7 @@ public class EventScreenController implements Initializable {
             }
         }
 
-        }
+    }
 
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;

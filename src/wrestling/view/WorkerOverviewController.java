@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.MainApp;
 import wrestling.model.GameController;
+import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
 public class WorkerOverviewController implements Initializable {
@@ -59,12 +60,18 @@ public class WorkerOverviewController implements Initializable {
     private Label proficiencyLabel;
 
     private Worker currentWorker;
+    private Promotion currentPromotion;
 
     public void setCurrentWorker(Worker newWorker) {
 
         this.currentWorker = newWorker;
         contractPaneController.setWorker(newWorker);
 
+        updateLabels();
+    }
+
+    public void setCurrentPromotion(Promotion promotion) {
+        this.currentPromotion = promotion;
         updateLabels();
     }
 
@@ -99,7 +106,7 @@ public class WorkerOverviewController implements Initializable {
 
     public void updateLabels() {
 
-        if (gameController.playerPromotion().getRoster().contains(currentWorker)) {
+        if (currentPromotion.getRoster().contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
@@ -108,12 +115,13 @@ public class WorkerOverviewController implements Initializable {
             reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
             contractLabel.setText(currentWorker.contractString());
-            
+
             contractPaneController.updateLabels();
-        } else if (!gameController.playerPromotion().getRoster().contains(currentWorker)) {
+        } else if (!currentPromotion.getRoster().contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
+
             currentWorker = null;
-            
+
             nameLabel.setText("");
             wrestlingLabel.setText("");
             flyingLabel.setText("");
@@ -122,11 +130,9 @@ public class WorkerOverviewController implements Initializable {
             reputationLabel.setText("");
             popularityLabel.setText("");
             contractLabel.setText("");
-            
+
             contractPaneController.updateLabels();
         }
-
-        
 
     }
 
