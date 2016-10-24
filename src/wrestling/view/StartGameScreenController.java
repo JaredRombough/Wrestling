@@ -31,9 +31,6 @@ public class StartGameScreenController implements Initializable {
     private Button startGameButton;
 
     @FXML
-    private Button loadGameButton;
-
-    @FXML
     private GridPane gridPane;
 
     private GameController gameController;
@@ -92,27 +89,12 @@ public class StartGameScreenController implements Initializable {
         });
     }
 
-    private void startGame() {
-
-        mainApp.prepareScreens();
-        mainApp.showBrowser();
-        mainApp.updateLabels();
-
-        mainApp.setButtonsDisable(false);
-
-    }
-
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
 
         if (event.getSource().equals(startGameButton)) {
             gameController.setPlayerPromotion(selectedPromotion);
-            startGame();
-
-        } else if (event.getSource().equals(loadGameButton)) {
-            mainApp.loadGame();
-
-            startGame();
+            mainApp.startGame();
 
         }
 

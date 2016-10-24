@@ -29,6 +29,7 @@ import static javafx.application.Application.launch;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import wrestling.model.EventArchive;
 
@@ -45,36 +46,74 @@ public class MainApp extends Application {
     private AnchorPane browserPane;
     private BrowserController browserController;
 
+    public MainApp() {
+        this.cssEnabled = false;
+    }
+
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
 
         showOptionDialogue();
+        if (!loadGame) {
 
-        initRootLayout();
-        showTitleScreen();
+            initRootLayout();
+            showTitleScreen();
+        }
 
     }
 
-    private void showOptionDialogue() throws IOException {
+    public void startGame() {
+        prepareScreens();
+        showBrowser();
+        updateLabels();
+
+        setButtonsDisable(false);
+    }
+
+    private final boolean cssEnabled;
+    private boolean loadGame = false;
+
+
+    /*
+    show the initial dialogue to choose random or imported game
+     */
+    private void showOptionDialogue() throws IOException, ClassNotFoundException {
         Alert alert = new Alert(AlertType.NONE);
         alert.setTitle("Wrestling");
         alert.setHeaderText("Wrestling!");
         alert.setContentText("Randomly generate game or import from file?");
-        ButtonType buttonTypeOne = new ButtonType("Random");
-        ButtonType buttonTypeTwo = new ButtonType("Import");
+        ButtonType randomButton = new ButtonType("Random");
+        ButtonType importButton = new ButtonType("Import");
+        ButtonType loadButton = new ButtonType("Load Game");
 
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+        if (cssEnabled) {
+            //add css
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+            dialogPane.getStyleClass().add("myDialog");
+        }
+
+        alert.getButtonTypes().setAll(randomButton, importButton, loadButton);
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTypeOne) {
+        if (result.get() == randomButton) {
             gameController = new GameController();
             gameController.preparePromotions();
             alert.close();
-        } else if (result.get() == buttonTypeTwo) {
+        } else if (result.get() == importButton) {
             Import importer = new Import();
             gameController = importer.importController();
             alert.close();
+
+        } else if (result.get() == loadButton) {
+            loadGame = true;
+
+            gameController = new GameController();
+            initRootLayout();
+            loadGame();
+
+            startGame();
 
         }
     }
@@ -124,7 +163,10 @@ public class MainApp extends Application {
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
 
-            //scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+            if (cssEnabled) {
+                scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+            }
+
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -156,7 +198,7 @@ public class MainApp extends Application {
     /*
     loads the worker overview
      */
-    public void loadWorkerOverview() {
+    private void loadWorkerOverview() {
         try {
 
             FXMLLoader loader = new FXMLLoader();
@@ -175,7 +217,7 @@ public class MainApp extends Application {
     /*
     loads the browser
      */
-    public void loadBrowser() {
+    private void loadBrowser() {
 
         try {
 
@@ -220,7 +262,7 @@ public class MainApp extends Application {
     /*
     loads the event screen (for booking events)
      */
-    public void loadEventScreen() {
+    private void loadEventScreen() {
         try {
 
             FXMLLoader loader = new FXMLLoader();

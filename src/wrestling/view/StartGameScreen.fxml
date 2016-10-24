@@ -25,7 +25,6 @@
         </rowConstraints>
          <children>
             <ListView fx:id="promotionListView" prefHeight="385.0" prefWidth="286.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="loadGameButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Load Game" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
             <Button fx:id="startGameButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
             <Label fx:id="currentPromotionLabel" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
