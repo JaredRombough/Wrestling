@@ -32,7 +32,7 @@ public class Promotion implements Serializable {
         return ai;
     }
 
-    private List<Worker> roster;
+    private final List<Worker> roster;
 
     public List<Worker> getRoster() {
         return this.roster;
@@ -48,6 +48,13 @@ public class Promotion implements Serializable {
         return name;
     }
     private static int serialNumber = 0;
+    private int indexNumber;
+    public void setIndexNumber(int indexNumber) {
+        this.indexNumber = indexNumber;
+    }
+    public int indexNumber() {return indexNumber;}
+    
+    
 
     private int popularity;
 
@@ -99,38 +106,15 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-    private List<EventArchive> events;
+    private final List<EventArchive> events;
 
-    private List<Event> eventQueue;
+    private final List<Event> eventQueue;
 
     //used for browsing events
     public List<EventArchive> getEvents() {
         return Collections.unmodifiableList(events);
     }
 
-    /* not currently used
-    public List<Event> getPastEvents() {
-        List<Event> pastEvents = new ArrayList<>();
-        for (Event event : events) {
-            if (event.isComplete()) {
-                pastEvents.add(event);
-            }
-        }
-        return pastEvents;
-    }
-     */
- /* not currently used
-    public List<Event> getFutureEvents() {
-        List<Event> futureEvents = new ArrayList<>();
-        for (Event event : events) {
-            if (!event.isComplete()) {
-                futureEvents.add(event);
-            }
-        }
-        return futureEvents;
-
-    }
-     */
     //called by game controller to see if there is an event scheduled today
     public Event getEventByDate(int date) {
         Event event = null;
@@ -152,7 +136,7 @@ public class Promotion implements Serializable {
         events.add(event);
     }
 
-    private List<Contract> contracts;
+    private final List<Contract> contracts;
 
     private Integer funds;
 

@@ -2,6 +2,7 @@ package wrestling.model;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,21 +16,24 @@ import java.util.Random;
  */
 public class WorkerFactory implements Serializable {
 
-    private List<String> firstNames;
-    private List<String> lastNames;
-    private Random random;
+    private final List<String> firstNames;
+    private final List<String> lastNames;
 
-    public WorkerFactory() {
-        this.firstNames = new ArrayList<String>();
-        this.lastNames = new ArrayList<String>();
+    private final Random random;
+
+    public WorkerFactory() throws IOException {
+        this.firstNames = new ArrayList<>();
+        this.lastNames = new ArrayList<>();
+
         random = new Random();
         prepareNameLists();
+
     }
 
     //public ArrayList roster;
     public ArrayList createRoster(int rosterSize) {
 
-        ArrayList<Worker> roster = new ArrayList<Worker>();
+        ArrayList<Worker> roster = new ArrayList<>();
 
         for (int i = 0; i < rosterSize; i++) {
             roster.add(randomWorker());
@@ -41,7 +45,7 @@ public class WorkerFactory implements Serializable {
 
     public ArrayList createRoster(int rosterSize, int rosterLevel) {
 
-        ArrayList<Worker> roster = new ArrayList<Worker>();
+        ArrayList<Worker> roster = new ArrayList<>();
 
         for (int i = 0; i < rosterSize; i++) {
             roster.add(randomWorker(rosterLevel));
@@ -107,20 +111,16 @@ public class WorkerFactory implements Serializable {
         worker.setShortName(lastName);
     }
 
-    private void prepareNameLists() {
+    private void prepareNameLists() throws FileNotFoundException, IOException {
 
-        try {
-            CSVReader reader = new CSVReader(new FileReader("commonNames.csv"), CSVParser.DEFAULT_SEPARATOR, CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
-            String[] nextLine;
-            while ((nextLine = reader.readNext()) != null) {
-                firstNames.add(nextLine[0]);
-                if (nextLine[1].length() != 0) {
-                    lastNames.add(nextLine[1].replace(";", ""));
-                }
-
+        CSVReader reader = new CSVReader(new FileReader("commonNames.csv"), CSVParser.DEFAULT_SEPARATOR, CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
+        String[] nextLine;
+        while ((nextLine = reader.readNext()) != null) {
+            firstNames.add(nextLine[0]);
+            if (nextLine[1].length() != 0) {
+                lastNames.add(nextLine[1].replace(";", ""));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
 
     }

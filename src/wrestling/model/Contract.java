@@ -44,6 +44,17 @@ public class Contract implements Serializable {
         calculateCost();
 
     }
+    
+    //basic default contract
+    public Contract(Worker worker, Promotion promotion) {
+        this.worker = worker;
+        this.promotion = promotion;
+        this.monthly = true;
+        this.exclusive = false;
+        this.duration = 365;
+        calculateCost();
+        
+    }
 
     private void calculateCost() {
 

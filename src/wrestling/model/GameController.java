@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,8 +71,10 @@ public class GameController implements Serializable {
     }
 
     public List<Worker> freeAgents(Promotion promotion) {
+
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
+
             if (worker.canNegotiate(promotion)) {
                 freeAgents.add(worker);
             }
@@ -83,7 +86,9 @@ public class GameController implements Serializable {
     public List<Worker> freeAgents() {
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
+
             if (worker.canNegotiate()) {
+
                 freeAgents.add(worker);
             }
         }
@@ -91,7 +96,7 @@ public class GameController implements Serializable {
         return freeAgents;
     }
 
-    public GameController() {
+    public GameController() throws IOException {
 
         //set the initial date here
         date = 1;
@@ -100,15 +105,28 @@ public class GameController implements Serializable {
         workerFactory = new WorkerFactory();
 
         //initialize the main lists
-        workers = new ArrayList<Worker>();
-        promotions = new ArrayList<Promotion>();
+        workers = new ArrayList<>();
+        promotions = new ArrayList<>();
 
         //prepare the promotions (and workers)
         preparePromotions();
 
     }
 
-    private void preparePromotions() {
+    public void setPromotions(List<Promotion> promotions) {
+        this.promotions = promotions;
+
+        for (Promotion promotion : promotions) {
+            promotion.setLevel(4);
+            promotion.addFunds(10000);
+        }
+    }
+
+    public void setWorkers(List<Worker> workers) {
+        this.workers = workers;
+    }
+
+    public void preparePromotions() {
         int numberOfPromotions = 20;
         int rosterSize = 15;
         int startingFunds = 10000;
@@ -129,8 +147,8 @@ public class GameController implements Serializable {
             double promotionCount = 0;
             double currentRatio;
             int currentLevel = levelRatios.indexOf(ratio);
-            List<Worker> currentLevelWorkers = new ArrayList<Worker>();
-            List<Promotion> currentLevelPromotions = new ArrayList<Promotion>();
+            List<Worker> currentLevelWorkers = new ArrayList<>();
+            List<Promotion> currentLevelPromotions = new ArrayList<>();
 
             do {
 
@@ -177,7 +195,7 @@ public class GameController implements Serializable {
     private void setAi() {
         //add ai where necessary
         for (Promotion promotion : promotions) {
-            if (!promotion.equals(playerPromotion) && !promotion.getName().equals("All Workers")) {
+            if (!promotion.equals(playerPromotion)) {
                 promotion.setAi(new PromotionAi(promotion, this));
             }
 

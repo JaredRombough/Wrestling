@@ -30,6 +30,9 @@ public class PromotionAi implements Serializable {
             bookEvent();
             //schedule another match for next week
             nextEvent += 7;
+        } else if (gameController.date() == nextEvent && promotion.getRoster().size() < 2) {
+            //we don't have enough workers, postpone
+            nextEvent += 7;
         }
 
         if (promotion.getRoster().size() < (promotion.getLevel() * 2) + 10) {
@@ -49,10 +52,8 @@ public class PromotionAi implements Serializable {
         });
     }
 
-    //sign a contract with the most popular worker available
+    //sign a contract with the first suitable worker found
     private void signContract() {
-
-        sortByPopularity(gameController.freeAgents(promotion));
 
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity()) {
@@ -66,6 +67,8 @@ public class PromotionAi implements Serializable {
     }
 
     private void bookEvent() {
+        
+        int maxSegments = 8;
 
         sortByPopularity(promotion.getRoster());
 
@@ -87,6 +90,10 @@ public class PromotionAi implements Serializable {
             if (eventRoster.size() > i + 1) {
                 Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
                 segments.add(match);
+            }
+            
+            if(segments.size() > maxSegments) {
+                break;
             }
         }
 

@@ -13,7 +13,7 @@
             <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
                <children>
                   <Label text="Wrestling!" />
-                  <Button mnemonicParsing="false" onAction="#handleButtonAction" text="Click to start" />
+                  <Button mnemonicParsing="false" onAction="#handleButtonAction" text="Click To Start!" />
                </children>
             </VBox>
          </children>

@@ -6,10 +6,12 @@
 package wrestling;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,12 +21,15 @@ import javafx.stage.Stage;
 import wrestling.model.GameController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.TitleScreenController;
-import wrestling.model.Event;
 import wrestling.view.BrowserController;
 import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
 import static javafx.application.Application.launch;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import wrestling.file.Import;
 import wrestling.model.EventArchive;
 
 public class MainApp extends Application {
@@ -41,48 +46,59 @@ public class MainApp extends Application {
     private BrowserController browserController;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
 
-        gameController = new GameController();
+        showOptionDialogue();
 
         initRootLayout();
         showTitleScreen();
 
     }
 
-    public void saveGame() {
-        try {
+    private void showOptionDialogue() throws IOException {
+        Alert alert = new Alert(AlertType.NONE);
+        alert.setTitle("Wrestling");
+        alert.setHeaderText("Wrestling!");
+        alert.setContentText("Randomly generate game or import from file?");
+        ButtonType buttonTypeOne = new ButtonType("Random");
+        ButtonType buttonTypeTwo = new ButtonType("Import");
 
-            FileOutputStream fileOutputStream = new FileOutputStream("wrestlingsavegame.ser");
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeOne) {
+            gameController = new GameController();
+            gameController.preparePromotions();
+            alert.close();
+        } else if (result.get() == buttonTypeTwo) {
+            Import importer = new Import();
+            gameController = importer.importController();
+            alert.close();
+
+        }
+    }
+
+    public void saveGame() throws FileNotFoundException, IOException {
+
+        FileOutputStream fileOutputStream = new FileOutputStream("wrestlingsavegame.ser");
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(gameController);
-            objectOutputStream.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
 
-    public void loadGame() throws ClassNotFoundException {
-        try {
+    public void loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
 
-            FileInputStream fileInputStream = new FileInputStream("wrestlingsavegame.ser");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        FileInputStream fileInputStream = new FileInputStream("wrestlingsavegame.ser");
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             gameController = null;
             gameController = (GameController) objectInputStream.readObject();
-
-            objectInputStream.close();
-
-            //now we need to update the rootlayoutcontroller with the newly
-            //loaded gameController or else it won't have the correct controller
-            rootLayoutController.setGameController(gameController);
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        //now we need to update the rootlayoutcontroller with the newly
+        //loaded gameController or else it won't have the correct controller
+        rootLayoutController.setGameController(gameController);
 
     }
 
@@ -99,6 +115,7 @@ public class MainApp extends Application {
      */
     public void initRootLayout() {
         try {
+
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
@@ -106,6 +123,8 @@ public class MainApp extends Application {
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
+
+            //scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -273,7 +292,7 @@ public class MainApp extends Application {
 
     }
 
-    public void nextDay() {
+    public void nextDay() throws IOException {
         gameController.nextDay();
         saveGame();
         updateLabels();

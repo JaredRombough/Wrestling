@@ -21,8 +21,6 @@ import wrestling.model.Worker;
 
 public class StartGameScreenController implements Initializable {
 
-
-
     @FXML
     private ListView promotionListView;
 
@@ -34,7 +32,7 @@ public class StartGameScreenController implements Initializable {
 
     @FXML
     private Button loadGameButton;
-    
+
     @FXML
     private GridPane gridPane;
 
@@ -61,10 +59,10 @@ public class StartGameScreenController implements Initializable {
 
         for (Promotion current : gameController.promotions) {
             //dont' want the player to pick the free agents. probably want a cleaner solution though.
-            if(!current.getName().equals("All Workers")) {
+            if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
             }
-            
+
         }
 
         promotionListView.setItems(promotionsObservableList);
@@ -80,15 +78,15 @@ public class StartGameScreenController implements Initializable {
 
                 currentPromotionLabel.setText(newValue.toString());
 
-                ListView<Worker> rosterListView = new ListView<Worker>();
+                ListView<Worker> rosterListView = new ListView<>();
                 ObservableList<Worker> rosterList = FXCollections.observableArrayList();
                 for (Worker current : newValue.getRoster()) {
                     rosterList.add(current);
                 }
                 rosterListView.setItems(rosterList);
-               
+
                 gridPane.add(rosterListView, 3, 1);
-                
+
                 selectedPromotion = newValue;
             }
         });

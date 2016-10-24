@@ -6,6 +6,8 @@ nbproject/
 test/
 build.xml
 wrestlingsavegame.ser
+*.dat
+
 
 #idea
 *.iml
