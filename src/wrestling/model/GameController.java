@@ -11,9 +11,24 @@ import java.util.Random;
  *
  * game controller handles game stuff
  */
-public class GameController implements Serializable {
+public final class GameController implements Serializable {
 
-    private final WorkerFactory workerFactory;
+    public GameController() throws IOException {
+
+        //set the initial date here
+        date = 1;
+
+        //initialize the main lists
+        workers = new ArrayList<>();
+        promotions = new ArrayList<>();
+
+        //prepare the promotions (and workers)
+        PromotionFactory promotionFactory = new PromotionFactory();
+        promotionFactory.preparePromotions();
+        promotions = promotionFactory.getPromotions();
+        workers = promotionFactory.getAllWorkers();
+
+    }
 
     private Integer date;
 
@@ -96,100 +111,16 @@ public class GameController implements Serializable {
         return freeAgents;
     }
 
-    public GameController() throws IOException {
-
-        //set the initial date here
-        date = 1;
-
-        //create a worker factory
-        workerFactory = new WorkerFactory();
-
-        //initialize the main lists
-        workers = new ArrayList<>();
-        promotions = new ArrayList<>();
-
-        //prepare the promotions (and workers)
-        preparePromotions();
-
-    }
-
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
 
         for (Promotion promotion : promotions) {
-            promotion.setLevel(4);
             promotion.addFunds(10000);
         }
     }
 
     public void setWorkers(List<Worker> workers) {
         this.workers = workers;
-    }
-
-    public void preparePromotions() {
-        int numberOfPromotions = 20;
-        int rosterSize = 15;
-        int startingFunds = 10000;
-        int workersPerPromotion = 50;
-
-        //keeps track of what proportion of our promotions
-        //should be at each level
-        List<Double> levelRatios = Arrays.asList(
-                0.3, //level 0
-                0.2, //level 1
-                0.2, //level 2
-                0.2, //level 3
-                0.1 //level 4
-        );
-
-        for (Double ratio : levelRatios) {
-
-            double promotionCount = 0;
-            double currentRatio;
-            int currentLevel = levelRatios.indexOf(ratio);
-            List<Worker> currentLevelWorkers = new ArrayList<>();
-            List<Promotion> currentLevelPromotions = new ArrayList<>();
-
-            do {
-
-                currentRatio = (double) promotionCount / numberOfPromotions;
-                promotionCount++;
-
-                Promotion newPromotion = new Promotion();
-
-                newPromotion.setLevel(currentLevel);
-
-                currentLevelPromotions.add(newPromotion);
-
-                //add workers to the game in proportion to the current promotion
-                currentLevelWorkers.addAll(workerFactory.createRoster(workersPerPromotion, currentLevel));
-
-            } while (currentRatio < ratio);
-
-            for (Promotion promotion : currentLevelPromotions) {
-
-                //add funds (this could be based on promotion level)
-                promotion.addFunds(startingFunds);
-
-                //assign workers based on promotion level
-                do {
-                    Worker worker = getRandomFromList(currentLevelWorkers);
-                    if (!promotion.getRoster().contains(worker)) {
-                        //current.getRoster().add(worker);
-                        Contract contract = new Contract(worker, promotion, true, true, 9, (worker.getPopularity() * 10));
-                        worker.addContract(contract);
-                        promotion.addContract(contract);
-                    }
-
-                } while (promotion.getRoster().size() < rosterSize);
-            }
-
-            //add all the workers and promotions we have generated for this
-            //level to the main lists
-            workers.addAll(currentLevelWorkers);
-            promotions.addAll(currentLevelPromotions);
-        }
-
     }
 
     private void setAi() {

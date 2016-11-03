@@ -49,12 +49,14 @@ public class Promotion implements Serializable {
     }
     private static int serialNumber = 0;
     private int indexNumber;
+
     public void setIndexNumber(int indexNumber) {
         this.indexNumber = indexNumber;
     }
-    public int indexNumber() {return indexNumber;}
-    
-    
+
+    public int indexNumber() {
+        return indexNumber;
+    }
 
     private int popularity;
 
@@ -70,6 +72,20 @@ public class Promotion implements Serializable {
         }
         this.popularity = popularity;
 
+    }
+
+    public int averageWorkerPopularity() {
+        int totalPop = 0;
+        int averagePop = 0;
+        
+        if (roster.size() > 0) {
+            for (Worker worker : roster) {
+                totalPop += worker.getPopularity();
+            }
+            averagePop = totalPop / roster.size();
+        }
+
+        return averagePop;
     }
 
     public void gainPopularity(int score) {

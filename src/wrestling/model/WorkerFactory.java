@@ -57,10 +57,22 @@ public class WorkerFactory implements Serializable {
 
     //to generate a random worker at a given popularity level
     public Worker randomWorker(int level) {
+
+        if (level < 1) {
+            level = 1;
+        } else if (level > 5) {
+            level = 5;
+        }
+
         Worker worker = new Worker();
 
         //set the popularity to be proportionate to the level requested
-        worker.setPopularity(rand20() + (level * 20));
+        worker.setPopularity((level * 20) + randRange(-10, 10));
+
+        //prevent too many maxed out workers
+        if (worker.getPopularity() > 100) {
+            worker.setPopularity(100 + randRange(-10, 0));
+        }
 
         worker.setEndurance(rand100());
         worker.setFlying(rand100());
@@ -71,6 +83,7 @@ public class WorkerFactory implements Serializable {
         worker.setStrength(rand100());
         worker.setStriking(rand100());
         worker.setTalk(rand100());
+
         setRandomName(worker);
 
         return worker;
@@ -130,10 +143,9 @@ public class WorkerFactory implements Serializable {
         return r.nextInt(100 - 0) + 0;
     }
 
-    private int rand20() {
+    private int randRange(int low, int high) {
         Random r = new Random();
-        return r.nextInt(20 - 0) + 0;
-
+        return r.nextInt(high - low) + low;
     }
 
 }

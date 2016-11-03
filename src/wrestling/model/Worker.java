@@ -37,8 +37,12 @@ public class Worker implements Serializable {
     private int reputation;
     private int popularity;
 
-    private List<Contract> contracts;
-    private List<Event> bookings;
+    private boolean manager;
+    private boolean fullTime;
+    private boolean mainRoster;
+    
+    private final List<Contract> contracts;
+    private final List<Event> bookings;
 
     public Worker() {
         this.contracts = new ArrayList<>();
@@ -343,6 +347,48 @@ public class Worker implements Serializable {
      */
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    /**
+     * @return the manager
+     */
+    public boolean isManager() {
+        return manager;
+    }
+
+    /**
+     * @param manager the manager to set
+     */
+    public void setManager(boolean manager) {
+        this.manager = manager;
+    }
+
+    /**
+     * @return the fullTime
+     */
+    public boolean isFullTime() {
+        return fullTime;
+    }
+
+    /**
+     * @param fullTime the fullTime to set
+     */
+    public void setFullTime(boolean fullTime) {
+        this.fullTime = fullTime;
+    }
+
+    /**
+     * @return the mainRoster
+     */
+    public boolean isMainRoster() {
+        return mainRoster;
+    }
+
+    /**
+     * @param mainRoster the mainRoster to set
+     */
+    public void setMainRoster(boolean mainRoster) {
+        this.mainRoster = mainRoster;
     }
 
 }

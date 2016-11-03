@@ -23,24 +23,28 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label fx:id="currentWorkerLabel" prefHeight="21.0" prefWidth="40.0" text="Name" />
-            <Label fx:id="nameLabel" prefHeight="21.0" prefWidth="148.0" text="Label" GridPane.columnIndex="1" />
+            <Label fx:id="currentWorkerLabel" text="Name" />
+            <Label fx:id="nameLabel" text="Label" GridPane.columnIndex="1" />
             <Label text="Striking" GridPane.rowIndex="1" />
             <Label fx:id="strikingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Wrestling" GridPane.rowIndex="2" />
             <Label fx:id="wrestlingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Contracts" GridPane.rowIndex="4" />
+            <Label text="Contracts" GridPane.rowIndex="6" />
             <Label fx:id="flyingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="Flying" GridPane.rowIndex="3" />
-            <Label fx:id="contractLabel" text="Label" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+            <Label fx:id="contractLabel" text="Label" GridPane.columnSpan="3" GridPane.rowIndex="7" />
             <Label text="Popularity" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label text="Reputation" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label text="Proficiency" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="popularityLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label fx:id="reputationLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Label fx:id="proficiencyLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Label fx:id="managerLabel" text="Label" GridPane.rowIndex="4" />
+            <Label fx:id="mainRosterLabel" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

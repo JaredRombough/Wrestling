@@ -58,6 +58,12 @@ public class WorkerOverviewController implements Initializable {
 
     @FXML
     private Label proficiencyLabel;
+    
+    @FXML
+    private Label managerLabel;
+
+    @FXML
+    private Label mainRosterLabel;
 
     private Worker currentWorker;
     private Promotion currentPromotion;
@@ -115,6 +121,21 @@ public class WorkerOverviewController implements Initializable {
             reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
             contractLabel.setText(currentWorker.contractString());
+            if(currentWorker.isManager()) {
+               managerLabel.setText("Manager");
+            } else {
+                managerLabel.setText("");
+            }
+            if(currentWorker.isMainRoster()) {
+                if(currentWorker.isFullTime()) {
+                    mainRosterLabel.setText("Full Time");
+                } else {
+                    mainRosterLabel.setText("Part Time");
+                }
+               
+            } else {
+                managerLabel.setText("Development");
+            }
 
             contractPaneController.updateLabels();
         } else if (!currentPromotion.getRoster().contains(currentWorker)) {

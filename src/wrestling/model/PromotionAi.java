@@ -47,7 +47,7 @@ public class PromotionAi implements Serializable {
         Collections.sort(workerList, new Comparator<Worker>() {
             @Override
             public int compare(Worker w1, Worker w2) {
-                return Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
+                return -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
             }
         });
     }
@@ -67,7 +67,7 @@ public class PromotionAi implements Serializable {
     }
 
     private void bookEvent() {
-        
+
         int maxSegments = 8;
 
         sortByPopularity(promotion.getRoster());
@@ -75,6 +75,7 @@ public class PromotionAi implements Serializable {
         //check for workers that are already booked on this date
         List<Worker> eventRoster = promotion.getRoster();
         List<Worker> alreadyBooked = new ArrayList<>();
+        
         for (Worker worker : eventRoster) {
             if (worker.isBooked(gameController.date())) {
                 alreadyBooked.add(worker);
@@ -82,6 +83,16 @@ public class PromotionAi implements Serializable {
         }
 
         eventRoster.removeAll(alreadyBooked);
+        
+        List<Worker> nonCompetitors = new ArrayList<>();
+        
+        for (Worker worker : eventRoster) {
+            if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
+                nonCompetitors.add(worker);
+            }
+        }
+
+        eventRoster.removeAll(nonCompetitors);
 
         List<Segment> segments = new ArrayList<>();
 
@@ -91,8 +102,8 @@ public class PromotionAi implements Serializable {
                 Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
                 segments.add(match);
             }
-            
-            if(segments.size() > maxSegments) {
+
+            if (segments.size() > maxSegments) {
                 break;
             }
         }

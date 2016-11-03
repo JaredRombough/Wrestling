@@ -73,7 +73,10 @@ public class StartGameScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
 
-                currentPromotionLabel.setText(newValue.toString());
+                currentPromotionLabel.setText(newValue.toString() + "\n" + 
+                        "Level: " + newValue.getLevel() + "\n" +
+                        "Workers: " + newValue.getRoster().size() + "\n" +
+                        "Average Popularity: " + newValue.averageWorkerPopularity());
 
                 ListView<Worker> rosterListView = new ListView<>();
                 ObservableList<Worker> rosterList = FXCollections.observableArrayList();

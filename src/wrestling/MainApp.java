@@ -55,16 +55,17 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
 
-        showOptionDialogue();
-        if (!loadGame) {
+        do {
+            loadGame = false;
+            showOptionDialogue();
+        } while (gameController == null);
 
-            initRootLayout();
-            showTitleScreen();
-        }
+        initRootLayout();
+        showTitleScreen();
 
     }
 
-    public void startGame() {
+    public void startGame() throws IOException {
         prepareScreens();
         showBrowser();
         updateLabels();
@@ -74,7 +75,6 @@ public class MainApp extends Application {
 
     private final boolean cssEnabled;
     private boolean loadGame = false;
-
 
     /*
     show the initial dialogue to choose random or imported game
@@ -96,10 +96,12 @@ public class MainApp extends Application {
         }
 
         alert.getButtonTypes().setAll(randomButton, importButton, loadButton);
+
         Optional<ButtonType> result = alert.showAndWait();
+
         if (result.get() == randomButton) {
             gameController = new GameController();
-            gameController.preparePromotions();
+
             alert.close();
         } else if (result.get() == importButton) {
             Import importer = new Import();
@@ -108,14 +110,10 @@ public class MainApp extends Application {
 
         } else if (result.get() == loadButton) {
             loadGame = true;
-
-            gameController = new GameController();
-            initRootLayout();
             loadGame();
 
-            startGame();
-
         }
+
     }
 
     public void saveGame() throws FileNotFoundException, IOException {
@@ -133,15 +131,19 @@ public class MainApp extends Application {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             gameController = null;
             gameController = (GameController) objectInputStream.readObject();
-        }
+            //now we need to update the rootlayoutcontroller with the newly
+            //loaded gameController or else it won't have the correct controller
+            //rootLayoutController.setGameController(gameController);
+        } catch (Exception e) {
 
-        //now we need to update the rootlayoutcontroller with the newly
-        //loaded gameController or else it won't have the correct controller
-        rootLayoutController.setGameController(gameController);
+            gameController = null;
+            System.out.println("load game exception");
+            e.printStackTrace();
+        }
 
     }
 
-    public void prepareScreens() {
+    public void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
         loadWorkerOverview();
@@ -210,29 +212,23 @@ public class MainApp extends Application {
             controller.setGameController(this.gameController);
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     /*
     loads the browser
      */
-    private void loadBrowser() {
+    private void loadBrowser() throws IOException {
 
-        try {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(MainApp.class.getResource("view/Browser.fxml"));
+        browserPane = (AnchorPane) loader.load();
 
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/Browser.fxml"));
-            browserPane = (AnchorPane) loader.load();
+        browserController = loader.getController();
 
-            browserController = loader.getController();
+        browserController.setMainApp(this);
+        browserController.setGameController(this.gameController);
 
-            browserController.setMainApp(this);
-            browserController.setGameController(this.gameController);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /*
