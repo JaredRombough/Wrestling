@@ -35,7 +35,7 @@ public class PromotionAi implements Serializable {
             nextEvent += 7;
         }
 
-        if (promotion.getRoster().size() < (promotion.getLevel() * 2) + 10) {
+        if (promotion.getRoster().size() < (promotion.getLevel() * 10)) {
             signContract();
 
         }
@@ -75,7 +75,7 @@ public class PromotionAi implements Serializable {
         //check for workers that are already booked on this date
         List<Worker> eventRoster = promotion.getRoster();
         List<Worker> alreadyBooked = new ArrayList<>();
-        
+
         for (Worker worker : eventRoster) {
             if (worker.isBooked(gameController.date())) {
                 alreadyBooked.add(worker);
@@ -83,9 +83,9 @@ public class PromotionAi implements Serializable {
         }
 
         eventRoster.removeAll(alreadyBooked);
-        
+
         List<Worker> nonCompetitors = new ArrayList<>();
-        
+
         for (Worker worker : eventRoster) {
             if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
                 nonCompetitors.add(worker);

@@ -24,6 +24,8 @@ public class Contract implements Serializable {
     private boolean exclusive;
 
     private int unitCost;
+    
+    
 
     public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
         this.worker = worker;
@@ -66,7 +68,6 @@ public class Contract implements Serializable {
             unitCost *= 1.5;
         }
 
-        unitCost *= duration;
 
     }
 
@@ -93,6 +94,7 @@ public class Contract implements Serializable {
     }
 
     private void terminateContract() {
+        
         this.worker.removeContract(this);
         this.promotion.removeContract(this);
     }

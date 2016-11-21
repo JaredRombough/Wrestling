@@ -83,6 +83,10 @@ public class WorkerFactory implements Serializable {
         worker.setStrength(rand100());
         worker.setStriking(rand100());
         worker.setTalk(rand100());
+        
+        worker.setManager(false);
+        worker.setMainRoster(true);
+        worker.setFullTime(true);
 
         setRandomName(worker);
 
@@ -102,6 +106,12 @@ public class WorkerFactory implements Serializable {
         worker.setStrength(rand100());
         worker.setStriking(rand100());
         worker.setTalk(rand100());
+        
+        worker.setManager(false);
+        worker.setMainRoster(true);
+        worker.setFullTime(true);
+        
+        
         setRandomName(worker);
 
         return worker;

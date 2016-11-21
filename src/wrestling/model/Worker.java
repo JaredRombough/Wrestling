@@ -40,7 +40,7 @@ public class Worker implements Serializable {
     private boolean manager;
     private boolean fullTime;
     private boolean mainRoster;
-    
+
     private final List<Contract> contracts;
     private final List<Event> bookings;
 
@@ -74,7 +74,7 @@ public class Worker implements Serializable {
     }
 
     public boolean canNegotiate() {
-        
+
         boolean canNegotiate = true;
 
         if (this.hasContract()) {
@@ -87,9 +87,9 @@ public class Worker implements Serializable {
         }
 
         return canNegotiate;
-        
+
     }
-    
+
     public boolean canNegotiate(Promotion promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
@@ -162,6 +162,10 @@ public class Worker implements Serializable {
         } else {
             this.popularity += 1;
         }
+
+        if (popularity > 100) {
+            popularity = 100;
+        }
     }
 
     public void losePopularity() {
@@ -173,6 +177,10 @@ public class Worker implements Serializable {
             this.popularity -= 2;
         } else {
             this.popularity -= 1;
+        }
+
+        if (popularity < 0) {
+            popularity = 0;
         }
     }
 

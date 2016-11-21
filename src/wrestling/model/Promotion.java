@@ -10,7 +10,6 @@ public class Promotion implements Serializable {
     public Promotion() {
         this.contracts = new ArrayList<>();
 
-        roster = new ArrayList<Worker>();
         events = new ArrayList<EventArchive>();
         eventQueue = new ArrayList<Event>();
         funds = 0;
@@ -32,10 +31,15 @@ public class Promotion implements Serializable {
         return ai;
     }
 
-    private final List<Worker> roster;
 
     public List<Worker> getRoster() {
-        return this.roster;
+        
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contracts) {
+            roster.add(contract.getWorker());
+        }
+        
+        return roster;
     }
 
     private String name;
@@ -77,12 +81,12 @@ public class Promotion implements Serializable {
     public int averageWorkerPopularity() {
         int totalPop = 0;
         int averagePop = 0;
-        
-        if (roster.size() > 0) {
-            for (Worker worker : roster) {
+
+        if (getRoster().size() > 0) {
+            for (Worker worker : getRoster()) {
                 totalPop += worker.getPopularity();
             }
-            averagePop = totalPop / roster.size();
+            averagePop = totalPop / getRoster().size();
         }
 
         return averagePop;
@@ -175,13 +179,13 @@ public class Promotion implements Serializable {
 
     public void addContract(Contract contract) {
         this.contracts.add(contract);
-        this.roster.add(contract.getWorker());
+        
 
     }
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
-        this.roster.remove(contract.getWorker());
+        
 
     }
 

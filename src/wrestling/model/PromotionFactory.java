@@ -62,15 +62,15 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = workerFactory.randomWorker(randomRange(promotion.getLevel() - 2, promotion.getLevel() + 2));
+                    Worker worker = workerFactory.randomWorker(randomRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    Contract contract = new Contract(worker, promotion, true, true, 9, (worker.getPopularity() * 10));
+                    Contract contract = new Contract(worker, promotion);
                     worker.addContract(contract);
                     promotion.addContract(contract);
 
                 } while (promotion.getRoster().size() < rosterSize);
 
-                getAllWorkers().addAll(promotion.getRoster());
+                allWorkers.addAll(promotion.getRoster());
             }
 
             //add all the workers and promotions we have generated for this

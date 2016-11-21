@@ -47,7 +47,8 @@ public class MainApp extends Application {
     private BrowserController browserController;
 
     public MainApp() {
-        this.cssEnabled = false;
+        this.cssEnabled = true;
+
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MainApp extends Application {
         this.primaryStage.setTitle("Wrestling");
 
         do {
-            loadGame = false;
+
             showOptionDialogue();
         } while (gameController == null);
 
@@ -74,7 +75,7 @@ public class MainApp extends Application {
     }
 
     private final boolean cssEnabled;
-    private boolean loadGame = false;
+
 
     /*
     show the initial dialogue to choose random or imported game
@@ -109,7 +110,7 @@ public class MainApp extends Application {
             alert.close();
 
         } else if (result.get() == loadButton) {
-            loadGame = true;
+
             loadGame();
 
         }
@@ -131,9 +132,7 @@ public class MainApp extends Application {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             gameController = null;
             gameController = (GameController) objectInputStream.readObject();
-            //now we need to update the rootlayoutcontroller with the newly
-            //loaded gameController or else it won't have the correct controller
-            //rootLayoutController.setGameController(gameController);
+
         } catch (Exception e) {
 
             gameController = null;
