@@ -23,13 +23,16 @@ public class EventArchive implements Serializable {
     private final Promotion promotion;
 
     private final int date;
+    
+    private final int attendance;
 
-    public EventArchive(Promotion promotion, final List<Segment> segments, final int totalCost, final int gate, int date) {
+    public EventArchive(Promotion promotion, final List<Segment> segments, final int totalCost, final int gate, final int attendance, int date) {
         this.gate = gate;
         this.totalCost = totalCost;
         this.segments = segments;
         this.promotion = promotion;
         this.date = date;
+        this.attendance = attendance;
     }
 
     public String getSummary() {

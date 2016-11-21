@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class PromotionAi implements Serializable {
 
@@ -13,7 +14,7 @@ public class PromotionAi implements Serializable {
     private final GameController gameController;
 
     public PromotionAi(Promotion promotion, GameController gameController) {
-        nextEvent = 2;
+        nextEvent = randRange(2,7);
         this.promotion = promotion;
         this.gameController = gameController;
     }
@@ -35,9 +36,26 @@ public class PromotionAi implements Serializable {
             nextEvent += 7;
         }
 
-        if (promotion.getRoster().size() < (promotion.getLevel() * 10)) {
+        //sign a contract if we are under the ideal amount of workers
+        if (promotion.getRoster().size() < 10 + (promotion.getLevel() * 10)) {
+
+            
             signContract();
 
+        //sign a contract if we have too many expiring contracts coming up
+        //to keep our roster at a reasonable size
+        } else if (promotion.getRoster().size() >= 10 + (promotion.getLevel() * 10)) {
+            int expiringCount = 0;
+            int overMax = promotion.getRoster().size() - 10 + (promotion.getLevel() * 10);
+            for (Contract contract : promotion.getContracts()) {
+                if (contract.getDuration() < 14) {
+                    expiringCount++;
+                }
+            }
+            
+            if (expiringCount > overMax) {
+                signContract();
+            }
         }
 
     }
@@ -57,7 +75,7 @@ public class PromotionAi implements Serializable {
 
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity()) {
-                Contract contract = new Contract(worker, promotion, true, true, 12);
+                Contract contract = new Contract(worker, promotion);
                 worker.addContract(contract);
                 promotion.addContract(contract);
                 break;
@@ -106,11 +124,18 @@ public class PromotionAi implements Serializable {
             if (segments.size() > maxSegments) {
                 break;
             }
+            
+            
         }
 
         Event event = new Event(segments, gameController.date(), promotion);
         event.scheduleEvent(gameController.date());
 
+    }
+    
+    private int randRange(int low, int high) {
+        Random r = new Random();
+        return r.nextInt(high - low) + low;
     }
 
 }

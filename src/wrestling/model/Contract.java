@@ -53,7 +53,17 @@ public class Contract implements Serializable {
         this.promotion = promotion;
         this.monthly = true;
         this.exclusive = false;
-        this.duration = 365;
+        this.duration = 30;
+        
+        
+        for(int i = 0; i < promotion.getLevel(); i++) {
+            duration += 30;
+            
+            if (i == 4) {
+                exclusive = true;
+            }
+        }
+        
         calculateCost();
         
     }
@@ -61,8 +71,16 @@ public class Contract implements Serializable {
     private void calculateCost() {
 
         unitCost = 0;
+        
+        
+        for (int i = 0; i < worker.getPopularity(); i++) {
+            if (i < 50) {
+                unitCost += 5;
+            } else {
+                unitCost += 10;
+            }
+        }
 
-        unitCost = worker.getPopularity() * 10;
 
         if (exclusive) {
             unitCost *= 1.5;

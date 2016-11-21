@@ -165,29 +165,25 @@ public class BrowserController implements Initializable {
 
     /*
     prepare the sort box to sort workers
-    */
+     */
     private void sortBoxWorkers() {
         //the list of comparators we want
         ObservableList comparators = FXCollections.observableArrayList(
                 new WorkerNameComparator(),
                 new WorkerPopularityComparator()
         );
-        
-       //definitely update the box if the box is empty
-       if(sortBox.getItems().isEmpty()) {
-           sortBox.setItems(comparators);
-           sortBox.getSelectionModel().selectFirst();
-       } 
-       
-       //if the box is not empty check if it has the same stuff we're trying to put in it
-       if(!sortBox.getItems().get(0).getClass().equals(comparators.get(0).getClass())) {
+
+        //definitely update the box if the box is empty
+        if (sortBox.getItems().isEmpty()) {
             sortBox.setItems(comparators);
             sortBox.getSelectionModel().selectFirst();
         }
-       
-        
-        
-       
+
+        //if the box is not empty check if it has the same stuff we're trying to put in it
+        if (!sortBox.getItems().get(0).getClass().equals(comparators.get(0).getClass())) {
+            sortBox.setItems(comparators);
+            sortBox.getSelectionModel().selectFirst();
+        }
 
     }
 

@@ -85,9 +85,36 @@ public class Event implements Serializable {
        
         
         //this is all that will remain of the event
-        EventArchive eventArchive = new EventArchive(promotion, segments, currentCost(), grossProfit(), date);
+        EventArchive eventArchive = new EventArchive(promotion, segments, currentCost(), grossProfit(), attendance(), date);
         promotion.archiveEvent(eventArchive);
         
+    }
+    
+    private int attendance() {
+        int attendance = 0;
+        
+        switch (promotion.getLevel()) {
+            case 0:
+                attendance += 50;
+                break;
+            case 1:
+                attendance += 100;
+                break;
+            case 2:
+                attendance += 250;
+                break;
+            case 3:
+                attendance += 500;
+                break;
+            case 4:
+                attendance += 2000;
+                break;
+            case 5:
+                attendance += 5000;
+                break;
+        }
+        
+        return attendance;
     }
 
     /*
@@ -134,6 +161,7 @@ public class Event implements Serializable {
         return allWorkers;
     }
     
+    //dynamic current cost calculation to be called while the player is booking
     public int currentCost() {
         
         int currentCost = 0;
@@ -145,14 +173,14 @@ public class Event implements Serializable {
         return currentCost;
     }
     
+    //gross profit for the event
     private int grossProfit() {
         int grossProfit = 0;
         
-        for (Segment s : segments) {
-            grossProfit += s.segmentRating();
+        grossProfit = attendance() * 10;
+        for(int i = 0; i < promotion.getLevel(); i++) {
+            grossProfit += attendance() * 2;
         }
-        
-        grossProfit = grossProfit * 10;
         
         return grossProfit;
     }
