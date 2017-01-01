@@ -85,9 +85,33 @@ public class Event implements Serializable {
        
         
         //this is all that will remain of the event
-        EventArchive eventArchive = new EventArchive(promotion, segments, currentCost(), grossProfit(), attendance(), date);
+        EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, getSummary());
         promotion.archiveEvent(eventArchive);
         
+    }
+    
+    public String getSummary() {
+        String eventString = new String();
+
+        for (Segment segment : segments) {
+
+            if (segment.isComplete()) {
+                eventString += segment.toString();
+                if (segment instanceof Match) {
+                    eventString += "\n";
+                    eventString += "Rating: " + ((Match) segment).segmentRating();
+
+                }
+                eventString += "\n";
+            }
+        }
+
+        eventString += "\n";
+        eventString += "Total cost: $" + currentCost();
+        eventString += "\n";
+        eventString += "Gross profit: $" + grossProfit();
+
+        return eventString;
     }
     
     private int attendance() {

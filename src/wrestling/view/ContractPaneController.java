@@ -19,7 +19,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
-import wrestling.model.Contract;
 import wrestling.model.GameController;
 import wrestling.model.Worker;
 
@@ -162,9 +161,7 @@ public class ContractPaneController implements Initializable {
 
     private void signContract() {
 
-        Contract contract = new Contract(worker, gameController.playerPromotion(), monthly, exclusive, duration(), cost);
-        worker.addContract(contract);
-        gameController.playerPromotion().addContract(contract);
+        gameController.contractFactory.createContract(worker, gameController.playerPromotion(), monthly, exclusive, cost, cost);
 
     }
 

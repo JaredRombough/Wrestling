@@ -5,12 +5,13 @@
  */
 package wrestling;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +32,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
-import wrestling.model.EventArchive;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
+
 
 public class MainApp extends Application {
 
@@ -48,6 +51,7 @@ public class MainApp extends Application {
 
     public MainApp() {
         this.cssEnabled = true;
+        
 
     }
 
@@ -70,6 +74,14 @@ public class MainApp extends Application {
         prepareScreens();
         showBrowser();
         updateLabels();
+        
+        //number of days to run automatically at start of game
+        int preRunDays = 900;
+        
+        for (int i = 0; i < preRunDays; i++) {
+            nextDay();
+            System.out.println("day: " + gameController.date());
+        }
 
         setButtonsDisable(false);
     }
@@ -116,30 +128,27 @@ public class MainApp extends Application {
         }
 
     }
-
+    
+    
+    
     public void saveGame() throws FileNotFoundException, IOException {
-
-        FileOutputStream fileOutputStream = new FileOutputStream("wrestlingsavegame.ser");
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
-            objectOutputStream.writeObject(gameController);
-        }
-
+        
+        Kryo kryo = new Kryo();
+      
+        Output output = new Output(new FileOutputStream("file.bin"));
+        
+        kryo.writeObject(output, gameController);
+        output.close();
     }
 
     public void loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
-
-        FileInputStream fileInputStream = new FileInputStream("wrestlingsavegame.ser");
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
-            gameController = null;
-            gameController = (GameController) objectInputStream.readObject();
-
-        } catch (Exception e) {
-
-            gameController = null;
-            System.out.println("load game exception");
-            e.printStackTrace();
-        }
-
+        
+        Kryo kryo = new Kryo();
+        
+        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+        Input input = new Input(new FileInputStream("file.bin"));
+        gameController = kryo.readObject(input, GameController.class);
+        input.close();
     }
 
     public void prepareScreens() throws IOException {
@@ -239,13 +248,12 @@ public class MainApp extends Application {
     }
 
     /*
-    shows the browser with a specific event displayed
-    such as when we have just run an event and go straight to the
-    results of it
+    shows the browser and selects the most recent event
      */
-    public void showBrowser(EventArchive event) {
+    public void showLastEvent() {
         showBrowser();
-        browserController.showEvent(event);
+        
+        browserController.showLastEvent();
 
     }
 
@@ -330,8 +338,11 @@ public class MainApp extends Application {
     }
 
     public void nextDay() throws IOException {
+        
         gameController.nextDay();
+        
         saveGame();
+        
         updateLabels();
     }
 

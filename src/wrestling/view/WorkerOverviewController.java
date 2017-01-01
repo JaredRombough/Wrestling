@@ -112,7 +112,8 @@ public class WorkerOverviewController implements Initializable {
 
     public void updateLabels() {
 
-        if (currentPromotion.getRoster().contains(currentWorker)) {
+        if (currentPromotion.getRoster().contains(currentWorker) || 
+                gameController.freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));

@@ -10,8 +10,8 @@ public class Promotion implements Serializable {
     public Promotion() {
         this.contracts = new ArrayList<>();
 
-        events = new ArrayList<EventArchive>();
-        eventQueue = new ArrayList<Event>();
+        events = new ArrayList<>();
+        eventQueue = new ArrayList<>();
         funds = 0;
         name = "Promotion #" + serialNumber;
 
@@ -166,6 +166,9 @@ public class Promotion implements Serializable {
 
     public void removeFunds(Integer expense) {
         funds -= expense;
+        if(funds < 0) {
+            funds = 0;
+        }
     }
 
     public Integer getFunds() {
@@ -186,16 +189,18 @@ public class Promotion implements Serializable {
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
         
+        
 
     }
 
     public List<Contract> getContracts() {
         return contracts;
     }
+    
 
     //the maximum popularity worker the promotion can hire
     public int maxPopularity() {
-        int max = (level * 20) + 10;
+        int max = (level * 20) + 20;
 
         if (max > 100) {
             max = 100;

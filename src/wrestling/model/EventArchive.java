@@ -1,16 +1,12 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
  * for storing a completed event
  *
- * we will need a static list of workers the cost the profits the date the match
- * results, ratings
- *
- * all of this needs to be fixed and unchangeable
+ * 
  */
 public class EventArchive implements Serializable {
 
@@ -18,51 +14,32 @@ public class EventArchive implements Serializable {
 
     private final int gate;
 
-    private final List<Segment> segments;
-
-    private final Promotion promotion;
+    private final String promotionName;
 
     private final int date;
-    
+
     private final int attendance;
 
-    public EventArchive(Promotion promotion, final List<Segment> segments, final int totalCost, final int gate, final int attendance, int date) {
+    private String summary;
+
+    public EventArchive(String promotionName, final int totalCost, final int gate, final int attendance, int date, String summary) {
         this.gate = gate;
         this.totalCost = totalCost;
-        this.segments = segments;
-        this.promotion = promotion;
+        this.promotionName = promotionName;
         this.date = date;
         this.attendance = attendance;
+        this.summary = summary;
     }
 
     public String getSummary() {
-        String eventString = new String();
 
-        for (Segment segment : getSegments()) {
-
-            if (segment.isComplete()) {
-                eventString += segment.toString();
-                if (segment instanceof Match) {
-                    eventString += "\n";
-                    eventString += "Rating: " + ((Match) segment).segmentRating();
-
-                }
-                eventString += "\n";
-            }
-        }
-
-        eventString += "\n";
-        eventString += "Total cost: $" + getTotalCost();
-        eventString += "\n";
-        eventString += "Total gate: $" + getGate();
-
-        return eventString;
+        return this.summary;
     }
 
     @Override
     public String toString() {
         String string = new String();
-        string += getPromotion().toString() + " event, day " + getDate();
+        string += promotionName + " event, day " + getDate();
         return string;
     }
 
@@ -78,20 +55,6 @@ public class EventArchive implements Serializable {
      */
     public int getGate() {
         return gate;
-    }
-
-    /**
-     * @return the segments
-     */
-    public List<Segment> getSegments() {
-        return segments;
-    }
-
-    /**
-     * @return the promotion
-     */
-    public Promotion getPromotion() {
-        return promotion;
     }
 
     /**

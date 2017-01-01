@@ -17,76 +17,14 @@ public class Contract implements Serializable {
     //total number of days/appearances left
     private int duration;
 
-    private int startDate;
-
     private boolean monthly;
 
     private boolean exclusive;
 
     private int unitCost;
-    
-    
 
-    public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
-        this.worker = worker;
-        this.promotion = promotion;
-        this.monthly = monthly;
-        this.exclusive = exclusive;
-        this.duration = duration;
-        this.unitCost = cost;
-
-    }
-
-    public Contract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration) {
-        this.worker = worker;
-        this.promotion = promotion;
-        this.monthly = monthly;
-        this.exclusive = exclusive;
-        this.duration = duration;
-        calculateCost();
-
-    }
-    
-    //basic default contract
-    public Contract(Worker worker, Promotion promotion) {
-        this.worker = worker;
-        this.promotion = promotion;
-        this.monthly = true;
-        this.exclusive = false;
-        this.duration = 30;
-        
-        
-        for(int i = 0; i < promotion.getLevel(); i++) {
-            duration += 30;
-            
-            if (i == 4) {
-                exclusive = true;
-            }
-        }
-        
-        calculateCost();
-        
-    }
-
-    private void calculateCost() {
-
-        unitCost = 0;
-        
-        
-        for (int i = 0; i < worker.getPopularity(); i++) {
-            if (i < 50) {
-                unitCost += 5;
-            } else {
-                unitCost += 10;
-            }
-        }
-
-
-        if (exclusive) {
-            unitCost *= 1.5;
-        }
-
-
+    //default constructor is empty, values must be set by contractFactory
+    public Contract() {
     }
 
     //depreciates monthly contracts
@@ -112,13 +50,14 @@ public class Contract implements Serializable {
     }
 
     private void terminateContract() {
-        
+
         this.worker.removeContract(this);
         this.promotion.removeContract(this);
+
     }
 
     public String getTerms() {
-        String string = getPromotion() + " Length: " + getDuration()
+        String string = promotion.getName() + " Length: " + duration
                 + " Appearance Cost: $" + getUnitCost();
 
         return string;
@@ -165,20 +104,6 @@ public class Contract implements Serializable {
     public void setDuration(int duration) {
 
         this.duration = duration;
-    }
-
-    /**
-     * @return the startDate
-     */
-    public int getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(int startDate) {
-        this.startDate = startDate;
     }
 
     /**

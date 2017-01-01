@@ -7,6 +7,9 @@ test/
 build.xml
 wrestlingsavegame.ser
 *.dat
+*.ser
+*.bin
+*.css
 
 
 #idea

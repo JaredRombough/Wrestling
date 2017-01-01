@@ -94,6 +94,7 @@ public class Match extends Segment implements Serializable {
 
                 for (int i = 0; i < team.size(); i++) {
                     string += team.get(i).getShortName();
+                    string += " (" + team.get(i).getPopularity() + ") ";
                     if (team.size() > 1 && i < team.size() - 1) {
                         string += "/";
                     }
@@ -143,6 +144,7 @@ public class Match extends Segment implements Serializable {
 
     }
 
+    @Override
     public void processSegment() {
         for (List<Worker> team : teams) {
             for (Worker worker : team) {

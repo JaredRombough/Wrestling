@@ -73,23 +73,6 @@ public class Worker implements Serializable {
         return contracts;
     }
 
-    public boolean canNegotiate() {
-
-        boolean canNegotiate = true;
-
-        if (this.hasContract()) {
-            for (Contract contract : contracts) {
-                if (contract.isExclusive()) {
-                    canNegotiate = false;
-                }
-
-            }
-        }
-
-        return canNegotiate;
-
-    }
-
     public boolean canNegotiate(Promotion promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
@@ -97,13 +80,10 @@ public class Worker implements Serializable {
 
         if (this.hasContract()) {
             for (Contract contract : contracts) {
-                if (contract.isExclusive()) {
+                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
                     canNegotiate = false;
                 }
 
-                if (contract.getPromotion().equals(promotion)) {
-                    canNegotiate = false;
-                }
             }
         }
 
@@ -159,6 +139,7 @@ public class Worker implements Serializable {
 
         } else if (rand == 2) {
             this.popularity += 2;
+            
         } else {
             this.popularity += 1;
         }

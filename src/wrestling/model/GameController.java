@@ -3,7 +3,6 @@ package wrestling.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -21,12 +20,14 @@ public final class GameController implements Serializable {
         //initialize the main lists
         workers = new ArrayList<>();
         promotions = new ArrayList<>();
+        contractFactory = new ContractFactory();
 
         //prepare the promotions (and workers)
-        PromotionFactory promotionFactory = new PromotionFactory();
+        PromotionFactory promotionFactory = new PromotionFactory(this);
         promotionFactory.preparePromotions();
         promotions = promotionFactory.getPromotions();
         workers = promotionFactory.getAllWorkers();
+        
 
     }
 
@@ -44,17 +45,18 @@ public final class GameController implements Serializable {
             if (promotion.getAi() != null) {
                 promotion.getAi().dailyUpdate();
             }
-
+            
             //see if the promotion has an event scheduled today, if so process it
             if (promotion.getEventByDate(date) != null) {
 
                 promotion.getEventByDate(date).processEvent();
             }
-
+            
             List<Contract> contractList = new ArrayList(promotion.getContracts());
             for (Contract contract : contractList) {
                 contract.nextDay();
             }
+            
 
         }
 
@@ -68,6 +70,8 @@ public final class GameController implements Serializable {
     public List<Promotion> promotions;
 
     private Promotion playerPromotion;
+    
+    public ContractFactory contractFactory;
 
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
@@ -97,20 +101,7 @@ public final class GameController implements Serializable {
 
         return freeAgents;
     }
-
-    public List<Worker> freeAgents() {
-        List<Worker> freeAgents = new ArrayList<>();
-        for (Worker worker : workers) {
-
-            if (worker.canNegotiate()) {
-
-                freeAgents.add(worker);
-            }
-        }
-
-        return freeAgents;
-    }
-
+    
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
 

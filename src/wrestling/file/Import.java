@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
-import wrestling.model.Contract;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
@@ -20,25 +17,26 @@ import wrestling.model.WorkerFactory;
  * for importing roster files etc
  */
 public class Import {
+    
+    private GameController gameController;
 
     public GameController importController() throws IOException {
 
+        gameController = new GameController();
         promotionsDat();
         workersDat();
-        GameController gameController = new GameController();
         gameController.setPromotions(promotions);
         gameController.setWorkers(allWorkers);
 
-        /*
-        for statistical evaluation of data only
         
+        //for statistical evaluation of data only
         boolean evaluate = false;
         
         if (evaluate) {
             EvaluateData evaluateData = new EvaluateData();
             evaluateData.evaluateData(promotions, allWorkers);
         }
-         */
+        
         return gameController;
     }
 
@@ -215,9 +213,10 @@ public class Import {
                 //sign contracts for workers that match with promotion keys
                 for (Promotion promotion : promotions) {
                     if (promotion.indexNumber() == contractIndx) {
-                        Contract contract = new Contract(worker, promotion);
-                        promotion.addContract(contract);
-                        worker.addContract(contract);
+                        //Contract contract = new Contract(worker, promotion);
+                        gameController.contractFactory.createContract(worker, promotion);
+                        //promotion.addContract(contract);
+                        //worker.addContract(contract);
                     }
                 }
 

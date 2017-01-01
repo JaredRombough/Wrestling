@@ -14,7 +14,7 @@ public class PromotionAi implements Serializable {
     private final GameController gameController;
 
     public PromotionAi(Promotion promotion, GameController gameController) {
-        nextEvent = randRange(2,7);
+        nextEvent = randRange(2, 7);
         this.promotion = promotion;
         this.gameController = gameController;
     }
@@ -39,21 +39,20 @@ public class PromotionAi implements Serializable {
         //sign a contract if we are under the ideal amount of workers
         if (promotion.getRoster().size() < 10 + (promotion.getLevel() * 10)) {
 
-            
             signContract();
 
-        //sign a contract if we have too many expiring contracts coming up
-        //to keep our roster at a reasonable size
-        } else if (promotion.getRoster().size() >= 10 + (promotion.getLevel() * 10)) {
+            //sign a contract if we have too many expiring contracts coming up
+            //to keep our roster at a reasonable size
+        } else if (promotion.getRoster().size() >= 10) {
             int expiringCount = 0;
-            int overMax = promotion.getRoster().size() - 10 + (promotion.getLevel() * 10);
+
             for (Contract contract : promotion.getContracts()) {
                 if (contract.getDuration() < 14) {
                     expiringCount++;
                 }
             }
-            
-            if (expiringCount > overMax) {
+
+            if (expiringCount > 5) {
                 signContract();
             }
         }
@@ -75,15 +74,32 @@ public class PromotionAi implements Serializable {
 
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity()) {
-                Contract contract = new Contract(worker, promotion);
-                worker.addContract(contract);
-                promotion.addContract(contract);
+
+                gameController.contractFactory.createContract(worker, promotion);
+
                 break;
             }
         }
 
     }
 
+    /*
+    
+    ideas?
+    
+    have a list of guys to push
+    loop through list by pop
+    for each loop
+    random chance of match type
+    random chance of pushed opponent for big event
+    random non-pushed opponents/partners fill out match
+    random chance of win/loss
+    
+    
+    have a way to check if a match is good
+    have a budget
+    
+     */
     private void bookEvent() {
 
         int maxSegments = 8;
@@ -124,15 +140,14 @@ public class PromotionAi implements Serializable {
             if (segments.size() > maxSegments) {
                 break;
             }
-            
-            
+
         }
 
         Event event = new Event(segments, gameController.date(), promotion);
         event.scheduleEvent(gameController.date());
 
     }
-    
+
     private int randRange(int low, int high) {
         Random r = new Random();
         return r.nextInt(high - low) + low;

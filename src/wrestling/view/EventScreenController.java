@@ -128,6 +128,8 @@ public class EventScreenController implements Initializable {
 
             //select the first segment so when we come back to do a new event
             //it will be highlighted already
+            //maybe we should have an onEnter and onExit function instead...
+            //although this is basically onExit already (minus the actual exit)
             segmentListView.getSelectionModel().selectFirst();
 
             //have to update the event segments first
@@ -149,7 +151,7 @@ public class EventScreenController implements Initializable {
 
             //tell the main app to show the browser and pass the event
             //so it can be selected by the corresponding controller
-            //mainApp.showBrowser(finishedEvent);
+            mainApp.showLastEvent();
             //advance the day
             mainApp.nextDay();
 

@@ -8,12 +8,15 @@ import java.util.Random;
 
 /*
 for generating promotions in a random game
-*/
+ */
 public class PromotionFactory {
 
     WorkerFactory workerFactory = new WorkerFactory();
 
-    public PromotionFactory() throws IOException {
+    private GameController gameController;
+
+    public PromotionFactory(GameController gameController) throws IOException {
+        this.gameController = gameController;
         numberOfPromotions = 20;
         promotions = new ArrayList<>();
         allWorkers = new ArrayList<>();
@@ -64,9 +67,7 @@ public class PromotionFactory {
 
                     Worker worker = workerFactory.randomWorker(randomRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    Contract contract = new Contract(worker, promotion);
-                    worker.addContract(contract);
-                    promotion.addContract(contract);
+                    gameController.contractFactory.createContract(worker, promotion);
 
                 } while (promotion.getRoster().size() < rosterSize);
 
