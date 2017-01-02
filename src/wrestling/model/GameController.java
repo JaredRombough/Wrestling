@@ -20,14 +20,15 @@ public final class GameController implements Serializable {
         //initialize the main lists
         workers = new ArrayList<>();
         promotions = new ArrayList<>();
+
         contractFactory = new ContractFactory();
+        eventFactory = new EventFactory(this);
 
         //prepare the promotions (and workers)
         PromotionFactory promotionFactory = new PromotionFactory(this);
         promotionFactory.preparePromotions();
         promotions = promotionFactory.getPromotions();
         workers = promotionFactory.getAllWorkers();
-        
 
     }
 
@@ -40,23 +41,20 @@ public final class GameController implements Serializable {
     //only called by MainApp
     public void nextDay() {
 
+        //iterate through all promotions
         for (Promotion promotion : promotions) {
 
+            //if the promotion is controlled by ai, do the daily update
             if (promotion.getAi() != null) {
                 promotion.getAi().dailyUpdate();
             }
-            
-            //see if the promotion has an event scheduled today, if so process it
-            if (promotion.getEventByDate(date) != null) {
 
-                promotion.getEventByDate(date).processEvent();
-            }
-            
+            //update all the contracts associated with the current promotion
             List<Contract> contractList = new ArrayList(promotion.getContracts());
             for (Contract contract : contractList) {
                 contract.nextDay();
+
             }
-            
 
         }
 
@@ -70,8 +68,9 @@ public final class GameController implements Serializable {
     public List<Promotion> promotions;
 
     private Promotion playerPromotion;
-    
+
     public ContractFactory contractFactory;
+    public EventFactory eventFactory;
 
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
@@ -101,7 +100,7 @@ public final class GameController implements Serializable {
 
         return freeAgents;
     }
-    
+
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
 

@@ -143,8 +143,8 @@ public class PromotionAi implements Serializable {
 
         }
 
-        Event event = new Event(segments, gameController.date(), promotion);
-        event.scheduleEvent(gameController.date());
+        gameController.eventFactory.createEvent(segments, gameController.date(), promotion);
+        gameController.eventFactory.processEvent();
 
     }
 

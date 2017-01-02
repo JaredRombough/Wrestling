@@ -38,7 +38,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.MainApp;
-import wrestling.model.Event;
+import wrestling.model.EventFactory;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
@@ -115,12 +115,6 @@ public class EventScreenController implements Initializable {
 
     }
 
-    private Event currentEvent;
-
-    public void setCurrentEvent(Event event) {
-        this.currentEvent = event;
-    }
-
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
 
@@ -136,9 +130,9 @@ public class EventScreenController implements Initializable {
             //this updates the segments list as well as the current event-in-progress
             updateEvent();
 
-            //create a new event with the updated segment list, date, player promotion
-            Event finishedEvent = new Event(segments, gameController.date(), gameController.playerPromotion());
-            finishedEvent.scheduleEvent(gameController.date());
+            //create and process a new event with the updated segment list, date, player promotion
+            gameController.eventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
+            gameController.eventFactory.processEvent();
 
             //clear the segments, so when we come back to do a new event
             //it will be empty again
@@ -177,7 +171,7 @@ public class EventScreenController implements Initializable {
             segments.add(currentController.getSegment());
         }
 
-        currentEvent.setSegments(segments);
+        gameController.eventFactory.setSegments(segments);
 
         updateLabels();
     }
@@ -185,7 +179,7 @@ public class EventScreenController implements Initializable {
     //updates lists and labels
     public void updateLabels() {
 
-        totalCostLabel.setText("Total Cost: $" + currentEvent.currentCost());
+        totalCostLabel.setText("Total Cost: $" + gameController.eventFactory.currentCost());
 
         for (SegmentNameItem current : segmentListView.getItems()) {
 
@@ -437,7 +431,7 @@ public class EventScreenController implements Initializable {
 
     private void newCurrentEvent() {
 
-        this.currentEvent = new Event(gameController.date(), gameController.playerPromotion());
+        gameController.eventFactory.createEvent(gameController.date(), gameController.playerPromotion());
     }
 
     /*
@@ -492,8 +486,7 @@ public class EventScreenController implements Initializable {
 
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date
-            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(currentEvent.getDate())) {
-
+            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(gameController.eventFactory.getDate())) {
                 workersList.add(worker);
             }
 

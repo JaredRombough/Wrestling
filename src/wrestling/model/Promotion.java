@@ -10,8 +10,8 @@ public class Promotion implements Serializable {
     public Promotion() {
         this.contracts = new ArrayList<>();
 
-        events = new ArrayList<>();
-        eventQueue = new ArrayList<>();
+        eventArchives = new ArrayList<>();
+        
         funds = 0;
         name = "Promotion #" + serialNumber;
 
@@ -126,34 +126,16 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-    private final List<EventArchive> events;
+    private final List<EventArchive> eventArchives;
 
-    private final List<Event> eventQueue;
 
     //used for browsing events
-    public List<EventArchive> getEvents() {
-        return Collections.unmodifiableList(events);
+    public List<EventArchive> getEventArchives() {
+        return Collections.unmodifiableList(eventArchives);
     }
-
-    //called by game controller to see if there is an event scheduled today
-    public Event getEventByDate(int date) {
-        Event event = null;
-        for (Event e : eventQueue) {
-            if (e.getDate() == date) {
-                event = e;
-                break;
-            }
-        }
-
-        return event;
-    }
-
-    public void scheduleEvent(Event event) {
-        eventQueue.add(event);
-    }
-
+    
     public void archiveEvent(EventArchive event) {
-        events.add(event);
+        eventArchives.add(event);
     }
 
     private final List<Contract> contracts;

@@ -37,12 +37,13 @@ public class Worker implements Serializable {
     private int reputation;
     private int popularity;
 
+    //should these be specified in the contract, instead of in the worker object?
     private boolean manager;
     private boolean fullTime;
     private boolean mainRoster;
 
     private final List<Contract> contracts;
-    private final List<Event> bookings;
+    private final List<EventFactory> bookings;
 
     public Worker() {
         this.contracts = new ArrayList<>();
@@ -53,11 +54,11 @@ public class Worker implements Serializable {
 
     }
 
-    public void addBooking(Event event) {
+    public void addBooking(EventFactory event) {
         bookings.add(event);
     }
 
-    public List<Event> getBookings() {
+    public List<EventFactory> getBookings() {
         return bookings;
     }
 
@@ -122,7 +123,7 @@ public class Worker implements Serializable {
     public boolean isBooked(int date) {
         boolean isBooked = false;
 
-        for (Event event : bookings) {
+        for (EventFactory event : bookings) {
             if (event.getDate() == date) {
                 isBooked = true;
             }

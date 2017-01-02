@@ -7,63 +7,59 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * an Event has a date, promotion, a list of segments (matches etc.) 
- * when the event is processed, it creates an EventArchive which is passed
- * to the promotion
+ * an Event has a date, promotion, a list of segments (matches etc.) when the
+ * event is processed, it creates an EventArchive which is passed to the
+ * promotion
  *
  */
-public class Event implements Serializable {
-    
+public class EventFactory implements Serializable {
+
     private List<Segment> segments;
-    
+
     private Integer date;
-    
+
     public int getDate() {
         return date;
     }
-    
+
     private Promotion promotion;
-    
+
     public Promotion getPromotion() {
         return this.promotion;
     }
-    
-    private boolean isComplete;
-    
-    public boolean isComplete() {
-        return isComplete;
+
+    private GameController gameController;
+
+    public EventFactory(GameController gameController) {
+        this.gameController = gameController;
     }
-    
-    public Event(Integer date, Promotion promotion) {
-        this.isComplete = false;
-        this.segments = new ArrayList<Segment>();
-        this.date = date;
-        this.promotion = promotion;
-        
+
+    public void clearEvent() {
+        this.segments = new ArrayList<>();
+        this.promotion = null;
+        this.date = gameController.date();
     }
-    
-    public Event(final List<Segment> segments, Integer date, Promotion promotion) {
-        this.isComplete = false;
+
+    public void createEvent(final List<Segment> segments, Integer date, Promotion promotion) {
+        clearEvent();
+        //this.isComplete = false;
         this.segments = new ArrayList<Segment>(segments);
         this.date = date;
         this.promotion = promotion;
-        
+
     }
-    
+
+    public void createEvent(Integer date, Promotion promotion) {
+        clearEvent();
+        //this.isComplete = false;
+        this.segments = new ArrayList<Segment>();
+        this.date = date;
+        this.promotion = promotion;
+
+    }
+
     public void setSegments(final List<Segment> segments) {
         this.segments = segments;
-    }
-    
-    public void scheduleEvent(int date) {
-        this.date = date;
-        for (Worker worker : allWorkers()) {
-            worker.addBooking(this);
-        }
-
-        //this is important, adds the event to the promotions' list
-        //otherwise the event will be lost
-        this.promotion.scheduleEvent(this);
-        
     }
 
     /*
@@ -72,24 +68,23 @@ public class Event implements Serializable {
     injuries or something like that
      */
     public void processEvent() {
-        
+
         processContracts();
-        
+
         processSegments();
-        
+
         promotion.gainPopularity();
         promotion.addFunds(grossProfit());
-        
-        isComplete = true;
-        
-       
-        
+
+        //isComplete = true;
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, getSummary());
         promotion.archiveEvent(eventArchive);
-        
+
+        clearEvent();
+
     }
-    
+
     public String getSummary() {
         String eventString = new String();
 
@@ -113,10 +108,10 @@ public class Event implements Serializable {
 
         return eventString;
     }
-    
+
     private int attendance() {
         int attendance = 0;
-        
+
         switch (promotion.getLevel()) {
             case 0:
                 attendance += 50;
@@ -137,7 +132,7 @@ public class Event implements Serializable {
                 attendance += 5000;
                 break;
         }
-        
+
         return attendance;
     }
 
@@ -147,20 +142,20 @@ public class Event implements Serializable {
     also notifies contracts of appearances
      */
     private void processContracts() {
-        
+
         for (Worker worker : allWorkers()) {
             promotion.removeFunds(worker.getContract(promotion).getUnitCost());
             worker.getContract(promotion).appearance();
-            
+
         }
-        
+
     }
-    
+
     private void processSegments() {
         for (Segment segment : segments) {
             segment.processSegment();
         }
-        
+
     }
 
     //this will return a list of all workers currently booked
@@ -169,11 +164,11 @@ public class Event implements Serializable {
     //one time. useful for cost calculation so we don't pay people
     //twice for the same show
     private List<Worker> allWorkers() {
-        
+
         List allWorkers = new ArrayList<Worker>();
         for (Segment currentSegment : segments) {
             allWorkers.addAll(currentSegment.allWorkers());
-            
+
         }
 
         //this should take the list of workers generated above
@@ -181,39 +176,40 @@ public class Event implements Serializable {
         Set<Worker> allWorkersSet = new LinkedHashSet<>(allWorkers);
         //convert the set back to a list with no duplicates
         allWorkers = new ArrayList<Worker>(allWorkersSet);
-        
+
         return allWorkers;
     }
-    
+
     //dynamic current cost calculation to be called while the player is booking
     public int currentCost() {
-        
+
         int currentCost = 0;
-        
+
         for (Worker currentWorker : allWorkers()) {
+
             currentCost += currentWorker.getContract(promotion).getUnitCost();
         }
-        
+
         return currentCost;
     }
-    
+
     //gross profit for the event
     private int grossProfit() {
         int grossProfit = 0;
-        
+
         grossProfit = attendance() * 10;
-        for(int i = 0; i < promotion.getLevel(); i++) {
+        for (int i = 0; i < promotion.getLevel(); i++) {
             grossProfit += attendance() * 2;
         }
-        
+
         return grossProfit;
     }
-    
+
     @Override
     public String toString() {
         String string = new String();
         string += promotion.toString() + " event, day " + date;
         return string;
     }
-    
+
 }

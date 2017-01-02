@@ -24,7 +24,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.MainApp;
-import wrestling.model.Event;
 import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
@@ -283,7 +282,7 @@ public class BrowserController implements Initializable {
     private void browseEvents() {
         clearLast();
 
-        setListViewContentEvents(eventsListView, currentPromotion.getEvents());
+        setListViewContentEvents(eventsListView, currentPromotion.getEventArchives());
 
         gridPane.add(eventSummary, 1, 1);
         GridPane.setRowSpan(eventSummary, 2);
@@ -391,7 +390,7 @@ public class BrowserController implements Initializable {
     private void prepareEventBrowsing() {
 
         //get the listview ready
-        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEvents()));
+        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEventArchives()));
 
         eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EventArchive>() {
             @Override
