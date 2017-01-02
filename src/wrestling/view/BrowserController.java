@@ -209,6 +209,7 @@ public class BrowserController implements Initializable {
         eventSortedList.comparatorProperty().bind(sortBox.valueProperty());
 
         listView.setItems(eventSortedList);
+        sortBox.getSelectionModel().selectFirst();
 
     }
 
@@ -242,25 +243,13 @@ public class BrowserController implements Initializable {
 
         }
     }
-/*
-    public void showEvent(EventArchive event) {
-        //this would take an event, find the promotion, select it properly
-        //ie so another screen can send to the browser with a particular event already selected on open
-        //might want this with workers, etc
-        setCurrentPromotion(event.getPromotionName());
-        eventsListView.getSelectionModel().select(event);
-        eventSummary.setText(event.getSummary());
-        eventsButton.fire();
 
-    }
-    */
     /*
     meant to be called from the event booking screen (or perhaps elsewhere)
     and shows the most recent event. right now it just selects the first one
     on the list
-    */
-    public void showLastEvent()
-    {
+     */
+    public void showLastEvent() {
         setCurrentPromotion(gameController.playerPromotion());
         eventsListView.getSelectionModel().selectFirst();
         eventsButton.fire();
@@ -300,7 +289,6 @@ public class BrowserController implements Initializable {
 
         clearLast();
 
-        //setListViewContent(workersListView, currentPromotion.getRoster());
         setListViewWorkers(workersListView, currentPromotion.getRoster());
 
         gridPane.add(workersListView, 0, 1);
@@ -317,11 +305,20 @@ public class BrowserController implements Initializable {
 
     private void browseFreeAgents() {
 
-        browseWorkers();
-        //slight inefficient hack, updates the sets the listview content after we've already
-        //set it in browseFreeAgents()
-        //setListViewContent(workersListView, gameController.freeAgents(gameController.playerPromotion()));
+        clearLast();
+
         setListViewWorkers(workersListView, gameController.freeAgents(gameController.playerPromotion()));
+
+        gridPane.add(workersListView, 0, 1);
+        GridPane.setRowSpan(workersListView, 2);
+        gridPane.add(workerOverviewPane, 1, 1);
+
+        lastListView = workersListView;
+        lastDisplayNode = workerOverviewPane;
+        lastSortedList = workerSortedList;
+
+        workersListView.getSelectionModel().selectFirst();
+
     }
 
     @Override
