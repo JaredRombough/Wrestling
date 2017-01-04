@@ -11,7 +11,7 @@ public class Promotion implements Serializable {
         this.contracts = new ArrayList<>();
 
         eventArchives = new ArrayList<>();
-        
+
         funds = 0;
         name = "Promotion #" + serialNumber;
 
@@ -31,14 +31,30 @@ public class Promotion implements Serializable {
         return ai;
     }
 
+    private boolean hasAi() {
+        return (ai != null);
+    }
 
-    public List<Worker> getRoster() {
-        
+    public List<Worker> getActiveRoster() {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (contract.getWorker().isFullTime() && !contract.getWorker().isManager()) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getFullRoster() {
+
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             roster.add(contract.getWorker());
         }
-        
+
         return roster;
     }
 
@@ -82,11 +98,11 @@ public class Promotion implements Serializable {
         int totalPop = 0;
         int averagePop = 0;
 
-        if (getRoster().size() > 0) {
-            for (Worker worker : getRoster()) {
+        if (getFullRoster().size() > 0) {
+            for (Worker worker : getFullRoster()) {
                 totalPop += worker.getPopularity();
             }
-            averagePop = totalPop / getRoster().size();
+            averagePop = totalPop / getFullRoster().size();
         }
 
         return averagePop;
@@ -101,7 +117,7 @@ public class Promotion implements Serializable {
     public void gainPopularity() {
         popularity += 1;
         if (popularity >= 100) {
-            if (level != 4) {
+            if (level != 5) {
                 level += 1;
                 popularity = 10;
             } else {
@@ -128,12 +144,11 @@ public class Promotion implements Serializable {
 
     private final List<EventArchive> eventArchives;
 
-
     //used for browsing events
     public List<EventArchive> getEventArchives() {
         return Collections.unmodifiableList(eventArchives);
     }
-    
+
     public void archiveEvent(EventArchive event) {
         eventArchives.add(event);
     }
@@ -148,7 +163,7 @@ public class Promotion implements Serializable {
 
     public void removeFunds(Integer expense) {
         funds -= expense;
-        if(funds < 0) {
+        if (funds < 0) {
             funds = 0;
         }
     }
@@ -164,21 +179,23 @@ public class Promotion implements Serializable {
 
     public void addContract(Contract contract) {
         this.contracts.add(contract);
-        
+        if (hasAi()) {
+            getAi().updatePushList();
+        }
 
     }
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
-        
-        
+        if (hasAi()) {
+            getAi().updatePushList();
+        }
 
     }
 
     public List<Contract> getContracts() {
         return contracts;
     }
-    
 
     //the maximum popularity worker the promotion can hire
     public int maxPopularity() {

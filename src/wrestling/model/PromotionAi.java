@@ -1,11 +1,12 @@
 package wrestling.model;
 
+import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.factory.ContractFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 public class PromotionAi implements Serializable {
 
@@ -14,47 +15,73 @@ public class PromotionAi implements Serializable {
     private final GameController gameController;
 
     public PromotionAi(Promotion promotion, GameController gameController) {
-        nextEvent = randRange(2, 7);
+        nextEvent = UtilityFunctions.randRange(2, 7);
         this.promotion = promotion;
         this.gameController = gameController;
+        this.pushList = new ArrayList<>();
     }
 
     //the date the next event is scheduled for
     private int nextEvent;
 
+    private List<Worker> pushList;
+
+    private int idealRosterSize() {
+        return 10 + (promotion.getLevel() * 10);
+    }
+
+    public void updatePushList() {
+        int maxPushListSize = 2 + (promotion.getLevel() * 2);
+
+        List<Worker> departedWorkers = new ArrayList<>();
+
+        for (Worker worker : pushList) {
+            if (!promotion.getFullRoster().contains(worker)) {
+                departedWorkers.add(worker);
+            }
+        }
+
+        pushList.removeAll(departedWorkers);
+
+        //list is too small
+        if (promotion.getFullRoster().size() > maxPushListSize
+                && pushList.size() < maxPushListSize) {
+
+            for (Worker worker : promotion.getFullRoster()) {
+                if (!pushList.contains(worker) && pushList.size() < maxPushListSize
+                        && !worker.isManager() && worker.isFullTime()) {
+                    pushList.add(worker);
+                } else if (pushList.size() >= maxPushListSize) {
+                    break;
+                }
+            }
+
+            //list is too big
+        } else if (promotion.getFullRoster().size() > maxPushListSize
+                && pushList.size() > maxPushListSize) {
+            while (pushList.size() > maxPushListSize) {
+                pushList.remove(0);
+            }
+        }
+
+    }
+
     //call this method every day for each ai
     //put the general decision making sequence here
     public void dailyUpdate() {
 
+        while (promotion.getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
+            signContract();
+        }
+
         //book a show if we have one scheduled today
-        if (gameController.date() == nextEvent && promotion.getRoster().size() >= 2) {
+        if (gameController.date() == nextEvent && promotion.getFullRoster().size() >= 2) {
             bookEvent();
             //schedule another match for next week
             nextEvent += 7;
-        } else if (gameController.date() == nextEvent && promotion.getRoster().size() < 2) {
+        } else if (gameController.date() == nextEvent && promotion.getFullRoster().size() < 2) {
             //we don't have enough workers, postpone
             nextEvent += 7;
-        }
-
-        //sign a contract if we are under the ideal amount of workers
-        if (promotion.getRoster().size() < 10 + (promotion.getLevel() * 10)) {
-
-            signContract();
-
-            //sign a contract if we have too many expiring contracts coming up
-            //to keep our roster at a reasonable size
-        } else if (promotion.getRoster().size() >= 10) {
-            int expiringCount = 0;
-
-            for (Contract contract : promotion.getContracts()) {
-                if (contract.getDuration() < 14) {
-                    expiringCount++;
-                }
-            }
-
-            if (expiringCount > 5) {
-                signContract();
-            }
         }
 
     }
@@ -75,7 +102,7 @@ public class PromotionAi implements Serializable {
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity()) {
 
-                gameController.contractFactory.createContract(worker, promotion);
+                ContractFactory.createContract(worker, promotion);
 
                 break;
             }
@@ -104,10 +131,12 @@ public class PromotionAi implements Serializable {
 
         int maxSegments = 8;
 
-        sortByPopularity(promotion.getRoster());
+        if (promotion.getLevel() > 3) {
+            maxSegments += 2;
+        }
 
         //check for workers that are already booked on this date
-        List<Worker> eventRoster = promotion.getRoster();
+        List<Worker> eventRoster = promotion.getFullRoster();
         List<Worker> alreadyBooked = new ArrayList<>();
 
         for (Worker worker : eventRoster) {
@@ -128,14 +157,79 @@ public class PromotionAi implements Serializable {
 
         eventRoster.removeAll(nonCompetitors);
 
-        List<Segment> segments = new ArrayList<>();
+        List<Worker> pushListPresent = new ArrayList<>();
 
-        //go through the roster by popularity and make singles matches
-        for (int i = 0; i < eventRoster.size(); i += 2) {
-            if (eventRoster.size() > i + 1) {
-                Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
-                segments.add(match);
+        for (int i = 0; i < pushList.size(); i++) {
+            if (eventRoster.contains(pushList.get(i))) {
+                eventRoster.remove(pushList.get(i));
+                pushListPresent.add(pushList.get(i));
             }
+        }
+        eventRoster.removeAll(pushList);
+        sortByPopularity(pushList);
+        sortByPopularity(eventRoster);
+
+        List<Segment> segments = new ArrayList<>();
+        List<Worker> matchBooked = new ArrayList<>();
+
+        for (int i = 0; i < pushListPresent.size(); i++) {
+
+            if (eventRoster.size() == matchBooked.size()) {
+                break;
+            }
+
+            //here we would randomly determine if it is a match or other segment type
+            //determine the number of teams (usually 2)
+            int teams = 2;
+            int random = UtilityFunctions.randRange(1, 10);
+            if (random > 8) {
+                teams += 10 - random;
+            }
+
+            //determine the size of teams (usually 1)
+            int teamSize = 1;
+            random = UtilityFunctions.randRange(1, 10);
+            if (random > 8) {
+                teamSize += 10 - random;
+            }
+
+            List<List<Worker>> matchTeams = new ArrayList<>();
+
+            //iterate through the teams we have to fill
+            for (int a = 0; a < teams; a++) {
+
+                List<Worker> team = new ArrayList<>();
+
+                //add the push target if this is the first spot on the first team
+                if (matchTeams.isEmpty() && team.isEmpty()) {
+                    team.add(pushList.get(i));
+                }
+
+                //iterate through the event roster to fill in the team
+                for (Worker worker : eventRoster) {
+                    //make sure the team isn't already full
+                    if (team.size() >= teamSize) {
+                        break;
+                    }
+
+                    //add the worker if they aren't in a match and they aren't being pushed
+                    if (!matchBooked.contains(worker)
+                            && !pushList.contains(worker)) {
+                        team.add(worker);
+                    }
+                }
+
+                matchTeams.add(team);
+                matchBooked.addAll(team);
+            }
+
+            Match match = new Match(matchTeams);
+
+            if (UtilityFunctions.randRange(1, 10) > 5 && matchTeams.size() >= 1) {
+                match.setWinner(1);
+            }
+
+            segments.add(match);
 
             if (segments.size() > maxSegments) {
                 break;
@@ -143,14 +237,27 @@ public class PromotionAi implements Serializable {
 
         }
 
+        //fill up the segments if we don't have enough for some reason
+        if (segments.size()
+                < maxSegments) {
+            eventRoster.removeAll(matchBooked);
+            //go through the roster by popularity and make singles matches
+            for (int i = 0; i < eventRoster.size(); i += 2) {
+                if (eventRoster.size() > i + 1) {
+                    Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
+                    segments.add(match);
+                }
+
+                if (segments.size() > maxSegments) {
+                    break;
+                }
+
+            }
+        }
+
         gameController.eventFactory.createEvent(segments, gameController.date(), promotion);
         gameController.eventFactory.processEvent();
 
-    }
-
-    private int randRange(int low, int high) {
-        Random r = new Random();
-        return r.nextInt(high - low) + low;
     }
 
 }

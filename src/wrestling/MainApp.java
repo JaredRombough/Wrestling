@@ -33,8 +33,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-
-
+import wrestling.model.MatchRecord;
+import wrestling.model.Worker;
 
 public class MainApp extends Application {
 
@@ -51,7 +51,6 @@ public class MainApp extends Application {
 
     public MainApp() {
         this.cssEnabled = true;
-        
 
     }
 
@@ -74,13 +73,14 @@ public class MainApp extends Application {
         prepareScreens();
         showBrowser();
         updateLabels();
-        
+
         //number of days to run automatically at start of game
-        int preRunDays = 900;
-        
+        int preRunDays = 600;
+
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
             System.out.println("day: " + gameController.date());
+
         }
 
         setButtonsDisable(false);
@@ -128,23 +128,21 @@ public class MainApp extends Application {
         }
 
     }
-    
-    
-    
+
     public void saveGame() throws FileNotFoundException, IOException {
-        
+
         Kryo kryo = new Kryo();
-      
+
         Output output = new Output(new FileOutputStream("file.bin"));
-        
+
         kryo.writeObject(output, gameController);
         output.close();
     }
 
     public void loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
-        
+
         Kryo kryo = new Kryo();
-        
+
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
         Input input = new Input(new FileInputStream("file.bin"));
         gameController = kryo.readObject(input, GameController.class);
@@ -252,7 +250,7 @@ public class MainApp extends Application {
      */
     public void showLastEvent() {
         showBrowser();
-        
+
         browserController.showLastEvent();
 
     }
@@ -338,11 +336,11 @@ public class MainApp extends Application {
     }
 
     public void nextDay() throws IOException {
-        
+
         gameController.nextDay();
-        
+
         saveGame();
-        
+
         updateLabels();
     }
 

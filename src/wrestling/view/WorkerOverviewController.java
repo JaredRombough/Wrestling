@@ -112,7 +112,7 @@ public class WorkerOverviewController implements Initializable {
 
     public void updateLabels() {
 
-        if (currentPromotion.getRoster().contains(currentWorker) || 
+        if (currentPromotion.getFullRoster().contains(currentWorker) || 
                 gameController.freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
@@ -139,7 +139,7 @@ public class WorkerOverviewController implements Initializable {
             }
 
             contractPaneController.updateLabels();
-        } else if (!currentPromotion.getRoster().contains(currentWorker)) {
+        } else if (!currentPromotion.getFullRoster().contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
 
             currentWorker = null;

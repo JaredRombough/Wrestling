@@ -52,6 +52,7 @@ public class Contract implements Serializable {
     private void terminateContract() {
 
         this.worker.removeContract(this);
+
         this.promotion.removeContract(this);
 
     }

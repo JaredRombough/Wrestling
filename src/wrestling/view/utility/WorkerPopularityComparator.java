@@ -1,4 +1,4 @@
-package wrestling.view.sort;
+package wrestling.view.utility;
 
 import java.util.Comparator;
 import wrestling.model.Worker;

@@ -1,7 +1,9 @@
 package wrestling.model;
 
+import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Match extends Segment implements Serializable {
@@ -23,7 +25,7 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public List<Worker> allWorkers() {
-        List<Worker> allWorkersList = new ArrayList<Worker>();
+        List<Worker> allWorkersList = new ArrayList<>();
 
         for (List<Worker> team : teams) {
             allWorkersList.addAll(team);
@@ -37,6 +39,7 @@ public class Match extends Segment implements Serializable {
 
     private int matchRating;
 
+    @Override
     public int segmentRating() {
         return matchRating;
     }
@@ -76,11 +79,25 @@ public class Match extends Segment implements Serializable {
 
     }
 
+    public void setWinner(int winnerIndex) {
+        if (winnerIndex < teams.size()) {
+            setWinner(teams.get(winnerIndex));
+        }
+
+    }
+
+    public void setWinner(List<Worker> winningTeam) {
+        if (teams.contains(winningTeam)) {
+            this.winner = winningTeam;
+            Collections.swap(teams, teams.indexOf(winningTeam), 0);
+        }
+    }
+
     @Override
     public boolean isComplete() {
 
         //consider a match completed if it has any workers (placeholder)
-        return !allWorkers().isEmpty();
+        return !allWorkers().isEmpty() && !getWinner().isEmpty();
     }
 
     @Override
@@ -146,13 +163,45 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public void processSegment() {
+
+        int winnerPop = 0;
+
+        for (Worker worker : getWinner()) {
+            winnerPop += worker.getPopularity();
+        }
+
+        winnerPop = winnerPop / getWinner().size();
+
         for (List<Worker> team : teams) {
-            for (Worker worker : team) {
-                if (team.equals(winner)) {
-                    worker.gainPopularity();
-                } else {
-                    worker.losePopularity();
+
+            if (!team.equals(getWinner())) {
+                int teamPop = 0;
+
+                for (Worker worker : team) {
+                    teamPop += worker.getPopularity();
                 }
+
+                teamPop = teamPop / getWinner().size();
+
+                if (teamPop > winnerPop) {
+                    for (Worker worker : getWinner()) {
+                        worker.gainPopularity();
+                    }
+
+                    for (Worker worker : team) {
+                        if (UtilityFunctions.randRange(1, 3) == 1) {
+                            worker.losePopularity();
+                        }
+
+                    }
+                } else {
+                    for (Worker worker : getWinner()) {
+                        if (UtilityFunctions.randRange(1, 3) == 1) {
+                            worker.gainPopularity();
+                        }
+                    }
+                }
+
             }
         }
     }

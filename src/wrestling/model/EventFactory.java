@@ -24,17 +24,13 @@ public class EventFactory implements Serializable {
 
     private Promotion promotion;
 
-    public Promotion getPromotion() {
-        return this.promotion;
-    }
-
-    private GameController gameController;
+    private final GameController gameController;
 
     public EventFactory(GameController gameController) {
         this.gameController = gameController;
     }
 
-    public void clearEvent() {
+    private void clearEvent() {
         this.segments = new ArrayList<>();
         this.promotion = null;
         this.date = gameController.date();
@@ -42,8 +38,8 @@ public class EventFactory implements Serializable {
 
     public void createEvent(final List<Segment> segments, Integer date, Promotion promotion) {
         clearEvent();
-        //this.isComplete = false;
-        this.segments = new ArrayList<Segment>(segments);
+
+        this.segments = new ArrayList<>(segments);
         this.date = date;
         this.promotion = promotion;
 
@@ -51,8 +47,8 @@ public class EventFactory implements Serializable {
 
     public void createEvent(Integer date, Promotion promotion) {
         clearEvent();
-        //this.isComplete = false;
-        this.segments = new ArrayList<Segment>();
+
+        this.segments = new ArrayList<>();
         this.date = date;
         this.promotion = promotion;
 
@@ -76,16 +72,15 @@ public class EventFactory implements Serializable {
         promotion.gainPopularity();
         promotion.addFunds(grossProfit());
 
-        //isComplete = true;
         //this is all that will remain of the event
-        EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, getSummary());
+        EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, generateSummaryString());
         promotion.archiveEvent(eventArchive);
 
         clearEvent();
 
     }
 
-    public String getSummary() {
+    private String generateSummaryString() {
         String eventString = new String();
 
         for (Segment segment : segments) {
@@ -105,6 +100,10 @@ public class EventFactory implements Serializable {
         eventString += "Total cost: $" + currentCost();
         eventString += "\n";
         eventString += "Gross profit: $" + grossProfit();
+        eventString += "\n";
+        eventString += "Roster size: " + promotion.getFullRoster().size();
+        eventString += "\n";
+        eventString += "Promotion Level: " + promotion.getLevel() + " (" + promotion.getPopulatirty() + ")";
 
         return eventString;
     }
@@ -153,7 +152,16 @@ public class EventFactory implements Serializable {
 
     private void processSegments() {
         for (Segment segment : segments) {
-            segment.processSegment();
+            if (segment.isComplete()) {
+                segment.processSegment();
+
+                if (segment.getClass().equals(Match.class)) {
+                    for (Worker worker : segment.allWorkers()) {
+                        worker.addMatchRecord(new MatchRecord(segment.toString(), date));
+                    }
+                }
+            }
+
         }
 
     }

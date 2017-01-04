@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import wrestling.model.factory.PromotionFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,14 +22,9 @@ public final class GameController implements Serializable {
         workers = new ArrayList<>();
         promotions = new ArrayList<>();
 
-        contractFactory = new ContractFactory();
         eventFactory = new EventFactory(this);
 
-        //prepare the promotions (and workers)
-        PromotionFactory promotionFactory = new PromotionFactory(this);
-        promotionFactory.preparePromotions();
-        promotions = promotionFactory.getPromotions();
-        workers = promotionFactory.getAllWorkers();
+        PromotionFactory.preparePromotions(this);
 
     }
 
@@ -44,16 +40,16 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotions) {
 
-            //if the promotion is controlled by ai, do the daily update
-            if (promotion.getAi() != null) {
-                promotion.getAi().dailyUpdate();
-            }
-
             //update all the contracts associated with the current promotion
-            List<Contract> contractList = new ArrayList(promotion.getContracts());
+            List<Contract> contractList = new ArrayList<>(promotion.getContracts());
             for (Contract contract : contractList) {
                 contract.nextDay();
 
+            }
+
+            //if the promotion is controlled by ai, do the daily update
+            if (promotion.getAi() != null) {
+                promotion.getAi().dailyUpdate();
             }
 
         }
@@ -69,7 +65,6 @@ public final class GameController implements Serializable {
 
     private Promotion playerPromotion;
 
-    public ContractFactory contractFactory;
     public EventFactory eventFactory;
 
     public void setPlayerPromotion(Promotion promotion) {

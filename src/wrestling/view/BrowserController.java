@@ -28,9 +28,9 @@ import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.sort.EventDateComparator;
-import wrestling.view.sort.WorkerNameComparator;
-import wrestling.view.sort.WorkerPopularityComparator;
+import wrestling.view.utility.EventDateComparator;
+import wrestling.view.utility.WorkerNameComparator;
+import wrestling.view.utility.WorkerPopularityComparator;
 
 /**
  *
@@ -289,7 +289,7 @@ public class BrowserController implements Initializable {
 
         clearLast();
 
-        setListViewWorkers(workersListView, currentPromotion.getRoster());
+        setListViewWorkers(workersListView, currentPromotion.getFullRoster());
 
         gridPane.add(workersListView, 0, 1);
         GridPane.setRowSpan(workersListView, 2);
@@ -367,7 +367,7 @@ public class BrowserController implements Initializable {
         }
 
         //get the listview ready
-        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getRoster()));
+        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getFullRoster()));
 
         workersListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Worker>() {
             @Override

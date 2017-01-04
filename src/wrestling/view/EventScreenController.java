@@ -480,7 +480,7 @@ public class EventScreenController implements Initializable {
         //get the workers and add them to the listview on the left
         ObservableList<Worker> workersList = FXCollections.observableArrayList();
 
-        List<Worker> roster = gameController.playerPromotion().getRoster();
+        List<Worker> roster = gameController.playerPromotion().getFullRoster();
 
         for (Worker worker : roster) {
 

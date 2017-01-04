@@ -1,9 +1,9 @@
 package wrestling.model;
 
+import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Worker implements Serializable {
 
@@ -46,8 +46,9 @@ public class Worker implements Serializable {
     private final List<EventFactory> bookings;
 
     public Worker() {
-        this.contracts = new ArrayList<>();
-        this.bookings = new ArrayList<>();
+        contracts = new ArrayList<>();
+        bookings = new ArrayList<>();
+        matchRecords = new ArrayList<>();
 
         name = "Worker #" + serialNumber;
         serialNumber++;
@@ -79,6 +80,10 @@ public class Worker implements Serializable {
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
 
+        if (popularity > promotion.maxPopularity()) {
+            canNegotiate = false;
+        }
+
         if (this.hasContract()) {
             for (Contract contract : contracts) {
                 if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
@@ -103,6 +108,10 @@ public class Worker implements Serializable {
             }
         }
 
+        if (thisContract == null) {
+            System.out.println("NULL CONTRACT\n" + name + "\n" + promotion.getName());
+        }
+
         return thisContract;
     }
 
@@ -123,8 +132,8 @@ public class Worker implements Serializable {
     public boolean isBooked(int date) {
         boolean isBooked = false;
 
-        for (EventFactory event : bookings) {
-            if (event.getDate() == date) {
+        for (MatchRecord record : matchRecords) {
+            if (record.getMatchDate() == date) {
                 isBooked = true;
             }
         }
@@ -134,24 +143,42 @@ public class Worker implements Serializable {
     }
 
     public void gainPopularity() {
-        int rand = rand3();
 
-        if (rand == 1) {
+        int maxPopularity = 0;
 
-        } else if (rand == 2) {
-            this.popularity += 2;
-            
-        } else {
-            this.popularity += 1;
+        for (Contract contract : contracts) {
+            if (contract.getPromotion().maxPopularity() > maxPopularity) {
+                maxPopularity = contract.getPromotion().maxPopularity();
+            }
+        }
+
+        if (popularity < maxPopularity
+                || UtilityFunctions.randRange(1, 10) == 1) {
+
+            if (UtilityFunctions.randRange(1, 3) == 1) {
+
+                this.popularity += 1;
+            }
         }
 
         if (popularity > 100) {
             popularity = 100;
         }
+
+    }
+
+    private List<MatchRecord> matchRecords;
+
+    public void addMatchRecord(MatchRecord record) {
+        matchRecords.add(record);
+    }
+
+    public List<MatchRecord> getMatchRecods() {
+        return matchRecords;
     }
 
     public void losePopularity() {
-        int rand = rand3();
+        int rand = UtilityFunctions.randRange(1, 3);
 
         if (rand == 1) {
 
@@ -164,11 +191,6 @@ public class Worker implements Serializable {
         if (popularity < 0) {
             popularity = 0;
         }
-    }
-
-    private int rand3() {
-        Random r = new Random();
-        return r.nextInt(3 - 0) + 0;
     }
 
     /**

@@ -1,19 +1,18 @@
-package wrestling.model;
+package wrestling.model.factory;
 
-import java.io.Serializable;
+import wrestling.model.Contract;
+import wrestling.model.Promotion;
+import wrestling.model.Worker;
 
 /**
  * attached to the gameController, it is called whenever a new contract is to be
  * created
  *
  */
-public class ContractFactory implements Serializable {
-
-    public ContractFactory() {
-    }
+public final class ContractFactory {
 
     //create a contract with predetermined attributes
-    public void createContract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
+    public static void createContract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost) {
         //create the contract
         Contract contract = new Contract();
 
@@ -30,7 +29,7 @@ public class ContractFactory implements Serializable {
     }
 
     //create a default contract
-    public void createContract(Worker worker, Promotion promotion) {
+    public static void createContract(Worker worker, Promotion promotion) {
 
         //create the contract
         Contract contract = new Contract();
@@ -39,7 +38,7 @@ public class ContractFactory implements Serializable {
         contract.setPromotion(promotion);
 
         contract.setMonthly(true);
-        
+
         //make contract exclusive for high level promotions
         if (promotion.getLevel() >= 3) {
             contract.setExclusive(true);
@@ -48,7 +47,7 @@ public class ContractFactory implements Serializable {
         }
 
         int duration = 30;
-        
+
         //scale the duration and exclusivity based on promotion level
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 30;
@@ -64,10 +63,10 @@ public class ContractFactory implements Serializable {
 
     }
 
- /*
+    /*
     calculate the cost for a contract if not explicitly specified
      */
-    private void calculateCost(Contract contract) {
+    private static void calculateCost(Contract contract) {
 
         int unitCost = 0;
 

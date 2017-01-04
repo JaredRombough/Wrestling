@@ -7,17 +7,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
+import wrestling.model.factory.ContractFactory;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.WorkerFactory;
+import wrestling.model.factory.WorkerFactory;
 
 /**
  *
  * for importing roster files etc
  */
 public class Import {
-    
+
     private GameController gameController;
 
     public GameController importController() throws IOException {
@@ -28,15 +29,14 @@ public class Import {
         gameController.setPromotions(promotions);
         gameController.setWorkers(allWorkers);
 
-        
         //for statistical evaluation of data only
         boolean evaluate = false;
-        
+
         if (evaluate) {
             EvaluateData evaluateData = new EvaluateData();
             evaluateData.evaluateData(promotions, allWorkers);
         }
-        
+
         return gameController;
     }
 
@@ -141,8 +141,6 @@ public class Import {
         boolean fullTime = true;
         boolean mainRoster = true;
 
-        WorkerFactory workerFactory = new WorkerFactory();
-
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
@@ -199,7 +197,7 @@ public class Import {
 
             if (counter == (19 * 16) + 3) {
                 currentLine = currentLine.substring(3, 28).trim();
-                Worker worker = workerFactory.randomWorker();
+                Worker worker = WorkerFactory.randomWorker();
                 worker.setName(currentLine);
                 worker.setShortName(currentLine);
                 worker.setFlying(flying);
@@ -213,10 +211,9 @@ public class Import {
                 //sign contracts for workers that match with promotion keys
                 for (Promotion promotion : promotions) {
                     if (promotion.indexNumber() == contractIndx) {
-                        //Contract contract = new Contract(worker, promotion);
-                        gameController.contractFactory.createContract(worker, promotion);
-                        //promotion.addContract(contract);
-                        //worker.addContract(contract);
+
+                        ContractFactory.createContract(worker, promotion);
+
                     }
                 }
 
