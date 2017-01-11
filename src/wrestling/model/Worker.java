@@ -42,12 +42,12 @@ public class Worker implements Serializable {
     private boolean fullTime;
     private boolean mainRoster;
 
-    private final List<Contract> contracts;
-    private final List<EventFactory> bookings;
+    private final List<Contract> contracts = new ArrayList<>();
+    private final List<EventFactory> bookings = new ArrayList<>();
+    private final List<Title> titles = new ArrayList<>();
 
     public Worker() {
-        contracts = new ArrayList<>();
-        bookings = new ArrayList<>();
+        
         matchRecords = new ArrayList<>();
 
         name = "Worker #" + serialNumber;
@@ -69,6 +69,14 @@ public class Worker implements Serializable {
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
+    }
+    
+    public void addTitle(Title title) {
+        this.titles.add(title);
+    }
+    
+    public void removeTitle(Title title) {
+        this.titles.remove(title);
     }
 
     public List getContracts() {
@@ -101,6 +109,7 @@ public class Worker implements Serializable {
     }
 
     public Contract getContract(Promotion promotion) {
+        
         Contract thisContract = null;
         for (Contract current : contracts) {
             if (current.getPromotion().equals(promotion)) {

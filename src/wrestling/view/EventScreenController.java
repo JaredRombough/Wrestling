@@ -130,8 +130,7 @@ public class EventScreenController implements Initializable {
             //this updates the segments list as well as the current event-in-progress
             updateEvent();
 
-            //create and process a new event with the updated segment list, date, player promotion
-            gameController.eventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
+            //process the updated event
             gameController.eventFactory.processEvent();
 
             //clear the segments, so when we come back to do a new event
@@ -171,7 +170,7 @@ public class EventScreenController implements Initializable {
             segments.add(currentController.getSegment());
         }
 
-        gameController.eventFactory.setSegments(segments);
+        gameController.eventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
 
         updateLabels();
     }

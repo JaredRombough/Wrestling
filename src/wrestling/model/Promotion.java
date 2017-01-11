@@ -153,7 +153,12 @@ public class Promotion implements Serializable {
         eventArchives.add(event);
     }
 
-    private final List<Contract> contracts;
+    
+    private List<Title> titles = new ArrayList<>();
+    
+    public void addTitle(Title title) {
+        this.getTitles().add(title);
+    }
 
     private Integer funds;
 
@@ -176,6 +181,8 @@ public class Promotion implements Serializable {
     public String toString() {
         return name;
     }
+    
+    private final List<Contract> contracts;
 
     public void addContract(Contract contract) {
         this.contracts.add(contract);
@@ -205,5 +212,12 @@ public class Promotion implements Serializable {
             max = 100;
         }
         return max;
+    }
+
+    /**
+     * @return the titles
+     */
+    public List<Title> getTitles() {
+        return titles;
     }
 }

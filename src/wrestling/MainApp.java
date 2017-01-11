@@ -26,15 +26,13 @@ import wrestling.view.BrowserController;
 import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
-import static javafx.application.Application.launch;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import wrestling.model.MatchRecord;
-import wrestling.model.Worker;
+import static javafx.application.Application.launch;
 
 public class MainApp extends Application {
 
@@ -75,11 +73,14 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 600;
+        int preRunDays = 0;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
-            System.out.println("day: " + gameController.date());
+            if(i % 10 == 5) {
+                System.out.println("day: " + gameController.date());
+            }
+                    
 
         }
 

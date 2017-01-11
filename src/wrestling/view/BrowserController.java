@@ -2,8 +2,6 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -27,10 +25,12 @@ import wrestling.MainApp;
 import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
+import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.view.utility.EventDateComparator;
-import wrestling.view.utility.WorkerNameComparator;
-import wrestling.view.utility.WorkerPopularityComparator;
+import wrestling.view.comparators.EventDateComparator;
+import wrestling.view.comparators.TitleNameComparator;
+import wrestling.view.comparators.WorkerNameComparator;
+import wrestling.view.comparators.WorkerPopularityComparator;
 
 /**
  *
@@ -45,7 +45,7 @@ public class BrowserController implements Initializable {
         this.mainApp = mainApp;
     }
 
-    public void setGameController(GameController gameController) {
+    public void setGameController(GameController gameController) throws IOException {
         this.gameController = gameController;
         initializeMore();
     }
@@ -86,8 +86,6 @@ public class BrowserController implements Initializable {
     @FXML
     private ComboBox sortBox;
 
-    private ObservableList<Comparator<Worker>> workerComparators;
-
     private Button lastButton;
 
     //for keeping track of the last nodes displayed 
@@ -95,12 +93,6 @@ public class BrowserController implements Initializable {
     private Node lastDisplayNode;
     private ListView lastListView;
 
-    private AnchorPane workerOverviewPane;
-    private WorkerOverviewController workerOverviewPaneController;
-    private Label eventSummary;
-
-    private ListView eventsListView;
-    private ListView workersListView;
     private Label categoryButton;
 
     private Promotion currentPromotion;
@@ -124,7 +116,10 @@ public class BrowserController implements Initializable {
                 + "\tPopularity " + currentPromotion.getPopulatirty()
                 + "\tFunds: " + currentPromotion.getFunds());
 
-        workerOverviewPaneController.setCurrentPromotion(currentPromotion);
+        //tell the workeroverviewcontroller which promotion we are looking at
+        //other controllers would be notified here too if necessary
+        WorkerOverviewController wo = (WorkerOverviewController) browseWorkers.controller;
+        wo.setCurrentPromotion(currentPromotion);
 
         //this is kind of a hack but it gets the main listview
         //to display whatever was last selected (roster, events, etc.)
@@ -134,44 +129,60 @@ public class BrowserController implements Initializable {
 
     }
 
-    private void sortByPopularity(List<Worker> workerList) {
-        //sort roster by popularity
-        Collections.sort(workerList, new Comparator<Worker>() {
-            @Override
-            public int compare(Worker w1, Worker w2) {
-                return -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
-            }
-        });
-    }
-    private SortedList<Worker> workerSortedList;
-    private SortedList<EventArchive> eventSortedList;
+    //keeps track of the last sortedlist so we can clear it when needed
     private SortedList lastSortedList;
 
-    private void setListViewWorkers(ListView listView, List<Worker> list) {
+    /*
+    internal class used to handle browsing of different object types
+     */
+    private class BrowserMode<T> {
 
-        FilteredList<Worker> filteredList
-                = new FilteredList<>(FXCollections.observableArrayList(list), p -> true);
+        private SortedList sortedList;
 
-        //add filter stuff here
-        workerSortedList = new SortedList<>(filteredList);
+        private ListView listView = new ListView<>();
 
-        sortBoxWorkers();
+        private AnchorPane displayPane;
 
-        workerSortedList.comparatorProperty().bind(sortBox.valueProperty());
+        private Controller controller;
 
-        listView.setItems(workerSortedList);
+        private ObservableList comparators;
+
+        public BrowserMode(Class<T> tClass, List initialItems, String fxmlPath) throws IOException {
+
+            //load the display pane and its controller
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource(fxmlPath));
+            displayPane = (AnchorPane) loader.load();
+
+            controller = loader.getController();
+
+            controller.setMainApp(mainApp);
+            controller.setGameController(gameController);
+
+            //get the listview ready
+            listView.setItems(FXCollections.observableArrayList(initialItems));
+
+            //listen for changes in selection on the listview
+            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
+                @Override
+                public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
+
+                    if (newValue != null) {
+
+                        //tell the controller what object we're looking at
+                        controller.setCurrent(newValue);
+
+                    }
+
+                }
+            });
+
+        }
+
     }
 
-    /*
-    prepare the sort box to sort workers
-     */
-    private void sortBoxWorkers() {
-        //the list of comparators we want
-        ObservableList comparators = FXCollections.observableArrayList(
-                new WorkerNameComparator(),
-                new WorkerPopularityComparator()
-        );
-
+    //update the sortbox to match the browse mode we are in
+    private void updateSortBox(ObservableList comparators) {
         //definitely update the box if the box is empty
         if (sortBox.getItems().isEmpty()) {
             sortBox.setItems(comparators);
@@ -183,39 +194,26 @@ public class BrowserController implements Initializable {
             sortBox.setItems(comparators);
             sortBox.getSelectionModel().selectFirst();
         }
-
     }
 
-    private void sortBoxEvents() {
-        ObservableList comparators = FXCollections.observableArrayList(
-                new EventDateComparator()
-        );
-        if (!sortBox.getItems().get(0).getClass().equals(comparators.get(0).getClass())) {
-            sortBox.setItems(comparators);
-            sortBox.getSelectionModel().selectFirst();
-        }
-
-    }
-
-    private void setListViewContentEvents(ListView listView, List<EventArchive> list) {
-
-        FilteredList<EventArchive> filteredList
+    //update the listview according to whatever browse mode we are in
+    private void setListView(BrowserMode browserMode, List list) {
+        FilteredList<Worker> filteredList
                 = new FilteredList<>(FXCollections.observableArrayList(list), p -> true);
 
-        eventSortedList = new SortedList<>(filteredList);
+        browserMode.sortedList = new SortedList<>(filteredList);
 
-        sortBoxEvents();
+        updateSortBox(browserMode.comparators);
 
-        eventSortedList.comparatorProperty().bind(sortBox.valueProperty());
+        browserMode.sortedList.comparatorProperty().bind(sortBox.valueProperty());
 
-        listView.setItems(eventSortedList);
-        sortBox.getSelectionModel().selectFirst();
-
+        browserMode.listView.setItems(browserMode.sortedList);
     }
 
     public void updateLabels() {
         setCurrentPromotion(currentPromotion);
-        workerOverviewPaneController.updateLabels();
+
+        browseWorkers.controller.updateLabels();
     }
 
     @FXML
@@ -223,24 +221,31 @@ public class BrowserController implements Initializable {
 
         if (event.getSource() == rosterButton) {
 
-            browseWorkers();
+            browse(browseWorkers, currentPromotion.getFullRoster());
 
             lastButton = rosterButton;
 
         } else if (event.getSource() == eventsButton) {
 
-            browseEvents();
+            browse(browseEvents, currentPromotion.getEventArchives());
 
             lastButton = eventsButton;
 
         } else if (event.getSource() == freeAgentsButton) {
 
-            browseFreeAgents();
+            browse(browseWorkers, gameController.freeAgents(gameController.playerPromotion()));
 
+            //this will send the user back to the roster browsing if they switch to another promotion
+            lastButton = rosterButton;
         } else if (event.getSource() == myPromotionButton) {
 
             setCurrentPromotion(gameController.playerPromotion());
 
+        } else if (event.getSource() == titlesButton) {
+
+            browse(browseTitles, currentPromotion.getTitles());
+
+            lastButton = titlesButton;
         }
     }
 
@@ -251,7 +256,7 @@ public class BrowserController implements Initializable {
      */
     public void showLastEvent() {
         setCurrentPromotion(gameController.playerPromotion());
-        eventsListView.getSelectionModel().selectFirst();
+        browseEvents.listView.getSelectionModel().selectFirst();
         eventsButton.fire();
     }
 
@@ -268,70 +273,31 @@ public class BrowserController implements Initializable {
         gridPane.getChildren().remove(lastDisplayNode);
     }
 
-    private void browseEvents() {
+    private void browse(BrowserMode browserMode, List listToBrowse) {
         clearLast();
 
-        setListViewContentEvents(eventsListView, currentPromotion.getEventArchives());
+        setListView(browserMode, listToBrowse);
 
-        gridPane.add(eventSummary, 1, 1);
-        GridPane.setRowSpan(eventSummary, 2);
-        gridPane.add(eventsListView, 0, 1);
-        GridPane.setRowSpan(eventsListView, 2);
+        gridPane.add(browserMode.listView, 0, 1);
+        GridPane.setRowSpan(browserMode.listView, 2);
 
-        lastListView = eventsListView;
-        lastSortedList = eventSortedList;
-        lastDisplayNode = eventSummary;
+        gridPane.add(browserMode.displayPane, 1, 1);
 
-        eventsListView.getSelectionModel().selectFirst();
-    }
+        lastListView = browserMode.listView;
+        lastDisplayNode = browserMode.displayPane;
+        lastSortedList = browserMode.sortedList;
 
-    private void browseWorkers() {
-
-        clearLast();
-
-        setListViewWorkers(workersListView, currentPromotion.getFullRoster());
-
-        gridPane.add(workersListView, 0, 1);
-        GridPane.setRowSpan(workersListView, 2);
-        gridPane.add(workerOverviewPane, 1, 1);
-
-        lastListView = workersListView;
-        lastDisplayNode = workerOverviewPane;
-        lastSortedList = workerSortedList;
-
-        workersListView.getSelectionModel().selectFirst();
-
-    }
-
-    private void browseFreeAgents() {
-
-        clearLast();
-
-        setListViewWorkers(workersListView, gameController.freeAgents(gameController.playerPromotion()));
-
-        gridPane.add(workersListView, 0, 1);
-        GridPane.setRowSpan(workersListView, 2);
-        gridPane.add(workerOverviewPane, 1, 1);
-
-        lastListView = workersListView;
-        lastDisplayNode = workerOverviewPane;
-        lastSortedList = workerSortedList;
-
-        workersListView.getSelectionModel().selectFirst();
-
+        browserMode.listView.getSelectionModel().selectFirst();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        workersListView = new ListView<>();
-        eventsListView = new ListView<>();
-        eventSummary = new Label();
+
         categoryButton = new Label();
 
         stablesButton.setDisable(true);
         staffButton.setDisable(true);
         teamsButton.setDisable(true);
-        titlesButton.setDisable(true);
 
     }
 
@@ -349,81 +315,43 @@ public class BrowserController implements Initializable {
 
     }
 
-    private void prepareWorkerBrowsing() {
+    private BrowserMode<Worker> browseWorkers;
+    private BrowserMode<EventArchive> browseEvents;
+    private BrowserMode<Title> browseTitles;
 
-        //load the workeroverview pane
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/WorkerOverview.fxml"));
-            workerOverviewPane = (AnchorPane) loader.load();
+    private void initializeMore() throws IOException {
 
-            workerOverviewPaneController = (WorkerOverviewController) loader.getController();
+        initializePromotionCombobox();
 
-            workerOverviewPaneController.setMainApp(this.mainApp);
-            workerOverviewPaneController.setGameController(this.gameController);
+        browseWorkers = new BrowserMode<>(Worker.class,
+                gameController.playerPromotion().getFullRoster(),
+                "view/WorkerOverview.fxml");
+        browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
+                new WorkerPopularityComparator()
+        );
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //get the listview ready
-        workersListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getFullRoster()));
-
-        workersListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Worker>() {
-            @Override
-            public void changed(ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) {
-                //for switching between promotions we may get a null value
-                //keep the old worker and wait until we're called again
-                if (newValue != null) {
-                    workerOverviewPaneController.setCurrentWorker(newValue);
-
-                }
-
-            }
-        });
-
-    }
-
-    private void prepareEventBrowsing() {
-
-        //get the listview ready
-        eventsListView.setItems(FXCollections.observableArrayList(gameController.playerPromotion().getEventArchives()));
-
-        eventsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EventArchive>() {
-            @Override
-            public void changed(ObservableValue<? extends EventArchive> observable, EventArchive oldValue, EventArchive newValue) {
-                //for switching between promotions we may get a null value
-                //keep the old worker and wait until we're called again
-                if (newValue != null) {
-
-                    eventSummary.setText(newValue.getSummary());
-
-                }
-
-            }
-        });
-
-    }
-
-    /*    private void initializeSortBox() {
-    workerComparators = FXCollections.observableArrayList(new NameComparator(),
-    new PopularityComparator());
-    sortBox.setItems(workerComparators);
-    }*/
-    private void initializeMore() {
         //right now this acts as the default view for the screen
         //set whatever we want the default view to be to the lastbutton
         //so it will fire later
         lastButton = rosterButton;
-        lastDisplayNode = workerOverviewPane;
+        lastDisplayNode = browseWorkers.displayPane;
 
-        initializePromotionCombobox();
-        //initializeSortBox();
+        browseEvents = new BrowserMode<>(EventArchive.class,
+                gameController.playerPromotion().getEventArchives(),
+                "view/SimpleDisplay.fxml");
+        browseEvents.comparators = FXCollections.observableArrayList(
+                new EventDateComparator()
+        );
 
-        prepareWorkerBrowsing();
-        prepareEventBrowsing();
+        browseTitles = new BrowserMode<>(Title.class,
+                gameController.playerPromotion().getTitles(),
+                "view/SimpleDisplay.fxml");
+        browseTitles.comparators = FXCollections.observableArrayList(
+                new TitleNameComparator()
+        );
 
         promotionComboBox.setValue(gameController.playerPromotion());
+
         lastButton.fire();
 
     }

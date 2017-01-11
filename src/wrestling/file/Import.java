@@ -10,7 +10,9 @@ import javax.xml.bind.DatatypeConverter;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
+import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
 
 /**
@@ -26,6 +28,7 @@ public class Import {
         gameController = new GameController();
         promotionsDat();
         workersDat();
+        beltDat();
         gameController.setPromotions(promotions);
         gameController.setWorkers(allWorkers);
 
@@ -68,13 +71,13 @@ public class Import {
     }
 
     private final List<Promotion> promotions = new ArrayList<>();
+    private final List<Integer> promotionKeys = new ArrayList<>();
 
     private void promotionsDat() throws IOException {
 
         Path path = Paths.get("promos.dat");
         byte[] data = Files.readAllBytes(path);
 
-        List<Integer> promotionKeys = new ArrayList<>();
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         int counter = 0;
@@ -123,6 +126,7 @@ public class Import {
     }
 
     private final List<Worker> allWorkers = new ArrayList<>();
+    private List<String> workerIDs = new ArrayList<>();
 
     private void workersDat() throws IOException {
 
@@ -131,6 +135,7 @@ public class Import {
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
+
         int counter = 0;
         int contractIndx = 0;
         int striking = 0;
@@ -141,6 +146,7 @@ public class Import {
         boolean fullTime = true;
         boolean mainRoster = true;
 
+        String workerId = new String();
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
@@ -151,6 +157,15 @@ public class Import {
             counter++;
 
             switch (counter) {
+                case 2:
+                    workerId += hexValueString;
+
+                    break;
+                case 3:
+                    workerId += hexValueString;
+
+                    break;
+
                 case 66:
                     contractIndx = hexStringToInt(hexValueString);
                     break;
@@ -196,7 +211,9 @@ public class Import {
             }
 
             if (counter == (19 * 16) + 3) {
+
                 currentLine = currentLine.substring(3, 28).trim();
+
                 Worker worker = WorkerFactory.randomWorker();
                 worker.setName(currentLine);
                 worker.setShortName(currentLine);
@@ -231,8 +248,93 @@ public class Import {
 
                 currentLine = "";
 
+                workerIDs.add(workerId);
+                workerId = new String();
+
             }
         }
+    }
+
+    private List<String> beltWorkerIDs = new ArrayList<>();
+    private List<Title> titles;
+    private List<String> titleNames = new ArrayList<>();
+
+    private void beltDat() throws IOException {
+        Path path = Paths.get("belt.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String workerId = new String();
+        String titleName = new String();
+
+        List<Integer> titlePromotionKeys = new ArrayList<>();
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+
+        int counter = 0;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            //combine the two characters into one string
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            currentLine += hexStringToLetter(hexValueString);
+
+            switch (counter) {
+                case 33:
+                    //track the promotion number associated with this belt
+                    titlePromotionKeys.add(hexStringToInt(hexValueString));
+                    break;
+                case 35:
+                    //workerID is two hex values that correspond to the worker
+                    //with the belt
+                    workerId += hexValueString;
+                    break;
+                case 36:
+                    workerId += hexValueString;
+                    break;
+                default:
+                    break;
+            }
+
+            counter++;
+
+            if (counter == (28 * 16) + 9) {
+
+                counter = 0;
+
+                currentLine = currentLine.substring(1, 31).trim();
+                titleName += currentLine;
+
+                //reset the line for the next loop
+                currentLine = "";
+
+                beltWorkerIDs.add(workerId);
+                titleNames.add(titleName);
+                workerId = new String();
+                titleName = new String();
+
+            }
+        }
+
+        //add the belts
+        for (int p = 0; p < promotions.size(); p++) {
+            for (int t = 0; t < titleNames.size(); t++) {
+
+                if (titlePromotionKeys.get(t).equals(promotions.get(p).indexNumber())) {
+
+                    for (int w = 0; w < workerIDs.size(); w++) {
+
+                        if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
+                            TitleFactory.createTitle(promotions.get(p), allWorkers.get(w), titleNames.get(t));
+
+                        }
+                    }
+
+                }
+
+            }
+        }
+
     }
 
 }

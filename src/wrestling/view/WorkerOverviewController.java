@@ -14,15 +14,17 @@ import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
-public class WorkerOverviewController implements Initializable {
+public class WorkerOverviewController extends Controller implements Initializable {
 
     private MainApp mainApp;
     private GameController gameController;
 
+    @Override
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
 
+    @Override
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
 
@@ -58,7 +60,7 @@ public class WorkerOverviewController implements Initializable {
 
     @FXML
     private Label proficiencyLabel;
-    
+
     @FXML
     private Label managerLabel;
 
@@ -68,7 +70,10 @@ public class WorkerOverviewController implements Initializable {
     private Worker currentWorker;
     private Promotion currentPromotion;
 
-    public void setCurrentWorker(Worker newWorker) {
+    @Override
+    public void setCurrent(Object obj) {
+
+        Worker newWorker = (Worker) obj;
 
         this.currentWorker = newWorker;
         contractPaneController.setWorker(newWorker);
@@ -86,7 +91,8 @@ public class WorkerOverviewController implements Initializable {
 
     }
 
-    private void initializeMore() {
+    @Override
+    void initializeMore() {
         loadContractPane();
     }
 
@@ -112,8 +118,8 @@ public class WorkerOverviewController implements Initializable {
 
     public void updateLabels() {
 
-        if (currentPromotion.getFullRoster().contains(currentWorker) || 
-                gameController.freeAgents(currentPromotion).contains(currentWorker)) {
+        if (currentPromotion.getFullRoster().contains(currentWorker)
+                || gameController.freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
@@ -122,18 +128,18 @@ public class WorkerOverviewController implements Initializable {
             reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
             contractLabel.setText(currentWorker.contractString());
-            if(currentWorker.isManager()) {
-               managerLabel.setText("Manager");
+            if (currentWorker.isManager()) {
+                managerLabel.setText("Manager");
             } else {
                 managerLabel.setText("");
             }
-            if(currentWorker.isMainRoster()) {
-                if(currentWorker.isFullTime()) {
+            if (currentWorker.isMainRoster()) {
+                if (currentWorker.isFullTime()) {
                     mainRosterLabel.setText("Full Time");
                 } else {
                     mainRosterLabel.setText("Part Time");
                 }
-               
+
             } else {
                 managerLabel.setText("Development");
             }
