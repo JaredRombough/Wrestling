@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import wrestling.model.factory.TitleFactory;
 
 public class Match extends Segment implements Serializable {
 
@@ -44,7 +45,15 @@ public class Match extends Segment implements Serializable {
         return matchRating;
     }
 
+    /*
     public Match(final Worker workerA, final Worker workerB) {
+        
+       
+        /*List<Worker> teams = new ArrayList<>();
+        teams.add(workerA);
+        teams.add(workerB);*/
+
+ /*
         teamA.add(workerA);
         teamB.add(workerB);
         teams.add(teamA);
@@ -53,14 +62,37 @@ public class Match extends Segment implements Serializable {
         this.hasTeams = true;
         this.winner = teamA;
         calculateMatchRating();
+     */
+ /* }*/
 
-    }
-
-    /*
+ /*
     this constructor takes an arbitrary number of teams
      */
     public Match(final List<List<Worker>> teams) {
 
+        this.hasWinner = false;
+        this.hasTeams = false;
+
+        if (teams.size() == 1) {
+            this.winner = teams.get(0);
+            this.hasWinner = true;
+            this.hasTeams = false;
+
+        } else if (teams.size() > 1) {
+            this.winner = teams.get(0);
+            this.hasWinner = true;
+            this.teams.addAll(teams);
+            this.hasTeams = true;
+            calculateMatchRating();
+        }
+
+    }
+
+    private Title title;
+
+    public Match(final List<List<Worker>> teams, Title title) {
+
+        this.title = title;
         this.hasWinner = false;
         this.hasTeams = false;
 
@@ -162,8 +194,27 @@ public class Match extends Segment implements Serializable {
     }
 
     @Override
-    public void processSegment() {
+    public void processSegment(int date) {
 
+        if (title != null) {
+
+            if (title.isVacant()) {
+
+                TitleFactory.awardTitle(title, winner, date);
+                System.out.println(winner.toString() + " wins the vacant  " + title.getName() + " title");
+            } else {
+                for (Worker worker : title.getWorkers()) {
+                    if (!winner.contains(worker)) {
+                        System.out.println(winner.toString() + " defeats " + title.getWorkers().toString() + " for the " + title.getName() + " title");
+                        TitleFactory.titleChange(title, winner, date);
+
+                        break;
+                    }
+
+                    System.out.println(winner.toString() + " defends the  " + title.getName() + " title");
+                }
+            }
+        }
         int winnerPop = 0;
 
         for (Worker worker : getWinner()) {

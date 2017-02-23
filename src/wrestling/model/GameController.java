@@ -43,7 +43,7 @@ public final class GameController implements Serializable {
             //update all the contracts associated with the current promotion
             List<Contract> contractList = new ArrayList<>(promotion.getContracts());
             for (Contract contract : contractList) {
-                contract.nextDay();
+                contract.nextDay(date);
 
             }
 
@@ -55,6 +55,7 @@ public final class GameController implements Serializable {
         }
 
         date++;
+
     }
 
     public Integer date() {

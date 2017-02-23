@@ -38,7 +38,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.MainApp;
-import wrestling.model.EventFactory;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;

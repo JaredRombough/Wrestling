@@ -65,8 +65,6 @@ public class EventFactory implements Serializable {
      */
     public void processEvent() {
 
-        processContracts();
-
         processSegments();
 
         promotion.gainPopularity();
@@ -75,6 +73,8 @@ public class EventFactory implements Serializable {
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, generateSummaryString());
         promotion.archiveEvent(eventArchive);
+
+        processContracts();
 
         clearEvent();
 
@@ -144,7 +144,7 @@ public class EventFactory implements Serializable {
 
         for (Worker worker : allWorkers()) {
             promotion.removeFunds(worker.getContract(promotion).getUnitCost());
-            worker.getContract(promotion).appearance();
+            worker.getContract(promotion).appearance(gameController.date());
 
         }
 
@@ -153,7 +153,7 @@ public class EventFactory implements Serializable {
     private void processSegments() {
         for (Segment segment : segments) {
             if (segment.isComplete()) {
-                segment.processSegment();
+                segment.processSegment(gameController.date());
 
                 if (segment.getClass().equals(Match.class)) {
                     for (Worker worker : segment.allWorkers()) {

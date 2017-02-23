@@ -5,21 +5,31 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import wrestling.model.EventArchive;
 import wrestling.model.Title;
 
 /*
 basic anchor pane for displaying a string on a label, used by browser
-*/
+ */
 public class SimpleDisplayController extends Controller implements Initializable {
 
     private Object obj;
 
+    private Text text;
+
     @FXML
-    private Label label;
+    private ScrollPane scrollPane;
 
     @Override
     void initializeMore() {
+
+        text = new Text();
+
+        scrollPane.setContent(text);
 
     }
 
@@ -31,6 +41,7 @@ public class SimpleDisplayController extends Controller implements Initializable
 
     @Override
     void updateLabels() {
+
         String newText = "";
 
         //call the appropriate method based on object type
@@ -39,9 +50,13 @@ public class SimpleDisplayController extends Controller implements Initializable
             newText += ea.getSummary();
         } else if (obj instanceof Title) {
             Title title = (Title) obj;
-            newText += title.getWorker();
+            newText += title.getWorkers() + " Day " + title.getDayWon() + " to today";
+            newText += "\n";
+            newText += title.getTitleHistory();
         }
-        label.setText(newText);
+
+        text.setText(newText);
+
     }
 
     @Override

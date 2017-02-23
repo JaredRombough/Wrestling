@@ -72,11 +72,11 @@ public class Worker implements Serializable {
     }
     
     public void addTitle(Title title) {
-        this.titles.add(title);
+        this.getTitles().add(title);
     }
     
     public void removeTitle(Title title) {
-        this.titles.remove(title);
+        this.getTitles().remove(title);
     }
 
     public List getContracts() {
@@ -410,6 +410,13 @@ public class Worker implements Serializable {
      */
     public void setMainRoster(boolean mainRoster) {
         this.mainRoster = mainRoster;
+    }
+
+    /**
+     * @return the titles
+     */
+    public List<Title> getTitles() {
+        return titles;
     }
 
 }

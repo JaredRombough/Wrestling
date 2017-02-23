@@ -1,6 +1,9 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import wrestling.model.factory.TitleFactory;
 
 /**
  *
@@ -17,6 +20,8 @@ public class Contract implements Serializable {
     //total number of days/appearances left
     private int duration;
 
+    private int startDate;
+
     private boolean monthly;
 
     private boolean exclusive;
@@ -25,35 +30,48 @@ public class Contract implements Serializable {
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
+
     }
 
     //depreciates monthly contracts
-    public void nextDay() {
+    public void nextDay(int date) {
         if (monthly) {
             duration--;
         }
 
         if (duration <= 0) {
-            terminateContract();
+            terminateContract(date);
         }
     }
 
     //depreciates appearance contracts
-    public void appearance() {
+    public void appearance(int date) {
         if (!monthly) {
             duration--;
         }
 
         if (duration <= 0) {
-            terminateContract();
+            terminateContract(date);
         }
     }
 
-    private void terminateContract() {
+    private void terminateContract(int date) {
 
-        this.worker.removeContract(this);
+        List<Title> toDrop = new ArrayList<>();
+        for (Title t : worker.getTitles()) {
+            if (t.getPromotion().equals(promotion)) {
+                toDrop.add(t);
+            }
+        }
 
-        this.promotion.removeContract(this);
+        for (Title t : toDrop) {
+
+            TitleFactory.stripTitle(t, date);
+        }
+
+        worker.removeContract(this);
+
+        promotion.removeContract(this);
 
     }
 
@@ -147,6 +165,20 @@ public class Contract implements Serializable {
      */
     public void setUnitCost(int unitCost) {
         this.unitCost = unitCost;
+    }
+
+    /**
+     * @return the startDate
+     */
+    public int getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(int startDate) {
+        this.startDate = startDate;
     }
 
 }

@@ -12,6 +12,6 @@ public abstract class Segment implements Serializable {
     public abstract List<Worker> allWorkers();
     public abstract int segmentRating();
     public abstract boolean isComplete();
-    public abstract void processSegment();
+    public abstract void processSegment(int date);
     
 }

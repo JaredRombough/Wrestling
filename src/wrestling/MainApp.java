@@ -73,16 +73,19 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 0;
+        int preRunDays = 400;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
             if(i % 10 == 5) {
                 System.out.println("day: " + gameController.date());
             }
+            
                     
 
         }
+        
+      
 
         setButtonsDisable(false);
     }

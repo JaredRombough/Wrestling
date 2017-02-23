@@ -162,7 +162,7 @@ public class ContractPaneController implements Initializable {
 
     private void signContract() {
 
-        ContractFactory.createContract(worker, gameController.playerPromotion(), monthly, exclusive, cost, cost);
+        ContractFactory.createContract(worker, gameController.playerPromotion(), monthly, exclusive, cost, cost, gameController.date());
 
     }
 

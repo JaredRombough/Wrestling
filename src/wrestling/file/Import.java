@@ -138,6 +138,8 @@ public class Import {
 
         int counter = 0;
         int contractIndx = 0;
+        int contractIndx2 = 0;
+        int contractIndx3 = 0;
         int striking = 0;
         int wrestling = 0;
         int flying = 0;
@@ -168,6 +170,12 @@ public class Import {
 
                 case 66:
                     contractIndx = hexStringToInt(hexValueString);
+                    break;
+                case 68:
+                    contractIndx2 = hexStringToInt(hexValueString);
+                    break;
+                case 70:
+                    contractIndx3 = hexStringToInt(hexValueString);
                     break;
                 case 83:
 
@@ -228,16 +236,24 @@ public class Import {
                 //sign contracts for workers that match with promotion keys
                 for (Promotion promotion : promotions) {
                     if (promotion.indexNumber() == contractIndx) {
-
+                        
                         ContractFactory.createContract(worker, promotion);
 
+                    } else if(promotion.indexNumber() == contractIndx2) {
+                        
+                        ContractFactory.createContract(worker, promotion);
+                    } else if(promotion.indexNumber() == contractIndx3) {
+                        ContractFactory.createContract(worker, promotion);
                     }
+                    
                 }
 
                 allWorkers.add(worker);
 
                 counter = 0;
                 contractIndx = 0;
+                contractIndx2 = 0;
+                contractIndx3 = 0;
                 striking = 0;
                 wrestling = 0;
                 flying = 0;
@@ -256,6 +272,7 @@ public class Import {
     }
 
     private List<String> beltWorkerIDs = new ArrayList<>();
+    private List<String> beltWorkerIDs2 = new ArrayList<>();
     private List<Title> titles;
     private List<String> titleNames = new ArrayList<>();
 
@@ -264,6 +281,7 @@ public class Import {
         byte[] data = Files.readAllBytes(path);
 
         String workerId = new String();
+        String workerId2 = new String();
         String titleName = new String();
 
         List<Integer> titlePromotionKeys = new ArrayList<>();
@@ -292,6 +310,12 @@ public class Import {
                 case 36:
                     workerId += hexValueString;
                     break;
+                case 37:
+                    workerId2 += hexValueString;
+                    break;
+                case 38:
+                    workerId2 += hexValueString;
+                    break;
                 default:
                     break;
             }
@@ -309,24 +333,47 @@ public class Import {
                 currentLine = "";
 
                 beltWorkerIDs.add(workerId);
+                beltWorkerIDs2.add(workerId2);
                 titleNames.add(titleName);
                 workerId = new String();
+                workerId2 = new String();
                 titleName = new String();
 
             }
         }
 
-        //add the belts
+        //go through the promotions
         for (int p = 0; p < promotions.size(); p++) {
+            
+            //go through the titles
             for (int t = 0; t < titleNames.size(); t++) {
 
+                //if promotion matches title
                 if (titlePromotionKeys.get(t).equals(promotions.get(p).indexNumber())) {
 
+                    //go through the workers
                     for (int w = 0; w < workerIDs.size(); w++) {
-
+                        
+                        //list to hold the title holder(s) we find
+                        List<Worker> titleHolders = new ArrayList<>();
+                        
+                        
                         if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
-                            TitleFactory.createTitle(promotions.get(p), allWorkers.get(w), titleNames.get(t));
-
+                            
+                            titleHolders.add(allWorkers.get(w));
+                            
+                            //check for a tag team partner
+                            for (int w2 = 0; w2 < workerIDs.size(); w2++) {
+                                if (workerIDs.get(w2).equals(beltWorkerIDs2.get(t))) {
+                                    
+                                    titleHolders.add(allWorkers.get(w2));
+                                    break;
+                                }
+                            }
+                            
+                            //create the title
+                            TitleFactory.createTitle(promotions.get(p), titleHolders, titleNames.get(t));
+                            
                         }
                     }
 

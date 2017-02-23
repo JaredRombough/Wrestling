@@ -4,6 +4,7 @@ import wrestling.model.utility.UtilityFunctions;
 import wrestling.model.factory.ContractFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +13,7 @@ public class PromotionAi implements Serializable {
 
     private final Promotion promotion;
 
-    private final GameController gameController;
+    public final GameController gameController;
 
     public PromotionAi(Promotion promotion, GameController gameController) {
         nextEvent = UtilityFunctions.randRange(2, 7);
@@ -70,6 +71,7 @@ public class PromotionAi implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate() {
 
+
         while (promotion.getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
             signContract();
         }
@@ -110,141 +112,132 @@ public class PromotionAi implements Serializable {
 
     }
 
-    /*
-    
-    ideas?
-    
-    have a list of guys to push
-    loop through list by pop
-    for each loop
-    random chance of match type
-    random chance of pushed opponent for big event
-    random non-pushed opponents/partners fill out match
-    random chance of win/loss
-    
-    
-    have a way to check if a match is good
-    have a budget
-    
-     */
+    //book an event
     private void bookEvent() {
 
+        //maximum segments for the event
         int maxSegments = 8;
 
+        //bigger promotions get more segments
         if (promotion.getLevel() > 3) {
             maxSegments += 2;
         }
 
-        //check for workers that are already booked on this date
-        List<Worker> eventRoster = promotion.getFullRoster();
-        List<Worker> alreadyBooked = new ArrayList<>();
+        //lists to track workers the event roster
+        //and workers that are already booked on this date
+        List<Worker> eventRoster = getEventRoster();
 
-        for (Worker worker : eventRoster) {
-            if (worker.isBooked(gameController.date())) {
-                alreadyBooked.add(worker);
-            }
-        }
-
-        eventRoster.removeAll(alreadyBooked);
-
-        List<Worker> nonCompetitors = new ArrayList<>();
-
-        for (Worker worker : eventRoster) {
-            if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
-                nonCompetitors.add(worker);
-            }
-        }
-
-        eventRoster.removeAll(nonCompetitors);
-
+        //list to track workers on the pushlist that are still available
         List<Worker> pushListPresent = new ArrayList<>();
 
+        //move pushlist workers present to the pushlistpresent from the event roster
         for (int i = 0; i < pushList.size(); i++) {
             if (eventRoster.contains(pushList.get(i))) {
                 eventRoster.remove(pushList.get(i));
                 pushListPresent.add(pushList.get(i));
             }
         }
-        eventRoster.removeAll(pushList);
+
+        //sort the lists of workers for the event by popularity
         sortByPopularity(pushList);
         sortByPopularity(eventRoster);
 
+        //list to hold event segments
         List<Segment> segments = new ArrayList<>();
+
+        //list to hold workers who have been booked for this event
         List<Worker> matchBooked = new ArrayList<>();
 
-        for (int i = 0; i < pushListPresent.size(); i++) {
+        //get a list of titles available for the event
+        List<Title> eventTitles = getEventTitles(eventRoster);
 
-            if (eventRoster.size() == matchBooked.size()) {
-                break;
-            }
+        //book title matches
+        for (Title title : eventTitles) {
 
-            //here we would randomly determine if it is a match or other segment type
+            //determine team size based on the title
+            int teamSize = title.getTeamSize();
+
             //determine the number of teams (usually 2)
-            int teams = 2;
+            int teamsNeeded = 2;
             int random = UtilityFunctions.randRange(1, 10);
             if (random > 8) {
-                teams += 10 - random;
-            }
-
-            //determine the size of teams (usually 1)
-            int teamSize = 1;
-            random = UtilityFunctions.randRange(1, 10);
-            if (random > 8) {
-                teamSize += 10 - random;
+                teamsNeeded += 10 - random;
             }
 
             List<List<Worker>> matchTeams = new ArrayList<>();
 
-            //iterate through the teams we have to fill
-            for (int a = 0; a < teams; a++) {
+            //if the title is not vacant, make the title holders team 1
+            if (!title.isVacant()) {
+                matchTeams.add(title.getWorkers());
+                matchBooked.addAll(title.getWorkers());
+            }
+
+            //list to hold the lists we will draw workers from
+            //in order of priority
+            List<List<Worker>> workerResources = new ArrayList<>();
+
+            workerResources.add(pushListPresent);
+            workerResources.add(eventRoster);
+
+            //loop for the number of teams we want
+            for (int i = 0; i < teamsNeeded; i++) {
 
                 List<Worker> team = new ArrayList<>();
+                boolean teamMade = false;
 
-                //add the push target if this is the first spot on the first team
-                if (matchTeams.isEmpty() && team.isEmpty()) {
-                    team.add(pushList.get(i));
-                }
+                //iterate through resources
+                for (List<Worker> resouce : workerResources) {
 
-                //iterate through the event roster to fill in the team
-                for (Worker worker : eventRoster) {
-                    //make sure the team isn't already full
-                    if (team.size() >= teamSize) {
+                    //iterate through workers in the resource
+                    for (Worker worker : resouce) {
+
+                        //if the worker isn't in this team or already booked, add them
+                        //to the team
+                        if (!matchBooked.contains(worker) && !team.contains(worker)) {
+                            team.add(worker);
+                        }
+
+                        //if the team is big enough, break out of the loop
+                        if (team.size() >= teamSize) {
+                            matchTeams.add(team);
+                            matchBooked.addAll(team);
+                            teamMade = true;
+                            break;
+                        }
+
+                    }
+                    if (teamMade) {
                         break;
                     }
-
-                    //add the worker if they aren't in a match and they aren't being pushed
-                    if (!matchBooked.contains(worker)
-                            && !pushList.contains(worker)) {
-                        team.add(worker);
-                    }
                 }
 
-                matchTeams.add(team);
-                matchBooked.addAll(team);
             }
 
-            Match match = new Match(matchTeams);
+            //make sure we have enough workers for a match
+            if (matchTeams.size() > 1) {
+                //roll for title change
+                if (UtilityFunctions.randRange(1, 10) > 5) {
+                    Collections.swap(matchTeams, 0, 1);
+                }
 
-            if (UtilityFunctions.randRange(1, 10) > 5 && matchTeams.size() >= 1) {
-                match.setWinner(1);
-            }
-
-            segments.add(match);
-
-            if (segments.size() > maxSegments) {
-                break;
+                Match match = new Match(matchTeams, title);
+                segments.add(match);
             }
 
         }
 
         //fill up the segments if we don't have enough for some reason
-        if (segments.size()
-                < maxSegments) {
-            eventRoster.removeAll(matchBooked);
+        if (segments.size() < maxSegments) {
+            //eventRoster.removeAll(matchBooked);
             //go through the roster by popularity and make singles matches
             for (int i = 0; i < eventRoster.size(); i += 2) {
                 if (eventRoster.size() > i + 1) {
-                    Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
+                    //move this somewhere else, like a matchFactory
+                    List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
+                    List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
+                    List<List<Worker>> teams = new ArrayList<>(Arrays.asList(teamA, teamB));
+                    Match match = new Match(teams);
+                    //Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
                     segments.add(match);
                 }
 
@@ -258,6 +251,68 @@ public class PromotionAi implements Serializable {
         gameController.eventFactory.createEvent(segments, gameController.date(), promotion);
         gameController.eventFactory.processEvent();
 
+    }
+
+    private List<Worker> getEventRoster() {
+        //lists to track workers the event roster
+        //and workers that are already booked on this date
+        List<Worker> eventRoster = promotion.getFullRoster();
+        List<Worker> alreadyBooked = new ArrayList<>();
+
+        //go through the event roster and check for workers already booked
+        for (Worker worker : eventRoster) {
+            if (worker.isBooked(gameController.date())) {
+                alreadyBooked.add(worker);
+            }
+        }
+
+        //remove all booked workers from the event roster
+        eventRoster.removeAll(alreadyBooked);
+
+        //list to hold noncompetitors (managers, etc)
+        List<Worker> nonCompetitors = new ArrayList<>();
+
+        //go through the event roster and collect noncompetitors
+        for (Worker worker : eventRoster) {
+            if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
+                nonCompetitors.add(worker);
+            }
+        }
+
+        //remove noncompetitors from the event roster
+        eventRoster.removeAll(nonCompetitors);
+
+        sortByPopularity(eventRoster);
+
+        return eventRoster;
+
+    }
+
+    //returns a list of titles available for an event
+    private List<Title> getEventTitles(List<Worker> eventRoster) {
+
+        List<Title> eventTitles = new ArrayList<>();
+
+        for (Title title : promotion.getTitles()) {
+
+            if (title.getWorkers().isEmpty()) {
+                eventTitles.add(title);
+            } else {
+                boolean titleWorkersPresent = true;
+
+                for (Worker worker : title.getWorkers()) {
+                    if (!eventRoster.contains(worker)) {
+                        titleWorkersPresent = false;
+                    }
+                }
+                if (titleWorkersPresent) {
+                    eventTitles.add(title);
+                }
+
+            }
+        }
+
+        return eventTitles;
     }
 
 }
