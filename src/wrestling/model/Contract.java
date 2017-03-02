@@ -55,6 +55,13 @@ public class Contract implements Serializable {
         }
     }
 
+    //for when a bigger promotion signs a written contract
+    //that overrides this open contract
+    public void buyOutContract() {
+
+        duration = 0;
+    }
+
     private void terminateContract(int date) {
 
         List<Title> toDrop = new ArrayList<>();
@@ -80,6 +87,12 @@ public class Contract implements Serializable {
                 + " Appearance Cost: $" + getUnitCost();
 
         return string;
+    }
+
+    private List<Integer> bookedDates = new ArrayList<>();
+
+    public void bookDate(int date) {
+        getBookedDates().add(date);
     }
 
     /**
@@ -179,6 +192,13 @@ public class Contract implements Serializable {
      */
     public void setStartDate(int startDate) {
         this.startDate = startDate;
+    }
+
+    /**
+     * @return the bookedDates
+     */
+    public List<Integer> getBookedDates() {
+        return bookedDates;
     }
 
 }

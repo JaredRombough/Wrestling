@@ -28,7 +28,8 @@ public final class PromotionFactory {
             double target = numberOfPromotions * levelRatios[i];
             double currentPromotions = 0;
 
-            int currentLevel = i;
+            //levels are 1 to 5
+            int currentLevel = i + 1;
 
             List<Promotion> currentLevelPromotions = new ArrayList<>();
 

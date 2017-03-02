@@ -16,16 +16,14 @@ public class PromotionAi implements Serializable {
     public final GameController gameController;
 
     public PromotionAi(Promotion promotion, GameController gameController) {
-        nextEvent = UtilityFunctions.randRange(2, 7);
+
+        eventDates.add(UtilityFunctions.randRange(2, 7));
         this.promotion = promotion;
         this.gameController = gameController;
         this.pushList = new ArrayList<>();
     }
 
-    //the date the next event is scheduled for
-    private int nextEvent;
-
-    private List<Worker> pushList;
+    private final List<Worker> pushList;
 
     private int idealRosterSize() {
         return 10 + (promotion.getLevel() * 10);
@@ -71,19 +69,21 @@ public class PromotionAi implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate() {
 
-
         while (promotion.getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
             signContract();
         }
 
         //book a show if we have one scheduled today
-        if (gameController.date() == nextEvent && promotion.getFullRoster().size() >= 2) {
+        if (eventDates.contains(gameController.date()) && promotion.getFullRoster().size() >= 2) {
             bookEvent();
-            //schedule another match for next week
-            nextEvent += 7;
-        } else if (gameController.date() == nextEvent && promotion.getFullRoster().size() < 2) {
-            //we don't have enough workers, postpone
-            nextEvent += 7;
+
+            //schedule future events as necessary
+            while (futureEvents() <= eventAmountTarget()) {
+
+                bookNextEvent();
+
+            }
+
         }
 
     }
@@ -109,6 +109,128 @@ public class PromotionAi implements Serializable {
                 break;
             }
         }
+
+    }
+
+    //sign a contract with the first suitable worker found
+    private void signContract(int date) {
+
+        for (Worker worker : gameController.freeAgents(promotion)) {
+            if (worker.getPopularity() <= promotion.maxPopularity() && !worker.isBooked(date)) {
+
+                ContractFactory.createContract(worker, promotion);
+
+                break;
+            }
+        }
+
+    }
+
+    //list of dates on which the promotion has events scheduled
+    private List<Integer> eventDates = new ArrayList<>();
+
+    //determine how many future events the promotion is meant to have at a given time
+    private int eventAmountTarget() {
+
+        int target = 0;
+
+        switch (promotion.getLevel()) {
+            case 1:
+                target = 1;
+                break;
+            case 2:
+                target = 1;
+                break;
+            case 3:
+                target = 2;
+                break;
+            case 4:
+                target = 4;
+                break;
+            case 5:
+                target = 20;
+                break;
+
+        }
+
+        return target;
+    }
+
+    private int futureEvents() {
+
+        int futureEvents = 0;
+
+        for (Integer i : eventDates) {
+            if (i > gameController.date()) {
+                futureEvents++;
+            }
+        }
+
+        return futureEvents;
+    }
+
+    private void bookNextEvent() {
+
+        int eventDate = gameController.date() + 30;
+        int bestDate = eventDate;
+        double threshold = 0.8;
+        double bestThreshold = 0;
+
+        boolean dateFound = false;
+
+        //go through a range of dates after the first acceptable next event date
+        for (int i = 0; i < 40; i++) {
+            eventDate += i;
+
+            //if we don't already have an event scheduled on this date
+            if (!eventDates.contains(eventDate)) {
+
+                //count the workers that are availeable on the date
+                double available = 0;
+                for (Worker worker : promotion.getActiveRoster()) {
+                    if (!worker.isBooked(eventDate, promotion)) {
+                        available++;
+                    }
+                }
+
+                double percentAvailable = available / (double) promotion.getActiveRoster().size();
+
+                //if a large enough portion of the roster is available, book it
+                if (percentAvailable > threshold) {
+                    dateFound = true;
+                    break;
+
+                } else if (percentAvailable > bestThreshold) {
+
+                    bestThreshold = percentAvailable;
+                    bestDate = eventDate;
+                }
+            }
+
+        }
+
+        //we didn't find a good date, take the best we did find and book some extra people
+        if (!dateFound) {
+
+            eventDate = bestDate;
+
+            int workersNeeded = (int) Math.round((threshold - bestThreshold) * promotion.getActiveRoster().size());
+
+            for (int i = 0; i < workersNeeded; i++) {
+                signContract(gameController.date());
+            }
+
+        }
+
+        //book the roster for the date
+        for (Worker worker : promotion.getFullRoster()) {
+            if (!worker.isBooked(eventDate)) {
+                worker.getContract(promotion).bookDate(eventDate);
+
+            }
+        }
+
+        eventDates.add(eventDate);
 
     }
 
@@ -257,17 +379,19 @@ public class PromotionAi implements Serializable {
         //lists to track workers the event roster
         //and workers that are already booked on this date
         List<Worker> eventRoster = promotion.getFullRoster();
-        List<Worker> alreadyBooked = new ArrayList<>();
+        List<Worker> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked
         for (Worker worker : eventRoster) {
-            if (worker.isBooked(gameController.date())) {
-                alreadyBooked.add(worker);
+
+            //the worker is unavailable if they are booked and the booking isn't with us
+            if (worker.isBooked(gameController.date(), promotion)) {
+                unavailable.add(worker);
             }
         }
 
         //remove all booked workers from the event roster
-        eventRoster.removeAll(alreadyBooked);
+        eventRoster.removeAll(unavailable);
 
         //list to hold noncompetitors (managers, etc)
         List<Worker> nonCompetitors = new ArrayList<>();

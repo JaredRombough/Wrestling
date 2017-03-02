@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package wrestling;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -73,12 +68,13 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 400;
+        int preRunDays = 200;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
+            System.out.println("day: " + gameController.date());
             if(i % 10 == 5) {
-                System.out.println("day: " + gameController.date());
+                //System.out.println("day: " + gameController.date());
             }
             
                     

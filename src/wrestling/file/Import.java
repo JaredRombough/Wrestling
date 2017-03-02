@@ -115,6 +115,11 @@ public class Import {
                 promotion.setName(currentLine);
                 promotion.setLevel(6 - level);
 
+                //game model easier to manage if we only have 5 levels
+                if (promotion.getLevel() == 0) {
+                    promotion.setLevel(1);
+                }
+
                 promotions.add(promotion);
 
                 //reset the line for the next loop
@@ -137,9 +142,15 @@ public class Import {
         String currentLine = "";
 
         int counter = 0;
+
+        //track up to three promotions that the worker might have contracts with
         int contractIndx = 0;
         int contractIndx2 = 0;
         int contractIndx3 = 0;
+
+        //track the contract type (W for written, O for open, N for none)
+        String contractType = "";
+
         int striking = 0;
         int wrestling = 0;
         int flying = 0;
@@ -176,6 +187,9 @@ public class Import {
                     break;
                 case 70:
                     contractIndx3 = hexStringToInt(hexValueString);
+                    break;
+                case 72:
+                    contractType = hexStringToLetter(hexValueString);
                     break;
                 case 83:
 
@@ -236,24 +250,35 @@ public class Import {
                 //sign contracts for workers that match with promotion keys
                 for (Promotion promotion : promotions) {
                     if (promotion.indexNumber() == contractIndx) {
-                        
+
                         ContractFactory.createContract(worker, promotion);
 
-                    } else if(promotion.indexNumber() == contractIndx2) {
-                        
+                        //hacky way to handle written/open contracts for now
+                        if (contractType.equals("W")) {
+                            worker.getContract(promotion).setExclusive(true);
+                        } else {
+                            worker.getContract(promotion).setExclusive(false);
+                        }
+
+                    } else if (promotion.indexNumber() == contractIndx2) {
+
                         ContractFactory.createContract(worker, promotion);
-                    } else if(promotion.indexNumber() == contractIndx3) {
+                        worker.getContract(promotion).setExclusive(false);
+                    } else if (promotion.indexNumber() == contractIndx3) {
                         ContractFactory.createContract(worker, promotion);
+                        worker.getContract(promotion).setExclusive(false);
                     }
-                    
+
                 }
 
+                //System.out.println(contractType);
                 allWorkers.add(worker);
 
                 counter = 0;
                 contractIndx = 0;
                 contractIndx2 = 0;
                 contractIndx3 = 0;
+                contractType = "";
                 striking = 0;
                 wrestling = 0;
                 flying = 0;
@@ -344,7 +369,7 @@ public class Import {
 
         //go through the promotions
         for (int p = 0; p < promotions.size(); p++) {
-            
+
             //go through the titles
             for (int t = 0; t < titleNames.size(); t++) {
 
@@ -353,27 +378,26 @@ public class Import {
 
                     //go through the workers
                     for (int w = 0; w < workerIDs.size(); w++) {
-                        
+
                         //list to hold the title holder(s) we find
                         List<Worker> titleHolders = new ArrayList<>();
-                        
-                        
+
                         if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
-                            
+
                             titleHolders.add(allWorkers.get(w));
-                            
+
                             //check for a tag team partner
                             for (int w2 = 0; w2 < workerIDs.size(); w2++) {
                                 if (workerIDs.get(w2).equals(beltWorkerIDs2.get(t))) {
-                                    
+
                                     titleHolders.add(allWorkers.get(w2));
                                     break;
                                 }
                             }
-                            
+
                             //create the title
                             TitleFactory.createTitle(promotions.get(p), titleHolders, titleNames.get(t));
-                            
+
                         }
                     }
 

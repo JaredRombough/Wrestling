@@ -47,7 +47,7 @@ public class Worker implements Serializable {
     private final List<Title> titles = new ArrayList<>();
 
     public Worker() {
-        
+
         matchRecords = new ArrayList<>();
 
         name = "Worker #" + serialNumber;
@@ -70,16 +70,16 @@ public class Worker implements Serializable {
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
     }
-    
+
     public void addTitle(Title title) {
         this.getTitles().add(title);
     }
-    
+
     public void removeTitle(Title title) {
         this.getTitles().remove(title);
     }
 
-    public List getContracts() {
+    public List<Contract> getContracts() {
         return contracts;
     }
 
@@ -109,7 +109,7 @@ public class Worker implements Serializable {
     }
 
     public Contract getContract(Promotion promotion) {
-        
+
         Contract thisContract = null;
         for (Contract current : contracts) {
             if (current.getPromotion().equals(promotion)) {
@@ -138,15 +138,29 @@ public class Worker implements Serializable {
         return this.getName();
     }
 
+    //checks if a worker is booked at all on a given date
     public boolean isBooked(int date) {
         boolean isBooked = false;
 
-        for (MatchRecord record : matchRecords) {
-            if (record.getMatchDate() == date) {
+        for (Contract contract : contracts) {
+            if (contract.getBookedDates().contains(date)) {
                 isBooked = true;
             }
         }
 
+        return isBooked;
+
+    }
+
+    //checks if a worker is booked on a certain date
+    //returns false if the booking is with the given promotion
+    public boolean isBooked(int date, Promotion p) {
+        boolean isBooked = isBooked(date);
+        
+        if(getContract(p).getBookedDates().contains(date)) {
+            isBooked = false;
+        }
+        
         return isBooked;
 
     }

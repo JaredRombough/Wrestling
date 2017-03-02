@@ -136,8 +136,8 @@ public class Promotion implements Serializable {
         if (level > 5) {
             level = 5;
         }
-        if (level < 0) {
-            level = 0;
+        if (level < 1) {
+            level = 1;
         }
         this.level = level;
     }
@@ -153,9 +153,8 @@ public class Promotion implements Serializable {
         eventArchives.add(event);
     }
 
-    
     private List<Title> titles = new ArrayList<>();
-    
+
     public void addTitle(Title title) {
         this.getTitles().add(title);
     }
@@ -181,7 +180,7 @@ public class Promotion implements Serializable {
     public String toString() {
         return name;
     }
-    
+
     private final List<Contract> contracts;
 
     public void addContract(Contract contract) {
@@ -220,4 +219,5 @@ public class Promotion implements Serializable {
     public List<Title> getTitles() {
         return titles;
     }
+
 }
