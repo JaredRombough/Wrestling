@@ -1,5 +1,8 @@
 package wrestling.model.factory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
@@ -19,9 +22,8 @@ public final class ContractFactory {
         contract.setWorker(worker);
         contract.setPromotion(promotion);
 
-        contract.setMonthly(monthly);
         contract.setDuration(duration);
-        contract.setUnitCost(cost);
+        contract.setAppearanceCost(cost);
         contract.setStartDate(startDate);
 
         //assign the contract
@@ -37,8 +39,6 @@ public final class ContractFactory {
 
         contract.setWorker(worker);
         contract.setPromotion(promotion);
-
-        contract.setMonthly(true);
 
         //exclusive contracts are default for top level promotions
         if (promotion.getLevel() == 5) {
@@ -66,7 +66,7 @@ public final class ContractFactory {
 
         contract.setDuration(duration);
 
-        calculateCost(contract);
+        calculateAppearanceCost(contract);
 
         //assign the contract
         promotion.addContract(contract);
@@ -77,23 +77,31 @@ public final class ContractFactory {
     /*
     calculate the cost for a contract if not explicitly specified
      */
-    private static void calculateCost(Contract contract) {
+    private static void calculateAppearanceCost(Contract contract) {
 
         int unitCost = 0;
 
-        for (int i = 0; i < contract.getWorker().getPopularity(); i++) {
-            if (i < 50) {
-                unitCost += 5;
-            } else {
-                unitCost += 10;
-            }
+        List<Integer> pricePoints = new ArrayList<>();
+
+        pricePoints.addAll(Arrays.asList(0, 10, 20, 50, 75, 100, 250, 500, 1000, 10000, 100000));
+
+        double nearest10 = contract.getWorker().getPopularity() / 10 * 10;
+        double multiplier = (contract.getWorker().getPopularity() - nearest10) / 10;
+
+        int ppIndex = (int) nearest10 / 10;
+
+        unitCost = pricePoints.get(ppIndex);
+
+        if (nearest10 != 100) {
+            double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
+            unitCost += (int) extra;
         }
 
         if (contract.isExclusive()) {
             unitCost *= 1.5;
         }
 
-        contract.setUnitCost(unitCost);
+        contract.setAppearanceCost(unitCost);
 
     }
 

@@ -22,11 +22,9 @@ public class Contract implements Serializable {
 
     private int startDate;
 
-    private boolean monthly;
-
     private boolean exclusive;
 
-    private int unitCost;
+    private int appearanceCost;
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
@@ -35,20 +33,19 @@ public class Contract implements Serializable {
 
     //depreciates monthly contracts
     public void nextDay(int date) {
-        if (monthly) {
-            duration--;
-        }
+
+        duration--;
 
         if (duration <= 0) {
             terminateContract(date);
         }
     }
 
-    //depreciates appearance contracts
+    //handles appearance-based contracts
     public void appearance(int date) {
-        if (!monthly) {
-            duration--;
-        }
+
+        //make the promotion 'pay' the worker for the appearance
+        promotion.removeFunds(appearanceCost);
 
         if (duration <= 0) {
             terminateContract(date);
@@ -84,7 +81,7 @@ public class Contract implements Serializable {
 
     public String getTerms() {
         String string = promotion.getName() + " Length: " + duration
-                + " Appearance Cost: $" + getUnitCost();
+                + " Appearance Cost: $" + getAppearanceCost();
 
         return string;
     }
@@ -139,20 +136,6 @@ public class Contract implements Serializable {
     }
 
     /**
-     * @return the written
-     */
-    public boolean isMonthly() {
-        return monthly;
-    }
-
-    /**
-     * @param monthly the written to set
-     */
-    public void setMonthly(boolean monthly) {
-        this.monthly = monthly;
-    }
-
-    /**
      * @return the exclusive
      */
     public boolean isExclusive() {
@@ -169,15 +152,15 @@ public class Contract implements Serializable {
     /**
      * @return the appearanceCost
      */
-    public int getUnitCost() {
-        return unitCost;
+    public int getAppearanceCost() {
+        return appearanceCost;
     }
 
     /**
      * @param unitCost the appearanceCost to set
      */
-    public void setUnitCost(int unitCost) {
-        this.unitCost = unitCost;
+    public void setAppearanceCost(int unitCost) {
+        this.appearanceCost = unitCost;
     }
 
     /**

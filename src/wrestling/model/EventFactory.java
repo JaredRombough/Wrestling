@@ -113,10 +113,10 @@ public class EventFactory implements Serializable {
 
         switch (promotion.getLevel()) {
             case 0:
-                attendance += 50;
+                attendance += 25;
                 break;
             case 1:
-                attendance += 100;
+                attendance += 50;
                 break;
             case 2:
                 attendance += 250;
@@ -143,7 +143,7 @@ public class EventFactory implements Serializable {
     private void processContracts() {
 
         for (Worker worker : allWorkers()) {
-            promotion.removeFunds(worker.getContract(promotion).getUnitCost());
+            
             worker.getContract(promotion).appearance(gameController.date());
 
         }
@@ -195,7 +195,7 @@ public class EventFactory implements Serializable {
 
         for (Worker currentWorker : allWorkers()) {
 
-            currentCost += currentWorker.getContract(promotion).getUnitCost();
+            currentCost += currentWorker.getContract(promotion).getAppearanceCost();
         }
 
         return currentCost;
