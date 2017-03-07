@@ -2,6 +2,7 @@ package wrestling.model;
 
 import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,7 +140,7 @@ public class Worker implements Serializable {
     }
 
     //checks if a worker is booked at all on a given date
-    public boolean isBooked(int date) {
+    public boolean isBooked(LocalDate date) {
         boolean isBooked = false;
 
         for (Contract contract : contracts) {
@@ -154,13 +155,13 @@ public class Worker implements Serializable {
 
     //checks if a worker is booked on a certain date
     //returns false if the booking is with the given promotion
-    public boolean isBooked(int date, Promotion p) {
+    public boolean isBooked(LocalDate date, Promotion p) {
         boolean isBooked = isBooked(date);
-        
-        if(getContract(p).getBookedDates().contains(date)) {
+
+        if (getContract(p).getBookedDates().contains(date)) {
             isBooked = false;
         }
-        
+
         return isBooked;
 
     }

@@ -24,6 +24,9 @@ public class RootLayoutController implements Initializable {
 
     @FXML
     private Button eventButton;
+    
+    @FXML
+    private Button financialButton;
 
     @FXML
     private Button nextDayButton;
@@ -58,6 +61,9 @@ public class RootLayoutController implements Initializable {
         } else if (event.getSource() == browserButton) {
 
             mainApp.showBrowser();
+        } else if (event.getSource() == financialButton) {
+            
+            mainApp.showFinancial();
         }
 
     }
@@ -92,6 +98,7 @@ public class RootLayoutController implements Initializable {
         browserButton.setDisable(disable);
         nextDayButton.setDisable(disable);
         eventButton.setDisable(disable);
+        financialButton.setDisable(disable);
     }
 
     public void setMainApp(MainApp mainApp) {

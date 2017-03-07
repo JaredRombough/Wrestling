@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -161,15 +162,57 @@ public class Promotion implements Serializable {
 
     private Integer funds;
 
+    private List<Transaction> transactions = new ArrayList<>();
+
+    public int getTransactionTotal(char type, LocalDate startDate, LocalDate endDate) {
+
+        int total = 0;
+
+        List<Transaction> transactionSet = getTransactions(type, startDate, endDate);
+
+        System.out.println(transactionSet);
+        System.out.println(transactions);
+
+        for (Transaction t : transactionSet) {
+            total += t.getAmount();
+        }
+
+        return total;
+    }
+
+    public List<Transaction> getTransactions(char type, LocalDate startDate, LocalDate endDate) {
+
+        List<Transaction> transactionSet = new ArrayList<>();
+
+        for (Transaction t : transactions) {
+
+            if (t.getType() == type && t.getDate().isAfter(startDate.minusDays(1)) && t.getDate().isBefore(endDate)) {
+                transactionSet.add(t);
+            }
+        }
+
+        return transactionSet;
+    }
+
+    private void addTransaction(int amount, char type, LocalDate date) {
+        Transaction transaction = new Transaction(amount, type, date);
+        transactions.add(transaction);
+    }
+
+    //for adding funds outside of the game economy
     public void addFunds(Integer income) {
         funds += income;
     }
 
-    public void removeFunds(Integer expense) {
+    public void addFunds(Integer income, char type, LocalDate date) {
+        funds += income;
+        addTransaction(income, type, date);
+    }
+
+    public void removeFunds(Integer expense, char type, LocalDate date) {
         funds -= expense;
-        if (funds < 0) {
-            funds = 0;
-        }
+        addTransaction(expense, type, date);
+
     }
 
     public Integer getFunds() {

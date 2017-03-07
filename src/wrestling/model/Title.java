@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,23 +106,23 @@ public class Title implements Serializable {
         this.name = name;
     }
 
-    private int dayWon;
+    private LocalDate dayWon;
 
     /**
      * @return the dayWon
      */
-    public int getDayWon() {
+    public LocalDate getDayWon() {
         return dayWon;
     }
 
     /**
      * @param dayWon the dayWon to set
      */
-    public void setDayWon(int dayWon) {
+    public void setDayWon(LocalDate dayWon) {
         this.dayWon = dayWon;
     }
 
-    public void addRecord(int currentDate) {
+    public void addRecord(LocalDate currentDate) {
 
         List<Worker> recordWorkers = new ArrayList<>();
         if (!isVacant()) {
@@ -149,10 +150,10 @@ public class Title implements Serializable {
     private class TitleRecord {
 
         private final List<Worker> workers;
-        private final int startDate;
-        private final int endDate;
+        private final LocalDate startDate;
+        private final LocalDate endDate;
 
-        public TitleRecord(List<Worker> workers, int startDate, int endDate) {
+        public TitleRecord(List<Worker> workers, LocalDate startDate, LocalDate endDate) {
             this.workers = workers;
             this.startDate = startDate;
             this.endDate = endDate;

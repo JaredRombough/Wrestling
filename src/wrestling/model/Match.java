@@ -2,6 +2,7 @@ package wrestling.model;
 
 import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,7 @@ import wrestling.model.factory.TitleFactory;
 
 public class Match extends Segment implements Serializable {
 
-    private List<List<Worker>> teams = new ArrayList<List<Worker>>();
+    private List<List<Worker>> teams = new ArrayList<>();
 
     private List<Worker> teamA = new ArrayList<>();
 
@@ -194,7 +195,7 @@ public class Match extends Segment implements Serializable {
     }
 
     @Override
-    public void processSegment(int date) {
+    public void processSegment(LocalDate date) {
 
         if (title != null) {
 

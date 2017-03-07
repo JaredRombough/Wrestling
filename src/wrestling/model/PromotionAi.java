@@ -3,6 +3,7 @@ package wrestling.model;
 import wrestling.model.utility.UtilityFunctions;
 import wrestling.model.factory.ContractFactory;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +18,8 @@ public class PromotionAi implements Serializable {
 
     public PromotionAi(Promotion promotion, GameController gameController) {
 
-        eventDates.add(UtilityFunctions.randRange(2, 7));
+        
+        eventDates.add(LocalDate.from(gameController.date()).plusDays(UtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
         this.pushList = new ArrayList<>();
@@ -113,7 +115,7 @@ public class PromotionAi implements Serializable {
     }
 
     //sign a contract with the first suitable worker found
-    private void signContract(int date) {
+    private void signContract(LocalDate date) {
 
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity() && !worker.isBooked(date)) {
@@ -127,7 +129,7 @@ public class PromotionAi implements Serializable {
     }
 
     //list of dates on which the promotion has events scheduled
-    private List<Integer> eventDates = new ArrayList<>();
+    private List<LocalDate> eventDates = new ArrayList<>();
 
     //determine how many future events the promotion is meant to have at a given time
     private int eventAmountTarget() {
@@ -160,8 +162,8 @@ public class PromotionAi implements Serializable {
 
         int futureEvents = 0;
 
-        for (Integer i : eventDates) {
-            if (i > gameController.date()) {
+        for (LocalDate ed : eventDates) {
+            if (ed.isAfter(gameController.date())) {
                 futureEvents++;
             }
         }
@@ -170,9 +172,13 @@ public class PromotionAi implements Serializable {
     }
 
     private void bookNextEvent() {
+        
+        
 
-        int eventDate = gameController.date() + 30;
-        int bestDate = eventDate;
+        LocalDate eventDate = LocalDate.ofYearDay(gameController.date().getYear(), gameController.date().getDayOfYear());
+        eventDate = LocalDate.from(eventDate).plusDays(30);
+        //LocalDate eventDate = gameController.date() + 30;
+        LocalDate bestDate = eventDate;
         double threshold = 0.8;
         double bestThreshold = 0;
 
@@ -180,7 +186,8 @@ public class PromotionAi implements Serializable {
 
         //go through a range of dates after the first acceptable next event date
         for (int i = 0; i < 40; i++) {
-            eventDate += i;
+            //eventDate += i;
+            eventDate = LocalDate.from(eventDate).plusDays(1);
 
             //if we don't already have an event scheduled on this date
             if (!eventDates.contains(eventDate)) {

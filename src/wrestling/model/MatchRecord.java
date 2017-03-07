@@ -1,5 +1,7 @@
 package wrestling.model;
 
+import java.time.LocalDate;
+
 /**
  *
  * a record of a match to be kept by the workers who participate in it
@@ -7,9 +9,9 @@ package wrestling.model;
 public class MatchRecord {
     
     private final String matchString;
-    private final int matchDate;
+    private final LocalDate matchDate;
     
-    public MatchRecord(String string, int date) {
+    public MatchRecord(String string, LocalDate date) {
         matchString = string;
         matchDate = date;
     }
@@ -24,7 +26,7 @@ public class MatchRecord {
     /**
      * @return the matchDate
      */
-    public int getMatchDate() {
+    public LocalDate getMatchDate() {
         return matchDate;
     }
     

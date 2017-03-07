@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,9 +17,9 @@ public class EventFactory implements Serializable {
 
     private List<Segment> segments;
 
-    private Integer date;
+    private LocalDate date;
 
-    public int getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -36,7 +37,7 @@ public class EventFactory implements Serializable {
         this.date = gameController.date();
     }
 
-    public void createEvent(final List<Segment> segments, Integer date, Promotion promotion) {
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
         clearEvent();
 
         this.segments = new ArrayList<>(segments);
@@ -45,7 +46,7 @@ public class EventFactory implements Serializable {
 
     }
 
-    public void createEvent(Integer date, Promotion promotion) {
+    public void createEvent(LocalDate date, Promotion promotion) {
         clearEvent();
 
         this.segments = new ArrayList<>();
@@ -68,7 +69,7 @@ public class EventFactory implements Serializable {
         processSegments();
 
         promotion.gainPopularity();
-        promotion.addFunds(grossProfit());
+        promotion.addFunds(grossProfit(), 'e', date);
 
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, generateSummaryString());

@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.factory.TitleFactory;
@@ -20,7 +21,7 @@ public class Contract implements Serializable {
     //total number of days/appearances left
     private int duration;
 
-    private int startDate;
+    private LocalDate startDate;
 
     private boolean exclusive;
 
@@ -32,7 +33,7 @@ public class Contract implements Serializable {
     }
 
     //depreciates monthly contracts
-    public void nextDay(int date) {
+    public void nextDay(LocalDate date) {
 
         duration--;
 
@@ -42,10 +43,10 @@ public class Contract implements Serializable {
     }
 
     //handles appearance-based contracts
-    public void appearance(int date) {
+    public void appearance(LocalDate date) {
 
         //make the promotion 'pay' the worker for the appearance
-        promotion.removeFunds(appearanceCost);
+        promotion.removeFunds(appearanceCost, 'w', date);
 
         if (duration <= 0) {
             terminateContract(date);
@@ -59,7 +60,7 @@ public class Contract implements Serializable {
         duration = 0;
     }
 
-    private void terminateContract(int date) {
+    private void terminateContract(LocalDate date) {
 
         List<Title> toDrop = new ArrayList<>();
         for (Title t : worker.getTitles()) {
@@ -86,9 +87,9 @@ public class Contract implements Serializable {
         return string;
     }
 
-    private List<Integer> bookedDates = new ArrayList<>();
+    private List<LocalDate> bookedDates = new ArrayList<>();
 
-    public void bookDate(int date) {
+    public void bookDate(LocalDate date) {
         getBookedDates().add(date);
     }
 
@@ -166,21 +167,21 @@ public class Contract implements Serializable {
     /**
      * @return the startDate
      */
-    public int getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
     /**
      * @param startDate the startDate to set
      */
-    public void setStartDate(int startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
     /**
      * @return the bookedDates
      */
-    public List<Integer> getBookedDates() {
+    public List<LocalDate> getBookedDates() {
         return bookedDates;
     }
 

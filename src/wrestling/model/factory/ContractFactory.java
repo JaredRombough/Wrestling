@@ -1,5 +1,6 @@
 package wrestling.model.factory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,7 @@ import wrestling.model.Worker;
 public final class ContractFactory {
 
     //create a contract with predetermined attributes
-    public static void createContract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost, int startDate) {
+    public static void createContract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost, LocalDate startDate) {
         //create the contract
         Contract contract = new Contract();
 

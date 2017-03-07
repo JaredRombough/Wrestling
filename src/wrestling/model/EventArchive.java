@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  *
@@ -16,13 +17,13 @@ public class EventArchive implements Serializable {
 
     private final String promotionName;
 
-    private final int date;
+    private final LocalDate date;
 
     private final int attendance;
 
     private String summary;
 
-    public EventArchive(String promotionName, final int totalCost, final int gate, final int attendance, int date, String summary) {
+    public EventArchive(String promotionName, final int totalCost, final int gate, final int attendance, LocalDate date, String summary) {
         this.gate = gate;
         this.totalCost = totalCost;
         this.promotionName = promotionName;
@@ -60,7 +61,7 @@ public class EventArchive implements Serializable {
     /**
      * @return the date
      */
-    public int getDate() {
+    public LocalDate getDate() {
         return date;
     }
 }

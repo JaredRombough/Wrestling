@@ -2,6 +2,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 /*
@@ -12,6 +13,6 @@ public abstract class Segment implements Serializable {
     public abstract List<Worker> allWorkers();
     public abstract int segmentRating();
     public abstract boolean isComplete();
-    public abstract void processSegment(int date);
+    public abstract void processSegment(LocalDate date);
     
 }

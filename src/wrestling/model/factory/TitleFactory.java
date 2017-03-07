@@ -1,5 +1,6 @@
 package wrestling.model.factory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,14 +38,14 @@ public final class TitleFactory {
     }
 
     //here we would update the title's tracker of reigns also        
-    public static void titleChange(Title title, List<Worker> winner, int date) {
+    public static void titleChange(Title title, List<Worker> winner, LocalDate date) {
 
         stripTitle(title, date);
         awardTitle(title, winner, date);
 
     }
 
-    public static void stripTitle(Title title, int date) {
+    public static void stripTitle(Title title, LocalDate date) {
 
         String s = title.getName();
         s += "dropped on " + date + " by ";
@@ -65,7 +66,7 @@ public final class TitleFactory {
 
     }
 
-    public static void awardTitle(Title title, List<Worker> winner, int date) {
+    public static void awardTitle(Title title, List<Worker> winner, LocalDate date) {
 
         title.addRecord(date);
 

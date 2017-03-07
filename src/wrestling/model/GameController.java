@@ -3,6 +3,7 @@ package wrestling.model;
 import wrestling.model.factory.PromotionFactory;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +17,7 @@ public final class GameController implements Serializable {
     public GameController() throws IOException {
 
         //set the initial date here
-        date = 1;
+        gameDate = LocalDate.of(2015, 1, 1);
 
         //initialize the main lists
         workers = new ArrayList<>();
@@ -28,11 +29,7 @@ public final class GameController implements Serializable {
 
     }
 
-    private Integer date;
-
-    public void setDate(Integer newDate) {
-        date = newDate;
-    }
+    private LocalDate gameDate;
 
     //only called by MainApp
     public void nextDay() {
@@ -43,7 +40,7 @@ public final class GameController implements Serializable {
             //update all the contracts associated with the current promotion
             List<Contract> contractList = new ArrayList<>(promotion.getContracts());
             for (Contract contract : contractList) {
-                contract.nextDay(date);
+                contract.nextDay(gameDate);
 
             }
 
@@ -54,12 +51,17 @@ public final class GameController implements Serializable {
 
         }
 
-        date++;
+        gameDate = LocalDate.from(gameDate).plusDays(1);
 
     }
 
+    /*
     public Integer date() {
+
         return date;
+    }*/
+    public LocalDate date() {
+        return gameDate;
     }
 
     public List<Promotion> promotions;

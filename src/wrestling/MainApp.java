@@ -28,6 +28,7 @@ import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import static javafx.application.Application.launch;
+import wrestling.view.FinancialScreenController;
 
 public class MainApp extends Application {
 
@@ -41,6 +42,8 @@ public class MainApp extends Application {
     private AnchorPane workerOverviewPane;
     private AnchorPane browserPane;
     private BrowserController browserController;
+    private AnchorPane financialPane;
+    private FinancialScreenController financialController;
 
     public MainApp() {
         this.cssEnabled = true;
@@ -73,15 +76,11 @@ public class MainApp extends Application {
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
             System.out.println("day: " + gameController.date());
-            if(i % 10 == 5) {
+            if (i % 10 == 5) {
                 //System.out.println("day: " + gameController.date());
             }
-            
-                    
 
         }
-        
-      
 
         setButtonsDisable(false);
     }
@@ -155,6 +154,7 @@ public class MainApp extends Application {
         loadWorkerOverview();
         loadEventScreen();
         loadBrowser();
+        loadFinancial();
     }
 
     /**
@@ -238,11 +238,33 @@ public class MainApp extends Application {
     }
 
     /*
+    loads the financial overview screen
+    */
+    private void loadFinancial() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(MainApp.class.getResource("view/FinancialScreen.fxml"));
+        financialPane = (AnchorPane) loader.load();
+
+        financialController = loader.getController();
+
+        financialController.setMainApp(this);
+        financialController.setGameController(this.gameController);
+    }
+
+    /*
     shows the browser
      */
     public void showBrowser() {
 
         rootLayout.setCenter(browserPane);
+    }
+
+    /*
+    shows the financial screen
+    */
+    public void showFinancial() {
+        rootLayout.setCenter(financialPane);
+        financialController.updateLabels();
     }
 
     /*
@@ -276,7 +298,6 @@ public class MainApp extends Application {
             eventScreenController = controller;
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -298,7 +319,6 @@ public class MainApp extends Application {
             rootLayout.setCenter(startGameScreen);
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -317,7 +337,6 @@ public class MainApp extends Application {
             TitleScreenController controller = loader.getController();
             controller.setMainApp(this);
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
@@ -332,6 +351,7 @@ public class MainApp extends Application {
         rootLayoutController.updateLabels();
         browserController.updateLabels();
         eventScreenController.updateLabels();
+        financialController.updateLabels();
 
     }
 
