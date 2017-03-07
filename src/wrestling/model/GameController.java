@@ -103,7 +103,7 @@ public final class GameController implements Serializable {
         this.promotions = promotions;
 
         for (Promotion promotion : promotions) {
-            promotion.addFunds(10000);
+            promotion.bankAccount().addFunds(10000);
         }
     }
 

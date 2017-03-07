@@ -46,7 +46,7 @@ public class Contract implements Serializable {
     public void appearance(LocalDate date) {
 
         //make the promotion 'pay' the worker for the appearance
-        promotion.removeFunds(appearanceCost, 'w', date);
+        promotion.bankAccount().removeFunds(appearanceCost, 'w', date);
 
         if (duration <= 0) {
             terminateContract(date);

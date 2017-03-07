@@ -50,7 +50,7 @@ public final class PromotionFactory {
             for (Promotion promotion : currentLevelPromotions) {
 
                 //add funds (this could be based on promotion level)
-                promotion.addFunds(startingFunds * promotion.getLevel());
+                promotion.bankAccount().addFunds(startingFunds * promotion.getLevel());
 
                 //assign workers based on promotion level
                 do {

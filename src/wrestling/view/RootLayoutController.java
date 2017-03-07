@@ -91,7 +91,7 @@ public class RootLayoutController implements Initializable {
     }
 
     public void updateCurrentFundsLabel() {
-        currentFundsLabel.setText("Funds: $" + gameController.playerPromotion().getFunds());
+        currentFundsLabel.setText("Funds: $" + gameController.playerPromotion().bankAccount().getFunds());
     }
 
     public void setButtonsDisable(boolean disable) {

@@ -1,4 +1,4 @@
-package wrestling.model;
+package wrestling.model.financial;
 
 import java.time.LocalDate;
 

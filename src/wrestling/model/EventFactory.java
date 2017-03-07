@@ -69,7 +69,7 @@ public class EventFactory implements Serializable {
         processSegments();
 
         promotion.gainPopularity();
-        promotion.addFunds(grossProfit(), 'e', date);
+        promotion.bankAccount().addFunds(grossProfit(), 'e', date);
 
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(promotion.getName(), currentCost(), grossProfit(), attendance(), date, generateSummaryString());

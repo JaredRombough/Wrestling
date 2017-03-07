@@ -114,7 +114,7 @@ public class BrowserController implements Initializable {
         currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                 + "Level " + currentPromotion.getLevel()
                 + "\tPopularity " + currentPromotion.getPopulatirty()
-                + "\tFunds: " + currentPromotion.getFunds());
+                + "\tFunds: " + currentPromotion.bankAccount().getFunds());
 
         //tell the workeroverviewcontroller which promotion we are looking at
         //other controllers would be notified here too if necessary
