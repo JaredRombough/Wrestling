@@ -57,7 +57,7 @@ public final class PromotionFactory {
 
                     Worker worker = WorkerFactory.randomWorker(UtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    ContractFactory.createContract(worker, promotion);
+                    ContractFactory.createContract(worker, promotion, gameController.date());
 
                 } while (promotion.getFullRoster().size() < rosterSize);
 

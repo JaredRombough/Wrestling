@@ -2,6 +2,7 @@ package wrestling.model;
 
 import wrestling.model.utility.UtilityFunctions;
 import wrestling.model.factory.ContractFactory;
+import wrestling.model.factory.EventFactory;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class PromotionAi implements Serializable {
 
     public PromotionAi(Promotion promotion, GameController gameController) {
 
-        
         eventDates.add(LocalDate.from(gameController.date()).plusDays(UtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
@@ -70,6 +70,10 @@ public class PromotionAi implements Serializable {
     //call this method every day for each ai
     //put the general decision making sequence here
     public void dailyUpdate() {
+        if (gameController.isPayDay()) {
+
+            payDay(gameController.date());
+        }
 
         while (promotion.getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
             signContract();
@@ -90,6 +94,14 @@ public class PromotionAi implements Serializable {
 
     }
 
+    //pay everyone
+    private void payDay(LocalDate date) {
+
+        for (Contract c : promotion.getContracts()) {
+            c.payDay(date);
+        }
+    }
+
     private void sortByPopularity(List<Worker> workerList) {
         //sort roster by popularity
         Collections.sort(workerList, new Comparator<Worker>() {
@@ -106,7 +118,7 @@ public class PromotionAi implements Serializable {
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity()) {
 
-                ContractFactory.createContract(worker, promotion);
+                ContractFactory.createContract(worker, promotion, gameController.date());
 
                 break;
             }
@@ -120,7 +132,7 @@ public class PromotionAi implements Serializable {
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= promotion.maxPopularity() && !worker.isBooked(date)) {
 
-                ContractFactory.createContract(worker, promotion);
+                ContractFactory.createContract(worker, promotion, gameController.date());
 
                 break;
             }
@@ -172,8 +184,6 @@ public class PromotionAi implements Serializable {
     }
 
     private void bookNextEvent() {
-        
-        
 
         LocalDate eventDate = LocalDate.ofYearDay(gameController.date().getYear(), gameController.date().getDayOfYear());
         eventDate = LocalDate.from(eventDate).plusDays(30);
@@ -377,8 +387,7 @@ public class PromotionAi implements Serializable {
             }
         }
 
-        gameController.eventFactory.createEvent(segments, gameController.date(), promotion);
-        gameController.eventFactory.processEvent();
+        EventFactory.createEvent(segments, gameController.date(), promotion);
 
     }
 

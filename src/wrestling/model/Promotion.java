@@ -25,7 +25,7 @@ public class Promotion implements Serializable {
 
     private PromotionAi ai;
 
-    private BankAccount bankAccount;
+    private final BankAccount bankAccount;
 
     public BankAccount bankAccount() {
         return bankAccount;
@@ -161,7 +161,7 @@ public class Promotion implements Serializable {
         eventArchives.add(event);
     }
 
-    private List<Title> titles = new ArrayList<>();
+    private final List<Title> titles = new ArrayList<>();
 
     public void addTitle(Title title) {
         this.getTitles().add(title);
@@ -196,11 +196,8 @@ public class Promotion implements Serializable {
 
     //the maximum popularity worker the promotion can hire
     public int maxPopularity() {
-        int max = (level * 20) + 20;
+        int max = level * 20;
 
-        if (max > 100) {
-            max = 100;
-        }
         return max;
     }
 

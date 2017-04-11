@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.factory.TitleFactory;
@@ -27,6 +28,8 @@ public class Contract implements Serializable {
 
     private int appearanceCost;
 
+    private int biWeeklyCost;
+
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
 
@@ -51,6 +54,24 @@ public class Contract implements Serializable {
         if (duration <= 0) {
             terminateContract(date);
         }
+    }
+
+    public void payDay(LocalDate date) {
+
+        if (biWeeklyCost != 0) {
+
+            long daysBetween = DAYS.between(startDate, date);
+            long payment = 0;
+            if (daysBetween < 14) {
+                payment += biWeeklyCost * (daysBetween / 14);
+            } else {
+                payment = biWeeklyCost;
+            }
+
+            promotion.bankAccount().removeFunds(Math.toIntExact(payment), 'w', date);
+
+        }
+
     }
 
     //for when a bigger promotion signs a written contract
@@ -183,6 +204,20 @@ public class Contract implements Serializable {
      */
     public List<LocalDate> getBookedDates() {
         return bookedDates;
+    }
+
+    /**
+     * @return the biWeeklyCost
+     */
+    public int getBiWeeklyCost() {
+        return biWeeklyCost;
+    }
+
+    /**
+     * @param biWeeklyCost the biWeeklyCost to set
+     */
+    public void setBiWeeklyCost(int biWeeklyCost) {
+        this.biWeeklyCost = biWeeklyCost;
     }
 
 }

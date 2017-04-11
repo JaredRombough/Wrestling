@@ -27,8 +27,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import static javafx.application.Application.launch;
 import wrestling.view.FinancialScreenController;
+import static javafx.application.Application.launch;
 
 public class MainApp extends Application {
 
@@ -71,7 +71,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 0;
+        int preRunDays = 300;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
@@ -239,7 +239,7 @@ public class MainApp extends Application {
 
     /*
     loads the financial overview screen
-    */
+     */
     private void loadFinancial() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(MainApp.class.getResource("view/FinancialScreen.fxml"));
@@ -261,7 +261,7 @@ public class MainApp extends Application {
 
     /*
     shows the financial screen
-    */
+     */
     public void showFinancial() {
         rootLayout.setCenter(financialPane);
         financialController.updateLabels();

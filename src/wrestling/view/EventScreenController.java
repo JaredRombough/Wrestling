@@ -7,6 +7,7 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
+import wrestling.model.factory.EventFactory;
 
 public class EventScreenController implements Initializable {
 
@@ -82,13 +84,9 @@ public class EventScreenController implements Initializable {
     //selected segment
     private Number currentSegmentNumber;
 
-    public Number getCurrentSegmentNumber() {
-        return currentSegmentNumber;
-    }
-
     private void setCurrentSegmentNumber(int number) {
 
-        Integer intObject = new Integer(number);
+        Integer intObject = number;
 
         Number newNumber = (Number) intObject;
         setCurrentSegmentNumber(newNumber);
@@ -118,39 +116,7 @@ public class EventScreenController implements Initializable {
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-
-            //select the first segment so when we come back to do a new event
-            //it will be highlighted already
-            //maybe we should have an onEnter and onExit function instead...
-            //although this is basically onExit already (minus the actual exit)
-            segmentListView.getSelectionModel().selectFirst();
-
-            //have to update the event segments first
-            //this updates the segments list as well as the current event-in-progress
-            updateEvent();
-
-            //process the updated event
-            gameController.eventFactory.processEvent();
-
-            //clear the segments, so when we come back to do a new event
-            //it will be empty again
-            segments.clear();
-
-            //go through the segmentPaneControllers and clear all the teams
-            for (SegmentPaneController current : segmentPaneControllers) {
-                current.clear();
-            }
-
-            //tell the main app to show the browser and pass the event
-            //so it can be selected by the corresponding controller
-            mainApp.showLastEvent();
-            //advance the day
-            mainApp.nextDay();
-
-            //reset the current event
-            newCurrentEvent();
-            updateLabels();
-
+            runEvent();
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
         } else if (event.getSource() == removeSegmentButton) {
@@ -158,18 +124,47 @@ public class EventScreenController implements Initializable {
         }
     }
 
+    private void runEvent() throws IOException {
+        //select the first segment so when we come back to do a new event
+        //it will be highlighted already
+        //maybe we should have an onEnter and onExit function instead...
+        //although this is basically onExit already (minus the actual exit)
+        segmentListView.getSelectionModel().selectFirst();
+
+        //have to update the event segments first
+        updateSegments();
+
+        //create the event with the segments assembled
+        EventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
+
+        //clear the segments, so when we come back to do a new event
+        //it will be empty again
+        segments.clear();
+
+        //go through the segmentPaneControllers and clear all the teams
+        for (SegmentPaneController current : segmentPaneControllers) {
+            current.clear();
+        }
+
+        //tell the main app to show the browser and pass the event
+        //so it can be selected by the corresponding controller
+        mainApp.showLastEvent();
+        //advance the day
+        mainApp.nextDay();
+
+        updateLabels();
+    }
+
     //this updates the segment list associated with the controller
     //and calls to update everything on the screen to reflect this
     //this should perhaps be more primary/streamlined, update this and get everything else
     //like labels and listview content from the item
-    public void updateEvent() {
+    public void updateSegments() {
 
         segments.clear();
         for (SegmentPaneController currentController : segmentPaneControllers) {
             segments.add(currentController.getSegment());
         }
-
-        gameController.eventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
 
         updateLabels();
     }
@@ -177,7 +172,7 @@ public class EventScreenController implements Initializable {
     //updates lists and labels
     public void updateLabels() {
 
-        totalCostLabel.setText("Total Cost: $" + gameController.eventFactory.currentCost());
+        totalCostLabel.setText("Total Cost: $" + currentCost());
 
         for (SegmentNameItem current : segmentListView.getItems()) {
 
@@ -189,7 +184,22 @@ public class EventScreenController implements Initializable {
 
     }
 
-    private int segmentListViewWidth = 300;
+    //dynamic current cost calculation
+    private int currentCost() {
+
+        int currentCost = 0;
+
+        for (Segment segment : segments) {
+            for (Worker worker : segment.allWorkers()) {
+                currentCost += worker.getContract(gameController.playerPromotion()).getAppearanceCost();
+            }
+
+        }
+
+        return currentCost;
+    }
+
+    private final int segmentListViewWidth = 300;
 
     /*
     adds a segment to the segment listview, creates the corresponding segment
@@ -219,12 +229,9 @@ public class EventScreenController implements Initializable {
             item.segment.set(controller.getSegment());
             item.name.set("Segment " + segments.size());
 
-            updateEvent();
+            updateSegments();
 
         } catch (IOException e) {
-
-            e.printStackTrace();
-
         }
     }
 
@@ -264,7 +271,7 @@ public class EventScreenController implements Initializable {
             segmentPaneControllers.remove(indexToRemove);
 
             //update the event since we have changed the number of segments
-            updateEvent();
+            updateSegments();
         }
 
     }
@@ -308,12 +315,7 @@ public class EventScreenController implements Initializable {
         ObjectProperty<Segment> segment = new SimpleObjectProperty();
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {
-            return new Callback<SegmentNameItem, Observable[]>() {
-                @Override
-                public Observable[] call(SegmentNameItem param) {
-                    return new Observable[]{param.segment, param.name};
-                }
-            };
+            return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
         }
 
         @Override
@@ -331,24 +333,21 @@ public class EventScreenController implements Initializable {
         public SorterCell() {
             ListCell thisCell = this;
 
-            setOnDragDetected(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (getItem() == null) {
+            setOnDragDetected((MouseEvent event) -> {
+                if (getItem() == null) {
 
-                        return;
-                    }
-
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(getText());
-                    LocalDragboard.getInstance().putValue(SegmentNameItem.class, getItem());
-                    content.putString(getItem().name.get());
-
-                    dragboard.setContent(content);;
-
-                    event.consume();
+                    return;
                 }
+
+                Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(getText());
+                LocalDragboard.getInstance().putValue(SegmentNameItem.class, getItem());
+                content.putString(getItem().name.get());
+
+                dragboard.setContent(content);
+
+                event.consume();
             });
 
             setOnDragOver(event -> {
@@ -374,40 +373,37 @@ public class EventScreenController implements Initializable {
                 }
             });
 
-            setOnDragDropped(new EventHandler<DragEvent>() {
-                @Override
-                public void handle(DragEvent event) {
-                    if (getText() == null) {
+            setOnDragDropped((DragEvent event) -> {
+                if (getText() == null) {
 
-                        return;
+                    return;
 
-                    }
-
-                    boolean success = false;
-
-                    LocalDragboard ldb = LocalDragboard.getInstance();
-                    if (ldb.hasType(SegmentNameItem.class)) {
-                        SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
-                        ObservableList<SegmentNameItem> items = getListView().getItems();
-                        int draggedIdx = items.indexOf(segmentNameItem);
-                        int thisIdx = items.indexOf(getItem());
-
-                        //swap all parallel arrays associated with the segment
-                        Collections.swap(items, thisIdx, draggedIdx);
-                        Collections.swap(segmentPanes, thisIdx, draggedIdx);
-                        Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
-                        Collections.swap(segments, thisIdx, draggedIdx);
-
-                        setCurrentSegmentNumber(thisIdx);
-
-                        segmentListView.getSelectionModel().select(segmentNameItem);
-                        success = true;
-                    }
-
-                    event.setDropCompleted(success);
-
-                    event.consume();
                 }
+
+                boolean success = false;
+
+                LocalDragboard ldb = LocalDragboard.getInstance();
+                if (ldb.hasType(SegmentNameItem.class)) {
+                    SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
+                    ObservableList<SegmentNameItem> items = getListView().getItems();
+                    int draggedIdx = items.indexOf(segmentNameItem);
+                    int thisIdx = items.indexOf(getItem());
+
+                    //swap all parallel arrays associated with the segment
+                    Collections.swap(items, thisIdx, draggedIdx);
+                    Collections.swap(segmentPanes, thisIdx, draggedIdx);
+                    Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
+                    Collections.swap(segments, thisIdx, draggedIdx);
+
+                    setCurrentSegmentNumber(thisIdx);
+
+                    segmentListView.getSelectionModel().select(segmentNameItem);
+                    success = true;
+                }
+
+                event.setDropCompleted(success);
+
+                event.consume();
             });
 
             setOnDragDone(DragEvent::consume);
@@ -427,20 +423,12 @@ public class EventScreenController implements Initializable {
         }
     }
 
-    private void newCurrentEvent() {
-
-        gameController.eventFactory.createEvent(gameController.date(), gameController.playerPromotion());
-    }
-
     /*
     additional initialization to be called externally after we have our mainApp etc.
      */
     private void initializeMore() {
 
-        //here we set a blank event, this will have to take an event from somewhere else
-        //ideally?
-        newCurrentEvent();
-
+        //here we set a blank event
         initializeSegmentListView();
 
         /*
@@ -483,8 +471,8 @@ public class EventScreenController implements Initializable {
         for (Worker worker : roster) {
 
             //we only want to include workers that aren't already in the segment
-            //as well as workers who aren't already booked on the event date
-            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(gameController.eventFactory.getDate())) {
+            //as well as workers who aren't already booked on the event date (today)
+            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(gameController.date())) {
                 workersList.add(worker);
             }
 
@@ -538,7 +526,7 @@ public class EventScreenController implements Initializable {
 
                 updateLabels();
                 segmentPaneControllers.get(currentSegmentNumber.intValue()).updateLabels();
-                updateEvent();
+                updateSegments();
 
                 //Clear, otherwise we end up with the worker stuck on the dragboard?
                 ldb.clearAll();

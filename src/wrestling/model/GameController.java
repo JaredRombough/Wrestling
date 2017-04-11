@@ -1,9 +1,12 @@
 package wrestling.model;
 
+import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,17 +22,31 @@ public final class GameController implements Serializable {
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
 
+        payDay = gameDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+
         //initialize the main lists
         workers = new ArrayList<>();
         promotions = new ArrayList<>();
 
-        eventFactory = new EventFactory(this);
-
+        //eventFactory = new EventFactory(this);
         PromotionFactory.preparePromotions(this);
 
     }
 
     private LocalDate gameDate;
+    private LocalDate payDay;
+
+    //is it payday?
+    public boolean isPayDay() {
+        boolean isPayDay = false;
+
+        if (gameDate.isEqual(payDay)) {
+
+            isPayDay = true;
+        }
+
+        return isPayDay;
+    }
 
     //only called by MainApp
     public void nextDay() {
@@ -51,6 +68,14 @@ public final class GameController implements Serializable {
 
         }
 
+        //if it is payday, advance next payday to two fridays in the future
+        if (isPayDay()) {
+            payDay = payDay.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+            payDay = payDay.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+
+        }
+
+        //advance the day by one
         gameDate = LocalDate.from(gameDate).plusDays(1);
 
     }
@@ -68,8 +93,7 @@ public final class GameController implements Serializable {
 
     private Promotion playerPromotion;
 
-    public EventFactory eventFactory;
-
+    //public EventFactory eventFactory;
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
         //set the Ai for non-player promotions

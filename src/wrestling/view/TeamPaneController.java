@@ -100,7 +100,7 @@ public class TeamPaneController implements Initializable {
 
                 updateLabels();
                 segmentPaneController.updateLabels();
-                eventScreenController.updateEvent();
+                eventScreenController.updateSegments();
 
                 //Clear, otherwise we end up with the worker stuck on the dragboard?
                 ldb.clearAll();

@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import wrestling.model.factory.EventFactory;
 import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -50,6 +51,8 @@ public class Worker implements Serializable {
     public Worker() {
 
         matchRecords = new ArrayList<>();
+
+        minimumPopularity = 0;
 
         name = "Worker #" + serialNumber;
         serialNumber++;
@@ -166,6 +169,16 @@ public class Worker implements Serializable {
 
     }
 
+    private int minimumPopularity;
+
+    //once workers reach a level of popularity, they can never  drop below 50% of that
+    private void updateMinimumPopularity() {
+
+        if ((popularity / 2) > minimumPopularity) {
+            minimumPopularity = popularity / 2;
+        }
+    }
+
     public void gainPopularity() {
 
         int maxPopularity = 0;
@@ -179,7 +192,19 @@ public class Worker implements Serializable {
         if (popularity < maxPopularity
                 || UtilityFunctions.randRange(1, 10) == 1) {
 
-            if (UtilityFunctions.randRange(1, 3) == 1) {
+            int range = 0;
+
+            if (popularity >= 90) {
+                range = 20;
+            } else if (popularity < 90 && popularity >= 80) {
+                range = 10;
+            } else if (popularity < 80 && popularity >= 70) {
+                range = 7;
+            } else if (popularity < 70) {
+                range = 5;
+            }
+
+            if (UtilityFunctions.randRange(1, range) == 1) {
 
                 this.popularity += 1;
             }
@@ -189,9 +214,26 @@ public class Worker implements Serializable {
             popularity = 100;
         }
 
+        updateMinimumPopularity();
+
     }
 
-    private List<MatchRecord> matchRecords;
+    public void losePopularity() {
+
+        if (UtilityFunctions.randRange(1, 10) == 10) {
+            popularity -= 1;
+        }
+
+        if (popularity < 0) {
+            popularity = 0;
+        }
+
+        if (popularity < minimumPopularity) {
+            popularity = minimumPopularity;
+        }
+    }
+
+    private final List<MatchRecord> matchRecords;
 
     public void addMatchRecord(MatchRecord record) {
         matchRecords.add(record);
@@ -199,22 +241,6 @@ public class Worker implements Serializable {
 
     public List<MatchRecord> getMatchRecods() {
         return matchRecords;
-    }
-
-    public void losePopularity() {
-        int rand = UtilityFunctions.randRange(1, 3);
-
-        if (rand == 1) {
-
-        } else if (rand == 2) {
-            this.popularity -= 2;
-        } else {
-            this.popularity -= 1;
-        }
-
-        if (popularity < 0) {
-            popularity = 0;
-        }
     }
 
     /**
@@ -369,6 +395,9 @@ public class Worker implements Serializable {
      */
     public void setPopularity(int popularity) {
         this.popularity = popularity;
+
+        updateMinimumPopularity();
+
     }
 
     /**

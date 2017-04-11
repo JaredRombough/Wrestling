@@ -251,7 +251,7 @@ public class Import {
                 for (Promotion promotion : promotions) {
                     if (promotion.indexNumber() == contractIndx) {
 
-                        ContractFactory.createContract(worker, promotion);
+                        ContractFactory.createContract(worker, promotion, gameController.date());
 
                         //hacky way to handle written/open contracts for now
                         if (contractType.equals("W")) {
@@ -262,10 +262,10 @@ public class Import {
 
                     } else if (promotion.indexNumber() == contractIndx2) {
 
-                        ContractFactory.createContract(worker, promotion);
+                        ContractFactory.createContract(worker, promotion, gameController.date());
                         worker.getContract(promotion).setExclusive(false);
                     } else if (promotion.indexNumber() == contractIndx3) {
-                        ContractFactory.createContract(worker, promotion);
+                        ContractFactory.createContract(worker, promotion, gameController.date());
                         worker.getContract(promotion).setExclusive(false);
                     }
 

@@ -105,7 +105,7 @@ public class SegmentPaneController implements Initializable {
 
             teamsPane.getChildren().add(teamPane);
 
-            eventScreenController.updateEvent();
+            eventScreenController.updateSegments();
 
         } catch (IOException e) {
 
@@ -132,7 +132,7 @@ public class SegmentPaneController implements Initializable {
 
             //tell the event screen to update particularly the segment listView
             //because we have changed the segment name
-            eventScreenController.updateEvent();
+            eventScreenController.updateSegments();
 
         }
 
@@ -143,7 +143,7 @@ public class SegmentPaneController implements Initializable {
         Collections.swap(teamPanes, indexA, indexB);
         Collections.swap(teamPaneControllers, indexA, indexB);
         //tell the event screen to update the event to reflect the new team priorirty
-        eventScreenController.updateEvent();
+        eventScreenController.updateSegments();
 
     }
 

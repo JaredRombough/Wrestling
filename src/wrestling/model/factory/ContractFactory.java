@@ -33,7 +33,7 @@ public final class ContractFactory {
     }
 
     //create a default contract
-    public static void createContract(Worker worker, Promotion promotion) {
+    public static void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
 
         //create the contract
         Contract contract = new Contract();
@@ -45,6 +45,7 @@ public final class ContractFactory {
         if (promotion.getLevel() == 5) {
 
             contract.setExclusive(true);
+            calculateBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
             for (Contract c : worker.getContracts()) {
@@ -56,6 +57,7 @@ public final class ContractFactory {
             }
         } else {
             contract.setExclusive(false);
+            calculateAppearanceCost(contract);
         }
 
         int duration = 30;
@@ -66,12 +68,15 @@ public final class ContractFactory {
         }
 
         contract.setDuration(duration);
-
-        calculateAppearanceCost(contract);
+        contract.setStartDate(startDate);
+        
 
         //assign the contract
         promotion.addContract(contract);
         worker.addContract(contract);
+        
+        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
+        + " on " + startDate);
 
     }
 
@@ -103,6 +108,37 @@ public final class ContractFactory {
         }
 
         contract.setAppearanceCost(unitCost);
+
+    }
+    
+    /*
+    calculate the cost for salaried workers
+    */
+    private static void calculateBiWeeklyCost(Contract contract) {
+
+        int unitCost = 0;
+
+        List<Integer> pricePoints = new ArrayList<>();
+
+        pricePoints.addAll(Arrays.asList(25, 25, 50, 75, 75, 150, 300, 500, 1000, 5000, 50000));
+
+        double nearest10 = contract.getWorker().getPopularity() / 10 * 10;
+        double multiplier = (contract.getWorker().getPopularity() - nearest10) / 10;
+
+        int ppIndex = (int) nearest10 / 10;
+
+        unitCost = pricePoints.get(ppIndex);
+
+        if (nearest10 != 100) {
+            double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
+            unitCost += (int) extra;
+        }
+
+        if (contract.isExclusive()) {
+            unitCost *= 1.5;
+        }
+
+        contract.setBiWeeklyCost(unitCost);
 
     }
 
