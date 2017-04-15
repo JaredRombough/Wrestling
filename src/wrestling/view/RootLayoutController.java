@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
@@ -52,20 +53,36 @@ public class RootLayoutController implements Initializable {
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == eventButton) {
-
+            updateSelectedButton(eventButton);
             mainApp.showEventScreen();
 
         } else if (event.getSource() == nextDayButton) {
+            
             mainApp.nextDay();
 
         } else if (event.getSource() == browserButton) {
-
+            updateSelectedButton(browserButton);
             mainApp.showBrowser();
-        } else if (event.getSource() == financialButton) {
             
+        } else if (event.getSource() == financialButton) {
+            updateSelectedButton(financialButton);
             mainApp.showFinancial();
         }
 
+    }
+    
+    private void updateSelectedButton(Button button)
+    {
+        for(Node b : buttonBar.getButtons())
+        {
+            if(b.getStyleClass().contains("selectedButton"))
+            {
+                b.getStyleClass().remove("selectedButton");
+            }
+        }
+        
+        button.getStyleClass().add("selectedButton");
+    
     }
 
     public void updateLabels() {
@@ -82,6 +99,7 @@ public class RootLayoutController implements Initializable {
 
     public void initializeMore() {
         updateCurrentDateLabel();
+        updateSelectedButton(browserButton);
 
     }
 

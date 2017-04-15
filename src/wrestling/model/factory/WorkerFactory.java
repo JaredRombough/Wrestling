@@ -61,13 +61,11 @@ public final class WorkerFactory {
 
         worker.setEndurance(UtilityFunctions.randRange(0, 100));
         worker.setFlying(UtilityFunctions.randRange(0, 100));
-        worker.setLook(UtilityFunctions.randRange(0, 100));
+        worker.setCharisma(UtilityFunctions.randRange(0, 100));
         worker.setProficiency(UtilityFunctions.randRange(0, 100));
-        worker.setReputation(UtilityFunctions.randRange(0, 100));
+        worker.setBehaviour(UtilityFunctions.randRange(0, 100));
         worker.setWrestling(UtilityFunctions.randRange(0, 100));
-        worker.setStrength(UtilityFunctions.randRange(0, 100));
         worker.setStriking(UtilityFunctions.randRange(0, 100));
-        worker.setTalk(UtilityFunctions.randRange(0, 100));
 
         worker.setManager(false);
         worker.setMainRoster(true);
@@ -84,13 +82,11 @@ public final class WorkerFactory {
         worker.setPopularity(UtilityFunctions.randRange(0, 100));
         worker.setEndurance(UtilityFunctions.randRange(0, 100));
         worker.setFlying(UtilityFunctions.randRange(0, 100));
-        worker.setLook(UtilityFunctions.randRange(0, 100));
+        worker.setCharisma(UtilityFunctions.randRange(0, 100));
         worker.setProficiency(UtilityFunctions.randRange(0, 100));
-        worker.setReputation(UtilityFunctions.randRange(0, 100));
+        worker.setBehaviour(UtilityFunctions.randRange(0, 100));
         worker.setWrestling(UtilityFunctions.randRange(0, 100));
-        worker.setStrength(UtilityFunctions.randRange(0, 100));
         worker.setStriking(UtilityFunctions.randRange(0, 100));
-        worker.setTalk(UtilityFunctions.randRange(0, 100));
 
         worker.setManager(false);
         worker.setMainRoster(true);

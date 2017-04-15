@@ -16,6 +16,11 @@ public class Match extends Segment implements Serializable {
 
     private List<Worker> winner;
 
+    private Title title;
+
+    private List<MatchRules> rules = new ArrayList<>();
+    private List<MatchFinishes> finish = new ArrayList<>();
+
     public List<Worker> teamA() {
         return teamA;
     }
@@ -46,27 +51,8 @@ public class Match extends Segment implements Serializable {
         return matchRating;
     }
 
+
     /*
-    public Match(final Worker workerA, final Worker workerB) {
-        
-       
-        /*List<Worker> teams = new ArrayList<>();
-        teams.add(workerA);
-        teams.add(workerB);*/
-
- /*
-        teamA.add(workerA);
-        teamB.add(workerB);
-        teams.add(teamA);
-        teams.add(teamB);
-        this.hasWinner = true;
-        this.hasTeams = true;
-        this.winner = teamA;
-        calculateMatchRating();
-     */
- /* }*/
-
- /*
     this constructor takes an arbitrary number of teams
      */
     public Match(final List<List<Worker>> teams) {
@@ -86,10 +72,23 @@ public class Match extends Segment implements Serializable {
             this.hasTeams = true;
             calculateMatchRating();
         }
+        
+        finish.add(MatchFinishes.CLEAN);
+        rules.add(MatchRules.DEFAULT);
 
     }
 
-    private Title title;
+    public Match(final List<List<Worker>> teams, final List<MatchRules> rules, final List<MatchFinishes> finish) {
+        this(teams);
+        this.rules = rules;
+        this.finish = finish;
+    }
+
+    public Match(final List<List<Worker>> teams, final List<MatchRules> rules, final List<MatchFinishes> finish, Title title) {
+        this(teams, title);
+        this.rules = rules;
+        this.finish = finish;
+    }
 
     public Match(final List<List<Worker>> teams, Title title) {
 
@@ -109,6 +108,9 @@ public class Match extends Segment implements Serializable {
             this.hasTeams = true;
             calculateMatchRating();
         }
+        
+        finish.add(MatchFinishes.CLEAN);
+        rules.add(MatchRules.DEFAULT);
 
     }
 
@@ -144,7 +146,7 @@ public class Match extends Segment implements Serializable {
 
                 for (int i = 0; i < team.size(); i++) {
                     string += team.get(i).getShortName();
-                    string += " (" + team.get(i).getPopularity() + ") ";
+                    //string += " (" + team.get(i).getPopularity() + ") ";
                     if (team.size() > 1 && i < team.size() - 1) {
                         string += "/";
                     }
@@ -159,6 +161,14 @@ public class Match extends Segment implements Serializable {
                 }
 
             }
+
+            MatchRules rule = rules.get(0);
+            if (rule != MatchRules.DEFAULT) {
+                string += " in a " + rules.get(0) + " match";
+            }
+
+            string += " by " + finish.get(0);
+
         } else {
             string += getWinner();
         }
@@ -218,6 +228,8 @@ public class Match extends Segment implements Serializable {
         }
         int winnerPop = 0;
 
+        //calculate the average popularity of the winning team
+        //but should it be max popularity?
         for (Worker worker : getWinner()) {
             winnerPop += worker.getPopularity();
         }
@@ -256,6 +268,19 @@ public class Match extends Segment implements Serializable {
 
             }
         }
-    }
 
+        //process injuries
+        for (Worker w : allWorkers()) {
+            //check worker against injury rule for the match type
+            //would need some exceptions if valets or guest refs or whatever are involved
+            //for a match we can filter nonparticipants here
+            //pass participants
+            //and they come back with specific injuries? eventually
+            //for an angle we can pass different workers to different functions based on role?
+            //have a 'bump' function
+            //or rather than have a million different injury methods, just have a
+            //dangerousness rating and a list of injury types
+
+        }
+    }
 }

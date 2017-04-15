@@ -15,6 +15,8 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -22,11 +24,11 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ComboBox fx:id="termsComboBox" GridPane.columnIndex="2" />
-            <ComboBox fx:id="typeComboBox" />
-            <Button fx:id="signButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Button" GridPane.columnIndex="4" />
-            <Label fx:id="costLabel" text="Label" GridPane.columnIndex="3" />
-            <ComboBox fx:id="lengthComboBox" GridPane.columnIndex="1" />
+            <ComboBox fx:id="typeComboBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="signButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Sign Contract" GridPane.columnIndex="6" />
+            <Label fx:id="costLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="4" GridPane.columnSpan="2" />
+            <ComboBox fx:id="lengthComboBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" />
+            <Label text="Months" GridPane.columnIndex="3" />
          </children>
       </GridPane>
    </children>

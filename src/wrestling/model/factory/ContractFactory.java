@@ -16,7 +16,7 @@ import wrestling.model.Worker;
 public final class ContractFactory {
 
     //create a contract with predetermined attributes
-    public static void createContract(Worker worker, Promotion promotion, boolean monthly, boolean exclusive, int duration, int cost, LocalDate startDate) {
+    public static void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = new Contract();
 
@@ -24,12 +24,65 @@ public final class ContractFactory {
         contract.setPromotion(promotion);
 
         contract.setDuration(duration);
-        contract.setAppearanceCost(cost);
+
+        if (exclusive) {
+            setBiWeeklyCost(contract);
+        } else {
+            setAppearanceCost(contract);
+        }
+
         contract.setStartDate(startDate);
 
         //assign the contract
         promotion.addContract(contract);
         worker.addContract(contract);
+    }
+
+    //create a contract with set exclusivity (only used by import)
+    public static void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
+
+        //create the contract
+        Contract contract = new Contract();
+
+        contract.setWorker(worker);
+        contract.setPromotion(promotion);
+
+        //exclusive contracts are default for top level promotions
+        if (exclusive) {
+
+            contract.setExclusive(true);
+            setBiWeeklyCost(contract);
+
+            //'buy out' any the other contracts the worker has
+            for (Contract c : worker.getContracts()) {
+
+                if (!c.getPromotion().equals(promotion)) {
+
+                    c.buyOutContract();
+                }
+            }
+        } else {
+            contract.setExclusive(false);
+            setAppearanceCost(contract);
+        }
+
+        int duration = 30;
+
+        //scale the duration and exclusivity based on promotion level
+        for (int i = 0; i < promotion.getLevel(); i++) {
+            duration += 30;
+        }
+
+        contract.setDuration(duration);
+        contract.setStartDate(startDate);
+
+        //assign the contract
+        promotion.addContract(contract);
+        worker.addContract(contract);
+
+        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
+                + " on " + startDate);
+
     }
 
     //create a default contract
@@ -45,7 +98,7 @@ public final class ContractFactory {
         if (promotion.getLevel() == 5) {
 
             contract.setExclusive(true);
-            calculateBiWeeklyCost(contract);
+            setBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
             for (Contract c : worker.getContracts()) {
@@ -57,7 +110,7 @@ public final class ContractFactory {
             }
         } else {
             contract.setExclusive(false);
-            calculateAppearanceCost(contract);
+            setAppearanceCost(contract);
         }
 
         int duration = 30;
@@ -69,21 +122,46 @@ public final class ContractFactory {
 
         contract.setDuration(duration);
         contract.setStartDate(startDate);
-        
 
         //assign the contract
         promotion.addContract(contract);
         worker.addContract(contract);
-        
-        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
-        + " on " + startDate);
 
+        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
+                + " on " + startDate);
+
+    }
+
+    public static int calculateAppearanceCost(Worker worker, boolean exclusive) {
+        int unitCost = 0;
+
+        List<Integer> pricePoints = new ArrayList<>();
+
+        pricePoints.addAll(Arrays.asList(0, 10, 20, 50, 75, 100, 250, 500, 1000, 10000, 100000));
+
+        double nearest10 = worker.getPopularity() / 10 * 10;
+        double multiplier = (worker.getPopularity() - nearest10) / 10;
+
+        int ppIndex = (int) nearest10 / 10;
+
+        unitCost = pricePoints.get(ppIndex);
+
+        if (nearest10 != 100) {
+            double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
+            unitCost += (int) extra;
+        }
+
+        if (exclusive) {
+            unitCost *= 1.5;
+        }
+
+        return unitCost;
     }
 
     /*
     calculate the cost for a contract if not explicitly specified
      */
-    private static void calculateAppearanceCost(Contract contract) {
+    private static void setAppearanceCost(Contract contract) {
 
         int unitCost = 0;
 
@@ -110,11 +188,11 @@ public final class ContractFactory {
         contract.setAppearanceCost(unitCost);
 
     }
-    
+
     /*
     calculate the cost for salaried workers
-    */
-    private static void calculateBiWeeklyCost(Contract contract) {
+     */
+    private static void setBiWeeklyCost(Contract contract) {
 
         int unitCost = 0;
 

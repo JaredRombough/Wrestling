@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.WorkerOverviewController">
    <children>
@@ -13,6 +14,8 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
@@ -27,24 +30,24 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label fx:id="currentWorkerLabel" text="Name" />
-            <Label fx:id="nameLabel" text="Label" GridPane.columnIndex="1" />
-            <Label text="Striking" GridPane.rowIndex="1" />
-            <Label fx:id="strikingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Wrestling" GridPane.rowIndex="2" />
-            <Label fx:id="wrestlingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Contracts" GridPane.rowIndex="6" />
-            <Label fx:id="flyingLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Flying" GridPane.rowIndex="3" />
-            <Label fx:id="contractLabel" text="Label" GridPane.columnSpan="3" GridPane.rowIndex="7" />
-            <Label text="Popularity" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label text="Reputation" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label text="Proficiency" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Label fx:id="popularityLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label fx:id="reputationLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <Label fx:id="proficiencyLabel" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <Label fx:id="managerLabel" text="Label" GridPane.rowIndex="4" />
-            <Label fx:id="mainRosterLabel" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label fx:id="currentWorkerLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Name" />
+            <Label fx:id="nameLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="3" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Striking" GridPane.rowIndex="1" />
+            <Label fx:id="strikingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Wrestling" GridPane.rowIndex="2" />
+            <Label fx:id="wrestlingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Contracts" GridPane.rowIndex="6" />
+            <Label fx:id="flyingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Flying" GridPane.rowIndex="3" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Popularity" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Reputation" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Proficiency" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="popularityLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label fx:id="reputationLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label fx:id="proficiencyLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Label fx:id="managerLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.rowIndex="4" />
+            <Label fx:id="mainRosterLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Text fx:id="contractText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" GridPane.rowSpan="2147483647" />
          </children>
       </GridPane>
    </children>

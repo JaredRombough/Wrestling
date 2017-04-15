@@ -7,7 +7,6 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +36,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.GameController;
@@ -199,8 +199,6 @@ public class EventScreenController implements Initializable {
         return currentCost;
     }
 
-    private final int segmentListViewWidth = 300;
-
     /*
     adds a segment to the segment listview, creates the corresponding segment
     pane and controller and adds them to the proper arrays for reference
@@ -341,6 +339,7 @@ public class EventScreenController implements Initializable {
 
                 Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
+
                 content.putString(getText());
                 LocalDragboard.getInstance().putValue(SegmentNameItem.class, getItem());
                 content.putString(getItem().name.get());
@@ -374,8 +373,8 @@ public class EventScreenController implements Initializable {
             });
 
             setOnDragDropped((DragEvent event) -> {
-                if (getText() == null) {
-
+                //if (getText() == null) {
+                if (getGraphic() == null) {
                     return;
 
                 }
@@ -409,6 +408,8 @@ public class EventScreenController implements Initializable {
             setOnDragDone(DragEvent::consume);
         }
 
+        private Text myText;
+
         @Override
         protected void updateItem(SegmentNameItem item, boolean empty) {
 
@@ -418,8 +419,13 @@ public class EventScreenController implements Initializable {
                 setText(null);
                 setGraphic(null);
             } else {
-                setText(item.name.get());
+                myText = new Text(item.name.getValue());
+                myText.setWrappingWidth(segmentListView.getWidth() - 40);
+                setGraphic(myText);
+                //setText(item.name.get());
+
             }
+
         }
     }
 

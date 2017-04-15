@@ -9,7 +9,6 @@ wrestlingsavegame.ser
 *.dat
 *.ser
 *.bin
-*.css
 EvaluateData.java
 
 

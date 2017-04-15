@@ -3,22 +3,26 @@ package wrestling.view;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import wrestling.MainApp;
 import wrestling.model.Match;
+import wrestling.model.MatchFinishes;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
+import wrestling.model.MatchRules;
 
 public class SegmentPaneController implements Initializable {
 
@@ -32,7 +36,10 @@ public class SegmentPaneController implements Initializable {
     private Button removeTeamButton;
 
     @FXML
-    private GridPane gridPane;
+    private ComboBox matchRules;
+
+    @FXML
+    private ComboBox matchFinishes;
 
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
@@ -43,8 +50,8 @@ public class SegmentPaneController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        teamPanes = new ArrayList<Pane>();
-        teamPaneControllers = new ArrayList<TeamPaneController>();
+        teamPanes = new ArrayList<>();
+        teamPaneControllers = new ArrayList<>();
 
     }
 
@@ -56,6 +63,42 @@ public class SegmentPaneController implements Initializable {
 
         }
 
+        matchRules.setOnAction((event) -> {
+            updateMatchRulesCombobox();
+            updateLabels();
+
+        });
+
+        matchFinishes.setOnAction((event) -> {
+            updateLabels();
+        });
+
+        matchRules.setItems(FXCollections.observableArrayList(MatchRules.values()));
+        matchRules.getSelectionModel().selectFirst();
+
+        updateMatchRulesCombobox();
+
+    }
+
+    private void updateMatchRulesCombobox() {
+        MatchRules current = (MatchRules) matchRules.getSelectionModel().getSelectedItem();
+        MatchFinishes lastFinish = (MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem();
+        List<MatchFinishes> finishes = new ArrayList<>();
+        for (MatchFinishes f : MatchFinishes.values()) {
+
+            if (current.nodq() && f.nodq()) {
+                finishes.add(f);
+            } else if (!current.nodq()) {
+                finishes.add(f);
+            }
+        }
+
+        matchFinishes.setItems(FXCollections.observableArrayList(finishes));
+        if (matchFinishes.getItems().contains(lastFinish)) {
+            matchFinishes.getSelectionModel().select(lastFinish);
+        } else {
+            matchFinishes.getSelectionModel().selectFirst();
+        }
     }
 
     public void setEventScreenController(EventScreenController eventScreenController) {
@@ -108,9 +151,6 @@ public class SegmentPaneController implements Initializable {
             eventScreenController.updateSegments();
 
         } catch (IOException e) {
-
-            e.printStackTrace();
-
         }
 
     }
@@ -118,7 +158,9 @@ public class SegmentPaneController implements Initializable {
     public void updateLabels() {
         for (TeamPaneController controller : teamPaneControllers) {
             controller.updateLabels();
+
         }
+        eventScreenController.updateSegments();
     }
 
     private void removeTeam() {
@@ -151,7 +193,9 @@ public class SegmentPaneController implements Initializable {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
 
-        Match match = new Match(getTeams());
+        Match match = new Match(getTeams(),
+                Arrays.asList((MatchRules) matchRules.getSelectionModel().getSelectedItem()),
+                Arrays.asList((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem()));
 
         return match;
     }

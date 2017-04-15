@@ -45,19 +45,12 @@ public class ContractPaneController implements Initializable {
     private ComboBox lengthComboBox;
 
     @FXML
-    private ComboBox termsComboBox;
-
-    @FXML
     private Label costLabel;
 
     @FXML
     private Button signButton;
 
     private boolean exclusive;
-
-    private boolean monthly;
-
-    private int cost;
 
     private Worker worker;
 
@@ -76,7 +69,7 @@ public class ContractPaneController implements Initializable {
 
         signButton.setDisable(disable);
         lengthComboBox.setDisable(disable);
-        termsComboBox.setDisable(disable);
+
         typeComboBox.setDisable(disable);
 
     }
@@ -88,8 +81,11 @@ public class ContractPaneController implements Initializable {
 
     private void initializeMore() {
 
-        List<String> exclusiveOpen = new ArrayList<>(Arrays.asList("Exclusive", "Open"));
-        List<String> terms = new ArrayList<>(Arrays.asList("Monthly", "Appearance"));
+        List<String> exclusiveOpen = new ArrayList<>(Arrays.asList("Open"));
+
+        if (gameController.playerPromotion().getLevel() == 5) {
+            exclusiveOpen.add("Exclusive");
+        }
 
         typeComboBox.getItems().addAll(exclusiveOpen);
         typeComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -107,29 +103,11 @@ public class ContractPaneController implements Initializable {
         });
         typeComboBox.getSelectionModel().selectFirst();
 
-        termsComboBox.getItems().addAll(terms);
-        termsComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue.equals("Monthly")) {
-                    monthly = true;
-
-                } else {
-                    monthly = false;
-
-                }
-
-                updateLabels();
-
-            }
-        });
-        termsComboBox.getSelectionModel().selectFirst();
-
         lengthComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
-                calculateCost();
+                updateCostLabel();
             }
         });
 
@@ -144,7 +122,7 @@ public class ContractPaneController implements Initializable {
 
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Sign Contract");
-            alert.setHeaderText("Terms go here");
+            alert.setHeaderText(termString());
             alert.setContentText("Sign this contract?");
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -162,42 +140,42 @@ public class ContractPaneController implements Initializable {
 
     private void signContract() {
 
-        ContractFactory.createContract(worker, gameController.playerPromotion(), monthly, exclusive, cost, cost, gameController.date());
+        ContractFactory.createContract(
+                worker,
+                gameController.playerPromotion(),
+                exclusive,
+                duration(),
+                gameController.date());
 
     }
 
     public void updateLabels() {
 
         updateLengthComboBox();
-        calculateCost();
+        updateCostLabel();
 
+    }
+
+    private String termString() {
+        String terms = "$" + ContractFactory.calculateAppearanceCost(worker, exclusive);
+
+        if (exclusive) {
+            terms += " Bi-Weekly";
+        } else {
+            terms += " per Apperance";
+        }
+
+        return terms;
     }
 
     private void updateCostLabel() {
         if (worker != null && worker.canNegotiate(gameController.playerPromotion())) {
-            costLabel.setText("" + cost);
+
+            costLabel.setText(termString());
         } else {
             costLabel.setText("Under Contract");
         }
 
-    }
-
-    private void calculateCost() {
-
-        cost = 0;
-
-        if (worker != null) {
-
-            cost = worker.getPopularity() * 10;
-
-            if (exclusive) {
-                cost *= 1.5;
-            }
-
-            cost *= (lengthComboBox.getSelectionModel().getSelectedIndex() + 1);
-        }
-
-        updateCostLabel();
     }
 
     private int duration() {
@@ -206,17 +184,17 @@ public class ContractPaneController implements Initializable {
 
     private void updateLengthComboBox() {
 
-        int appearanceMax = 10;
-        int monthlyMax = 36;
+        int lengthMax = 12;
+
         lengthComboBox.getItems().clear();
 
-        List<String> appearanceList = new ArrayList<>();
+        List<String> lengthList = new ArrayList<>();
 
-        for (Integer i = 1; i <= appearanceMax; i++) {
-            appearanceList.add(i.toString());
+        for (Integer i = 1; i <= lengthMax; i++) {
+            lengthList.add(i.toString());
         }
 
-        lengthComboBox.getItems().addAll(appearanceList);
+        lengthComboBox.getItems().addAll(lengthList);
 
         lengthComboBox.getSelectionModel().selectFirst();
     }

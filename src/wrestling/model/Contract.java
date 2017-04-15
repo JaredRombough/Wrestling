@@ -103,7 +103,13 @@ public class Contract implements Serializable {
 
     public String getTerms() {
         String string = promotion.getName() + " Length: " + duration
-                + " Appearance Cost: $" + getAppearanceCost();
+                + " days. ";
+
+        if (exclusive) {
+            string += "$" + getBiWeeklyCost() + " Bi-Weekly.";
+        } else {
+            string += "$" + getAppearanceCost() + " per appearance.";
+        }
 
         return string;
     }

@@ -11,9 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
@@ -25,7 +25,10 @@ public class StartGameScreenController implements Initializable {
     private ListView promotionListView;
 
     @FXML
-    private Label currentPromotionLabel;
+    private ListView workersListView;
+
+    @FXML
+    private Text currentPromotionText;
 
     @FXML
     private Button startGameButton;
@@ -73,23 +76,29 @@ public class StartGameScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
 
-                currentPromotionLabel.setText(newValue.toString() + "\n"
-                        + "Level: " + newValue.getLevel() + "\n"
-                        + "Workers: " + newValue.getFullRoster().size() + "\n"
-                        + "Average Popularity: " + newValue.averageWorkerPopularity());
-
-                ListView<Worker> rosterListView = new ListView<>();
-                ObservableList<Worker> rosterList = FXCollections.observableArrayList();
-                for (Worker current : newValue.getFullRoster()) {
-                    rosterList.add(current);
-                }
-                rosterListView.setItems(rosterList);
-
-                gridPane.add(rosterListView, 3, 1);
-
-                selectedPromotion = newValue;
+                updateWorkersListView(newValue);
             }
         });
+
+        promotionListView.getSelectionModel().selectFirst();
+        updateWorkersListView(
+                (Promotion) promotionListView.getSelectionModel().getSelectedItem());
+    }
+
+    private void updateWorkersListView(Promotion newValue) {
+        currentPromotionText.setText(newValue.toString().trim() + "\n"
+                + "Level: " + newValue.getLevel() + "\n"
+                + "Workers: " + newValue.getFullRoster().size() + "\n"
+                + "Average Popularity: " + newValue.averageWorkerPopularity());
+
+        ObservableList<Worker> rosterList = FXCollections.observableArrayList();
+        for (Worker current : newValue.getFullRoster()) {
+            rosterList.add(current);
+        }
+        workersListView.setItems(rosterList);
+
+        selectedPromotion = newValue;
+
     }
 
     @FXML

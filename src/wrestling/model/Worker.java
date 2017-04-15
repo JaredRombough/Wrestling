@@ -31,13 +31,12 @@ public class Worker implements Serializable {
     private int striking;
     private int flying;
     private int wrestling;
-    private int look;
-    private int talk;
-    private int strength;
+    private int charisma;
     private int endurance;
     private int proficiency;
-    private int reputation;
+    private int behaviour;
     private int popularity;
+    private int fatigue;
 
     //should these be specified in the contract, instead of in the worker object?
     private boolean manager;
@@ -302,43 +301,15 @@ public class Worker implements Serializable {
     /**
      * @return the look
      */
-    public int getLook() {
-        return look;
+    public int getCharisma() {
+        return charisma;
     }
 
     /**
-     * @param look the look to set
+     * @param charisma the look to set
      */
-    public void setLook(int look) {
-        this.look = look;
-    }
-
-    /**
-     * @return the talk
-     */
-    public int getTalk() {
-        return talk;
-    }
-
-    /**
-     * @param talk the talk to set
-     */
-    public void setTalk(int talk) {
-        this.talk = talk;
-    }
-
-    /**
-     * @return the strength
-     */
-    public int getStrength() {
-        return strength;
-    }
-
-    /**
-     * @param strength the strength to set
-     */
-    public void setStrength(int strength) {
-        this.strength = strength;
+    public void setCharisma(int charisma) {
+        this.charisma = charisma;
     }
 
     /**
@@ -372,15 +343,15 @@ public class Worker implements Serializable {
     /**
      * @return the reputation
      */
-    public int getReputation() {
-        return reputation;
+    public int getBehaviour() {
+        return behaviour;
     }
 
     /**
-     * @param reputation the reputation to set
+     * @param behaviour the reputation to set
      */
-    public void setReputation(int reputation) {
-        this.reputation = reputation;
+    public void setBehaviour(int behaviour) {
+        this.behaviour = behaviour;
     }
 
     /**
@@ -461,6 +432,20 @@ public class Worker implements Serializable {
      */
     public List<Title> getTitles() {
         return titles;
+    }
+
+    /**
+     * @return the fatigue
+     */
+    public int getFatigue() {
+        return fatigue;
+    }
+
+    /**
+     * @param fatigue the fatigue to set
+     */
+    public void setFatigue(int fatigue) {
+        this.fatigue = fatigue;
     }
 
 }

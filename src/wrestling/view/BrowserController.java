@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -139,9 +140,9 @@ public class BrowserController implements Initializable {
 
         private SortedList sortedList;
 
-        private ListView listView = new ListView<>();
+        private final ListView listView = new ListView<>();
 
-        private AnchorPane displayPane;
+        private final AnchorPane displayPane;
 
         private Controller controller;
 
@@ -282,6 +283,9 @@ public class BrowserController implements Initializable {
         GridPane.setRowSpan(browserMode.listView, 2);
 
         gridPane.add(browserMode.displayPane, 1, 1);
+        GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
+        GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
+        
 
         lastListView = browserMode.listView;
         lastDisplayNode = browserMode.displayPane;

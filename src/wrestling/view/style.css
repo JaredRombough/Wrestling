@@ -1,0 +1,49 @@
+.root{
+    -fx-font-size: 10pt;
+    -fx-font-family: "Arial";
+    -fx-base: #90AFC5;
+    -fx-background: lightgrey;
+    -fx-focus-color: #2A3132;
+
+
+}
+
+.button{
+    -fx-text-fill: white;
+    -fx-background-color: #2A3132;
+    -fx-border-radius: 2;
+    -fx-border-color: grey;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+.label{
+    -fx-padding: 10;
+
+}
+
+.centredList .list-cell
+{
+    -fx-alignment: center;
+}
+
+.selectedButton
+{
+
+    -fx-background-color:lightcyan;
+    -fx-text-fill: black;
+}
+
+
+.highStat
+{
+    -fx-text-fill: green;
+}
+.midStat
+{
+    -fx-text-fill: yellow;
+}
+.lowStat
+{
+    -fx-text-fill: red;
+}

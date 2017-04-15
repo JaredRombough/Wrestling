@@ -2,6 +2,8 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
@@ -50,7 +53,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private Label flyingLabel;
 
     @FXML
-    private Label contractLabel;
+    private Text contractText;
 
     @FXML
     private Label popularityLabel;
@@ -110,7 +113,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
             contractPaneController.setGameController(this.gameController);
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
         gridPane.add(contractPane, 0, 6, 4, 1);
@@ -125,9 +127,43 @@ public class WorkerOverviewController extends Controller implements Initializabl
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
             strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
             proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
-            reputationLabel.setText(Integer.toString(currentWorker.getReputation()));
+            reputationLabel.setText(Integer.toString(currentWorker.getBehaviour()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
-            contractLabel.setText(currentWorker.contractString());
+
+            List<Label> statLabels = Arrays.asList(
+                    wrestlingLabel,
+                    flyingLabel,
+                    strikingLabel,
+                    proficiencyLabel,
+                    reputationLabel,
+                    popularityLabel);
+
+            List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
+
+            for (Label l : statLabels) {
+                //strip previous styles
+                for (String s : styleList) {
+                    if (l.getStyleClass().contains(s)) {
+                        l.getStyleClass().remove(s);
+                    }
+                }
+
+                String style = "";
+                if (Integer.parseInt(l.getText()) < 50) {
+                    style = "lowStat";
+                } else if (Integer.parseInt(l.getText()) >= 50
+                        && Integer.parseInt(l.getText()) < 75) {
+                    style = "midStat";
+                } else {
+                    style = "highStat";
+                }
+
+                l.getStyleClass().add(style);
+
+            }
+
+            contractText.setText(currentWorker.contractString());
+
             if (currentWorker.isManager()) {
                 managerLabel.setText("Manager");
             } else {
@@ -157,7 +193,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
             proficiencyLabel.setText("");
             reputationLabel.setText("");
             popularityLabel.setText("");
-            contractLabel.setText("");
+            contractText.setText("");
 
             contractPaneController.updateLabels();
         }
