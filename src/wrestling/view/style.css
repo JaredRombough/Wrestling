@@ -1,36 +1,107 @@
 .root{
-    -fx-font-size: 10pt;
-    -fx-font-family: "Arial";
-    -fx-base: #90AFC5;
-    -fx-background: lightgrey;
-    -fx-focus-color: #2A3132;
+
+    -fx-font: 16px "Trebuchet";
+    -fx-base: #BDBDBD;
+    -fx-background: #9E9E9E;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-accent: transparent;
 
 
 }
+
+.bigger {
+    -fx-font: 24px "Trebuchet";
+}
+
+.cell:selected, .cell:filled:selected:hover {
+    -fx-background: #424242;
+
+
+}
+
+.cell:filled:hover{
+    -fx-background: #9E9E9E;
+
+}
+
+.cell:empty {
+    -fx-background: #f1f1f1;
+}
+
+.sorterCell {
+    -fx-text-fill: white;
+}
+
+.list-view .scroll-bar:horizontal .increment-arrow,
+.list-view .scroll-bar:horizontal .decrement-arrow,
+.list-view .scroll-bar:horizontal .increment-button,
+.list-view .scroll-bar:horizontal .decrement-button {
+    -fx-padding:0;
+}
+
+.list-view {
+    -fx-padding: 0px 5px 0px 5px;
+
+    -fx-background-color: #9E9E9E;
+
+
+}
+
+
+/*TEAM PANE*/
+
+.teamPane {
+    -fx-background-color: #E0E0E0;
+    -fx-border-width: 1px 2px 1px 2px;
+    -fx-border-color: #616161;
+}
+
+.teamPaneListView  {
+    -fx-background-color: #E0E0E0;
+}
+
+.teamPaneListView .list-cell{
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #212121;
+}
+
+.teamPaneListView .list-cell:selected {
+    -fx-text-fill: #212121;
+}
+
+.teamPaneListView .list-cell:filled:hover {
+    -fx-background-color: #9E9E9E;
+}
+
+
+.teamPaneNameLabel {
+    -fx-text-alignment:center;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+}
+
+
+
+
+
 
 .button{
     -fx-text-fill: white;
-    -fx-background-color: #2A3132;
-    -fx-border-radius: 2;
-    -fx-border-color: grey;
-    -fx-background-radius: 5;
-    -fx-padding: 5;
-}
-
-.label{
-    -fx-padding: 10;
+    -fx-background-color: #424242;
 
 }
 
-.centredList .list-cell
+.sorterLabel
 {
     -fx-alignment: center;
+
 }
 
 .selectedButton
 {
 
-    -fx-background-color:lightcyan;
+    -fx-background-color: #F5F5F5;
     -fx-text-fill: black;
 }
 

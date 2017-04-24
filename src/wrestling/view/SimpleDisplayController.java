@@ -5,7 +5,10 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import wrestling.model.EventArchive;
 import wrestling.model.Title;
 
@@ -16,18 +19,25 @@ public class SimpleDisplayController extends Controller implements Initializable
 
     private Object obj;
 
-    private Text text;
-
+    //private Text text;
     @FXML
     private ScrollPane scrollPane;
+
+    @FXML
+    private TextArea textArea;
+
+    @FXML
+    private TextFlow textFlow;
+
+    //private Text text;
+    @FXML
+    private StackPane stackPane;
 
     @Override
     void initializeMore() {
 
-        text = new Text();
-
-        scrollPane.setContent(text);
-
+        //text = new Text();
+        //textArea.add(text);
     }
 
     @Override
@@ -51,8 +61,13 @@ public class SimpleDisplayController extends Controller implements Initializable
             newText += "\n";
             newText += title.getTitleHistory();
         }
-
+        Text text = new Text();
         text.setText(newText);
+
+        scrollPane.setContent(text);
+        //text.setText(newText);
+        //textArea.setText(newText);
+        //text.setTextAlignment(TextAlignment.CENTER);
 
     }
 

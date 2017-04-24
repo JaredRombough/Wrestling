@@ -7,6 +7,7 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -105,7 +106,7 @@ public class RootLayoutController implements Initializable {
 
     public void updateCurrentDateLabel() {
 
-        currentDateLabel.setText("Day " + gameController.date());
+        currentDateLabel.setText(gameController.date().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
     }
 
     public void updateCurrentFundsLabel() {

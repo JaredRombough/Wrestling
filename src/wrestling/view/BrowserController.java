@@ -2,6 +2,8 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -14,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -77,6 +78,8 @@ public class BrowserController implements Initializable {
 
     @FXML
     private Button myPromotionButton;
+
+    private List<Button> browseButtons;
 
     @FXML
     private ComboBox promotionComboBox;
@@ -223,31 +226,49 @@ public class BrowserController implements Initializable {
         if (event.getSource() == rosterButton) {
 
             browse(browseWorkers, currentPromotion.getFullRoster());
-
+            updateSelectedButton(rosterButton);
             lastButton = rosterButton;
 
         } else if (event.getSource() == eventsButton) {
 
             browse(browseEvents, currentPromotion.getEventArchives());
-
+            updateSelectedButton(eventsButton);
             lastButton = eventsButton;
 
         } else if (event.getSource() == freeAgentsButton) {
 
             browse(browseWorkers, gameController.freeAgents(gameController.playerPromotion()));
-
+            updateSelectedButton(freeAgentsButton);
             //this will send the user back to the roster browsing if they switch to another promotion
             lastButton = rosterButton;
         } else if (event.getSource() == myPromotionButton) {
-
+            updateSelectedButton(myPromotionButton);
             setCurrentPromotion(gameController.playerPromotion());
 
         } else if (event.getSource() == titlesButton) {
-
+            updateSelectedButton(titlesButton);
             browse(browseTitles, currentPromotion.getTitles());
 
             lastButton = titlesButton;
         }
+    }
+
+    private void updateSelectedButton(Button button) {
+        for (Button b : browseButtons) {
+            if (b.getStyleClass().contains("selectedButton")) {
+
+                b.getStyleClass().remove("selectedButton");
+
+            }
+        }
+        
+        if(currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton))
+        {
+            myPromotionButton.getStyleClass().add("selectedButton");
+        }
+
+        button.getStyleClass().add("selectedButton");
+
     }
 
     /*
@@ -285,7 +306,6 @@ public class BrowserController implements Initializable {
         gridPane.add(browserMode.displayPane, 1, 1);
         GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
         GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
-        
 
         lastListView = browserMode.listView;
         lastDisplayNode = browserMode.displayPane;
@@ -296,6 +316,11 @@ public class BrowserController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        this.browseButtons = new ArrayList<>(Arrays.asList(
+                eventsButton, freeAgentsButton, myPromotionButton, rosterButton,
+                stablesButton, staffButton, teamsButton, titlesButton
+        ));
 
         categoryButton = new Label();
 

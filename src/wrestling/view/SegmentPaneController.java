@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,9 +15,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
@@ -43,7 +47,7 @@ public class SegmentPaneController implements Initializable {
 
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
-    private int defaultTeams = 2;
+    private final int defaultTeams = 2;
 
     private EventScreenController eventScreenController;
 
@@ -63,20 +67,106 @@ public class SegmentPaneController implements Initializable {
 
         }
 
+        intitializeMatchFinshesCombobox();
+
+        initializeMatchRulesCombobox();
+
+        updateMatchRulesCombobox();
+
+    }
+
+    private void intitializeMatchFinshesCombobox() {
+
+        matchFinishes.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+            if (newValue != null) {
+                //only update when a new value is being selected
+                updateLabels();
+            }
+
+        });
+        //set the list cells display
+        matchFinishes.setCellFactory(new Callback<ListView<MatchFinishes>, ListCell<MatchFinishes>>() {
+            @Override
+            public ListCell<MatchFinishes> call(ListView<MatchFinishes> p) {
+                return new ListCell<MatchFinishes>() {
+
+                    @Override
+                    protected void updateItem(MatchFinishes item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item == null || empty) {
+                            setText(null);
+                        } else {
+                            setText(item.description());
+                        }
+                    }
+                };
+            }
+        });
+
+        //set the main cell display
+        matchFinishes.setButtonCell(
+                new ListCell<MatchFinishes>() {
+            @Override
+            protected void updateItem(MatchFinishes t, boolean bln) {
+                super.updateItem(t, bln);
+                if (bln) {
+                    setText("");
+                } else {
+                    setText(t.description());
+                }
+            }
+        });
+
+    }
+
+    private void initializeMatchRulesCombobox() {
+
+        //for when selection changes
         matchRules.setOnAction((event) -> {
             updateMatchRulesCombobox();
             updateLabels();
 
         });
 
-        matchFinishes.setOnAction((event) -> {
-            updateLabels();
+        //set the items, here we could filter out rules that the promotion can't use
+        matchRules.setItems(FXCollections.observableArrayList(MatchRules.values()));
+
+        //set the list cells display
+        matchRules.setCellFactory(new Callback<ListView<MatchRules>, ListCell<MatchRules>>() {
+            @Override
+            public ListCell<MatchRules> call(ListView<MatchRules> p) {
+                return new ListCell<MatchRules>() {
+
+                    @Override
+                    protected void updateItem(MatchRules item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item == null || empty) {
+                            setText(null);
+                        } else {
+                            setText(item.description());
+                        }
+                    }
+                };
+            }
         });
 
-        matchRules.setItems(FXCollections.observableArrayList(MatchRules.values()));
-        matchRules.getSelectionModel().selectFirst();
+        //set the main cell display
+        matchRules.setButtonCell(
+                new ListCell<MatchRules>() {
+            @Override
+            protected void updateItem(MatchRules t, boolean bln) {
+                super.updateItem(t, bln);
+                if (bln) {
+                    setText("");
+                } else {
+                    setText(t.description());
+                }
+            }
+        });
 
-        updateMatchRulesCombobox();
+        matchRules.getSelectionModel().selectFirst();
 
     }
 
@@ -147,6 +237,7 @@ public class SegmentPaneController implements Initializable {
             controller.initializeMore();
 
             teamsPane.getChildren().add(teamPane);
+            updateTeamNames();
 
             eventScreenController.updateSegments();
 
@@ -186,7 +277,25 @@ public class SegmentPaneController implements Initializable {
         Collections.swap(teamPaneControllers, indexA, indexB);
         //tell the event screen to update the event to reflect the new team priorirty
         eventScreenController.updateSegments();
+        updateTeamNames();
 
+    }
+
+    //this will need to be more complex when more types of segments are added
+    private void updateTeamNames() {
+        for (TeamPaneController tpc : teamPaneControllers) {
+            String teamName = "";
+            switch (teamPaneControllers.indexOf(tpc)) {
+                case 0:
+                    teamName += "Winner";
+                    break;
+                default:
+                    teamName += "Loser";
+                    break;
+            }
+            tpc.setTeamNameLabel(teamName);
+
+        }
     }
 
     public Segment getSegment() {

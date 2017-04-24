@@ -12,6 +12,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return false;
         }
+
+        @Override
+        public String description() {
+            return "Standard";
+        }
+
     },
     HARDCORE {
         @Override
@@ -23,6 +29,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "Hardcore";
+        }
+
     },
     SUBMISSION {
         @Override
@@ -34,6 +46,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return false;
         }
+
+        @Override
+        public String description() {
+            return "Submission";
+        }
+
     },
     LADDER {
         @Override
@@ -45,6 +63,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "Ladder";
+        }
+
     },
     TABLES {
         @Override
@@ -56,6 +80,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "Tables";
+        }
+
     },
     CAGE {
         @Override
@@ -66,6 +96,11 @@ public enum MatchRules implements MatchRule {
         @Override
         public boolean nodq() {
             return true;
+        }
+
+        @Override
+        public String description() {
+            return "Cage";
         }
     },
     LASTMANSTANDING {
@@ -78,6 +113,11 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "Last Man Standing";
+        }
     },
     IRONMAN {
         @Override
@@ -88,6 +128,11 @@ public enum MatchRules implements MatchRule {
         @Override
         public boolean nodq() {
             return false;
+        }
+
+        @Override
+        public String description() {
+            return "Ironman";
         }
     },
     IQUIT {
@@ -100,6 +145,12 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "I Quit";
+        }
+
     },
     INFERNO {
         @Override
@@ -110,6 +161,11 @@ public enum MatchRules implements MatchRule {
         @Override
         public boolean nodq() {
             return true;
+        }
+
+        @Override
+        public String description() {
+            return "Inferno";
         }
     },
     FIRSTBLOOD {
@@ -122,6 +178,11 @@ public enum MatchRules implements MatchRule {
         public boolean nodq() {
             return true;
         }
+
+        @Override
+        public String description() {
+            return "First Blood";
+        }
     },
     BARBEDWIRE {
         @Override
@@ -132,6 +193,11 @@ public enum MatchRules implements MatchRule {
         @Override
         public boolean nodq() {
             return true;
+        }
+
+        @Override
+        public String description() {
+            return "Barbed Wire";
         }
     }
 

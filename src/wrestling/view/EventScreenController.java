@@ -37,6 +37,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.GameController;
@@ -408,7 +409,7 @@ public class EventScreenController implements Initializable {
             setOnDragDone(DragEvent::consume);
         }
 
-        private Text myText;
+        private Label myLabel;
 
         @Override
         protected void updateItem(SegmentNameItem item, boolean empty) {
@@ -419,10 +420,15 @@ public class EventScreenController implements Initializable {
                 setText(null);
                 setGraphic(null);
             } else {
-                myText = new Text(item.name.getValue());
-                myText.setWrappingWidth(segmentListView.getWidth() - 40);
-                setGraphic(myText);
-                //setText(item.name.get());
+
+                myLabel = new Label(item.name.getValue());
+                myLabel.setTextAlignment(TextAlignment.CENTER);
+
+                myLabel.setWrapText(true);
+                myLabel.setMaxWidth(segmentListView.getWidth() - 40);
+
+                myLabel.getStyleClass().add("sorterLabel");
+                setGraphic(myLabel);
 
             }
 

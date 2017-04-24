@@ -70,9 +70,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="REF" />
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="RULES:" GridPane.columnSpan="2" />
                   <ComboBox fx:id="matchRules" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                   <ComboBox fx:id="matchFinishes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="FINISH:" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                </children>
             </GridPane>
          </children>

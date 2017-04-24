@@ -29,6 +29,9 @@ public class StartGameScreenController implements Initializable {
 
     @FXML
     private Text currentPromotionText;
+    
+    @FXML
+    private Text currentPromotionName;
 
     @FXML
     private Button startGameButton;
@@ -86,8 +89,8 @@ public class StartGameScreenController implements Initializable {
     }
 
     private void updateWorkersListView(Promotion newValue) {
-        currentPromotionText.setText(newValue.toString().trim() + "\n"
-                + "Level: " + newValue.getLevel() + "\n"
+        currentPromotionName.setText(newValue.toString().trim());
+        currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
                 + "Workers: " + newValue.getFullRoster().size() + "\n"
                 + "Average Popularity: " + newValue.averageWorkerPopularity());
 

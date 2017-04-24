@@ -24,7 +24,7 @@ public class Match extends Segment implements Serializable {
     public List<Worker> teamA() {
         return teamA;
     }
-    private List<Worker> teamB = new ArrayList<>();
+    private final List<Worker> teamB = new ArrayList<>();
 
     public List<Worker> teamB() {
         return teamB;
@@ -72,7 +72,7 @@ public class Match extends Segment implements Serializable {
             this.hasTeams = true;
             calculateMatchRating();
         }
-        
+
         finish.add(MatchFinishes.CLEAN);
         rules.add(MatchRules.DEFAULT);
 
@@ -108,7 +108,7 @@ public class Match extends Segment implements Serializable {
             this.hasTeams = true;
             calculateMatchRating();
         }
-        
+
         finish.add(MatchFinishes.CLEAN);
         rules.add(MatchRules.DEFAULT);
 
@@ -135,12 +135,60 @@ public class Match extends Segment implements Serializable {
         return !allWorkers().isEmpty() && !getWinner().isEmpty();
     }
 
+    private boolean isHandicapMatch() {
+        boolean handicap = false;
+        int size = teams.get(0).size();
+        for (List<Worker> team : teams) {
+            if (team.size() != size && team.size() >= 1) {
+                handicap = true;
+                break;
+
+            }
+        }
+        return handicap;
+    }
+
     @Override
     public String toString() {
 
         String string = new String();
 
         if (this.hasTeams) {
+
+            if (isHandicapMatch()) {
+                string += "Handicap Match\n";
+
+            } else if (rules.get(0).equals(MatchRules.DEFAULT)) {
+
+                if (teams.size() == 2) {
+
+                    switch (teams.get(0).size()) {
+                        case 1:
+                            string += "Singles Match\n";
+                            break;
+                        case 2:
+                            string += "Tag Team Match\n";
+                            break;
+                        case 3:
+                            string += "Six Man Tag Team Match\n";
+                            break;
+                        case 4:
+                            string += "Eight Man Tag Team Match\n";
+                            break;
+                        case 5:
+                            string += "Ten Man Tag Team Match\n";
+                            break;
+                        default:
+                            break;
+                    }
+
+                } else {
+                    string += teams.size() + "-Way Match\n";
+                }
+            } else {
+                string += rules.get(0).description() + " Match\n";
+            }
+
             for (int t = 0; t < teams.size(); t++) {
                 List<Worker> team = teams.get(t);
 
@@ -162,12 +210,16 @@ public class Match extends Segment implements Serializable {
 
             }
 
-            MatchRules rule = rules.get(0);
-            if (rule != MatchRules.DEFAULT) {
-                string += " in a " + rules.get(0) + " match";
-            }
+            switch (finish.get(0)) {
+                case COUNTOUT:
+                    string += " by Countout";
+                    break;
+                case DQINTERFERENCE:
+                case DQ:
+                    string += " by DQ";
+                    break;
 
-            string += " by " + finish.get(0);
+            }
 
         } else {
             string += getWinner();
@@ -178,6 +230,7 @@ public class Match extends Segment implements Serializable {
         }
 
         return string;
+
     }
 
     public List<Worker> getWinner() {

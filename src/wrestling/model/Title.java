@@ -42,9 +42,24 @@ public class Title implements Serializable {
         String string = "";
 
         for (TitleRecord tr : titleHistory) {
-            string = tr.workers + " Day " + tr.startDate + " to " + tr.endDate + "\n" + string;
+            
+            
+            String name = "\n\n";
+            
+            if(tr.workers.isEmpty()) {
+                name += "Vacant";
+            } else {
+                for(Worker w : tr.workers) {
+                    name += w.getName() + "/";
+                }
+                name = name.substring(0, name.length() - 1);
+            }
+            
+            
+            string = name + " " + tr.startDate + " to " + tr.endDate + string;
 
         }
+       
 
         return string;
     }

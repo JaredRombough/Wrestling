@@ -29,6 +29,8 @@ import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
 import static javafx.application.Application.launch;
+import wrestling.model.MatchRecord;
+import wrestling.model.Worker;
 
 public class MainApp extends Application {
 
@@ -71,13 +73,18 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 0;
+        int preRunDays = 10;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
             System.out.println("day: " + gameController.date());
-            if (i % 10 == 5) {
-                //System.out.println("day: " + gameController.date());
+            if (i % 10 == 5) {/*
+                for(Worker w : gameController.allWorkers()) {
+                    System.out.println(w.getName());
+                        for(MatchRecord mr : w.getMatchRecods()) {
+                            System.out.print(" " + mr.getMatchString());
+                        }
+                }*/
             }
 
         }
@@ -184,8 +191,10 @@ public class MainApp extends Application {
             rootLayoutController.setGameController(this.gameController);
 
             //set the minum size of the main window based on the root layout
-            primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
-            primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
+            //primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
+            //primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
+            primaryStage.setMinWidth(1200);
+            primaryStage.setMinHeight(900);
 
             primaryStage.centerOnScreen();
             //this.primaryStage.setMaximized(true);

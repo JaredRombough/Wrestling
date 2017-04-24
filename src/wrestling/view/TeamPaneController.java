@@ -37,10 +37,7 @@ public class TeamPaneController implements Initializable {
     @FXML
     private Label teamNameLabel;
 
-    @FXML
-    private GridPane gridPane;
-
-    private double cellHeight = 30;
+    private double CELL_HEIGHT = 33;
     private double defaultMainPaneHeight;
 
     private EventScreenController eventScreenController;
@@ -112,7 +109,7 @@ public class TeamPaneController implements Initializable {
 
     public void updateLabels() {
 
-        updateTeamNameLabel();
+        //updateTeamNameLabel();
         updateTeamListViewHeight();
     }
 
@@ -121,12 +118,17 @@ public class TeamPaneController implements Initializable {
         teamNameLabel.setText(getTeamName());
 
     }
+    
+    public void setTeamNameLabel(String string) {
+        teamNameLabel.setText(string);
+    }
 
     private void updateTeamListViewHeight() {
 
-        double height = cellHeight * teamListView.getItems().size();
+        double height = CELL_HEIGHT * teamListView.getItems().size() + 5;
+        
 
-        mainPane.setMinHeight(defaultMainPaneHeight + cellHeight + height);
+        mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
         teamListView.setMinHeight(height);
 
     }
@@ -210,12 +212,12 @@ public class TeamPaneController implements Initializable {
 
         teamListView.setOnDragDropped(new DragDropHandler(teamListView.getItems()));
 
-        double height = cellHeight;
+        double height = CELL_HEIGHT;
         teamListView.setPrefHeight(height);
-        mainPane.setPrefHeight(defaultMainPaneHeight + cellHeight + height);
+        mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
 
         //update the label
-        updateTeamNameLabel();
+        //updateTeamNameLabel();
 
     }
 
