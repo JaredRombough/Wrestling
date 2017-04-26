@@ -131,7 +131,7 @@ public class Import {
     }
 
     private final List<Worker> allWorkers = new ArrayList<>();
-    private List<String> workerIDs = new ArrayList<>();
+    private final List<String> workerIDs = new ArrayList<>();
 
     private void workersDat() throws IOException {
 
@@ -155,6 +155,8 @@ public class Import {
         int wrestling = 0;
         int flying = 0;
         int popularity = 0;
+        int behaviour = 0;
+        int charisma = 0;
         boolean manager = false;
         boolean fullTime = true;
         boolean mainRoster = true;
@@ -228,6 +230,11 @@ public class Import {
                 case 158:
                     popularity = hexStringToInt(hexValueString);
                     break;
+                case 160:
+                    charisma = hexStringToInt(hexValueString);
+                    break;
+                case 256:
+                    behaviour = hexStringToInt(hexValueString);
                 default:
                     break;
             }
@@ -243,6 +250,8 @@ public class Import {
                 worker.setStriking(striking);
                 worker.setWrestling(wrestling);
                 worker.setPopularity(popularity);
+                worker.setCharisma(charisma);
+                worker.setBehaviour(behaviour);
                 worker.setManager(manager);
                 worker.setFullTime(fullTime);
                 worker.setMainRoster(mainRoster);
@@ -269,21 +278,9 @@ public class Import {
 
                 }
 
-                //System.out.println(contractType);
                 allWorkers.add(worker);
 
                 counter = 0;
-                contractIndx = 0;
-                contractIndx2 = 0;
-                contractIndx3 = 0;
-                contractType = "";
-                striking = 0;
-                wrestling = 0;
-                flying = 0;
-                popularity = 0;
-                manager = false;
-                fullTime = true;
-                mainRoster = true;
 
                 currentLine = "";
 

@@ -59,7 +59,10 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private Label popularityLabel;
 
     @FXML
-    private Label reputationLabel;
+    private Label behaviourLabel;
+
+    @FXML
+    private Label charismaLabel;
 
     @FXML
     private Label proficiencyLabel;
@@ -118,6 +121,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
         gridPane.add(contractPane, 0, 6, 4, 1);
     }
 
+    @Override
     public void updateLabels() {
 
         if (currentPromotion.getFullRoster().contains(currentWorker)
@@ -127,7 +131,8 @@ public class WorkerOverviewController extends Controller implements Initializabl
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
             strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
             proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
-            reputationLabel.setText(Integer.toString(currentWorker.getBehaviour()));
+            behaviourLabel.setText(Integer.toString(currentWorker.getBehaviour()));
+            charismaLabel.setText((Integer.toString(currentWorker.getCharisma())));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
             List<Label> statLabels = Arrays.asList(
@@ -135,7 +140,8 @@ public class WorkerOverviewController extends Controller implements Initializabl
                     flyingLabel,
                     strikingLabel,
                     proficiencyLabel,
-                    reputationLabel,
+                    behaviourLabel,
+                    charismaLabel,
                     popularityLabel);
 
             List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
@@ -191,7 +197,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
             flyingLabel.setText("");
             strikingLabel.setText("");
             proficiencyLabel.setText("");
-            reputationLabel.setText("");
+            behaviourLabel.setText("");
             popularityLabel.setText("");
             contractText.setText("");
 

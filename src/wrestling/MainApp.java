@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,16 +20,10 @@ import wrestling.view.BrowserController;
 import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
 import static javafx.application.Application.launch;
-import wrestling.model.MatchRecord;
-import wrestling.model.Worker;
 
 public class MainApp extends Application {
 
@@ -47,6 +40,9 @@ public class MainApp extends Application {
     private AnchorPane financialPane;
     private FinancialScreenController financialController;
 
+    private final int WINDOW_MIN_WIDTH = 1200;
+    private final int WINDOW_MIN_HEIGHT = 900;
+
     public MainApp() {
         this.cssEnabled = true;
 
@@ -56,14 +52,59 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Wrestling");
+        this.primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
+        this.primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
+        this.primaryStage.centerOnScreen();
 
-        do {
-
-            showOptionDialogue();
-        } while (gameController == null);
-
-        initRootLayout();
         showTitleScreen();
+
+    }
+
+    //starts a new random game
+    public void newRandomGame() throws IOException {
+        this.gameController = new GameController();
+        initRootLayout();
+        showStartGameScreen();
+    }
+
+    //starts a new game from imported data
+    public void newImportGame() throws IOException {
+        Import importer = new Import();
+        this.gameController = importer.importController();
+        initRootLayout();
+        showStartGameScreen();
+    }
+
+    //continues the last saved game, jumps to browser
+    public void continueGame() throws ClassNotFoundException, IOException {
+        this.gameController = loadGame();
+        initRootLayout();
+        startGame();
+    }
+
+    //shows initial title screen
+    private void showTitleScreen() {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/TitleScreen.fxml"));
+            AnchorPane titleScreen = (AnchorPane) loader.load();
+
+            // Show the scene containing the root layout.
+            Scene scene = new Scene(titleScreen);
+
+            if (cssEnabled) {
+                scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+            }
+
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+            TitleScreenController controller = loader.getController();
+            controller.setMainApp(this);
+        } catch (IOException e) {
+        }
 
     }
 
@@ -78,14 +119,6 @@ public class MainApp extends Application {
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
             System.out.println("day: " + gameController.date());
-            if (i % 10 == 5) {/*
-                for(Worker w : gameController.allWorkers()) {
-                    System.out.println(w.getName());
-                        for(MatchRecord mr : w.getMatchRecods()) {
-                            System.out.print(" " + mr.getMatchString());
-                        }
-                }*/
-            }
 
         }
 
@@ -94,48 +127,7 @@ public class MainApp extends Application {
 
     private final boolean cssEnabled;
 
-
-    /*
-    show the initial dialogue to choose random or imported game
-     */
-    private void showOptionDialogue() throws IOException, ClassNotFoundException {
-        Alert alert = new Alert(AlertType.NONE);
-        alert.setTitle("Wrestling");
-        alert.setHeaderText("Wrestling!");
-        alert.setContentText("Randomly generate game or import from file?");
-        ButtonType randomButton = new ButtonType("Random");
-        ButtonType importButton = new ButtonType("Import");
-        ButtonType loadButton = new ButtonType("Load Game");
-
-        if (cssEnabled) {
-            //add css
-            DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
-            dialogPane.getStyleClass().add("myDialog");
-        }
-
-        alert.getButtonTypes().setAll(randomButton, importButton, loadButton);
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == randomButton) {
-            gameController = new GameController();
-
-            alert.close();
-        } else if (result.get() == importButton) {
-            Import importer = new Import();
-            gameController = importer.importController();
-            alert.close();
-
-        } else if (result.get() == loadButton) {
-
-            loadGame();
-
-        }
-
-    }
-
-    public void saveGame() throws FileNotFoundException, IOException {
+    private void saveGame() throws FileNotFoundException, IOException {
 
         Kryo kryo = new Kryo();
 
@@ -145,17 +137,19 @@ public class MainApp extends Application {
         output.close();
     }
 
-    public void loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
+    private GameController loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
 
         Kryo kryo = new Kryo();
 
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
         Input input = new Input(new FileInputStream("file.bin"));
-        gameController = kryo.readObject(input, GameController.class);
+        GameController gc = kryo.readObject(input, GameController.class);
         input.close();
+
+        return gc;
     }
 
-    public void prepareScreens() throws IOException {
+    private void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
         loadWorkerOverview();
@@ -193,12 +187,7 @@ public class MainApp extends Application {
             //set the minum size of the main window based on the root layout
             //primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
             //primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
-            primaryStage.setMinWidth(1200);
-            primaryStage.setMinHeight(900);
-
-            primaryStage.centerOnScreen();
             //this.primaryStage.setMaximized(true);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -333,8 +322,8 @@ public class MainApp extends Application {
 
     /*
     loads and shows the title screen
-     */
-    public void showTitleScreen() {
+     *//*
+    private void showTitleScreen() {
         try {
 
             FXMLLoader loader = new FXMLLoader();
@@ -348,15 +337,15 @@ public class MainApp extends Application {
         } catch (IOException e) {
         }
 
-    }
+    }*/
 
-    /*
+ /*
     calls the root layout to update the labels
     most/all controllers have a link to the main app
     so if they cause any change that needs to be reflected 
     in labels outside of their screens it can be handled here
      */
-    public void updateLabels() {
+    private void updateLabels() {
         rootLayoutController.updateLabels();
         browserController.updateLabels();
         eventScreenController.updateLabels();
@@ -377,17 +366,8 @@ public class MainApp extends Application {
     disable buttons, for when we're starting up the game
     and don't yet want to allow screen switching freedom
      */
-    public void setButtonsDisable(boolean disable) {
+    private void setButtonsDisable(boolean disable) {
         rootLayoutController.setButtonsDisable(disable);
-    }
-
-    /**
-     * Returns the main stage.
-     *
-     * @return
-     */
-    public Stage getPrimaryStage() {
-        return primaryStage;
     }
 
     public static void main(String[] args) {

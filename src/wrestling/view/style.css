@@ -10,6 +10,15 @@
 
 }
 
+.titleScreenBackdrop{
+    -fx-background-image: url("title.jpg");
+    -fx-background-repeat:no-repeat;
+    -fx-background-size: 1500 1000;
+    -fx-background: black;
+    -fx-background-position: center center;
+    -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0); 
+}
+
 .bigger {
     -fx-font: 24px "Trebuchet";
 }
