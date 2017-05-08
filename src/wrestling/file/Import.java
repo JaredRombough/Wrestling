@@ -1,5 +1,6 @@
 package wrestling.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +11,6 @@ import javax.xml.bind.DatatypeConverter;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
-import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
@@ -23,8 +23,10 @@ public class Import {
 
     private GameController gameController;
 
-    public GameController importController() throws IOException {
+    private File importFolder;
 
+    public GameController importController(File importFolder) throws IOException {
+        this.importFolder = importFolder;
         gameController = new GameController();
         promotionsDat();
         workersDat();
@@ -59,12 +61,14 @@ public class Import {
         //only keep numbers that translate to an ascii alphabet value
         //otherwise just put a blank in our string
         //this will need to be more complex if we import more than just names
-        if (intLetter >= 64 && intLetter <= 173) {
+        if (intLetter >= 0 && intLetter <= 499) {
 
             letter += String.valueOf((char) (intLetter));
 
         } else {
+
             letter += " ";
+
         }
 
         return letter;
@@ -75,7 +79,7 @@ public class Import {
 
     private void promotionsDat() throws IOException {
 
-        Path path = Paths.get("promos.dat");
+        Path path = Paths.get(importFolder.getPath() + "\\promos.dat");
         byte[] data = Files.readAllBytes(path);
 
         String fileString = DatatypeConverter.printHexBinary(data);
@@ -135,7 +139,7 @@ public class Import {
 
     private void workersDat() throws IOException {
 
-        Path path = Paths.get("wrestler.dat");
+        Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
         byte[] data = Files.readAllBytes(path);
 
         String fileString = DatatypeConverter.printHexBinary(data);
@@ -291,13 +295,13 @@ public class Import {
         }
     }
 
-    private List<String> beltWorkerIDs = new ArrayList<>();
-    private List<String> beltWorkerIDs2 = new ArrayList<>();
-    private List<Title> titles;
-    private List<String> titleNames = new ArrayList<>();
+    private final List<String> beltWorkerIDs = new ArrayList<>();
+    private final List<String> beltWorkerIDs2 = new ArrayList<>();
+
+    private final List<String> titleNames = new ArrayList<>();
 
     private void beltDat() throws IOException {
-        Path path = Paths.get("belt.dat");
+        Path path = Paths.get(importFolder.getPath() + "\\belt.dat");
         byte[] data = Files.readAllBytes(path);
 
         String workerId = new String();

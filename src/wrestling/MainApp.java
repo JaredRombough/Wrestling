@@ -3,6 +3,7 @@ package wrestling;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +25,7 @@ import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
 import static javafx.application.Application.launch;
+import javafx.scene.control.Alert;
 
 public class MainApp extends Application {
 
@@ -51,10 +53,10 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Wrestling");
-        this.primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
-        this.primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
-        this.primaryStage.centerOnScreen();
+        this.getPrimaryStage().setTitle("Wrestling");
+        this.getPrimaryStage().setMinWidth(WINDOW_MIN_WIDTH);
+        this.getPrimaryStage().setMinHeight(WINDOW_MIN_HEIGHT);
+        this.getPrimaryStage().centerOnScreen();
 
         showTitleScreen();
 
@@ -68,11 +70,23 @@ public class MainApp extends Application {
     }
 
     //starts a new game from imported data
-    public void newImportGame() throws IOException {
+    public void newImportGame(File importFolder) throws IOException {
         Import importer = new Import();
-        this.gameController = importer.importController();
-        initRootLayout();
-        showStartGameScreen();
+        this.gameController = importer.importController(importFolder);
+
+        //confirm the import process was successful before starting game
+        if (gameController.promotions.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Import error");
+            alert.setHeaderText("No promotions found");
+            alert.setContentText("Returning to title ");
+            alert.showAndWait();
+
+        } else {
+
+            initRootLayout();
+            showStartGameScreen();
+        }
     }
 
     //continues the last saved game, jumps to browser
@@ -98,8 +112,8 @@ public class MainApp extends Application {
                 scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
             }
 
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            getPrimaryStage().setScene(scene);
+            getPrimaryStage().show();
 
             TitleScreenController controller = loader.getController();
             controller.setMainApp(this);
@@ -114,7 +128,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 10;
+        int preRunDays = 0;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
@@ -176,8 +190,8 @@ public class MainApp extends Application {
                 scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
             }
 
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            getPrimaryStage().setScene(scene);
+            getPrimaryStage().show();
 
             //load and store the controller
             rootLayoutController = loader.getController();
@@ -372,5 +386,12 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    /**
+     * @return the primaryStage
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 }

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -53,7 +54,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private Label flyingLabel;
 
     @FXML
-    private Text contractText;
+    private ScrollPane contractInfo;
 
     @FXML
     private Label popularityLabel;
@@ -118,7 +119,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
         } catch (IOException e) {
         }
 
-        gridPane.add(contractPane, 0, 6, 4, 1);
+        gridPane.add(contractPane, 0, 9, 4, 1);
     }
 
     @Override
@@ -168,7 +169,9 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             }
 
-            contractText.setText(currentWorker.contractString());
+            Text text = new Text(currentWorker.contractString());
+
+            contractInfo.setContent(text);
 
             if (currentWorker.isManager()) {
                 managerLabel.setText("Manager");
@@ -186,10 +189,20 @@ public class WorkerOverviewController extends Controller implements Initializabl
                 managerLabel.setText("Development");
             }
 
-            contractPaneController.updateLabels();
+            //only show the contract pane if the worker can negotiate with the player
+            if (currentWorker.canNegotiate(currentPromotion)) {
+                if (!gridPane.getChildren().contains(contractPane)) {
+                    gridPane.add(contractPane, 0, 9, 4, 1);
+                }
+                contractPaneController.updateLabels();
+
+            } else if (gridPane.getChildren().contains(contractPane)) {
+                gridPane.getChildren().remove(contractPane);
+            }
+
         } else if (!currentPromotion.getFullRoster().contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
-
+            //try to eliminate this possibility if we haven't already
             currentWorker = null;
 
             nameLabel.setText("");
@@ -199,7 +212,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
             proficiencyLabel.setText("");
             behaviourLabel.setText("");
             popularityLabel.setText("");
-            contractText.setText("");
+            //contractInfo.setText("");
 
             contractPaneController.updateLabels();
         }
