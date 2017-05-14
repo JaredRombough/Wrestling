@@ -113,10 +113,11 @@ public class Import {
                 counter = 0;
 
                 //trim the line to get the promotion name
-                currentLine = currentLine.substring(3, 43).trim();
-
+                //currentLine = currentLine.substring(3, 43).trim();
                 promotion.setIndexNumber(promotionKeys.get(promotionKeys.size() - 1));
-                promotion.setName(currentLine);
+                promotion.setName(currentLine.substring(3, 43).trim());
+                promotion.setShortName(currentLine.substring(43, 49).trim());
+                promotion.setImagePath(currentLine.substring(49, 65).trim());
                 promotion.setLevel(6 - level);
 
                 //game model easier to manage if we only have 5 levels
@@ -245,11 +246,10 @@ public class Import {
 
             if (counter == (19 * 16) + 3) {
 
-                currentLine = currentLine.substring(3, 28).trim();
-
                 Worker worker = WorkerFactory.randomWorker();
-                worker.setName(currentLine);
-                worker.setShortName(currentLine);
+                worker.setName(currentLine.substring(3, 27).trim());
+                worker.setShortName(currentLine.substring(28, 38).trim());
+                worker.setImageString(currentLine.substring(45, 65).trim());
                 worker.setFlying(flying);
                 worker.setStriking(striking);
                 worker.setWrestling(wrestling);

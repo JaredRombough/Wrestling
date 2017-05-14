@@ -4,6 +4,9 @@ build/
 dist/
 nbproject/
 test/
+data/
+pics/
+logos/
 build.xml
 wrestlingsavegame.ser
 *.dat

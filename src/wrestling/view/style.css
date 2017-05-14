@@ -98,12 +98,12 @@
     -fx-background-color: #424242;
     -fx-border-width: 5;
     -fx-border-color: #9E9E9E;
-    
+
     -fx-text-fill: white;
     -fx-padding: 0 5 0 0;
-    
+
     -fx-alignment: CENTER_RIGHT;
-    
+
 }
 
 .workerStat {
@@ -148,4 +148,9 @@
 .lowStat
 {
     -fx-text-fill: red;
+}
+
+.imageBorder {
+    -fx-padding: 10;
+    -fx-background-color: #424242;
 }

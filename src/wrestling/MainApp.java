@@ -26,6 +26,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
 import static javafx.application.Application.launch;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 
 public class MainApp extends Application {
 
@@ -41,6 +42,10 @@ public class MainApp extends Application {
     private BrowserController browserController;
     private AnchorPane financialPane;
     private FinancialScreenController financialController;
+
+    private File picsFolder;
+    private File logosFolder;
+    private File dataFolder;
 
     private final int WINDOW_MIN_WIDTH = 1200;
     private final int WINDOW_MIN_HEIGHT = 900;
@@ -70,9 +75,13 @@ public class MainApp extends Application {
     }
 
     //starts a new game from imported data
-    public void newImportGame(File importFolder) throws IOException {
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws IOException {
+        this.dataFolder = dataFolder;
+        this.picsFolder = picsFolder;
+        this.logosFolder = logosFolder;
+
         Import importer = new Import();
-        this.gameController = importer.importController(importFolder);
+        this.gameController = importer.importController(dataFolder);
 
         //confirm the import process was successful before starting game
         if (gameController.promotions.isEmpty()) {
@@ -80,6 +89,11 @@ public class MainApp extends Application {
             alert.setTitle("Import error");
             alert.setHeaderText("No promotions found");
             alert.setContentText("Returning to title ");
+
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/wrestling/view/style.css").toExternalForm());
+
             alert.showAndWait();
 
         } else {
@@ -394,4 +408,26 @@ public class MainApp extends Application {
     public Stage getPrimaryStage() {
         return primaryStage;
     }
+
+    /**
+     * @return the picsFolder
+     */
+    public File getPicsFolder() {
+        return picsFolder;
+    }
+
+    /**
+     * @return the logosFolder
+     */
+    public File getLogosFolder() {
+        return logosFolder;
+    }
+
+    /**
+     * @return the dataFolder
+     */
+    public File getDataFolder() {
+        return dataFolder;
+    }
+
 }

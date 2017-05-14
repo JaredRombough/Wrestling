@@ -67,6 +67,8 @@ public class Promotion implements Serializable {
     }
 
     private String name;
+    private String shortName;
+    private String imagePath;
 
     public void setName(String name) {
         this.name = name;
@@ -206,6 +208,34 @@ public class Promotion implements Serializable {
      */
     public List<Title> getTitles() {
         return titles;
+    }
+
+    /**
+     * @return the shortName
+     */
+    public String getShortName() {
+        return shortName;
+    }
+
+    /**
+     * @param shortName the shortName to set
+     */
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    /**
+     * @return the imagePath
+     */
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    /**
+     * @param imagePath the imagePath to set
+     */
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
 }

@@ -25,6 +25,7 @@ public class Worker implements Serializable {
 
     private String name;
     private String shortName;
+    private String imageString;
 
     private static int serialNumber = 0;
 
@@ -446,6 +447,20 @@ public class Worker implements Serializable {
      */
     public void setFatigue(int fatigue) {
         this.fatigue = fatigue;
+    }
+
+    /**
+     * @return the imageString
+     */
+    public String getImageString() {
+        return imageString;
+    }
+
+    /**
+     * @param imageString the imageString to set
+     */
+    public void setImageString(String imageString) {
+        this.imageString = imageString;
     }
 
 }

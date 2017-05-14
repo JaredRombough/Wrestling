@@ -10,6 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -74,6 +76,9 @@ public class WorkerOverviewController extends Controller implements Initializabl
     @FXML
     private Label mainRosterLabel;
 
+    @FXML
+    private ImageView imageView;
+
     private Worker currentWorker;
     private Promotion currentPromotion;
 
@@ -135,6 +140,10 @@ public class WorkerOverviewController extends Controller implements Initializabl
             behaviourLabel.setText(Integer.toString(currentWorker.getBehaviour()));
             charismaLabel.setText((Integer.toString(currentWorker.getCharisma())));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
+
+            //set the worker image
+            Image image = new Image("File:" + mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
+            imageView.setImage(image);
 
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,

@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -33,6 +34,7 @@ import wrestling.view.comparators.EventDateComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
+import javafx.util.Callback;
 
 /**
  *
@@ -261,9 +263,8 @@ public class BrowserController implements Initializable {
 
             }
         }
-        
-        if(currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton))
-        {
+
+        if (currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton)) {
             myPromotionButton.getStyleClass().add("selectedButton");
         }
 
@@ -334,6 +335,25 @@ public class BrowserController implements Initializable {
 
         //set up the promotion combobox
         promotionComboBox.getItems().addAll(gameController.promotions);
+        
+        // show the promotion acronym
+        Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
+
+            @Override
+            protected void updateItem(Promotion item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setText(null);
+                } else {
+                    setText(item.getShortName());
+                }
+            }
+        };
+
+        promotionComboBox.setCellFactory(cellFactory);
+        promotionComboBox.setButtonCell((ListCell) cellFactory.call(null));
+
         promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
