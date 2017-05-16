@@ -21,7 +21,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.model.Worker;
@@ -37,7 +36,7 @@ public class TeamPaneController implements Initializable {
     @FXML
     private Label teamNameLabel;
 
-    private double CELL_HEIGHT = 33;
+    private static final double CELL_HEIGHT = 33;
     private double defaultMainPaneHeight;
 
     private EventScreenController eventScreenController;
@@ -88,7 +87,7 @@ public class TeamPaneController implements Initializable {
         @Override
         public void handle(DragEvent event) {
 
-            LocalDragboard ldb = LocalDragboard.getInstance();
+            LocalDragboard ldb = LocalDragboard.getINSTANCE();
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
 
@@ -109,16 +108,9 @@ public class TeamPaneController implements Initializable {
 
     public void updateLabels() {
 
-        //updateTeamNameLabel();
         updateTeamListViewHeight();
     }
 
-    private void updateTeamNameLabel() {
-
-        teamNameLabel.setText(getTeamName());
-
-    }
-    
     public void setTeamNameLabel(String string) {
         teamNameLabel.setText(string);
     }
@@ -126,7 +118,6 @@ public class TeamPaneController implements Initializable {
     private void updateTeamListViewHeight() {
 
         double height = CELL_HEIGHT * teamListView.getItems().size() + 5;
-        
 
         mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
         teamListView.setMinHeight(height);
@@ -137,7 +128,7 @@ public class TeamPaneController implements Initializable {
     private ObjectProperty<AnchorPane> draggingTab;
 
     private void preparePaneForSorting() {
-        draggingTab = new SimpleObjectProperty<AnchorPane>();
+        draggingTab = new SimpleObjectProperty<>();
         mainPane.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -216,9 +207,6 @@ public class TeamPaneController implements Initializable {
         teamListView.setPrefHeight(height);
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
 
-        //update the label
-        //updateTeamNameLabel();
-
     }
 
     private void setWorkerCellFactory(ListView listView) {
@@ -234,15 +222,14 @@ public class TeamPaneController implements Initializable {
 
     public List<Worker> getWorkers() {
 
-        List workers = new ArrayList<Worker>(teamListView.getItems());
-        return workers;
+        return new ArrayList<>(teamListView.getItems());
 
     }
 
     public String getTeamName() {
-        String string = new String();
+        String string = "";
 
-        if (getWorkers().size() > 0) {
+        if (!getWorkers().isEmpty()) {
 
             for (int i = 0; i < getWorkers().size(); i++) {
                 Worker worker = getWorkers().get(i);

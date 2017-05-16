@@ -86,9 +86,7 @@ public class EventScreenController implements Initializable {
 
     private void setCurrentSegmentNumber(int number) {
 
-        Integer intObject = number;
-
-        Number newNumber = (Number) intObject;
+        Number newNumber = number;
         setCurrentSegmentNumber(newNumber);
     }
 
@@ -341,7 +339,7 @@ public class EventScreenController implements Initializable {
                 ClipboardContent content = new ClipboardContent();
 
                 content.putString(getText());
-                LocalDragboard.getInstance().putValue(SegmentNameItem.class, getItem());
+                LocalDragboard.getINSTANCE().putValue(SegmentNameItem.class, getItem());
                 content.putString(getItem().name.get());
 
                 dragboard.setContent(content);
@@ -373,7 +371,7 @@ public class EventScreenController implements Initializable {
             });
 
             setOnDragDropped((DragEvent event) -> {
-                //if (getText() == null) {
+            
                 if (getGraphic() == null) {
                     return;
 
@@ -381,7 +379,7 @@ public class EventScreenController implements Initializable {
 
                 boolean success = false;
 
-                LocalDragboard ldb = LocalDragboard.getInstance();
+                LocalDragboard ldb = LocalDragboard.getINSTANCE();
                 if (ldb.hasType(SegmentNameItem.class)) {
                     SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
                     ObservableList<SegmentNameItem> items = getListView().getItems();
@@ -526,7 +524,7 @@ public class EventScreenController implements Initializable {
         @Override
         public void handle(DragEvent event) {
 
-            LocalDragboard ldb = LocalDragboard.getInstance();
+            LocalDragboard ldb = LocalDragboard.getINSTANCE();
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
 

@@ -20,6 +20,10 @@ import wrestling.model.utility.UtilityFunctions;
  */
 public final class EventFactory {
 
+    private EventFactory() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
@@ -80,33 +84,36 @@ public final class EventFactory {
     }
 
     private static String generateSummaryString(TempEvent event) {
-        String eventString = new String();
+        StringBuilder bld = new StringBuilder();
 
         for (Segment segment : event.getSegments()) {
 
             if (segment.isComplete()) {
-                eventString += segment.toString();
+                bld.append(segment.toString());
                 if (segment instanceof Match) {
-                    eventString += "\n";
-                    eventString += "Rating: " + ((Match) segment).segmentRating();
+
+                    bld.append("\n");
+                    bld.append("Rating: " + ((Match) segment).segmentRating());
 
                 }
-                eventString += "\n";
+                bld.append("\n");
+
             }
         }
 
-        eventString += "\n";
-        eventString += "Total cost: $" + calculateCost(event);
-        eventString += "\n";
-        eventString += "Attendance: " + attendance(event);
-        eventString += "\n";
-        eventString += "Gross profit: $" + gate(event);
-        eventString += "\n";
-        eventString += "Roster size: " + event.getPromotion().getFullRoster().size();
-        eventString += "\n";
-        eventString += "Promotion Level: " + event.getPromotion().getLevel() + " (" + event.getPromotion().getPopulatirty() + ")";
+        bld.append("\n");
 
-        return eventString;
+        bld.append("Total cost: $").append(calculateCost(event));
+        bld.append("\n");
+        bld.append("Attendance: ").append(attendance(event));
+        bld.append("\n");
+        bld.append("Gross profit: $").append(gate(event));
+        bld.append("\n");
+        bld.append("Roster size: ").append(event.getPromotion().getFullRoster().size());
+        bld.append("\n");
+        bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
+
+        return bld.toString();
     }
 
     private static int attendance(TempEvent event) {
@@ -127,6 +134,8 @@ public final class EventFactory {
                 break;
             case 5:
                 attendance += 4000;
+                break;
+            default:
                 break;
         }
 
@@ -231,6 +240,8 @@ public final class EventFactory {
                 break;
             case 5:
                 ticketPrice += 35;
+                break;
+            default:
                 break;
         }
 

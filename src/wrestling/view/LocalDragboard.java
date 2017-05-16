@@ -10,16 +10,16 @@ public class LocalDragboard {
 
     private final Map<Class<?>, Object> contents;
 
-    private final static LocalDragboard instance = new LocalDragboard();
+    private static final LocalDragboard INSTANCE = new LocalDragboard();
     
     
 
     private LocalDragboard() {
-        this.contents = new HashMap<Class<?>, Object>();
+        this.contents = new HashMap<>();
     }
 
-    public static LocalDragboard getInstance() {
-        return instance;
+    public static LocalDragboard getINSTANCE() {
+        return INSTANCE;
     }
 
     public <T> void putValue(Class<T> type, T value) {

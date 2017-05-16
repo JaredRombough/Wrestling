@@ -1,6 +1,5 @@
 package wrestling.model;
 
-import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,7 +51,7 @@ public final class GameController implements Serializable {
     public void nextDay() {
 
         //iterate through all promotions
-        for (Promotion promotion : promotions) {
+        for (Promotion promotion : getPromotions()) {
 
             //update all the contracts associated with the current promotion
             List<Contract> contractList = new ArrayList<>(promotion.getContracts());
@@ -80,20 +79,14 @@ public final class GameController implements Serializable {
 
     }
 
-    /*
-    public Integer date() {
-
-        return date;
-    }*/
     public LocalDate date() {
         return gameDate;
     }
 
-    public List<Promotion> promotions;
+    private List<Promotion> promotions;
 
     private Promotion playerPromotion;
 
-    //public EventFactory eventFactory;
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
         //set the Ai for non-player promotions
@@ -137,7 +130,7 @@ public final class GameController implements Serializable {
 
     private void setAi() {
         //add ai where necessary
-        for (Promotion promotion : promotions) {
+        for (Promotion promotion : getPromotions()) {
             if (!promotion.equals(playerPromotion)) {
                 promotion.setAi(new PromotionAi(promotion, this));
             }
@@ -151,8 +144,14 @@ public final class GameController implements Serializable {
     public static Worker getRandomFromList(List<Worker> list) {
         Random randomizer = new Random();
 
-        Worker randomWorker = list.get(randomizer.nextInt(list.size()));
-        return randomWorker;
+        return list.get(randomizer.nextInt(list.size()));
+    }
+
+    /**
+     * @return the promotions
+     */
+    public List<Promotion> getPromotions() {
+        return promotions;
     }
 
 }

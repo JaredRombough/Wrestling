@@ -109,7 +109,7 @@ public class Worker implements Serializable {
     }
 
     private boolean hasContract() {
-        return (this.contracts.size() > 0);
+        return !this.contracts.isEmpty();
     }
 
     public Contract getContract(Promotion promotion) {
@@ -129,12 +129,14 @@ public class Worker implements Serializable {
     }
 
     public String contractString() {
-        String string = new String();
+
+        StringBuilder bld = new StringBuilder();
         for (Contract current : contracts) {
-            string += current.getTerms();
-            string += "\n";
+
+            bld.append(current.getTerms());
+            bld.append("\n");
         }
-        return string;
+        return bld.toString();
     }
 
     @Override

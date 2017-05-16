@@ -32,7 +32,7 @@ public class Contract implements Serializable {
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
-
+        
     }
 
     //depreciates monthly contracts

@@ -104,12 +104,7 @@ public class PromotionAi implements Serializable {
 
     private void sortByPopularity(List<Worker> workerList) {
         //sort roster by popularity
-        Collections.sort(workerList, new Comparator<Worker>() {
-            @Override
-            public int compare(Worker w1, Worker w2) {
-                return -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity());
-            }
-        });
+        Collections.sort(workerList, (Worker w1, Worker w2) -> -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity()));
     }
 
     //sign a contract with the first suitable worker found
@@ -164,6 +159,8 @@ public class PromotionAi implements Serializable {
             case 5:
                 target = 20;
                 break;
+            default:
+                break;
 
         }
 
@@ -187,7 +184,6 @@ public class PromotionAi implements Serializable {
 
         LocalDate eventDate = LocalDate.ofYearDay(gameController.date().getYear(), gameController.date().getDayOfYear());
         eventDate = LocalDate.from(eventDate).plusDays(30);
-        //LocalDate eventDate = gameController.date() + 30;
         LocalDate bestDate = eventDate;
         double threshold = 0.8;
         double bestThreshold = 0;
@@ -196,7 +192,7 @@ public class PromotionAi implements Serializable {
 
         //go through a range of dates after the first acceptable next event date
         for (int i = 0; i < 40; i++) {
-            //eventDate += i;
+
             eventDate = LocalDate.from(eventDate).plusDays(1);
 
             //if we don't already have an event scheduled on this date
@@ -367,7 +363,7 @@ public class PromotionAi implements Serializable {
 
         //fill up the segments if we don't have enough for some reason
         if (segments.size() < maxSegments) {
-            //eventRoster.removeAll(matchBooked);
+
             //go through the roster by popularity and make singles matches
             for (int i = 0; i < eventRoster.size(); i += 2) {
                 if (eventRoster.size() > i + 1) {
@@ -376,7 +372,7 @@ public class PromotionAi implements Serializable {
                     List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
                     List<List<Worker>> teams = new ArrayList<>(Arrays.asList(teamA, teamB));
                     Match match = new Match(teams);
-                    //Match match = new Match(eventRoster.get(i), eventRoster.get(i + 1));
+
                     segments.add(match);
                 }
 

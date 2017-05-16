@@ -34,7 +34,7 @@ public class WorkerCell extends ListCell<Worker> {
                 /*
                          we need to drag the reference to the worker, not just the string
                  */
-                LocalDragboard.getInstance().putValue(Worker.class, getItem());
+                LocalDragboard.getINSTANCE().putValue(Worker.class, getItem());
 
                 event.consume();
             }

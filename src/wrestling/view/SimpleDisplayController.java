@@ -19,7 +19,6 @@ public class SimpleDisplayController extends Controller implements Initializable
 
     private Object obj;
 
-    //private Text text;
     @FXML
     private ScrollPane scrollPane;
 
@@ -29,15 +28,12 @@ public class SimpleDisplayController extends Controller implements Initializable
     @FXML
     private TextFlow textFlow;
 
-    //private Text text;
     @FXML
     private StackPane stackPane;
 
     @Override
     void initializeMore() {
 
-        //text = new Text();
-        //textArea.add(text);
     }
 
     @Override
@@ -65,9 +61,6 @@ public class SimpleDisplayController extends Controller implements Initializable
         text.setText(newText);
 
         scrollPane.setContent(text);
-        //text.setText(newText);
-        //textArea.setText(newText);
-        //text.setTextAlignment(TextAlignment.CENTER);
 
     }
 

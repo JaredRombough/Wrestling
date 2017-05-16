@@ -1,5 +1,6 @@
 package wrestling.view;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -138,12 +139,15 @@ public class WorkerOverviewController extends Controller implements Initializabl
             strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
             proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
             behaviourLabel.setText(Integer.toString(currentWorker.getBehaviour()));
-            charismaLabel.setText((Integer.toString(currentWorker.getCharisma())));
+            charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
             //set the worker image
-            Image image = new Image("File:" + mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
-            imageView.setImage(image);
+            File f = new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
+            if (f.exists() && !f.isDirectory()) {
+                Image image = new Image("File:" + mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
+                imageView.setImage(image);
+            }
 
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,
@@ -164,7 +168,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
                     }
                 }
 
-                String style = "";
+                String style;
                 if (Integer.parseInt(l.getText()) < 50) {
                     style = "lowStat";
                 } else if (Integer.parseInt(l.getText()) >= 50

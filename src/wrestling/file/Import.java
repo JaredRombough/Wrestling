@@ -112,8 +112,7 @@ public class Import {
 
                 counter = 0;
 
-                //trim the line to get the promotion name
-                //currentLine = currentLine.substring(3, 43).trim();
+                //trim the line to get the promotion name etc
                 promotion.setIndexNumber(promotionKeys.get(promotionKeys.size() - 1));
                 promotion.setName(currentLine.substring(3, 43).trim());
                 promotion.setShortName(currentLine.substring(43, 49).trim());
@@ -166,7 +165,7 @@ public class Import {
         boolean fullTime = true;
         boolean mainRoster = true;
 
-        String workerId = new String();
+        String workerId = "";
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
@@ -240,6 +239,7 @@ public class Import {
                     break;
                 case 256:
                     behaviour = hexStringToInt(hexValueString);
+                    break;
                 default:
                     break;
             }
@@ -289,7 +289,7 @@ public class Import {
                 currentLine = "";
 
                 workerIDs.add(workerId);
-                workerId = new String();
+                workerId = "";
 
             }
         }
@@ -359,9 +359,9 @@ public class Import {
                 beltWorkerIDs.add(workerId);
                 beltWorkerIDs2.add(workerId2);
                 titleNames.add(titleName);
-                workerId = new String();
-                workerId2 = new String();
-                titleName = new String();
+                workerId = "";
+                workerId2 = "";
+                titleName = "";
 
             }
         }

@@ -1,5 +1,6 @@
 package wrestling.view;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class StartGameScreenController implements Initializable {
         //now that we have the game controller we can set the promotions to the listview
         ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
 
-        for (Promotion current : gameController.promotions) {
+        for (Promotion current : gameController.getPromotions()) {
             //dont' want the player to pick the free agents. probably want a cleaner solution though.
             if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
@@ -86,8 +87,12 @@ public class StartGameScreenController implements Initializable {
 
                 updateWorkersListView(newValue);
                 //set the promotion image
-                Image image = new Image("File:" + mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath());
-                imageView.setImage(image);
+                File f = new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath());
+                if (f.exists() && !f.isDirectory()) {
+                    Image image = new Image("File:" + mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath());
+                    imageView.setImage(image);
+                }
+
             }
         });
 

@@ -39,7 +39,7 @@ public class EventArchive implements Serializable {
 
     @Override
     public String toString() {
-        String string = new String();
+        String string = "";
         string += promotionName + " event, day " + getDate();
         return string;
     }
@@ -63,5 +63,12 @@ public class EventArchive implements Serializable {
      */
     public LocalDate getDate() {
         return date;
+    }
+
+    /**
+     * @return the attendance
+     */
+    public int getAttendance() {
+        return attendance;
     }
 }

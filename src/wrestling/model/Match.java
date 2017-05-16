@@ -41,7 +41,6 @@ public class Match extends Segment implements Serializable {
         return allWorkersList;
     }
 
-    private boolean hasWinner;
     private boolean hasTeams;
 
     private int matchRating;
@@ -57,17 +56,14 @@ public class Match extends Segment implements Serializable {
      */
     public Match(final List<List<Worker>> teams) {
 
-        this.hasWinner = false;
         this.hasTeams = false;
 
         if (teams.size() == 1) {
             this.winner = teams.get(0);
-            this.hasWinner = true;
             this.hasTeams = false;
 
         } else if (teams.size() > 1) {
             this.winner = teams.get(0);
-            this.hasWinner = true;
             this.teams.addAll(teams);
             this.hasTeams = true;
             calculateMatchRating();
@@ -93,17 +89,14 @@ public class Match extends Segment implements Serializable {
     public Match(final List<List<Worker>> teams, Title title) {
 
         this.title = title;
-        this.hasWinner = false;
         this.hasTeams = false;
 
         if (teams.size() == 1) {
             this.winner = teams.get(0);
-            this.hasWinner = true;
             this.hasTeams = false;
 
         } else if (teams.size() > 1) {
             this.winner = teams.get(0);
-            this.hasWinner = true;
             this.teams.addAll(teams);
             this.hasTeams = true;
             calculateMatchRating();
@@ -139,7 +132,7 @@ public class Match extends Segment implements Serializable {
         boolean handicap = false;
         int size = teams.get(0).size();
         for (List<Worker> team : teams) {
-            if (team.size() != size && team.size() >= 1) {
+            if (team.size() != size && !team.isEmpty()) {
                 handicap = true;
                 break;
 
@@ -194,7 +187,7 @@ public class Match extends Segment implements Serializable {
 
                 for (int i = 0; i < team.size(); i++) {
                     string += team.get(i).getShortName();
-                    //string += " (" + team.get(i).getPopularity() + ") ";
+
                     if (team.size() > 1 && i < team.size() - 1) {
                         string += "/";
                     }
@@ -217,6 +210,8 @@ public class Match extends Segment implements Serializable {
                 case DQINTERFERENCE:
                 case DQ:
                     string += " by DQ";
+                    break;
+                default:
                     break;
 
             }

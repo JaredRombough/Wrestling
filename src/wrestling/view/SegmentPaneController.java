@@ -47,7 +47,7 @@ public class SegmentPaneController implements Initializable {
 
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
-    private final int defaultTeams = 2;
+    private static final int DEFAULTTEAMS = 2;
 
     private EventScreenController eventScreenController;
 
@@ -61,7 +61,7 @@ public class SegmentPaneController implements Initializable {
 
     public void initializeMore() {
 
-        for (int i = 0; i < defaultTeams; i++) {
+        for (int i = 0; i < DEFAULTTEAMS; i++) {
 
             addTeam();
 
@@ -123,7 +123,7 @@ public class SegmentPaneController implements Initializable {
     private void initializeMatchRulesCombobox() {
 
         //for when selection changes
-        matchRules.setOnAction((event) -> {
+        matchRules.setOnAction(event -> {
             updateMatchRulesCombobox();
             updateLabels();
 
@@ -257,7 +257,7 @@ public class SegmentPaneController implements Initializable {
     private void removeTeam() {
 
         //we may want an alternate method where a minimum of one team is kept
-        if (teamPanes.size() > 0 && teamPaneControllers.size() > 0) {
+        if (!teamPanes.isEmpty() && !teamPaneControllers.isEmpty()) {
 
             teamPanes.remove(teamPanes.size() - 1);
             teamPaneControllers.remove(teamPaneControllers.size() - 1);
@@ -302,11 +302,9 @@ public class SegmentPaneController implements Initializable {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
 
-        Match match = new Match(getTeams(),
+        return new Match(getTeams(),
                 Arrays.asList((MatchRules) matchRules.getSelectionModel().getSelectedItem()),
                 Arrays.asList((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem()));
-
-        return match;
     }
 
     /*
@@ -314,11 +312,11 @@ public class SegmentPaneController implements Initializable {
      */
     public void clear() {
 
-        while (teamPanes.size() > 0 && teamPaneControllers.size() > 0) {
+        while (!teamPanes.isEmpty() && !teamPaneControllers.isEmpty()) {
             removeTeam();
         }
 
-        for (int i = 0; i < defaultTeams; i++) {
+        for (int i = 0; i < DEFAULTTEAMS; i++) {
             addTeam();
         }
 

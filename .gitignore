@@ -7,6 +7,7 @@ test/
 data/
 pics/
 logos/
+lib/
 build.xml
 wrestlingsavegame.ser
 *.dat
@@ -68,3 +69,4 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.mf
+/src/wrestling/.sonarlint/

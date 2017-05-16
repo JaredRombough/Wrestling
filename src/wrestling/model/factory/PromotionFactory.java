@@ -13,6 +13,10 @@ import wrestling.model.Worker;
 for generating promotions in a random game
  */
 public final class PromotionFactory {
+    
+    private PromotionFactory() {
+        throw new IllegalAccessError("Utility class");
+    }
 
     public static void preparePromotions(GameController gameController) throws IOException {
 

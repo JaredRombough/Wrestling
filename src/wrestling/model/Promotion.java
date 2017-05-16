@@ -40,7 +40,7 @@ public class Promotion implements Serializable {
     }
 
     private boolean hasAi() {
-        return (ai != null);
+        return ai != null;
     }
 
     public List<Worker> getActiveRoster() {
@@ -108,7 +108,7 @@ public class Promotion implements Serializable {
         int totalPop = 0;
         int averagePop = 0;
 
-        if (getFullRoster().size() > 0) {
+        if (!getFullRoster().isEmpty()) {
             for (Worker worker : getFullRoster()) {
                 totalPop += worker.getPopularity();
             }
@@ -198,9 +198,7 @@ public class Promotion implements Serializable {
 
     //the maximum popularity worker the promotion can hire
     public int maxPopularity() {
-        int max = level * 20;
-
-        return max;
+        return level * 20;
     }
 
     /**

@@ -4,7 +4,6 @@ package wrestling.view.comparators;
 
 import java.util.Comparator;
 import wrestling.model.Title;
-import wrestling.model.Worker;
 
 public class TitleNameComparator implements Comparator<Title> {
 

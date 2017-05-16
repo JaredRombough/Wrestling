@@ -47,8 +47,8 @@ public class MainApp extends Application {
     private File logosFolder;
     private File dataFolder;
 
-    private final int WINDOW_MIN_WIDTH = 1200;
-    private final int WINDOW_MIN_HEIGHT = 900;
+    private static final int WINDOW_MIN_WIDTH = 1200;
+    private static final int WINDOW_MIN_HEIGHT = 900;
 
     public MainApp() {
         this.cssEnabled = true;
@@ -84,7 +84,7 @@ public class MainApp extends Application {
         this.gameController = importer.importController(dataFolder);
 
         //confirm the import process was successful before starting game
-        if (gameController.promotions.isEmpty()) {
+        if (gameController.getPromotions().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Import error");
             alert.setHeaderText("No promotions found");
@@ -155,7 +155,7 @@ public class MainApp extends Application {
 
     private final boolean cssEnabled;
 
-    private void saveGame() throws FileNotFoundException, IOException {
+    private void saveGame() throws IOException {
 
         Kryo kryo = new Kryo();
 
@@ -165,7 +165,7 @@ public class MainApp extends Application {
         output.close();
     }
 
-    private GameController loadGame() throws ClassNotFoundException, FileNotFoundException, IOException {
+    private GameController loadGame() throws ClassNotFoundException, IOException {
 
         Kryo kryo = new Kryo();
 
@@ -212,12 +212,7 @@ public class MainApp extends Application {
             rootLayoutController.setMainApp(this);
             rootLayoutController.setGameController(this.gameController);
 
-            //set the minum size of the main window based on the root layout
-            //primaryStage.setMinWidth(rootLayoutController.rootLayoutMinWidth() * 3);
-            //primaryStage.setMinHeight(rootLayoutController.rootLayoutMinWidth() * 2);
-            //this.primaryStage.setMaximized(true);
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -348,26 +343,8 @@ public class MainApp extends Application {
         }
     }
 
+
     /*
-    loads and shows the title screen
-     *//*
-    private void showTitleScreen() {
-        try {
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/TitleScreen.fxml"));
-            AnchorPane titleScreen = (AnchorPane) loader.load();
-
-            rootLayout.setCenter(titleScreen);
-
-            TitleScreenController controller = loader.getController();
-            controller.setMainApp(this);
-        } catch (IOException e) {
-        }
-
-    }*/
-
- /*
     calls the root layout to update the labels
     most/all controllers have a link to the main app
     so if they cause any change that needs to be reflected 
@@ -400,6 +377,7 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
     }
 
     /**
@@ -413,21 +391,22 @@ public class MainApp extends Application {
      * @return the picsFolder
      */
     public File getPicsFolder() {
-        return picsFolder;
+        return (dataFolder == null) ? new File(System.getProperty("user.dir") + "/PICS/") : picsFolder;
     }
 
     /**
      * @return the logosFolder
      */
     public File getLogosFolder() {
-        return logosFolder;
+        return (dataFolder == null) ? new File(System.getProperty("user.dir") + "/LOGOS/") : logosFolder;
     }
 
     /**
      * @return the dataFolder
      */
     public File getDataFolder() {
-        return dataFolder;
+
+        return (dataFolder == null) ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
     }
 
 }

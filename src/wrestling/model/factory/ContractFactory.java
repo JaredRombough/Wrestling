@@ -15,6 +15,10 @@ import wrestling.model.Worker;
  */
 public final class ContractFactory {
 
+    private ContractFactory() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     //create a contract with predetermined attributes
     public static void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
@@ -133,7 +137,7 @@ public final class ContractFactory {
     }
 
     public static int calculateAppearanceCost(Worker worker, boolean exclusive) {
-        int unitCost = 0;
+        int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();
 
@@ -194,7 +198,7 @@ public final class ContractFactory {
      */
     private static void setBiWeeklyCost(Contract contract) {
 
-        int unitCost = 0;
+        int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();
 

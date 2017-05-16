@@ -3,7 +3,6 @@ package wrestling.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /*
@@ -44,19 +43,19 @@ public class Title implements Serializable {
         for (TitleRecord tr : titleHistory) {
             
             
-            String name = "\n\n";
+            String workerName = "\n\n";
             
             if(tr.workers.isEmpty()) {
-                name += "Vacant";
+                workerName += "Vacant";
             } else {
                 for(Worker w : tr.workers) {
-                    name += w.getName() + "/";
+                    workerName += w.getName() + "/";
                 }
-                name = name.substring(0, name.length() - 1);
+                workerName = workerName.substring(0, workerName.length() - 1);
             }
             
             
-            string = name + " " + tr.startDate + " to " + tr.endDate + string;
+            string = workerName + " " + tr.startDate + " to " + tr.endDate + string;
 
         }
        

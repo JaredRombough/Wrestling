@@ -153,7 +153,7 @@ public class BrowserController implements Initializable {
 
         private ObservableList comparators;
 
-        public BrowserMode(Class<T> tClass, List initialItems, String fxmlPath) throws IOException {
+        public BrowserMode(List initialItems, String fxmlPath) throws IOException {
 
             //load the display pane and its controller
             FXMLLoader loader = new FXMLLoader();
@@ -256,19 +256,22 @@ public class BrowserController implements Initializable {
     }
 
     private void updateSelectedButton(Button button) {
-        for (Button b : browseButtons) {
-            if (b.getStyleClass().contains("selectedButton")) {
 
-                b.getStyleClass().remove("selectedButton");
+        String selectedButtonClass = "selectedButton";
+
+        for (Button b : browseButtons) {
+            if (b.getStyleClass().contains(selectedButtonClass)) {
+
+                b.getStyleClass().remove(selectedButtonClass);
 
             }
         }
 
         if (currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton)) {
-            myPromotionButton.getStyleClass().add("selectedButton");
+            myPromotionButton.getStyleClass().add(selectedButtonClass);
         }
 
-        button.getStyleClass().add("selectedButton");
+        button.getStyleClass().add(selectedButtonClass);
 
     }
 
@@ -334,8 +337,8 @@ public class BrowserController implements Initializable {
     private void initializePromotionCombobox() {
 
         //set up the promotion combobox
-        promotionComboBox.getItems().addAll(gameController.promotions);
-        
+        promotionComboBox.getItems().addAll(gameController.getPromotions());
+
         // show the promotion acronym
         Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
 
@@ -372,7 +375,7 @@ public class BrowserController implements Initializable {
 
         initializePromotionCombobox();
 
-        browseWorkers = new BrowserMode<>(Worker.class,
+        browseWorkers = new BrowserMode<>(
                 gameController.playerPromotion().getFullRoster(),
                 "view/WorkerOverview.fxml");
         browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
@@ -385,14 +388,14 @@ public class BrowserController implements Initializable {
         lastButton = rosterButton;
         lastDisplayNode = browseWorkers.displayPane;
 
-        browseEvents = new BrowserMode<>(EventArchive.class,
+        browseEvents = new BrowserMode<>(
                 gameController.playerPromotion().getEventArchives(),
                 "view/SimpleDisplay.fxml");
         browseEvents.comparators = FXCollections.observableArrayList(
                 new EventDateComparator()
         );
 
-        browseTitles = new BrowserMode<>(Title.class,
+        browseTitles = new BrowserMode<>(
                 gameController.playerPromotion().getTitles(),
                 "view/SimpleDisplay.fxml");
         browseTitles.comparators = FXCollections.observableArrayList(
