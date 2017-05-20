@@ -3,7 +3,6 @@ package wrestling.model.factory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.Worker;
@@ -14,9 +13,6 @@ import wrestling.model.Worker;
  */
 public final class TitleFactory {
     
-    private TitleFactory() {
-        throw new IllegalAccessError("Utility class");
-    }
 
     //create a title with predetermined attributes
     public static void createTitle(Promotion promotion, Worker worker, String name) {
@@ -79,6 +75,9 @@ public final class TitleFactory {
         }
         title.setDayWon(date);
 
+    }
+    private TitleFactory() {
+        throw new IllegalAccessError("Utility class");
     }
 
 }

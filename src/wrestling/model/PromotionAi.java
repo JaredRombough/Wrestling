@@ -1,15 +1,14 @@
 package wrestling.model;
 
-import wrestling.model.utility.UtilityFunctions;
-import wrestling.model.factory.ContractFactory;
-import wrestling.model.factory.EventFactory;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import wrestling.model.factory.ContractFactory;
+import wrestling.model.factory.EventFactory;
+import wrestling.model.utility.UtilityFunctions;
 
 public class PromotionAi implements Serializable {
 
@@ -17,15 +16,17 @@ public class PromotionAi implements Serializable {
 
     public final GameController gameController;
 
-    public PromotionAi(Promotion promotion, GameController gameController) {
 
+    private final List<Worker> pushList;
+    //list of dates on which the promotion has events scheduled
+    private List<LocalDate> eventDates = new ArrayList<>();
+    public PromotionAi(Promotion promotion, GameController gameController) {
+        
         eventDates.add(LocalDate.from(gameController.date()).plusDays(UtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
         this.pushList = new ArrayList<>();
     }
-
-    private final List<Worker> pushList;
 
     private int idealRosterSize() {
         return 10 + (promotion.getLevel() * 10);
@@ -135,8 +136,6 @@ public class PromotionAi implements Serializable {
 
     }
 
-    //list of dates on which the promotion has events scheduled
-    private List<LocalDate> eventDates = new ArrayList<>();
 
     //determine how many future events the promotion is meant to have at a given time
     private int eventAmountTarget() {

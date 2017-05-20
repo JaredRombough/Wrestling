@@ -24,11 +24,12 @@ import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
+import wrestling.model.MatchRules;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
-import wrestling.model.MatchRules;
 
 public class SegmentPaneController implements Initializable {
+    private static final int DEFAULTTEAMS = 2;
 
     @FXML
     private VBox teamsPane;
@@ -47,7 +48,6 @@ public class SegmentPaneController implements Initializable {
 
     private List<Pane> teamPanes;
     private List<TeamPaneController> teamPaneControllers;
-    private static final int DEFAULTTEAMS = 2;
 
     private EventScreenController eventScreenController;
 
@@ -287,10 +287,10 @@ public class SegmentPaneController implements Initializable {
             String teamName = "";
             switch (teamPaneControllers.indexOf(tpc)) {
                 case 0:
-                    teamName += "Winner";
+                    teamName = "Winner";
                     break;
                 default:
-                    teamName += "Loser";
+                    teamName = "Loser";
                     break;
             }
             tpc.setTeamNameLabel(teamName);

@@ -1,13 +1,14 @@
 package wrestling.model;
 
-import wrestling.model.factory.EventFactory;
-import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.factory.EventFactory;
+import wrestling.model.utility.UtilityFunctions;
 
 public class Worker implements Serializable {
+    private static int serialNumber = 0;
 
     /**
      * @return the serialNumber
@@ -27,7 +28,6 @@ public class Worker implements Serializable {
     private String shortName;
     private String imageString;
 
-    private static int serialNumber = 0;
 
     private int striking;
     private int flying;
@@ -47,6 +47,8 @@ public class Worker implements Serializable {
     private final List<Contract> contracts = new ArrayList<>();
     private final List<EventFactory> bookings = new ArrayList<>();
     private final List<Title> titles = new ArrayList<>();
+    private int minimumPopularity;
+    private final List<MatchRecord> matchRecords;
 
     public Worker() {
 
@@ -171,7 +173,6 @@ public class Worker implements Serializable {
 
     }
 
-    private int minimumPopularity;
 
     //once workers reach a level of popularity, they can never  drop below 50% of that
     private void updateMinimumPopularity() {
@@ -235,7 +236,6 @@ public class Worker implements Serializable {
         }
     }
 
-    private final List<MatchRecord> matchRecords;
 
     public void addMatchRecord(MatchRecord record) {
         matchRecords.add(record);

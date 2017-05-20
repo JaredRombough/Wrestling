@@ -5,7 +5,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javafx.application.Application;
@@ -29,6 +28,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 
 public class MainApp extends Application {
+    private static final int WINDOW_MIN_WIDTH = 1200;
+    private static final int WINDOW_MIN_HEIGHT = 900;
+    public static void main(String[] args) {
+        launch(args);
+        
+    }
 
     private Stage primaryStage;
     private BorderPane rootLayout;
@@ -46,9 +51,8 @@ public class MainApp extends Application {
     private File picsFolder;
     private File logosFolder;
     private File dataFolder;
-
-    private static final int WINDOW_MIN_WIDTH = 1200;
-    private static final int WINDOW_MIN_HEIGHT = 900;
+    
+    private final boolean cssEnabled;
 
     public MainApp() {
         this.cssEnabled = true;
@@ -153,7 +157,6 @@ public class MainApp extends Application {
         setButtonsDisable(false);
     }
 
-    private final boolean cssEnabled;
 
     private void saveGame() throws IOException {
 
@@ -375,10 +378,6 @@ public class MainApp extends Application {
         rootLayoutController.setButtonsDisable(disable);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-
-    }
 
     /**
      * @return the primaryStage

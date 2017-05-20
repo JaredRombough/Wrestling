@@ -43,7 +43,7 @@
                   <Font size="36.0" />
                </font></Text>
             <Text fx:id="currentPromotionText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-            <StackPane styleClass="imageBorder" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
+            <StackPane fx:id="promotionImageBorder" styleClass="imageBorder" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
                <children>
                   <ImageView fx:id="imageView" fitHeight="105.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" />
                </children>

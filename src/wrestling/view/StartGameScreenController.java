@@ -1,9 +1,9 @@
 package wrestling.view;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.io.IOException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,14 +13,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.utility.UtilityFunctions;
 
 public class StartGameScreenController implements Initializable {
 
@@ -40,7 +40,7 @@ public class StartGameScreenController implements Initializable {
     private Button startGameButton;
 
     @FXML
-    private GridPane gridPane;
+    private StackPane promotionImageBorder;
 
     @FXML
     private ImageView imageView;
@@ -80,25 +80,26 @@ public class StartGameScreenController implements Initializable {
     }
 
     public void initializeMore() {
+        initializePromotionsListView();
+        updateWorkersListView(
+                (Promotion) promotionListView.getSelectionModel().getSelectedItem());
+    }
+
+    private void initializePromotionsListView() {
         promotionListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
 
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
 
                 updateWorkersListView(newValue);
-                //set the promotion image
-                File f = new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath());
-                if (f.exists() && !f.isDirectory()) {
-                    Image image = new Image("File:" + mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath());
-                    imageView.setImage(image);
-                }
+                UtilityFunctions.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+                        promotionImageBorder,
+                        imageView);
 
             }
         });
 
         promotionListView.getSelectionModel().selectFirst();
-        updateWorkersListView(
-                (Promotion) promotionListView.getSelectionModel().getSelectedItem());
     }
 
     private void updateWorkersListView(Promotion newValue) {

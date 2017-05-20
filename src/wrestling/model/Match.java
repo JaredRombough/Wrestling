@@ -1,12 +1,12 @@
 package wrestling.model;
 
-import wrestling.model.utility.UtilityFunctions;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import wrestling.model.factory.TitleFactory;
+import wrestling.model.utility.UtilityFunctions;
 
 public class Match extends Segment implements Serializable {
 
@@ -21,34 +21,13 @@ public class Match extends Segment implements Serializable {
     private List<MatchRules> rules = new ArrayList<>();
     private List<MatchFinishes> finish = new ArrayList<>();
 
-    public List<Worker> teamA() {
-        return teamA;
-    }
     private final List<Worker> teamB = new ArrayList<>();
 
-    public List<Worker> teamB() {
-        return teamB;
-    }
-
-    @Override
-    public List<Worker> allWorkers() {
-        List<Worker> allWorkersList = new ArrayList<>();
-
-        for (List<Worker> team : teams) {
-            allWorkersList.addAll(team);
-        }
-
-        return allWorkersList;
-    }
 
     private boolean hasTeams;
 
     private int matchRating;
 
-    @Override
-    public int segmentRating() {
-        return matchRating;
-    }
 
 
     /*
@@ -105,6 +84,26 @@ public class Match extends Segment implements Serializable {
         finish.add(MatchFinishes.CLEAN);
         rules.add(MatchRules.DEFAULT);
 
+    }
+    public List<Worker> teamA() {
+        return teamA;
+    }
+    public List<Worker> teamB() {
+        return teamB;
+    }
+    @Override
+    public List<Worker> allWorkers() {
+        List<Worker> allWorkersList = new ArrayList<>();
+        
+        for (List<Worker> team : teams) {
+            allWorkersList.addAll(team);
+        }
+        
+        return allWorkersList;
+    }
+    @Override
+    public int segmentRating() {
+        return matchRating;
     }
 
     public void setWinner(int winnerIndex) {

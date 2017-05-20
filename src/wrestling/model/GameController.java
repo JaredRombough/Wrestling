@@ -1,6 +1,5 @@
 package wrestling.model;
 
-import wrestling.model.factory.PromotionFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
@@ -9,13 +8,27 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import wrestling.model.factory.PromotionFactory;
 
 /**
  *
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
+    /*
+    returns a random worker from a list of workers
+    */
+    public static Worker getRandomFromList(List<Worker> list) {
+        Random randomizer = new Random();
+        
+        return list.get(randomizer.nextInt(list.size()));
+    }
 
+    private LocalDate gameDate;
+    private LocalDate payDay;
+    private List<Promotion> promotions;
+    private Promotion playerPromotion;
+    private List<Worker> workers;
     public GameController() throws IOException {
 
         //set the initial date here
@@ -31,9 +44,6 @@ public final class GameController implements Serializable {
         PromotionFactory.preparePromotions(this);
 
     }
-
-    private LocalDate gameDate;
-    private LocalDate payDay;
 
     //is it payday?
     public boolean isPayDay() {
@@ -83,9 +93,6 @@ public final class GameController implements Serializable {
         return gameDate;
     }
 
-    private List<Promotion> promotions;
-
-    private Promotion playerPromotion;
 
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
@@ -97,7 +104,6 @@ public final class GameController implements Serializable {
         return playerPromotion;
     }
 
-    private List<Worker> workers;
 
     public List<Worker> allWorkers() {
         return workers;
@@ -138,14 +144,6 @@ public final class GameController implements Serializable {
         }
     }
 
-    /*
-    returns a random worker from a list of workers
-     */
-    public static Worker getRandomFromList(List<Worker> list) {
-        Random randomizer = new Random();
-
-        return list.get(randomizer.nextInt(list.size()));
-    }
 
     /**
      * @return the promotions

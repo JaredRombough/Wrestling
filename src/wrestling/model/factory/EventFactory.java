@@ -20,9 +20,6 @@ import wrestling.model.utility.UtilityFunctions;
  */
 public final class EventFactory {
 
-    private EventFactory() {
-        throw new IllegalAccessError("Utility class");
-    }
 
     public static void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
 
@@ -48,40 +45,6 @@ public final class EventFactory {
 
     }
 
-    //class to temporarily hold event info to make things cleaner
-    private static class TempEvent {
-
-        private final List<Segment> segments;
-        private final LocalDate date;
-        private final Promotion promotion;
-
-        public TempEvent(List<Segment> segments, LocalDate date, Promotion promotion) {
-            this.segments = new ArrayList<>(segments);
-            this.date = date;
-            this.promotion = promotion;
-        }
-
-        /**
-         * @return the segments
-         */
-        public List<Segment> getSegments() {
-            return segments;
-        }
-
-        /**
-         * @return the date
-         */
-        public LocalDate getDate() {
-            return date;
-        }
-
-        /**
-         * @return the promotion
-         */
-        public Promotion getPromotion() {
-            return promotion;
-        }
-    }
 
     private static String generateSummaryString(TempEvent event) {
         StringBuilder bld = new StringBuilder();
@@ -246,5 +209,42 @@ public final class EventFactory {
         }
 
         return attendance(event) * ticketPrice;
+    }
+    private EventFactory() {
+        throw new IllegalAccessError("Utility class");
+    }
+    //class to temporarily hold event info to make things cleaner
+    private static class TempEvent {
+        
+        private final List<Segment> segments;
+        private final LocalDate date;
+        private final Promotion promotion;
+        
+        public TempEvent(List<Segment> segments, LocalDate date, Promotion promotion) {
+            this.segments = new ArrayList<>(segments);
+            this.date = date;
+            this.promotion = promotion;
+        }
+        
+        /**
+         * @return the segments
+         */
+        public List<Segment> getSegments() {
+            return segments;
+        }
+        
+        /**
+         * @return the date
+         */
+        public LocalDate getDate() {
+            return date;
+        }
+        
+        /**
+         * @return the promotion
+         */
+        public Promotion getPromotion() {
+            return promotion;
+        }
     }
 }

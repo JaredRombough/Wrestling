@@ -4,15 +4,15 @@ import java.time.LocalDate;
 
 public class Transaction {
 
+
+    private final int amount;
+    private final char type;
+    private final LocalDate date;
     public Transaction(int amount, char type, LocalDate date) {
         this.amount = amount;
         this.type = type;
         this.date = date;
     }
-
-    private final int amount;
-    private final char type;
-    private final LocalDate date;
 
     /**
      * @return the amount

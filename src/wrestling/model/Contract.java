@@ -29,6 +29,7 @@ public class Contract implements Serializable {
     private int appearanceCost;
 
     private int biWeeklyCost;
+    private List<LocalDate> bookedDates = new ArrayList<>();
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
@@ -114,7 +115,6 @@ public class Contract implements Serializable {
         return string;
     }
 
-    private List<LocalDate> bookedDates = new ArrayList<>();
 
     public void bookDate(LocalDate date) {
         getBookedDates().add(date);

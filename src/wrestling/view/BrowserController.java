@@ -24,6 +24,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.EventArchive;
 import wrestling.model.GameController;
@@ -34,7 +35,6 @@ import wrestling.view.comparators.EventDateComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
-import javafx.util.Callback;
 
 /**
  *
@@ -45,14 +45,6 @@ public class BrowserController implements Initializable {
     private MainApp mainApp;
     private GameController gameController;
 
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    public void setGameController(GameController gameController) throws IOException {
-        this.gameController = gameController;
-        initializeMore();
-    }
 
     @FXML
     private Button rosterButton;
@@ -103,11 +95,25 @@ public class BrowserController implements Initializable {
 
     private Promotion currentPromotion;
 
+
+    //keeps track of the last sortedlist so we can clear it when needed
+    private SortedList lastSortedList;
+
+    private BrowserMode<Worker> browseWorkers;
+    private BrowserMode<EventArchive> browseEvents;
+    private BrowserMode<Title> browseTitles;
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+    public void setGameController(GameController gameController) throws IOException {
+        this.gameController = gameController;
+        initializeMore();
+    }
     /*
     sets the current promotion
     updates relevant labels
     fires the last button to update the list
-     */
+    */
     private void setCurrentPromotion(Promotion newPromotion) {
         this.currentPromotion = newPromotion;
 
@@ -132,58 +138,6 @@ public class BrowserController implements Initializable {
         //for the newly selected promotion
         //might not work for more complex situations
         lastButton.fire();
-
-    }
-
-    //keeps track of the last sortedlist so we can clear it when needed
-    private SortedList lastSortedList;
-
-    /*
-    internal class used to handle browsing of different object types
-     */
-    private class BrowserMode<T> {
-
-        private SortedList sortedList;
-
-        private final ListView listView = new ListView<>();
-
-        private final AnchorPane displayPane;
-
-        private Controller controller;
-
-        private ObservableList comparators;
-
-        public BrowserMode(List initialItems, String fxmlPath) throws IOException {
-
-            //load the display pane and its controller
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(fxmlPath));
-            displayPane = (AnchorPane) loader.load();
-
-            controller = loader.getController();
-
-            controller.setMainApp(mainApp);
-            controller.setGameController(gameController);
-
-            //get the listview ready
-            listView.setItems(FXCollections.observableArrayList(initialItems));
-
-            //listen for changes in selection on the listview
-            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
-                @Override
-                public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-
-                    if (newValue != null) {
-
-                        //tell the controller what object we're looking at
-                        controller.setCurrent(newValue);
-
-                    }
-
-                }
-            });
-
-        }
 
     }
 
@@ -367,9 +321,6 @@ public class BrowserController implements Initializable {
 
     }
 
-    private BrowserMode<Worker> browseWorkers;
-    private BrowserMode<EventArchive> browseEvents;
-    private BrowserMode<Title> browseTitles;
 
     private void initializeMore() throws IOException {
 
@@ -406,6 +357,54 @@ public class BrowserController implements Initializable {
 
         lastButton.fire();
 
+    }
+    /*
+    internal class used to handle browsing of different object types
+    */
+    private class BrowserMode<T> {
+        
+        private SortedList sortedList;
+        
+        private final ListView listView = new ListView<>();
+        
+        private final AnchorPane displayPane;
+        
+        private Controller controller;
+        
+        private ObservableList comparators;
+        
+        public BrowserMode(List initialItems, String fxmlPath) throws IOException {
+            
+            //load the display pane and its controller
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource(fxmlPath));
+            displayPane = (AnchorPane) loader.load();
+            
+            controller = loader.getController();
+            
+            controller.setMainApp(mainApp);
+            controller.setGameController(gameController);
+            
+            //get the listview ready
+            listView.setItems(FXCollections.observableArrayList(initialItems));
+            
+            //listen for changes in selection on the listview
+            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
+                @Override
+                public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
+                    
+                    if (newValue != null) {
+                        
+                        //tell the controller what object we're looking at
+                        controller.setCurrent(newValue);
+                        
+                    }
+                    
+                }
+            });
+            
+        }
+        
     }
 
 }

@@ -63,7 +63,7 @@
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </ScrollPane>
-            <StackPane styleClass="imageBorder" GridPane.columnIndex="4" GridPane.rowIndex="2">
+            <StackPane fx:id="workerImageBorder" styleClass="imageBorder" GridPane.columnIndex="4" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </GridPane.margin>

@@ -19,24 +19,15 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
-import wrestling.model.factory.ContractFactory;
 import wrestling.model.GameController;
 import wrestling.model.Worker;
+import wrestling.model.factory.ContractFactory;
 
 public class ContractPaneController implements Initializable {
 
     private MainApp mainApp;
     private GameController gameController;
 
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
-    }
 
     @FXML
     private ComboBox typeComboBox;
@@ -53,6 +44,14 @@ public class ContractPaneController implements Initializable {
     private boolean exclusive;
 
     private Worker worker;
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+        
+        initializeMore();
+    }
 
     public void setWorker(Worker worker) {
         this.worker = worker;

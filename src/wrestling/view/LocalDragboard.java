@@ -8,18 +8,18 @@ public class LocalDragboard {
     
     
 
-    private final Map<Class<?>, Object> contents;
 
     private static final LocalDragboard INSTANCE = new LocalDragboard();
     
     
 
-    private LocalDragboard() {
-        this.contents = new HashMap<>();
-    }
 
     public static LocalDragboard getINSTANCE() {
         return INSTANCE;
+    }
+    private final Map<Class<?>, Object> contents;
+    private LocalDragboard() {
+        this.contents = new HashMap<>();
     }
 
     public <T> void putValue(Class<T> type, T value) {

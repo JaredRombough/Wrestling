@@ -76,13 +76,13 @@ public class EventScreenController implements Initializable {
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private final List<Segment> segments = new ArrayList<>();
 
-    private Segment currentSegment() {
-        return segments.get(currentSegmentNumber.intValue());
-    }
 
     //this would be for keeping track of the index number of the currently
     //selected segment
     private Number currentSegmentNumber;
+    private Segment currentSegment() {
+        return segments.get(currentSegmentNumber.intValue());
+    }
 
     private void setCurrentSegmentNumber(int number) {
 
@@ -299,138 +299,6 @@ public class EventScreenController implements Initializable {
         });
     }
 
-    /*
-    used for the segment listview, instead of strings we keep an observable list
-    of SegmentNameItems. This forces the listview to update everytime we update
-    a SegmentNameItem.
-     */
-    private static class SegmentNameItem {
-
-        StringProperty name = new SimpleStringProperty();
-
-        ObjectProperty<Segment> segment = new SimpleObjectProperty();
-
-        public static Callback<SegmentNameItem, Observable[]> extractor() {
-            return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
-        }
-
-        @Override
-        public String toString() {
-            return name.get();
-        }
-    }
-
-    /*
-    special cell for the segment sorter that handles sorting by drag
-    and drop
-     */
-    private class SorterCell extends ListCell<SegmentNameItem> {
-
-        public SorterCell() {
-            ListCell thisCell = this;
-
-            setOnDragDetected((MouseEvent event) -> {
-                if (getItem() == null) {
-
-                    return;
-                }
-
-                Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-
-                content.putString(getText());
-                LocalDragboard.getINSTANCE().putValue(SegmentNameItem.class, getItem());
-                content.putString(getItem().name.get());
-
-                dragboard.setContent(content);
-
-                event.consume();
-            });
-
-            setOnDragOver(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-
-                event.consume();
-            });
-
-            setOnDragEntered(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(0.3);
-                }
-            });
-
-            setOnDragExited(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(1);
-                }
-            });
-
-            setOnDragDropped((DragEvent event) -> {
-            
-                if (getGraphic() == null) {
-                    return;
-
-                }
-
-                boolean success = false;
-
-                LocalDragboard ldb = LocalDragboard.getINSTANCE();
-                if (ldb.hasType(SegmentNameItem.class)) {
-                    SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
-                    ObservableList<SegmentNameItem> items = getListView().getItems();
-                    int draggedIdx = items.indexOf(segmentNameItem);
-                    int thisIdx = items.indexOf(getItem());
-
-                    //swap all parallel arrays associated with the segment
-                    Collections.swap(items, thisIdx, draggedIdx);
-                    Collections.swap(segmentPanes, thisIdx, draggedIdx);
-                    Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
-                    Collections.swap(segments, thisIdx, draggedIdx);
-
-                    setCurrentSegmentNumber(thisIdx);
-
-                    segmentListView.getSelectionModel().select(segmentNameItem);
-                    success = true;
-                }
-
-                event.setDropCompleted(success);
-
-                event.consume();
-            });
-
-            setOnDragDone(DragEvent::consume);
-        }
-
-        private Label myLabel;
-
-        @Override
-        protected void updateItem(SegmentNameItem item, boolean empty) {
-
-            super.updateItem(item, empty);
-
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-
-                myLabel = new Label(item.name.getValue());
-                myLabel.setTextAlignment(TextAlignment.CENTER);
-
-                myLabel.setWrapText(true);
-                myLabel.setMaxWidth(segmentListView.getWidth() - 40);
-
-                myLabel.getStyleClass().add("sorterLabel");
-                setGraphic(myLabel);
-
-            }
-
-        }
-    }
 
     /*
     additional initialization to be called externally after we have our mainApp etc.
@@ -514,11 +382,144 @@ public class EventScreenController implements Initializable {
 
     }
 
+
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+
+        initializeMore();
+    }
+
+    private static class SegmentNameItem {
+
+        public static Callback<SegmentNameItem, Observable[]> extractor() {
+            return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
+        }
+        StringProperty name = new SimpleStringProperty();
+        ObjectProperty<Segment> segment = new SimpleObjectProperty();
+
+        @Override
+        public String toString() {
+            return name.get();
+        }
+    }
+
+    private class SorterCell extends ListCell<SegmentNameItem> {
+
+        private Label myLabel;
+
+        public SorterCell() {
+            ListCell thisCell = this;
+
+            setOnDragDetected((MouseEvent event) -> {
+                if (getItem() == null) {
+
+                    return;
+                }
+
+                Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+
+                content.putString(getText());
+                LocalDragboard.getINSTANCE().putValue(SegmentNameItem.class, getItem());
+                content.putString(getItem().name.get());
+
+                dragboard.setContent(content);
+
+                event.consume();
+            });
+
+            setOnDragOver(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            });
+
+            setOnDragEntered(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    setOpacity(0.3);
+                }
+            });
+
+            setOnDragExited(event -> {
+                if (event.getGestureSource() != thisCell
+                        && event.getDragboard().hasString()) {
+                    setOpacity(1);
+                }
+            });
+            
+            setOnDragDropped((DragEvent event) -> {
+                
+                if (getGraphic() == null) {
+                    return;
+
+                }
+
+                boolean success = false;
+
+                LocalDragboard ldb = LocalDragboard.getINSTANCE();
+                if (ldb.hasType(SegmentNameItem.class)) {
+                    SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
+                    ObservableList<SegmentNameItem> items = getListView().getItems();
+                    int draggedIdx = items.indexOf(segmentNameItem);
+                    int thisIdx = items.indexOf(getItem());
+
+                    //swap all parallel arrays associated with the segment
+                    Collections.swap(items, thisIdx, draggedIdx);
+                    Collections.swap(segmentPanes, thisIdx, draggedIdx);
+                    Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
+                    Collections.swap(segments, thisIdx, draggedIdx);
+
+                    setCurrentSegmentNumber(thisIdx);
+
+                    segmentListView.getSelectionModel().select(segmentNameItem);
+                    success = true;
+                }
+
+                event.setDropCompleted(success);
+
+                event.consume();
+            });
+
+            setOnDragDone(DragEvent::consume);
+        }
+
+        @Override
+        protected void updateItem(SegmentNameItem item, boolean empty) {
+
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+
+                myLabel = new Label(item.name.getValue());
+                myLabel.setTextAlignment(TextAlignment.CENTER);
+
+                myLabel.setWrapText(true);
+                myLabel.setMaxWidth(segmentListView.getWidth() - 40);
+
+                myLabel.getStyleClass().add("sorterLabel");
+                setGraphic(myLabel);
+
+            }
+
+        }
+    }
     /*
     to be used by the workersListView on the left of the screen
     should only be needed for when the user is dropping a worker
     on the listView that has been dragged from one of the teams
-     */
+    */
     private class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
 
         @Override
@@ -543,17 +544,6 @@ public class EventScreenController implements Initializable {
             }
         }
 
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-    }
-
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
     }
 
 }

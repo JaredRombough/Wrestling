@@ -46,6 +46,9 @@ public class ImportDialogController extends Controller implements Initializable 
     private File logosPath;
     private File dataPath;
 
+
+    private Stage stage;
+    private MainApp mainApp;
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
 
@@ -61,8 +64,6 @@ public class ImportDialogController extends Controller implements Initializable 
         }
         updateLabels();
     }
-
-    private Stage stage;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -135,7 +136,6 @@ public class ImportDialogController extends Controller implements Initializable 
         dataPath = new File(System.getProperty("user.dir") + "/DATA/");
     }
 
-    private MainApp mainApp;
 
     @Override
     public void setMainApp(MainApp mainApp) {

@@ -15,6 +15,8 @@ public class Title implements Serializable {
     private int teamSize;
     private Promotion promotion;
     private String name;
+    private LocalDate dayWon;
+    private List<TitleRecord> titleHistory = new ArrayList<>();
 
     //vacant title
     public Title(Promotion promotion, int teamSize, String name) {
@@ -120,7 +122,6 @@ public class Title implements Serializable {
         this.name = name;
     }
 
-    private LocalDate dayWon;
 
     /**
      * @return the dayWon
@@ -152,7 +153,6 @@ public class Title implements Serializable {
 
     }
 
-    private List<TitleRecord> titleHistory = new ArrayList<>();
 
     /**
      * @return the teamSize

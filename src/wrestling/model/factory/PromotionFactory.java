@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
-import wrestling.model.utility.UtilityFunctions;
 import wrestling.model.Worker;
+import wrestling.model.utility.UtilityFunctions;
 
 
 /*
@@ -14,9 +14,6 @@ for generating promotions in a random game
  */
 public final class PromotionFactory {
     
-    private PromotionFactory() {
-        throw new IllegalAccessError("Utility class");
-    }
 
     public static void preparePromotions(GameController gameController) throws IOException {
 
@@ -77,6 +74,9 @@ public final class PromotionFactory {
         gameController.setPromotions(promotions);
         gameController.setWorkers(allWorkers);
 
+    }
+    private PromotionFactory() {
+        throw new IllegalAccessError("Utility class");
     }
 
 }

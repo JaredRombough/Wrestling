@@ -11,32 +11,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.utility.UtilityFunctions;
 
 public class WorkerOverviewController extends Controller implements Initializable {
 
     private MainApp mainApp;
     private GameController gameController;
 
-    @Override
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    @Override
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
-    }
 
     private AnchorPane contractPane;
     private ContractPaneController contractPaneController;
@@ -80,8 +70,21 @@ public class WorkerOverviewController extends Controller implements Initializabl
     @FXML
     private ImageView imageView;
 
+    @FXML
+    private StackPane workerImageBorder;
+
     private Worker currentWorker;
     private Promotion currentPromotion;
+    @Override
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+    @Override
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+        
+        initializeMore();
+    }
 
     @Override
     public void setCurrent(Object obj) {
@@ -142,12 +145,9 @@ public class WorkerOverviewController extends Controller implements Initializabl
             charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
-            //set the worker image
-            File f = new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
-            if (f.exists() && !f.isDirectory()) {
-                Image image = new Image("File:" + mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString());
-                imageView.setImage(image);
-            }
+            UtilityFunctions.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
+                    workerImageBorder,
+                    imageView);
 
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,

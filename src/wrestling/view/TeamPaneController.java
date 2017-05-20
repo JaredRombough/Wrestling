@@ -26,6 +26,8 @@ import javafx.util.Callback;
 import wrestling.model.Worker;
 
 public class TeamPaneController implements Initializable {
+    private static final double CELL_HEIGHT = 33;
+    private static final String TAB_DRAG_KEY = "anchorpane";
 
     @FXML
     private ListView teamListView;
@@ -36,11 +38,12 @@ public class TeamPaneController implements Initializable {
     @FXML
     private Label teamNameLabel;
 
-    private static final double CELL_HEIGHT = 33;
     private double defaultMainPaneHeight;
 
     private EventScreenController eventScreenController;
     private SegmentPaneController segmentPaneController;
+    private int teamNumber;
+    private ObjectProperty<AnchorPane> draggingTab;
 
     public void setEventScreenController(EventScreenController eventScreenController) {
         this.eventScreenController = eventScreenController;
@@ -50,7 +53,6 @@ public class TeamPaneController implements Initializable {
         this.segmentPaneController = segmentPaneController;
     }
 
-    private int teamNumber;
 
     public int getTeamNumber() {
         return this.teamNumber;
@@ -74,37 +76,6 @@ public class TeamPaneController implements Initializable {
 
     }
 
-    private class DragDropHandler implements EventHandler<DragEvent> {
-
-        private final ObservableList<Worker> itemList;
-
-        DragDropHandler(ObservableList<Worker> itemList) {
-
-            this.itemList = itemList;
-
-        }
-
-        @Override
-        public void handle(DragEvent event) {
-
-            LocalDragboard ldb = LocalDragboard.getINSTANCE();
-            if (ldb.hasType(Worker.class)) {
-                Worker worker = ldb.getValue(Worker.class);
-
-                segmentPaneController.removeWorker(worker);
-                itemList.add(worker);
-
-                updateLabels();
-                segmentPaneController.updateLabels();
-                eventScreenController.updateSegments();
-
-                //Clear, otherwise we end up with the worker stuck on the dragboard?
-                ldb.clearAll();
-
-            }
-        }
-
-    }
 
     public void updateLabels() {
 
@@ -124,8 +95,6 @@ public class TeamPaneController implements Initializable {
 
     }
 
-    private static final String TAB_DRAG_KEY = "anchorpane";
-    private ObjectProperty<AnchorPane> draggingTab;
 
     private void preparePaneForSorting() {
         draggingTab = new SimpleObjectProperty<>();
@@ -243,6 +212,37 @@ public class TeamPaneController implements Initializable {
         }
 
         return string;
+    }
+    private class DragDropHandler implements EventHandler<DragEvent> {
+        
+        private final ObservableList<Worker> itemList;
+        
+        DragDropHandler(ObservableList<Worker> itemList) {
+            
+            this.itemList = itemList;
+            
+        }
+        
+        @Override
+        public void handle(DragEvent event) {
+            
+            LocalDragboard ldb = LocalDragboard.getINSTANCE();
+            if (ldb.hasType(Worker.class)) {
+                Worker worker = ldb.getValue(Worker.class);
+                
+                segmentPaneController.removeWorker(worker);
+                itemList.add(worker);
+                
+                updateLabels();
+                segmentPaneController.updateLabels();
+                eventScreenController.updateSegments();
+                
+                //Clear, otherwise we end up with the worker stuck on the dragboard?
+                ldb.clearAll();
+                
+            }
+        }
+        
     }
 
 }

@@ -8,10 +8,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
-import wrestling.model.factory.ContractFactory;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
 
@@ -25,6 +25,17 @@ public class Import {
 
     private File importFolder;
 
+    private final List<Promotion> promotions = new ArrayList<>();
+    private final List<Integer> promotionKeys = new ArrayList<>();
+
+    private final List<Worker> allWorkers = new ArrayList<>();
+    private final List<String> workerIDs = new ArrayList<>();
+
+    private final List<String> beltWorkerIDs = new ArrayList<>();
+    private final List<String> beltWorkerIDs2 = new ArrayList<>();
+
+    private final List<String> titleNames = new ArrayList<>();
+    
     public GameController importController(File importFolder) throws IOException {
         this.importFolder = importFolder;
         gameController = new GameController();
@@ -44,13 +55,11 @@ public class Import {
 
         return gameController;
     }
-
     private int hexStringToInt(String hexValueString) {
 
         return Integer.parseInt(hexValueString, 16);
 
     }
-
     private String hexStringToLetter(String hexValueString) {
         //take the characters in two positions, since they combine to make
         //up one hex value that we have to translate
@@ -73,10 +82,6 @@ public class Import {
 
         return letter;
     }
-
-    private final List<Promotion> promotions = new ArrayList<>();
-    private final List<Integer> promotionKeys = new ArrayList<>();
-
     private void promotionsDat() throws IOException {
 
         Path path = Paths.get(importFolder.getPath() + "\\promos.dat");
@@ -133,10 +138,6 @@ public class Import {
             }
         }
     }
-
-    private final List<Worker> allWorkers = new ArrayList<>();
-    private final List<String> workerIDs = new ArrayList<>();
-
     private void workersDat() throws IOException {
 
         Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
@@ -294,11 +295,6 @@ public class Import {
             }
         }
     }
-
-    private final List<String> beltWorkerIDs = new ArrayList<>();
-    private final List<String> beltWorkerIDs2 = new ArrayList<>();
-
-    private final List<String> titleNames = new ArrayList<>();
 
     private void beltDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\belt.dat");

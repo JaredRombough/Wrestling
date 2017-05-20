@@ -6,13 +6,13 @@ import java.util.List;
 
 public class BankAccount {
 
-    public BankAccount() {
-        funds = 0;
-    }
 
     private Integer funds;
 
     private List<Transaction> transactions = new ArrayList<>();
+    public BankAccount() {
+        funds = 0;
+    }
 
     public int getTransactionTotal(char type, LocalDate startDate, LocalDate endDate) {
 

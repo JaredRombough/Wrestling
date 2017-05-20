@@ -15,9 +15,6 @@ import wrestling.model.Worker;
  */
 public final class ContractFactory {
 
-    private ContractFactory() {
-        throw new IllegalAccessError("Utility class");
-    }
 
     //create a contract with predetermined attributes
     public static void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
@@ -222,6 +219,9 @@ public final class ContractFactory {
 
         contract.setBiWeeklyCost(unitCost);
 
+    }
+    private ContractFactory() {
+        throw new IllegalAccessError("Utility class");
     }
 
 }

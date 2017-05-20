@@ -8,6 +8,20 @@ import wrestling.model.financial.BankAccount;
 
 public class Promotion implements Serializable {
 
+    private static int serialNumber = 0;
+
+    private PromotionAi ai;
+
+    private final BankAccount bankAccount;
+    private String name;
+    private String shortName;
+    private String imagePath;
+    private int indexNumber;
+    private int popularity;
+    private int level;
+    private final List<EventArchive> eventArchives;
+    private final List<Title> titles = new ArrayList<>();
+    private final List<Contract> contracts;
     public Promotion() {
         this.contracts = new ArrayList<>();
 
@@ -22,10 +36,6 @@ public class Promotion implements Serializable {
 
         serialNumber++;
     }
-
-    private PromotionAi ai;
-
-    private final BankAccount bankAccount;
 
     public BankAccount bankAccount() {
         return bankAccount;
@@ -66,9 +76,6 @@ public class Promotion implements Serializable {
         return roster;
     }
 
-    private String name;
-    private String shortName;
-    private String imagePath;
 
     public void setName(String name) {
         this.name = name;
@@ -77,8 +84,6 @@ public class Promotion implements Serializable {
     public String getName() {
         return name;
     }
-    private static int serialNumber = 0;
-    private int indexNumber;
 
     public void setIndexNumber(int indexNumber) {
         this.indexNumber = indexNumber;
@@ -88,7 +93,6 @@ public class Promotion implements Serializable {
         return indexNumber;
     }
 
-    private int popularity;
 
     public int getPopulatirty() {
         return popularity;
@@ -136,7 +140,6 @@ public class Promotion implements Serializable {
         }
     }
 
-    private int level;
 
     public int getLevel() {
         return level;
@@ -152,7 +155,6 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-    private final List<EventArchive> eventArchives;
 
     //used for browsing events
     public List<EventArchive> getEventArchives() {
@@ -163,7 +165,6 @@ public class Promotion implements Serializable {
         eventArchives.add(event);
     }
 
-    private final List<Title> titles = new ArrayList<>();
 
     public void addTitle(Title title) {
         this.getTitles().add(title);
@@ -174,7 +175,6 @@ public class Promotion implements Serializable {
         return name;
     }
 
-    private final List<Contract> contracts;
 
     public void addContract(Contract contract) {
         this.contracts.add(contract);
