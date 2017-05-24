@@ -1,4 +1,4 @@
-package wrestling.file;
+package file;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class Import {
     private final List<String> beltWorkerIDs2 = new ArrayList<>();
 
     private final List<String> titleNames = new ArrayList<>();
-    
+
     public GameController importController(File importFolder) throws IOException {
         this.importFolder = importFolder;
         gameController = new GameController();
@@ -55,11 +55,13 @@ public class Import {
 
         return gameController;
     }
+
     private int hexStringToInt(String hexValueString) {
 
         return Integer.parseInt(hexValueString, 16);
 
     }
+
     private String hexStringToLetter(String hexValueString) {
         //take the characters in two positions, since they combine to make
         //up one hex value that we have to translate
@@ -82,6 +84,7 @@ public class Import {
 
         return letter;
     }
+
     private void promotionsDat() throws IOException {
 
         Path path = Paths.get(importFolder.getPath() + "\\promos.dat");
@@ -138,6 +141,7 @@ public class Import {
             }
         }
     }
+
     private void workersDat() throws IOException {
 
         Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
@@ -291,6 +295,9 @@ public class Import {
 
                 workerIDs.add(workerId);
                 workerId = "";
+                manager = false;
+                fullTime = true;
+                mainRoster = true;
 
             }
         }

@@ -20,7 +20,7 @@ import wrestling.view.BrowserController;
 import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
-import wrestling.file.Import;
+import file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
 import static javafx.application.Application.launch;
@@ -146,7 +146,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 0;
+        int preRunDays = 300;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();

@@ -10,8 +10,6 @@ public class Promotion implements Serializable {
 
     private static int serialNumber = 0;
 
-    private PromotionAi ai;
-
     private final BankAccount bankAccount;
     private String name;
     private String shortName;
@@ -22,6 +20,7 @@ public class Promotion implements Serializable {
     private final List<EventArchive> eventArchives;
     private final List<Title> titles = new ArrayList<>();
     private final List<Contract> contracts;
+
     public Promotion() {
         this.contracts = new ArrayList<>();
 
@@ -39,18 +38,6 @@ public class Promotion implements Serializable {
 
     public BankAccount bankAccount() {
         return bankAccount;
-    }
-
-    public void setAi(PromotionAi ai) {
-        this.ai = ai;
-    }
-
-    public PromotionAi getAi() {
-        return ai;
-    }
-
-    private boolean hasAi() {
-        return ai != null;
     }
 
     public List<Worker> getActiveRoster() {
@@ -76,7 +63,6 @@ public class Promotion implements Serializable {
         return roster;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
@@ -92,7 +78,6 @@ public class Promotion implements Serializable {
     public int indexNumber() {
         return indexNumber;
     }
-
 
     public int getPopulatirty() {
         return popularity;
@@ -140,7 +125,6 @@ public class Promotion implements Serializable {
         }
     }
 
-
     public int getLevel() {
         return level;
     }
@@ -155,7 +139,6 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-
     //used for browsing events
     public List<EventArchive> getEventArchives() {
         return Collections.unmodifiableList(eventArchives);
@@ -164,7 +147,6 @@ public class Promotion implements Serializable {
     public void archiveEvent(EventArchive event) {
         eventArchives.add(event);
     }
-
 
     public void addTitle(Title title) {
         this.getTitles().add(title);
@@ -175,20 +157,13 @@ public class Promotion implements Serializable {
         return name;
     }
 
-
     public void addContract(Contract contract) {
         this.contracts.add(contract);
-        if (hasAi()) {
-            getAi().updatePushList();
-        }
 
     }
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
-        if (hasAi()) {
-            getAi().updatePushList();
-        }
 
     }
 

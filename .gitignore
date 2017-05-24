@@ -70,3 +70,5 @@ Temporary Items
 .apdisk
 *.mf
 /src/wrestling/.sonarlint/
+src/log4j2.xml
+src/log4j.dtd

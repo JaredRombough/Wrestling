@@ -14,14 +14,14 @@ public class PromotionAi implements Serializable {
 
     private final Promotion promotion;
 
-    public final GameController gameController;
-
+    private final GameController gameController;
 
     private final List<Worker> pushList;
     //list of dates on which the promotion has events scheduled
     private List<LocalDate> eventDates = new ArrayList<>();
+
     public PromotionAi(Promotion promotion, GameController gameController) {
-        
+
         eventDates.add(LocalDate.from(gameController.date()).plusDays(UtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
@@ -29,11 +29,14 @@ public class PromotionAi implements Serializable {
     }
 
     private int idealRosterSize() {
-        return 10 + (promotion.getLevel() * 10);
+        return 10 + (getPromotion().getLevel() * 10);
+    }
+
+    private int maxPushListSize() {
+        return 2 + (getPromotion().getLevel() * 2);
     }
 
     public void updatePushList() {
-        int maxPushListSize = 2 + (promotion.getLevel() * 2);
 
         List<Worker> departedWorkers = new ArrayList<>();
 
@@ -46,22 +49,22 @@ public class PromotionAi implements Serializable {
         pushList.removeAll(departedWorkers);
 
         //list is too small
-        if (promotion.getFullRoster().size() > maxPushListSize
-                && pushList.size() < maxPushListSize) {
+        if (getPromotion().getFullRoster().size() > maxPushListSize()
+                && pushList.size() < maxPushListSize()) {
 
-            for (Worker worker : promotion.getFullRoster()) {
-                if (!pushList.contains(worker) && pushList.size() < maxPushListSize
+            for (Worker worker : getPromotion().getFullRoster()) {
+                if (!pushList.contains(worker) && pushList.size() < maxPushListSize()
                         && !worker.isManager() && worker.isFullTime()) {
                     pushList.add(worker);
-                } else if (pushList.size() >= maxPushListSize) {
+                } else if (pushList.size() >= maxPushListSize()) {
                     break;
                 }
             }
 
             //list is too big
-        } else if (promotion.getFullRoster().size() > maxPushListSize
-                && pushList.size() > maxPushListSize) {
-            while (pushList.size() > maxPushListSize) {
+        } else if (getPromotion().getFullRoster().size() > maxPushListSize()
+                && pushList.size() > maxPushListSize()) {
+            while (pushList.size() > maxPushListSize()) {
                 pushList.remove(0);
             }
         }
@@ -71,17 +74,22 @@ public class PromotionAi implements Serializable {
     //call this method every day for each ai
     //put the general decision making sequence here
     public void dailyUpdate() {
+        
+        if(pushList.size() != maxPushListSize()) {
+            updatePushList();
+        }
+        
         if (gameController.isPayDay()) {
 
             payDay(gameController.date());
         }
 
-        while (promotion.getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
+        while (getPromotion().getActiveRoster().size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
             signContract();
         }
 
         //book a show if we have one scheduled today
-        if (eventDates.contains(gameController.date()) && promotion.getFullRoster().size() >= 2) {
+        if (eventDates.contains(gameController.date()) && getPromotion().getFullRoster().size() >= 2) {
             bookEvent();
 
             //schedule future events as necessary
@@ -98,7 +106,7 @@ public class PromotionAi implements Serializable {
     //pay everyone
     private void payDay(LocalDate date) {
 
-        for (Contract c : promotion.getContracts()) {
+        for (Contract c : getPromotion().getContracts()) {
             c.payDay(date);
         }
     }
@@ -111,10 +119,10 @@ public class PromotionAi implements Serializable {
     //sign a contract with the first suitable worker found
     private void signContract() {
 
-        for (Worker worker : gameController.freeAgents(promotion)) {
-            if (worker.getPopularity() <= promotion.maxPopularity()) {
+        for (Worker worker : gameController.freeAgents(getPromotion())) {
+            if (worker.getPopularity() <= getPromotion().maxPopularity()) {
 
-                ContractFactory.createContract(worker, promotion, gameController.date());
+                ContractFactory.createContract(worker, getPromotion(), gameController.date());
 
                 break;
             }
@@ -125,10 +133,10 @@ public class PromotionAi implements Serializable {
     //sign a contract with the first suitable worker found
     private void signContract(LocalDate date) {
 
-        for (Worker worker : gameController.freeAgents(promotion)) {
-            if (worker.getPopularity() <= promotion.maxPopularity() && !worker.isBooked(date)) {
+        for (Worker worker : gameController.freeAgents(getPromotion())) {
+            if (worker.getPopularity() <= getPromotion().maxPopularity() && !worker.isBooked(date)) {
 
-                ContractFactory.createContract(worker, promotion, gameController.date());
+                ContractFactory.createContract(worker, getPromotion(), gameController.date());
 
                 break;
             }
@@ -136,13 +144,12 @@ public class PromotionAi implements Serializable {
 
     }
 
-
     //determine how many future events the promotion is meant to have at a given time
     private int eventAmountTarget() {
 
         int target = 0;
 
-        switch (promotion.getLevel()) {
+        switch (getPromotion().getLevel()) {
             case 1:
                 target = 1;
                 break;
@@ -199,13 +206,13 @@ public class PromotionAi implements Serializable {
 
                 //count the workers that are availeable on the date
                 double available = 0;
-                for (Worker worker : promotion.getActiveRoster()) {
+                for (Worker worker : getPromotion().getActiveRoster()) {
                     if (!worker.isBooked(eventDate, promotion)) {
                         available++;
                     }
                 }
 
-                double percentAvailable = available / (double) promotion.getActiveRoster().size();
+                double percentAvailable = available / (double) getPromotion().getActiveRoster().size();
 
                 //if a large enough portion of the roster is available, book it
                 if (percentAvailable > threshold) {
@@ -226,7 +233,7 @@ public class PromotionAi implements Serializable {
 
             eventDate = bestDate;
 
-            int workersNeeded = (int) Math.round((threshold - bestThreshold) * promotion.getActiveRoster().size());
+            int workersNeeded = (int) Math.round((threshold - bestThreshold) * getPromotion().getActiveRoster().size());
 
             for (int i = 0; i < workersNeeded; i++) {
                 signContract(gameController.date());
@@ -235,9 +242,9 @@ public class PromotionAi implements Serializable {
         }
 
         //book the roster for the date
-        for (Worker worker : promotion.getFullRoster()) {
+        for (Worker worker : getPromotion().getFullRoster()) {
             if (!worker.isBooked(eventDate)) {
-                worker.getContract(promotion).bookDate(eventDate);
+                worker.getContract(getPromotion()).bookDate(eventDate);
 
             }
         }
@@ -253,10 +260,9 @@ public class PromotionAi implements Serializable {
         int maxSegments = 8;
 
         //bigger promotions get more segments
-        if (promotion.getLevel() > 3) {
+        if (getPromotion().getLevel() > 3) {
             maxSegments += 2;
         }
-
         //lists to track workers the event roster
         //and workers that are already booked on this date
         List<Worker> eventRoster = getEventRoster();
@@ -382,21 +388,21 @@ public class PromotionAi implements Serializable {
             }
         }
 
-        EventFactory.createEvent(segments, gameController.date(), promotion);
+        EventFactory.createEvent(segments, gameController.date(), getPromotion());
 
     }
 
     private List<Worker> getEventRoster() {
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = promotion.getFullRoster();
+        List<Worker> eventRoster = getPromotion().getFullRoster();
         List<Worker> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked
         for (Worker worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
-            if (worker.isBooked(gameController.date(), promotion)) {
+            if (worker.isBooked(gameController.date(), getPromotion())) {
                 unavailable.add(worker);
             }
         }
@@ -410,6 +416,7 @@ public class PromotionAi implements Serializable {
         //go through the event roster and collect noncompetitors
         for (Worker worker : eventRoster) {
             if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
+
                 nonCompetitors.add(worker);
             }
         }
@@ -428,7 +435,7 @@ public class PromotionAi implements Serializable {
 
         List<Title> eventTitles = new ArrayList<>();
 
-        for (Title title : promotion.getTitles()) {
+        for (Title title : getPromotion().getTitles()) {
 
             if (title.getWorkers().isEmpty()) {
                 eventTitles.add(title);
@@ -448,6 +455,13 @@ public class PromotionAi implements Serializable {
         }
 
         return eventTitles;
+    }
+
+    /**
+     * @return the promotion
+     */
+    public Promotion getPromotion() {
+        return promotion;
     }
 
 }

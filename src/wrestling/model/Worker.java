@@ -8,6 +8,7 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.utility.UtilityFunctions;
 
 public class Worker implements Serializable {
+
     private static int serialNumber = 0;
 
     /**
@@ -27,7 +28,6 @@ public class Worker implements Serializable {
     private String name;
     private String shortName;
     private String imageString;
-
 
     private int striking;
     private int flying;
@@ -173,7 +173,6 @@ public class Worker implements Serializable {
 
     }
 
-
     //once workers reach a level of popularity, they can never  drop below 50% of that
     private void updateMinimumPopularity() {
 
@@ -235,7 +234,6 @@ public class Worker implements Serializable {
             popularity = minimumPopularity;
         }
     }
-
 
     public void addMatchRecord(MatchRecord record) {
         matchRecords.add(record);

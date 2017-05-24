@@ -15,30 +15,29 @@ import wrestling.model.factory.PromotionFactory;
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
+
     /*
     returns a random worker from a list of workers
-    */
+     */
     public static Worker getRandomFromList(List<Worker> list) {
         Random randomizer = new Random();
-        
+
         return list.get(randomizer.nextInt(list.size()));
     }
 
     private LocalDate gameDate;
     private LocalDate payDay;
-    private List<Promotion> promotions;
     private Promotion playerPromotion;
-    private List<Worker> workers;
+    private List<Promotion> promotions = new ArrayList<>();
+    private List<PromotionAi> promotionAis = new ArrayList<>();
+    private List<Worker> workers = new ArrayList<>();
+
     public GameController() throws IOException {
 
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
 
         payDay = gameDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-
-        //initialize the main lists
-        workers = new ArrayList<>();
-        promotions = new ArrayList<>();
 
         //eventFactory = new EventFactory(this);
         PromotionFactory.preparePromotions(this);
@@ -61,19 +60,16 @@ public final class GameController implements Serializable {
     public void nextDay() {
 
         //iterate through all promotions
-        for (Promotion promotion : getPromotions()) {
+        for (PromotionAi pAi : promotionAis) {
 
             //update all the contracts associated with the current promotion
-            List<Contract> contractList = new ArrayList<>(promotion.getContracts());
+            List<Contract> contractList = new ArrayList<>(pAi.getPromotion().getContracts());
             for (Contract contract : contractList) {
                 contract.nextDay(gameDate);
 
             }
 
-            //if the promotion is controlled by ai, do the daily update
-            if (promotion.getAi() != null) {
-                promotion.getAi().dailyUpdate();
-            }
+            pAi.dailyUpdate();
 
         }
 
@@ -93,7 +89,6 @@ public final class GameController implements Serializable {
         return gameDate;
     }
 
-
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
         //set the Ai for non-player promotions
@@ -103,7 +98,6 @@ public final class GameController implements Serializable {
     public Promotion playerPromotion() {
         return playerPromotion;
     }
-
 
     public List<Worker> allWorkers() {
         return workers;
@@ -138,12 +132,11 @@ public final class GameController implements Serializable {
         //add ai where necessary
         for (Promotion promotion : getPromotions()) {
             if (!promotion.equals(playerPromotion)) {
-                promotion.setAi(new PromotionAi(promotion, this));
+                promotionAis.add(new PromotionAi(promotion, this));
             }
 
         }
     }
-
 
     /**
      * @return the promotions
