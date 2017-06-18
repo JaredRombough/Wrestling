@@ -50,10 +50,8 @@
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Flying" GridPane.rowIndex="4" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Popularity" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Behaviour" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Proficiency" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Label fx:id="popularityLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Label fx:id="behaviourLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Label fx:id="proficiencyLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="5" />
             <Label fx:id="managerLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.rowIndex="6" />
             <Label fx:id="mainRosterLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="6" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Charisma" GridPane.columnIndex="2" GridPane.rowIndex="3" />

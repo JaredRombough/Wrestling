@@ -149,105 +149,20 @@ public class Import {
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
-
+        List<String> currentHexLine = new ArrayList<>();
+        List<String> currentStringLine = new ArrayList<>();
         int counter = 0;
 
-        //track up to three promotions that the worker might have contracts with
-        int contractIndx = 0;
-        int contractIndx2 = 0;
-        int contractIndx3 = 0;
-
-        //track the contract type (W for written, O for open, N for none)
-        String contractType = "";
-
-        int striking = 0;
-        int wrestling = 0;
-        int flying = 0;
-        int popularity = 0;
-        int behaviour = 0;
-        int charisma = 0;
-        boolean manager = false;
-        boolean fullTime = true;
-        boolean mainRoster = true;
-
-        String workerId = "";
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
 
             currentLine += hexStringToLetter(hexValueString);
+            currentHexLine.add(hexValueString);
+            currentStringLine.add(hexStringToLetter(hexValueString));
 
             counter++;
-
-            switch (counter) {
-                case 2:
-                    workerId += hexValueString;
-
-                    break;
-                case 3:
-                    workerId += hexValueString;
-
-                    break;
-
-                case 66:
-                    contractIndx = hexStringToInt(hexValueString);
-                    break;
-                case 68:
-                    contractIndx2 = hexStringToInt(hexValueString);
-                    break;
-                case 70:
-                    contractIndx3 = hexStringToInt(hexValueString);
-                    break;
-                case 72:
-                    contractType = hexStringToLetter(hexValueString);
-                    break;
-                case 83:
-
-                    switch (hexValueString) {
-                        case "07":
-                            //development
-                            manager = false;
-                            fullTime = true;
-                            mainRoster = false;
-                            break;
-                        case "19":
-                            //non-wrestler
-                            manager = false;
-                            fullTime = false;
-                            mainRoster = true;
-                            break;
-                        case "32":
-                            //manager
-                            manager = true;
-                            fullTime = true;
-                            mainRoster = true;
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 148:
-                    striking = hexStringToInt(hexValueString);
-                    break;
-                case 150:
-                    wrestling = hexStringToInt(hexValueString);
-                    break;
-                case 152:
-                    flying = hexStringToInt(hexValueString);
-                    break;
-                case 158:
-                    popularity = hexStringToInt(hexValueString);
-                    break;
-                case 160:
-                    charisma = hexStringToInt(hexValueString);
-                    break;
-                case 256:
-                    behaviour = hexStringToInt(hexValueString);
-                    break;
-                default:
-                    break;
-            }
 
             if (counter == (19 * 16) + 3) {
 
@@ -255,32 +170,60 @@ public class Import {
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
                 worker.setImageString(currentLine.substring(45, 65).trim());
-                worker.setFlying(flying);
-                worker.setStriking(striking);
-                worker.setWrestling(wrestling);
-                worker.setPopularity(popularity);
-                worker.setCharisma(charisma);
-                worker.setBehaviour(behaviour);
+                worker.setFlying(hexStringToInt(currentHexLine.get(151)));
+                worker.setStriking(hexStringToInt(currentHexLine.get(147)));
+                worker.setWrestling(hexStringToInt(currentHexLine.get(149)));
+                worker.setPopularity(hexStringToInt(currentHexLine.get(157)));
+                worker.setCharisma(hexStringToInt(currentHexLine.get(159)));
+                worker.setBehaviour(hexStringToInt(currentHexLine.get(255)));
+
+                boolean manager;
+                boolean fullTime;
+                boolean mainRoster;
+
+                switch (currentHexLine.get(82)) {
+                    case "07":
+                        //development
+                        manager = false;
+                        fullTime = true;
+                        mainRoster = false;
+                        break;
+                    case "19":
+                        //non-wrestler
+                        manager = false;
+                        fullTime = false;
+                        mainRoster = true;
+                        break;
+                    case "32":
+                        //manager
+                        manager = true;
+                        fullTime = true;
+                        mainRoster = true;
+                        break;
+                    default:
+                        manager = false;
+                        fullTime = true;
+                        mainRoster = true;
+                        break;
+                }
+
                 worker.setManager(manager);
                 worker.setFullTime(fullTime);
                 worker.setMainRoster(mainRoster);
 
                 //sign contracts for workers that match with promotion keys
                 for (Promotion promotion : promotions) {
-                    if (promotion.indexNumber() == contractIndx) {
-
+                    if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
                         //handle written/open contracts
-                        if (contractType.equals("W")) {
+                        if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
                             ContractFactory.createContract(worker, promotion, gameController.date(), true);
                         } else {
                             ContractFactory.createContract(worker, promotion, gameController.date(), false);
                         }
-
-                    } else if (promotion.indexNumber() == contractIndx2) {
-
+                    } else if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
                         ContractFactory.createContract(worker, promotion, gameController.date());
                         worker.getContract(promotion).setExclusive(false);
-                    } else if (promotion.indexNumber() == contractIndx3) {
+                    } else if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
                         ContractFactory.createContract(worker, promotion, gameController.date());
                         worker.getContract(promotion).setExclusive(false);
                     }
@@ -288,16 +231,11 @@ public class Import {
                 }
 
                 allWorkers.add(worker);
-
+                workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
                 counter = 0;
-
                 currentLine = "";
-
-                workerIDs.add(workerId);
-                workerId = "";
-                manager = false;
-                fullTime = true;
-                mainRoster = true;
+                currentHexLine = new ArrayList<>();
+                currentStringLine = new ArrayList<>();
 
             }
         }

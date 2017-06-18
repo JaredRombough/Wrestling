@@ -27,7 +27,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private MainApp mainApp;
     private GameController gameController;
 
-
     private AnchorPane contractPane;
     private ContractPaneController contractPaneController;
 
@@ -72,14 +71,16 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
     private Worker currentWorker;
     private Promotion currentPromotion;
+
     @Override
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
+
     @Override
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
-        
+
         initializeMore();
     }
 
