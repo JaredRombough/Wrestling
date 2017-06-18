@@ -59,10 +59,8 @@ public final class WorkerFactory {
             worker.setPopularity(100 + UtilityFunctions.randRange(-10, 0));
         }
 
-        worker.setEndurance(UtilityFunctions.randRange(0, 100));
         worker.setFlying(UtilityFunctions.randRange(0, 100));
         worker.setCharisma(UtilityFunctions.randRange(0, 100));
-        worker.setProficiency(UtilityFunctions.randRange(0, 100));
         worker.setBehaviour(UtilityFunctions.randRange(0, 100));
         worker.setWrestling(UtilityFunctions.randRange(0, 100));
         worker.setStriking(UtilityFunctions.randRange(0, 100));
@@ -80,10 +78,8 @@ public final class WorkerFactory {
         Worker worker = new Worker();
 
         worker.setPopularity(UtilityFunctions.randRange(0, 100));
-        worker.setEndurance(UtilityFunctions.randRange(0, 100));
         worker.setFlying(UtilityFunctions.randRange(0, 100));
         worker.setCharisma(UtilityFunctions.randRange(0, 100));
-        worker.setProficiency(UtilityFunctions.randRange(0, 100));
         worker.setBehaviour(UtilityFunctions.randRange(0, 100));
         worker.setWrestling(UtilityFunctions.randRange(0, 100));
         worker.setStriking(UtilityFunctions.randRange(0, 100));

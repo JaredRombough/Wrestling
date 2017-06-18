@@ -33,11 +33,8 @@ public class Worker implements Serializable {
     private int flying;
     private int wrestling;
     private int charisma;
-    private int endurance;
-    private int proficiency;
     private int behaviour;
     private int popularity;
-    private int fatigue;
 
     //should these be specified in the contract, instead of in the worker object?
     private boolean manager;
@@ -314,34 +311,6 @@ public class Worker implements Serializable {
     }
 
     /**
-     * @return the endurance
-     */
-    public int getEndurance() {
-        return endurance;
-    }
-
-    /**
-     * @param endurance the endurance to set
-     */
-    public void setEndurance(int endurance) {
-        this.endurance = endurance;
-    }
-
-    /**
-     * @return the proficiency
-     */
-    public int getProficiency() {
-        return proficiency;
-    }
-
-    /**
-     * @param proficiency the proficiency to set
-     */
-    public void setProficiency(int proficiency) {
-        this.proficiency = proficiency;
-    }
-
-    /**
      * @return the reputation
      */
     public int getBehaviour() {
@@ -433,20 +402,6 @@ public class Worker implements Serializable {
      */
     public List<Title> getTitles() {
         return titles;
-    }
-
-    /**
-     * @return the fatigue
-     */
-    public int getFatigue() {
-        return fatigue;
-    }
-
-    /**
-     * @param fatigue the fatigue to set
-     */
-    public void setFatigue(int fatigue) {
-        this.fatigue = fatigue;
     }
 
     /**

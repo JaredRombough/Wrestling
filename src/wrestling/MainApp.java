@@ -3,6 +3,7 @@ package wrestling;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,19 +21,25 @@ import wrestling.view.BrowserController;
 import wrestling.view.EventScreenController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.WorkerOverviewController;
-import file.Import;
+import wrestling.file.Import;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.view.FinancialScreenController;
-import static javafx.application.Application.launch;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
+import static javafx.application.Application.launch;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
 
 public class MainApp extends Application {
+
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
+
     public static void main(String[] args) {
+
         launch(args);
-        
+
     }
 
     private Stage primaryStage;
@@ -51,7 +58,7 @@ public class MainApp extends Application {
     private File picsFolder;
     private File logosFolder;
     private File dataFolder;
-    
+
     private final boolean cssEnabled;
 
     public MainApp() {
@@ -60,13 +67,13 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
+    public void start(Stage primaryStage) {
+
         this.primaryStage = primaryStage;
         this.getPrimaryStage().setTitle("Wrestling");
         this.getPrimaryStage().setMinWidth(WINDOW_MIN_WIDTH);
         this.getPrimaryStage().setMinHeight(WINDOW_MIN_HEIGHT);
         this.getPrimaryStage().centerOnScreen();
-
         showTitleScreen();
 
     }
@@ -95,8 +102,7 @@ public class MainApp extends Application {
             alert.setContentText("Returning to title ");
 
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(
-                    getClass().getResource("/wrestling/view/style.css").toExternalForm());
+            dialogPane.getStylesheets().add("style.css");
 
             alert.showAndWait();
 
@@ -125,9 +131,11 @@ public class MainApp extends Application {
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(titleScreen);
+            BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("title.jpg"));
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
 
             if (cssEnabled) {
-                scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+                scene.getStylesheets().add("style.css");
             }
 
             getPrimaryStage().setScene(scene);
@@ -135,6 +143,7 @@ public class MainApp extends Application {
 
             TitleScreenController controller = loader.getController();
             controller.setMainApp(this);
+            controller.setImage(image);
         } catch (IOException e) {
         }
 
@@ -146,7 +155,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 300;
+        int preRunDays = 0;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
@@ -156,7 +165,6 @@ public class MainApp extends Application {
 
         setButtonsDisable(false);
     }
-
 
     private void saveGame() throws IOException {
 
@@ -204,7 +212,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(rootLayout);
 
             if (cssEnabled) {
-                scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+                scene.getStylesheets().add("style.css");
             }
 
             getPrimaryStage().setScene(scene);
@@ -377,7 +385,6 @@ public class MainApp extends Application {
     private void setButtonsDisable(boolean disable) {
         rootLayoutController.setButtonsDisable(disable);
     }
-
 
     /**
      * @return the primaryStage

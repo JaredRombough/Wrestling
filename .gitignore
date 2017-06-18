@@ -72,3 +72,5 @@ Temporary Items
 /src/wrestling/.sonarlint/
 src/log4j2.xml
 src/log4j.dtd
+*.log
+src/log4j2-test.xml

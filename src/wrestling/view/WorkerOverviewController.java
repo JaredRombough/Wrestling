@@ -59,9 +59,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private Label charismaLabel;
 
     @FXML
-    private Label proficiencyLabel;
-
-    @FXML
     private Label managerLabel;
 
     @FXML
@@ -140,7 +137,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
             strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
-            proficiencyLabel.setText(Integer.toString(currentWorker.getProficiency()));
             behaviourLabel.setText(Integer.toString(currentWorker.getBehaviour()));
             charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
@@ -153,7 +149,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
                     wrestlingLabel,
                     flyingLabel,
                     strikingLabel,
-                    proficiencyLabel,
                     behaviourLabel,
                     charismaLabel,
                     popularityLabel);
@@ -222,7 +217,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
             wrestlingLabel.setText("");
             flyingLabel.setText("");
             strikingLabel.setText("");
-            proficiencyLabel.setText("");
             behaviourLabel.setText("");
             popularityLabel.setText("");
             //contractInfo.setText("");

@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,6 +28,9 @@ public class TitleScreenController implements Initializable {
 
     @FXML
     private Button continueGameButton;
+    
+    @FXML
+    private ImageView imageView;
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
@@ -60,9 +65,8 @@ public class TitleScreenController implements Initializable {
 
         Scene importScene = new Scene(importDialog);
 
-        importScene.getStylesheets().add(
-                getClass().getResource("style.css").toExternalForm());
-
+        importScene.getStylesheets().add("style.css");
+        
         importPopup.setScene(importScene);
 
         importPopup.showAndWait();
@@ -78,5 +82,10 @@ public class TitleScreenController implements Initializable {
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 
+    }
+    
+    public void setImage(Image image)
+    {
+        this.imageView.setImage(image);
     }
 }
