@@ -25,11 +25,14 @@ public class Import {
 
     private File importFolder;
 
-    private final List<Promotion> promotions = new ArrayList<>();
+    private final List<Promotion> allPromotions = new ArrayList<>();
     private final List<Integer> promotionKeys = new ArrayList<>();
+    private final List<String> otherPromotionNames = new ArrayList<>();
 
     private final List<Worker> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
+    private final List<Worker> otherWorkers = new ArrayList<>();
+    private final List<String> otherWorkerPromotions = new ArrayList<>();
 
     private final List<String> beltWorkerIDs = new ArrayList<>();
     private final List<String> beltWorkerIDs2 = new ArrayList<>();
@@ -42,7 +45,8 @@ public class Import {
         promotionsDat();
         workersDat();
         beltDat();
-        gameController.setPromotions(promotions);
+        processOther();
+        gameController.setPromotions(allPromotions);
         gameController.setWorkers(allWorkers);
 
         //for statistical evaluation of data only
@@ -50,7 +54,7 @@ public class Import {
 
         if (evaluate) {
             EvaluateData evaluateData = new EvaluateData();
-            evaluateData.evaluateData(promotions, allWorkers);
+            evaluateData.evaluateData(allPromotions, allWorkers);
         }
 
         return gameController;
@@ -83,6 +87,38 @@ public class Import {
         }
 
         return letter;
+    }
+
+    private void processOther() {
+        for (String s : otherPromotionNames) {
+            Promotion p = new Promotion();
+            p.setName(s);
+            p.setShortName(s);
+
+            //calculate promotion level
+            int totalPop = 0;
+            int totalWorkers = 0;
+            for (int i = 0; i < otherWorkers.size(); i++) {
+                if (otherWorkerPromotions.get(i).equals(p.getName())) {
+                    totalPop += otherWorkers.get(i).getPopularity();
+                    totalWorkers++;
+                }
+            }
+            int avgPop = totalPop / totalWorkers;
+            p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
+            p.setIndexNumber(allPromotions.size());
+            allPromotions.add(p);
+            for (int i = 0; i < otherWorkers.size(); i++) {
+                if (otherWorkerPromotions.get(i).equals(p.getName())) {
+                    ContractFactory.createContract(otherWorkers.get(i), p, gameController.date(), false);
+                }
+            }
+
+        }
+
+        AdvancedImport adIm = new AdvancedImport();
+        adIm.updateOtherPromotins(allPromotions);
+
     }
 
     private void promotionsDat() throws IOException {
@@ -132,7 +168,7 @@ public class Import {
                     promotion.setLevel(1);
                 }
 
-                promotions.add(promotion);
+                allPromotions.add(promotion);
 
                 //reset the line for the next loop
                 currentLine = "";
@@ -201,6 +237,7 @@ public class Import {
                         mainRoster = true;
                         break;
                     default:
+                        //shouldn't happen
                         manager = false;
                         fullTime = true;
                         mainRoster = true;
@@ -211,23 +248,20 @@ public class Import {
                 worker.setFullTime(fullTime);
                 worker.setMainRoster(mainRoster);
 
-                //sign contracts for workers that match with promotion keys
-                for (Promotion promotion : promotions) {
-                    if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
-                        //handle written/open contracts
-                        if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
-                            ContractFactory.createContract(worker, promotion, gameController.date(), true);
-                        } else {
-                            ContractFactory.createContract(worker, promotion, gameController.date(), false);
-                        }
-                    } else if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
-                        ContractFactory.createContract(worker, promotion, gameController.date());
-                        worker.getContract(promotion).setExclusive(false);
-                    } else if (promotion.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
-                        ContractFactory.createContract(worker, promotion, gameController.date());
-                        worker.getContract(promotion).setExclusive(false);
+                String otherPromotionName = (currentStringLine.get(76) + currentStringLine.get(77)).trim();
+                if (!otherPromotionName.trim().isEmpty()) {
+                    otherWorkers.add(worker);
+                    otherWorkerPromotions.add(otherPromotionName);
+                    if (!otherPromotionNames.contains(otherPromotionName)) {
+                        otherPromotionNames.add(otherPromotionName);
                     }
 
+                }
+
+                //look for extra promotions
+                //sign contracts for workers that match with promotion keys
+                for (Promotion p : allPromotions) {
+                    checkForContract(p, worker, currentHexLine);
                 }
 
                 allWorkers.add(worker);
@@ -238,6 +272,23 @@ public class Import {
                 currentStringLine = new ArrayList<>();
 
             }
+        }
+    }
+
+    private void checkForContract(Promotion p, Worker w, List<String> currentHexLine) {
+        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
+            //handle written/open contracts
+            if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
+                ContractFactory.createContract(w, p, gameController.date(), true);
+            } else {
+                ContractFactory.createContract(w, p, gameController.date(), false);
+            }
+        } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
+            ContractFactory.createContract(w, p, gameController.date());
+            w.getContract(p).setExclusive(false);
+        } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
+            ContractFactory.createContract(w, p, gameController.date());
+            w.getContract(p).setExclusive(false);
         }
     }
 
@@ -308,13 +359,13 @@ public class Import {
         }
 
         //go through the promotions
-        for (int p = 0; p < promotions.size(); p++) {
+        for (int p = 0; p < allPromotions.size(); p++) {
 
             //go through the titles
             for (int t = 0; t < titleNames.size(); t++) {
 
                 //if promotion matches title
-                if (titlePromotionKeys.get(t).equals(promotions.get(p).indexNumber())) {
+                if (titlePromotionKeys.get(t).equals(allPromotions.get(p).indexNumber())) {
 
                     //go through the workers
                     for (int w = 0; w < workerIDs.size(); w++) {
@@ -336,7 +387,7 @@ public class Import {
                             }
 
                             //create the title
-                            TitleFactory.createTitle(promotions.get(p), titleHolders, titleNames.get(t));
+                            TitleFactory.createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
 
                         }
                     }
