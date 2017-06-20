@@ -12,10 +12,10 @@ import wrestling.model.utility.UtilityFunctions;
 /*
 for generating promotions in a random game
  */
-public final class PromotionFactory {
+public class PromotionFactory {
     
 
-    public static void preparePromotions(GameController gameController) throws IOException {
+    public void preparePromotions(GameController gameController) throws IOException {
 
         List<Promotion> promotions = new ArrayList<>();
         List<Worker> allWorkers = new ArrayList<>();
@@ -58,7 +58,7 @@ public final class PromotionFactory {
 
                     Worker worker = WorkerFactory.randomWorker(UtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    ContractFactory.createContract(worker, promotion, gameController.date());
+                    gameController.getContractFactory().createContract(worker, promotion, gameController.date());
 
                 } while (promotion.getFullRoster().size() < rosterSize);
 
@@ -75,8 +75,11 @@ public final class PromotionFactory {
         gameController.setWorkers(allWorkers);
 
     }
-    private PromotionFactory() {
-        throw new IllegalAccessError("Utility class");
+
+    private final GameController gc;
+
+    public PromotionFactory(GameController gc) {
+        this.gc = gc;
     }
 
 }

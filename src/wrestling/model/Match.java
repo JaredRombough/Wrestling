@@ -252,24 +252,26 @@ public class Match extends Segment implements Serializable {
     }
 
     @Override
-    public void processSegment(LocalDate date) {
-
+    public String processSegment(LocalDate date, TitleFactory titleFactory) {
+        
+        StringBuilder sb = new StringBuilder();
+        
         if (title != null) {
 
             if (title.isVacant()) {
 
-                TitleFactory.awardTitle(title, winner, date);
-                System.out.println(winner.toString() + " wins the vacant  " + title.getName() + " title");
+                titleFactory.awardTitle(title, winner, date);
+                sb.append(winner.toString()).append(" wins the vacant  ").append(title.getName()).append(" title");
             } else {
                 for (Worker worker : title.getWorkers()) {
                     if (!winner.contains(worker)) {
-                        System.out.println(winner.toString() + " defeats " + title.getWorkers().toString() + " for the " + title.getName() + " title");
-                        TitleFactory.titleChange(title, winner, date);
+                        sb.append(winner.toString()).append(" defeats ").append(title.getWorkers().toString()).append(" for the ").append(title.getName()).append(" title");
+                        titleFactory.titleChange(title, winner, date);
 
                         break;
                     }
 
-                    System.out.println(winner.toString() + " defends the  " + title.getName() + " title");
+                    sb.append(winner.toString()).append(" defends the  ").append(title.getName()).append(" title");
                 }
             }
         }
@@ -329,5 +331,7 @@ public class Match extends Segment implements Serializable {
             //dangerousness rating and a list of injury types
 
         }
+        
+        return sb.toString();
     }
 }

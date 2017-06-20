@@ -155,7 +155,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 0;
+        int preRunDays = 700;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
@@ -170,7 +170,7 @@ public class MainApp extends Application {
 
         Kryo kryo = new Kryo();
 
-        Output output = new Output(new FileOutputStream("file.bin"));
+        Output output = new Output(new FileOutputStream("saveGame.bin"));
 
         kryo.writeObject(output, gameController);
         output.close();
@@ -181,7 +181,7 @@ public class MainApp extends Application {
         Kryo kryo = new Kryo();
 
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
-        Input input = new Input(new FileInputStream("file.bin"));
+        Input input = new Input(new FileInputStream("saveGame.bin"));
         GameController gc = kryo.readObject(input, GameController.class);
         input.close();
 

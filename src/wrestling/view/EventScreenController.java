@@ -76,10 +76,10 @@ public class EventScreenController implements Initializable {
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private final List<Segment> segments = new ArrayList<>();
 
-
     //this would be for keeping track of the index number of the currently
     //selected segment
     private Number currentSegmentNumber;
+
     private Segment currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
     }
@@ -133,7 +133,7 @@ public class EventScreenController implements Initializable {
         updateSegments();
 
         //create the event with the segments assembled
-        EventFactory.createEvent(segments, gameController.date(), gameController.playerPromotion());
+        gameController.getEventFactory().createEvent(segments, gameController.date(), gameController.playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -382,7 +382,6 @@ public class EventScreenController implements Initializable {
 
     }
 
-
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 
@@ -455,9 +454,9 @@ public class EventScreenController implements Initializable {
                     setOpacity(1);
                 }
             });
-            
+
             setOnDragDropped((DragEvent event) -> {
-                
+
                 if (getGraphic() == null) {
                     return;
 
@@ -515,11 +514,12 @@ public class EventScreenController implements Initializable {
 
         }
     }
+
     /*
     to be used by the workersListView on the left of the screen
     should only be needed for when the user is dropping a worker
     on the listView that has been dragged from one of the teams
-    */
+     */
     private class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
 
         @Override

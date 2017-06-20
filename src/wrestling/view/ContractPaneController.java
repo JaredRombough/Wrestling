@@ -139,7 +139,7 @@ public class ContractPaneController implements Initializable {
 
     private void signContract() {
 
-        ContractFactory.createContract(
+        gameController.getContractFactory().createContract(
                 worker,
                 gameController.playerPromotion(),
                 exclusive,
@@ -156,7 +156,7 @@ public class ContractPaneController implements Initializable {
     }
 
     private String termString() {
-        String terms = "$" + ContractFactory.calculateAppearanceCost(worker, exclusive);
+        String terms = "$" + gameController.getContractFactory().calculateAppearanceCost(worker, exclusive);
 
         if (exclusive) {
             terms += " Bi-Weekly";

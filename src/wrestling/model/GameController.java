@@ -8,7 +8,10 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import wrestling.model.factory.ContractFactory;
+import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
+import wrestling.model.factory.TitleFactory;
 
 /**
  *
@@ -31,18 +34,39 @@ public final class GameController implements Serializable {
     private List<Promotion> promotions = new ArrayList<>();
     private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
+    
+    private final DirtSheet dirtSheet;
+    private final ContractFactory contractFactory;
+    private final EventFactory eventFactory;
+    private final PromotionFactory promotionFactory;
+    private final TitleFactory titleFactory;
+    
 
     public GameController() throws IOException {
 
+        dirtSheet = new DirtSheet();
+        contractFactory = new ContractFactory(this);
+        eventFactory = new EventFactory(this);
+        promotionFactory = new PromotionFactory(this);
+        titleFactory = new TitleFactory(this);
+        
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
 
         payDay = gameDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
 
         //eventFactory = new EventFactory(this);
-        PromotionFactory.preparePromotions(this);
+        promotionFactory.preparePromotions(this);
+        
+        
 
     }
+    
+    public void newDirt(String string)
+    {
+        dirtSheet.newDirt(string, gameDate);
+    }
+    
 
     //is it payday?
     public boolean isPayDay() {
@@ -62,12 +86,7 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (PromotionAi pAi : promotionAis) {
 
-            //update all the contracts associated with the current promotion
-            List<Contract> contractList = new ArrayList<>(pAi.getPromotion().getContracts());
-            for (Contract contract : contractList) {
-                contract.nextDay(gameDate);
-
-            }
+            
 
             pAi.dailyUpdate();
 
@@ -143,6 +162,27 @@ public final class GameController implements Serializable {
      */
     public List<Promotion> getPromotions() {
         return promotions;
+    }
+
+    /**
+     * @return the contractFactory
+     */
+    public ContractFactory getContractFactory() {
+        return contractFactory;
+    }
+
+    /**
+     * @return the eventFactory
+     */
+    public EventFactory getEventFactory() {
+        return eventFactory;
+    }
+
+    /**
+     * @return the titleFactory
+     */
+    public TitleFactory getTitleFactory() {
+        return titleFactory;
     }
 
 }

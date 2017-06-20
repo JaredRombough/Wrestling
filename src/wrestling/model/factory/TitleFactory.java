@@ -3,6 +3,7 @@ package wrestling.model.factory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.Worker;
@@ -11,11 +12,10 @@ import wrestling.model.Worker;
  * called whenever a new title is to be created
  *
  */
-public final class TitleFactory {
-    
+public class TitleFactory {
 
     //create a title with predetermined attributes
-    public static void createTitle(Promotion promotion, Worker worker, String name) {
+    public void createTitle(Promotion promotion, Worker worker, String name) {
 
         List<Worker> workers = new ArrayList<>();
         workers.add(worker);
@@ -27,7 +27,7 @@ public final class TitleFactory {
     }
 
     //create a title with predetermined attributes
-    public static void createTitle(Promotion promotion, List<Worker> workers, String name) {
+    public void createTitle(Promotion promotion, List<Worker> workers, String name) {
         Title title = new Title(promotion, workers, name);
         promotion.addTitle(title);
         for (Worker worker : workers) {
@@ -37,22 +37,23 @@ public final class TitleFactory {
     }
 
     //here we would update the title's tracker of reigns also        
-    public static void titleChange(Title title, List<Worker> winner, LocalDate date) {
+    public void titleChange(Title title, List<Worker> winner, LocalDate date) {
 
         stripTitle(title, date);
         awardTitle(title, winner, date);
 
     }
 
-    public static void stripTitle(Title title, LocalDate date) {
+    public void stripTitle(Title title, LocalDate date) {
 
-        String s = title.getName();
-        s += "dropped on " + date + " by ";
+        StringBuilder sb = new StringBuilder();
+        sb.append(title.getName());
+        sb.append("dropped on ").append(date).append(" by ");
         for (Worker worker : title.getWorkers()) {
-            s += worker.getName();
+            sb.append(worker.getName());
         }
 
-        System.out.println(s);
+        gc.newDirt(sb.toString());
 
         title.addRecord(date);
 
@@ -65,7 +66,7 @@ public final class TitleFactory {
 
     }
 
-    public static void awardTitle(Title title, List<Worker> winner, LocalDate date) {
+    public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
 
         title.addRecord(date);
 
@@ -76,8 +77,11 @@ public final class TitleFactory {
         title.setDayWon(date);
 
     }
-    private TitleFactory() {
-        throw new IllegalAccessError("Utility class");
+
+    private GameController gc;
+
+    public TitleFactory(GameController gc) {
+        this.gc = gc;
     }
 
 }

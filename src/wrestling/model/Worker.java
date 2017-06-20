@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.utility.UtilityFunctions;
 
@@ -45,11 +48,8 @@ public class Worker implements Serializable {
     private final List<EventFactory> bookings = new ArrayList<>();
     private final List<Title> titles = new ArrayList<>();
     private int minimumPopularity;
-    private final List<MatchRecord> matchRecords;
 
     public Worker() {
-
-        matchRecords = new ArrayList<>();
 
         minimumPopularity = 0;
 
@@ -111,6 +111,8 @@ public class Worker implements Serializable {
         return !this.contracts.isEmpty();
     }
 
+    private transient Logger log = LogManager.getLogger(this.getClass());
+
     public Contract getContract(Promotion promotion) {
 
         Contract thisContract = null;
@@ -121,7 +123,7 @@ public class Worker implements Serializable {
         }
 
         if (thisContract == null) {
-            System.out.println("NULL CONTRACT\n" + name + "\n" + promotion.getName());
+            log.log(Level.ERROR, "NULL CONTRACT\n" + name + "\n" + promotion.getName());
         }
 
         return thisContract;
@@ -230,14 +232,6 @@ public class Worker implements Serializable {
         if (popularity < minimumPopularity) {
             popularity = minimumPopularity;
         }
-    }
-
-    public void addMatchRecord(MatchRecord record) {
-        matchRecords.add(record);
-    }
-
-    public List<MatchRecord> getMatchRecods() {
-        return matchRecords;
     }
 
     /**

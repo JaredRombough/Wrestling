@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import wrestling.model.Contract;
 import wrestling.model.EventArchive;
+import wrestling.model.GameController;
 import wrestling.model.Match;
-import wrestling.model.MatchRecord;
 import wrestling.model.Promotion;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
@@ -18,10 +19,9 @@ import wrestling.model.utility.UtilityFunctions;
  * figures out attendance, gate processes contracts
  *
  */
-public final class EventFactory {
+public class EventFactory {
 
-
-    public static void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
 
@@ -45,8 +45,7 @@ public final class EventFactory {
 
     }
 
-
-    private static String generateSummaryString(TempEvent event) {
+    private String generateSummaryString(TempEvent event) {
         StringBuilder bld = new StringBuilder();
 
         for (Segment segment : event.getSegments()) {
@@ -56,7 +55,7 @@ public final class EventFactory {
                 if (segment instanceof Match) {
 
                     bld.append("\n");
-                    bld.append("Rating: " + ((Match) segment).segmentRating());
+                    bld.append("Rating: ").append(((Match) segment).segmentRating());
 
                 }
                 bld.append("\n");
@@ -79,7 +78,7 @@ public final class EventFactory {
         return bld.toString();
     }
 
-    private static int attendance(TempEvent event) {
+    private int attendance(TempEvent event) {
         int attendance = 0;
 
         switch (event.getPromotion().getLevel()) {
@@ -121,25 +120,29 @@ public final class EventFactory {
     and takes money from the promotion accordingly
     also notifies contracts of appearances
      */
-    private static void processContracts(TempEvent event) {
+    private void processContracts(TempEvent event) {
 
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            worker.getContract(event.getPromotion()).appearance(event.getDate());
+            Contract c = worker.getContract(event.getPromotion());
+            if (!c.appearance(event.getDate())) 
+            {
+                gc.getContractFactory().reportExpiration(c);
+            }
 
         }
 
     }
 
-    private static void processSegments(TempEvent event) {
+    private void processSegments(TempEvent event) {
         for (Segment segment : event.getSegments()) {
             if (segment.isComplete()) {
-                segment.processSegment(event.getDate());
+                gc.newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()));
 
                 if (segment.getClass().equals(Match.class
                 )) {
                     for (Worker worker : segment.allWorkers()) {
-                        worker.addMatchRecord(new MatchRecord(segment.toString(), event.getDate()));
+                        gc.newDirt(segment.toString());
                     }
                 }
             }
@@ -153,7 +156,7 @@ public final class EventFactory {
     //so if a worker is in two different segments he is only on the list
     //one time. useful for cost calculation so we don't pay people
     //twice for the same show
-    private static List<Worker> allWorkers(List<Segment> segments) {
+    private List<Worker> allWorkers(List<Segment> segments) {
 
         List allWorkers = new ArrayList<>();
         for (Segment currentSegment : segments) {
@@ -171,7 +174,7 @@ public final class EventFactory {
     }
 
     //dynamic current cost calculation to be called while the player is booking
-    private static int calculateCost(TempEvent event) {
+    private int calculateCost(TempEvent event) {
 
         int currentCost = 0;
 
@@ -184,7 +187,7 @@ public final class EventFactory {
     }
 
     //gross profit for the event
-    private static int gate(TempEvent event) {
+    private int gate(TempEvent event) {
 
         int ticketPrice = 0;
 
@@ -210,36 +213,40 @@ public final class EventFactory {
 
         return attendance(event) * ticketPrice;
     }
-    private EventFactory() {
-        throw new IllegalAccessError("Utility class");
+
+    private final GameController gc;
+
+    public EventFactory(GameController gc) {
+        this.gc = gc;
     }
+
     //class to temporarily hold event info to make things cleaner
-    private static class TempEvent {
-        
+    private class TempEvent {
+
         private final List<Segment> segments;
         private final LocalDate date;
         private final Promotion promotion;
-        
+
         public TempEvent(List<Segment> segments, LocalDate date, Promotion promotion) {
             this.segments = new ArrayList<>(segments);
             this.date = date;
             this.promotion = promotion;
         }
-        
+
         /**
          * @return the segments
          */
         public List<Segment> getSegments() {
             return segments;
         }
-        
+
         /**
          * @return the date
          */
         public LocalDate getDate() {
             return date;
         }
-        
+
         /**
          * @return the promotion
          */

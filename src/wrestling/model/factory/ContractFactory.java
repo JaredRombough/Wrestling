@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Contract;
+import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
@@ -13,11 +14,16 @@ import wrestling.model.Worker;
  * created
  *
  */
-public final class ContractFactory {
+public class ContractFactory {
 
+    private GameController gc;
+
+    public ContractFactory(GameController gameController) {
+        this.gc = gameController;
+    }
 
     //create a contract with predetermined attributes
-    public static void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = new Contract();
 
@@ -40,7 +46,7 @@ public final class ContractFactory {
     }
 
     //create a contract with set exclusivity (only used by import)
-    public static void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
+    public void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
 
         //create the contract
         Contract contract = new Contract();
@@ -81,13 +87,12 @@ public final class ContractFactory {
         promotion.addContract(contract);
         worker.addContract(contract);
 
-        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
-                + " on " + startDate);
+        reportSigning(promotion, worker, startDate);
 
     }
 
     //create a default contract
-    public static void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
+    public void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
 
         //create the contract
         Contract contract = new Contract();
@@ -128,12 +133,11 @@ public final class ContractFactory {
         promotion.addContract(contract);
         worker.addContract(contract);
 
-        System.out.println(promotion.getName() + " pop " + promotion.getPopulatirty() + " signed " + worker.getName() + " pop " + worker.getPopularity()
-                + " on " + startDate);
+        reportSigning(promotion, worker, startDate);
 
     }
 
-    public static int calculateAppearanceCost(Worker worker, boolean exclusive) {
+    public int calculateAppearanceCost(Worker worker, boolean exclusive) {
         int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();
@@ -162,7 +166,7 @@ public final class ContractFactory {
     /*
     calculate the cost for a contract if not explicitly specified
      */
-    private static void setAppearanceCost(Contract contract) {
+    private void setAppearanceCost(Contract contract) {
 
         int unitCost = 0;
 
@@ -193,7 +197,7 @@ public final class ContractFactory {
     /*
     calculate the cost for salaried workers
      */
-    private static void setBiWeeklyCost(Contract contract) {
+    private void setBiWeeklyCost(Contract contract) {
 
         int unitCost;
 
@@ -220,8 +224,19 @@ public final class ContractFactory {
         contract.setBiWeeklyCost(unitCost);
 
     }
-    private ContractFactory() {
-        throw new IllegalAccessError("Utility class");
+
+    private void reportSigning(Promotion p, Worker w, LocalDate d) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getShortName()).append(" pop ").append(p.getPopulatirty()).append(" signed ").append(w.getName())
+                .append(" pop ").append(w.getPopularity()).append(" on ").append(d);
+        gc.newDirt(sb.toString());
+    }
+    
+    public void reportExpiration(Contract c)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
+        gc.newDirt(sb.toString());
     }
 
 }

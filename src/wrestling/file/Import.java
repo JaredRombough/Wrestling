@@ -110,7 +110,7 @@ public class Import {
             allPromotions.add(p);
             for (int i = 0; i < otherWorkers.size(); i++) {
                 if (otherWorkerPromotions.get(i).equals(p.getName())) {
-                    ContractFactory.createContract(otherWorkers.get(i), p, gameController.date(), false);
+                    gameController.getContractFactory().createContract(otherWorkers.get(i), p, gameController.date(), false);
                 }
             }
 
@@ -279,15 +279,15 @@ public class Import {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
             if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
-                ContractFactory.createContract(w, p, gameController.date(), true);
+                gameController.getContractFactory().createContract(w, p, gameController.date(), true);
             } else {
-                ContractFactory.createContract(w, p, gameController.date(), false);
+                gameController.getContractFactory().createContract(w, p, gameController.date(), false);
             }
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
-            ContractFactory.createContract(w, p, gameController.date());
+            gameController.getContractFactory().createContract(w, p, gameController.date());
             w.getContract(p).setExclusive(false);
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
-            ContractFactory.createContract(w, p, gameController.date());
+            gameController.getContractFactory().createContract(w, p, gameController.date());
             w.getContract(p).setExclusive(false);
         }
     }
@@ -387,7 +387,7 @@ public class Import {
                             }
 
                             //create the title
-                            TitleFactory.createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
+                            gameController.getTitleFactory().createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
 
                         }
                     }

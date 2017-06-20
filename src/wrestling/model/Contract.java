@@ -33,28 +33,34 @@ public class Contract implements Serializable {
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
-        
+
     }
 
     //depreciates monthly contracts
-    public void nextDay(LocalDate date) {
-
+    public boolean nextDay() {
+        boolean stillExists = true;
         duration--;
 
         if (duration <= 0) {
-            terminateContract(date);
+            terminateContract();
+            stillExists = false;
         }
+        
+        return stillExists;
     }
 
     //handles appearance-based contracts
-    public void appearance(LocalDate date) {
-
+    public boolean appearance(LocalDate date) {
+        boolean stillExists = true;
         //make the promotion 'pay' the worker for the appearance
         promotion.bankAccount().removeFunds(appearanceCost, 'w', date);
 
         if (duration <= 0) {
-            terminateContract(date);
+            terminateContract();
+            stillExists = false;
         }
+        
+        return stillExists;
     }
 
     public void payDay(LocalDate date) {
@@ -82,19 +88,7 @@ public class Contract implements Serializable {
         duration = 0;
     }
 
-    private void terminateContract(LocalDate date) {
-
-        List<Title> toDrop = new ArrayList<>();
-        for (Title t : worker.getTitles()) {
-            if (t.getPromotion().equals(promotion)) {
-                toDrop.add(t);
-            }
-        }
-
-        for (Title t : toDrop) {
-
-            TitleFactory.stripTitle(t, date);
-        }
+    private void terminateContract() {
 
         worker.removeContract(this);
 
@@ -114,7 +108,6 @@ public class Contract implements Serializable {
 
         return string;
     }
-
 
     public void bookDate(LocalDate date) {
         getBookedDates().add(date);
