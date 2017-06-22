@@ -24,12 +24,6 @@ public class EventFactory {
     public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
-
-        processSegments(event);
-
-        promotion.gainPopularity();
-        promotion.bankAccount().addFunds(gate(event), 'e', date);
-
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(
                 promotion.getName(),
@@ -38,6 +32,11 @@ public class EventFactory {
                 attendance(event),
                 date,
                 generateSummaryString(event));
+
+        processSegments(event, eventArchive);
+
+        promotion.gainPopularity();
+        promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         promotion.archiveEvent(eventArchive);
 
@@ -125,8 +124,7 @@ public class EventFactory {
         for (Worker worker : allWorkers(event.getSegments())) {
 
             Contract c = worker.getContract(event.getPromotion());
-            if (!c.appearance(event.getDate())) 
-            {
+            if (!c.appearance(event.getDate())) {
                 gc.getContractFactory().reportExpiration(c);
             }
 
@@ -134,17 +132,14 @@ public class EventFactory {
 
     }
 
-    private void processSegments(TempEvent event) {
+    private void processSegments(TempEvent event, EventArchive ea) {
         for (Segment segment : event.getSegments()) {
             if (segment.isComplete()) {
-                gc.newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()));
+                gc.newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()),
+                        segment.allWorkers(),
+                        event.getPromotion(),
+                        ea);
 
-                if (segment.getClass().equals(Match.class
-                )) {
-                    for (Worker worker : segment.allWorkers()) {
-                        gc.newDirt(segment.toString());
-                    }
-                }
             }
 
         }

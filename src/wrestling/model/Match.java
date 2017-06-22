@@ -332,6 +332,6 @@ public class Match extends Segment implements Serializable {
 
         }
         
-        return sb.toString();
+        return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
     }
 }

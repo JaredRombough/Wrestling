@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.factory.ContractFactory;
@@ -34,13 +35,12 @@ public final class GameController implements Serializable {
     private List<Promotion> promotions = new ArrayList<>();
     private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
-    
+
     private final DirtSheet dirtSheet;
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
-    
 
     public GameController() throws IOException {
 
@@ -49,7 +49,7 @@ public final class GameController implements Serializable {
         eventFactory = new EventFactory(this);
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(this);
-        
+
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
 
@@ -57,16 +57,21 @@ public final class GameController implements Serializable {
 
         //eventFactory = new EventFactory(this);
         promotionFactory.preparePromotions(this);
-        
-        
 
     }
-    
-    public void newDirt(String string)
-    {
+
+    public void newDirt(String string) {
         dirtSheet.newDirt(string, gameDate);
     }
-    
+
+    public void newDirt(String string, List<Worker> workers, Promotion promotion, EventArchive eventArchive) {
+        newDirt(string, workers, Arrays.asList(promotion), eventArchive);
+    }
+
+    public void newDirt(String string, List<Worker> workers, List<Promotion> promotions, EventArchive eventArchive) {
+        Dirt dirt = new Dirt(string, gameDate, workers, promotions, eventArchive);
+        dirtSheet.newDirt(dirt);
+    }
 
     //is it payday?
     public boolean isPayDay() {
@@ -85,8 +90,6 @@ public final class GameController implements Serializable {
 
         //iterate through all promotions
         for (PromotionAi pAi : promotionAis) {
-
-            
 
             pAi.dailyUpdate();
 

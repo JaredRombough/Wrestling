@@ -24,5 +24,11 @@ public class DirtSheet {
         reports.add(dirt);
         logger.log(Level.INFO, date + " " + string);
     }
+    
+    public void newDirt(Dirt dirt)
+    {
+        reports.add(dirt);
+        logger.log(Level.INFO, dirt.getDate() + " " + dirt.toString());
+    }
 
 }
