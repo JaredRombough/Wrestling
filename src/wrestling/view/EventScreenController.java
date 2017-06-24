@@ -42,7 +42,6 @@ import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
-import wrestling.model.factory.EventFactory;
 
 public class EventScreenController implements Initializable {
 
@@ -319,13 +318,8 @@ public class EventScreenController implements Initializable {
         segmentListView.getSelectionModel().selectFirst();
 
         //for the workersListView to accept dragged items
-        final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent dragEvent) {
-
-                dragEvent.acceptTransferModes(TransferMode.MOVE);
-
-            }
+        final EventHandler<DragEvent> dragOverHandler = (DragEvent dragEvent) -> {
+            dragEvent.acceptTransferModes(TransferMode.MOVE);
         };
 
         workersListView.setOnDragOver(dragOverHandler);

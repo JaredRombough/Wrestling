@@ -135,7 +135,7 @@ public class EventFactory {
     private void processSegments(TempEvent event, EventArchive ea) {
         for (Segment segment : event.getSegments()) {
             if (segment.isComplete()) {
-                gc.newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()),
+                gc.getDirtSheet().newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()),
                         segment.allWorkers(),
                         event.getPromotion(),
                         ea);

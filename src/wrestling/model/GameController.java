@@ -35,6 +35,7 @@ public final class GameController implements Serializable {
     private List<Promotion> promotions = new ArrayList<>();
     private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
+    private List<TagTeam> tagTeams = new ArrayList<>();
 
     private final DirtSheet dirtSheet;
     private final ContractFactory contractFactory;
@@ -44,7 +45,7 @@ public final class GameController implements Serializable {
 
     public GameController() throws IOException {
 
-        dirtSheet = new DirtSheet();
+        dirtSheet = new DirtSheet(this);
         contractFactory = new ContractFactory(this);
         eventFactory = new EventFactory(this);
         promotionFactory = new PromotionFactory(this);
@@ -60,18 +61,7 @@ public final class GameController implements Serializable {
 
     }
 
-    public void newDirt(String string) {
-        dirtSheet.newDirt(string, gameDate);
-    }
-
-    public void newDirt(String string, List<Worker> workers, Promotion promotion, EventArchive eventArchive) {
-        newDirt(string, workers, Arrays.asList(promotion), eventArchive);
-    }
-
-    public void newDirt(String string, List<Worker> workers, List<Promotion> promotions, EventArchive eventArchive) {
-        Dirt dirt = new Dirt(string, gameDate, workers, promotions, eventArchive);
-        dirtSheet.newDirt(dirt);
-    }
+    
 
     //is it payday?
     public boolean isPayDay() {
@@ -123,6 +113,19 @@ public final class GameController implements Serializable {
 
     public List<Worker> allWorkers() {
         return workers;
+    }
+    
+    public List<TagTeam> getTagTeams(Promotion promotion)
+    {
+        List<TagTeam> teams = new ArrayList<>();
+        for(TagTeam tt : tagTeams)
+        {
+            if(promotion.getFullRoster().containsAll(tt.getWorkers()))
+            {
+                teams.add(tt);
+            }
+        }
+        return teams;
     }
 
     public List<Worker> freeAgents(Promotion promotion) {
@@ -186,6 +189,27 @@ public final class GameController implements Serializable {
      */
     public TitleFactory getTitleFactory() {
         return titleFactory;
+    }
+
+    /**
+     * @return the dirtSheet
+     */
+    public DirtSheet getDirtSheet() {
+        return dirtSheet;
+    }
+
+    /**
+     * @return the tagTeams
+     */
+    public List<TagTeam> getTagTeams() {
+        return tagTeams;
+    }
+
+    /**
+     * @param tagTeams the tagTeams to set
+     */
+    public void setTagTeams(List<TagTeam> tagTeams) {
+        this.tagTeams = tagTeams;
     }
 
 }

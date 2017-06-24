@@ -29,9 +29,11 @@ import wrestling.MainApp;
 import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
+import wrestling.model.TagTeam;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.view.comparators.EventDateComparator;
+import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
@@ -102,6 +104,7 @@ public class BrowserController implements Initializable {
     private BrowserMode<Worker> browseWorkers;
     private BrowserMode<EventArchive> browseEvents;
     private BrowserMode<Title> browseTitles;
+    private BrowserMode<TagTeam> browseTeams;
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
@@ -206,6 +209,9 @@ public class BrowserController implements Initializable {
             browse(browseTitles, currentPromotion.getTitles());
 
             lastButton = titlesButton;
+        } else if (event.getSource() == teamsButton) {
+            updateSelectedButton(teamsButton);
+            browse(browseTeams, gameController.getTagTeams(currentPromotion));
         }
     }
 
@@ -264,6 +270,7 @@ public class BrowserController implements Initializable {
         gridPane.add(browserMode.displayPane, 1, 1);
         GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
         GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
+        GridPane.setRowSpan(browserMode.displayPane, GridPane.REMAINING);
 
         lastListView = browserMode.listView;
         lastDisplayNode = browserMode.displayPane;
@@ -284,7 +291,6 @@ public class BrowserController implements Initializable {
 
         stablesButton.setDisable(true);
         staffButton.setDisable(true);
-        teamsButton.setDisable(true);
 
     }
 
@@ -352,6 +358,13 @@ public class BrowserController implements Initializable {
         browseTitles.comparators = FXCollections.observableArrayList(
                 new TitleNameComparator()
         );
+        
+        browseTeams = new BrowserMode<>(
+                gameController.playerPromotion().getTitles(),
+                "view/SimpleDisplay.fxml");
+        browseTeams.comparators = FXCollections.observableArrayList(
+                new TagTeamNameComparator()
+        );
 
         promotionComboBox.setValue(gameController.playerPromotion());
 
@@ -384,6 +397,7 @@ public class BrowserController implements Initializable {
             
             controller.setMainApp(mainApp);
             controller.setGameController(gameController);
+            
             
             //get the listview ready
             listView.setItems(FXCollections.observableArrayList(initialItems));

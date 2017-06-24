@@ -10,9 +10,8 @@ import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
+import wrestling.model.TagTeam;
 import wrestling.model.Worker;
-import wrestling.model.factory.ContractFactory;
-import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
 
 /**
@@ -39,15 +38,23 @@ public class Import {
 
     private final List<String> titleNames = new ArrayList<>();
 
+    private final List<TagTeam> allTagTeams = new ArrayList<>();
+
     public GameController importController(File importFolder) throws IOException {
         this.importFolder = importFolder;
         gameController = new GameController();
         promotionsDat();
         workersDat();
+        teamsDat();
         beltDat();
         processOther();
         gameController.setPromotions(allPromotions);
         gameController.setWorkers(allWorkers);
+        gameController.setTagTeams(allTagTeams);
+
+        for (TagTeam tt : allTagTeams) {
+            System.out.println(tt.getName() + tt.getWorkers());
+        }
 
         //for statistical evaluation of data only
         boolean evaluate = false;
@@ -178,6 +185,56 @@ public class Import {
         }
     }
 
+    private void teamsDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\teams.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+        List<String> currentHexLine = new ArrayList<>();
+        List<String> currentStringLine = new ArrayList<>();
+        int counter = 0;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            //combine the two characters into one string
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            currentLine += hexStringToLetter(hexValueString);
+            currentHexLine.add(hexValueString);
+            currentStringLine.add(hexStringToLetter(hexValueString));
+
+            counter++;
+
+            if (counter == 59) {
+
+                TagTeam team = new TagTeam();
+                String id1 = currentHexLine.get(26) + currentHexLine.get(27);
+                String id2 = currentHexLine.get(28) + currentHexLine.get(29);
+
+                team.setName(currentLine.substring(1, 18).trim());
+                for (int x = 0; x < allWorkers.size(); x++) {
+
+                    if (workerIDs.get(x).equals(id1)
+                            || workerIDs.get(x).equals(id2)) {
+                        team.getWorkers().add(allWorkers.get(x));
+                    }
+                }
+                team.setExperience(hexStringToInt(currentHexLine.get(55)));
+
+                team.setActive(currentHexLine.get(57).equals("FF"));
+
+                allTagTeams.add(team);
+
+                counter = 0;
+                currentLine = "";
+                currentHexLine = new ArrayList<>();
+                currentStringLine = new ArrayList<>();
+
+            }
+        }
+    }
+
     private void workersDat() throws IOException {
 
         Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
@@ -266,6 +323,8 @@ public class Import {
 
                 allWorkers.add(worker);
                 workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
+                System.out.println(worker.getName());
+                System.out.println(workerIDs.get(workerIDs.size() - 1));
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();

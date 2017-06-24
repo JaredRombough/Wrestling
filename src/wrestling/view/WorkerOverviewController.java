@@ -14,6 +14,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.MainApp;
@@ -68,6 +69,11 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
     @FXML
     private StackPane workerImageBorder;
+    
+    @FXML
+    private AnchorPane feedAnchor;
+    private AnchorPane feedPane;
+    private SimpleDisplayController feedPaneController;
 
     private Worker currentWorker;
     private Promotion currentPromotion;
@@ -108,6 +114,30 @@ public class WorkerOverviewController extends Controller implements Initializabl
     @Override
     void initializeMore() {
         loadContractPane();
+        loadFeed();
+    }
+    
+    private void loadFeed()
+    {
+        //load the contract pane
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/SimpleDisplay.fxml"));
+            feedPane = (AnchorPane) loader.load();
+
+            feedPaneController = (SimpleDisplayController) loader.getController();
+
+            feedPaneController.setMainApp(this.mainApp);
+
+            feedPaneController.setGameController(this.gameController);
+            
+            feedAnchor.getChildren().add(feedPane);
+            
+            
+          
+
+        } catch (IOException e) {
+        }
     }
 
     private void loadContractPane() {
@@ -224,6 +254,8 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             contractPaneController.updateLabels();
         }
+        
+        feedPaneController.setCurrent(currentWorker);
 
     }
 

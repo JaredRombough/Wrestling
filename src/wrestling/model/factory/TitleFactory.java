@@ -53,7 +53,7 @@ public class TitleFactory {
             sb.append(worker.getName());
         }
 
-        gc.newDirt(sb.toString());
+        gc.getDirtSheet().newDirt(sb.toString());
 
         title.addRecord(date);
 

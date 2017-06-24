@@ -230,14 +230,14 @@ public class ContractFactory {
         StringBuilder sb = new StringBuilder();
         sb.append(p.getShortName()).append(" pop ").append(p.getPopulatirty()).append(" signed ").append(w.getName())
                 .append(" pop ").append(w.getPopularity()).append(" on ").append(d);
-        gc.newDirt(sb.toString());
+        gc.getDirtSheet().newDirt(sb.toString(), w, p);
     }
     
     public void reportExpiration(Contract c)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
-        gc.newDirt(sb.toString());
+        gc.getDirtSheet().newDirt(sb.toString(), c.getWorker(), c.getPromotion());
     }
 
 }
