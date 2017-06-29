@@ -6,11 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import wrestling.model.Contract;
+import wrestling.model.dirt.Dirt;
 import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Segment;
+import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
 import wrestling.model.utility.UtilityFunctions;
 
@@ -135,10 +137,11 @@ public class EventFactory {
     private void processSegments(TempEvent event, EventArchive ea) {
         for (Segment segment : event.getSegments()) {
             if (segment.isComplete()) {
-                gc.getDirtSheet().newDirt(segment.processSegment(event.getDate(), gc.getTitleFactory()),
+
+                gc.getDirtSheet().newDirt(new SegmentRecord(segment.processSegment(event.getDate(), gc.getTitleFactory()),
                         segment.allWorkers(),
                         event.getPromotion(),
-                        ea);
+                        ea));
 
             }
 

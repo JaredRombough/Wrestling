@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import wrestling.model.dirt.News;
 import wrestling.model.Contract;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
@@ -88,7 +89,7 @@ public class ContractFactory {
         promotion.addContract(contract);
         worker.addContract(contract);
 
-        reportSigning(promotion, worker, startDate);
+        reportSigning(contract);
 
     }
 
@@ -134,7 +135,7 @@ public class ContractFactory {
         promotion.addContract(contract);
         worker.addContract(contract);
 
-        reportSigning(promotion, worker, startDate);
+        reportSigning(contract);
 
     }
 
@@ -226,18 +227,18 @@ public class ContractFactory {
 
     }
 
-    private void reportSigning(Promotion p, Worker w, LocalDate d) {
+    private void reportSigning(Contract c) {
         StringBuilder sb = new StringBuilder();
-        sb.append(p.getShortName()).append(" pop ").append(p.getPopulatirty()).append(" signed ").append(w.getName())
-                .append(" pop ").append(w.getPopularity()).append(" on ").append(d);
-        gc.getDirtSheet().newDirt(sb.toString(), w, p);
+        sb.append(c.getPromotion().getShortName()).append(" pop ").append(c.getPromotion().getPopulatirty()).append(" signed ").append(c.getWorker().getName())
+                .append(" pop ").append(c.getWorker().getPopularity()).append(" on ").append(c.getStartDate());
+        gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
     
     public void reportExpiration(Contract c)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
-        gc.getDirtSheet().newDirt(sb.toString(), c.getWorker(), c.getPromotion());
+        gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
 
 }

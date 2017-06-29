@@ -6,8 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
@@ -21,6 +25,8 @@ import wrestling.model.factory.WorkerFactory;
 public class Import {
 
     private GameController gameController;
+
+    private transient Logger logger = LogManager.getLogger(getClass());
 
     private File importFolder;
 
@@ -40,22 +46,41 @@ public class Import {
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
-    public GameController importController(File importFolder) throws IOException {
+    private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
+            "promos",
+            "belt",
+            "teams",
+            "wrestler"
+    ));
+
+    public String tryImport(File importFolder) throws Exception {
+
+        StringBuilder sb = new StringBuilder();
         this.importFolder = importFolder;
-        gameController = new GameController();
-        promotionsDat();
-        workersDat();
-        teamsDat();
-        beltDat();
+        for (String s : filesNeeded) {
+            File f = new File(importFolder.getPath() + "\\" + s + ".dat");
+            if (!f.exists() || f.isDirectory()) {
+                sb.append(f.toString()).append(" not found.").append("\n");
+            }
+        }
+
+        try {
+            gameController = new GameController();
+            logger.log(Level.INFO, gameController);
+            promotionsDat();
+            workersDat();
+            teamsDat();
+            beltDat();
+        } catch (Exception ex) {
+            sb.append(ex);
+            logger.log(Level.ERROR, ex);
+            throw ex;
+        }
         processOther();
         gameController.setPromotions(allPromotions);
         gameController.setWorkers(allWorkers);
         gameController.setTagTeams(allTagTeams);
-
-        for (TagTeam tt : allTagTeams) {
-            System.out.println(tt.getName() + tt.getWorkers());
-        }
-
+        logger.log(Level.INFO, gameController);
         //for statistical evaluation of data only
         boolean evaluate = false;
 
@@ -64,7 +89,8 @@ public class Import {
             evaluateData.evaluateData(allPromotions, allWorkers);
         }
 
-        return gameController;
+        return sb.toString();
+
     }
 
     private int hexStringToInt(String hexValueString) {
@@ -117,7 +143,7 @@ public class Import {
             allPromotions.add(p);
             for (int i = 0; i < otherWorkers.size(); i++) {
                 if (otherWorkerPromotions.get(i).equals(p.getName())) {
-                    gameController.getContractFactory().createContract(otherWorkers.get(i), p, gameController.date(), false);
+                    getGameController().getContractFactory().createContract(otherWorkers.get(i), p, getGameController().date(), false);
                 }
             }
 
@@ -323,8 +349,6 @@ public class Import {
 
                 allWorkers.add(worker);
                 workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
-                System.out.println(worker.getName());
-                System.out.println(workerIDs.get(workerIDs.size() - 1));
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
@@ -338,15 +362,15 @@ public class Import {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
             if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
-                gameController.getContractFactory().createContract(w, p, gameController.date(), true);
+                getGameController().getContractFactory().createContract(w, p, getGameController().date(), true);
             } else {
-                gameController.getContractFactory().createContract(w, p, gameController.date(), false);
+                getGameController().getContractFactory().createContract(w, p, getGameController().date(), false);
             }
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
-            gameController.getContractFactory().createContract(w, p, gameController.date());
+            getGameController().getContractFactory().createContract(w, p, getGameController().date());
             w.getContract(p).setExclusive(false);
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
-            gameController.getContractFactory().createContract(w, p, gameController.date());
+            getGameController().getContractFactory().createContract(w, p, getGameController().date());
             w.getContract(p).setExclusive(false);
         }
     }
@@ -446,7 +470,7 @@ public class Import {
                             }
 
                             //create the title
-                            gameController.getTitleFactory().createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
+                            getGameController().getTitleFactory().createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
 
                         }
                     }
@@ -456,6 +480,13 @@ public class Import {
             }
         }
 
+    }
+
+    /**
+     * @return the gameController
+     */
+    public GameController getGameController() {
+        return gameController;
     }
 
 }

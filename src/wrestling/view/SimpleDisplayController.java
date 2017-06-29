@@ -13,6 +13,10 @@ import wrestling.model.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.dirt.Dirt;
+import wrestling.model.dirt.SegmentRecord;
+import wrestling.model.dirt.TitleRecord;
+
 
 /*
 basic anchor pane for displaying a string on a label, used by browser
@@ -53,21 +57,25 @@ public class SimpleDisplayController extends Controller implements Initializable
 
         //call the appropriate method based on object type
         if (obj instanceof EventArchive) {
-            EventArchive ea = (EventArchive) obj;
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < gc.getDirtSheet().getReports().size(); i++) {
-                if (gc.getDirtSheet().getReports().get(i).getEventArchive() != null
-                        && gc.getDirtSheet().getReports().get(i).getEventArchive().equals(ea)) {
-                    sb.append(gc.getDirtSheet().getReports().get(i).toString());
+            for (Dirt dirt : gc.getDirtSheet().getReports()) {
+                if (dirt instanceof SegmentRecord
+                        && ((SegmentRecord) dirt).getEventArchive().equals(obj)) {
+                    sb.append(dirt.toString());
                     sb.append("\n");
                 }
             }
             newText = sb.toString();
         } else if (obj instanceof Title) {
-            Title title = (Title) obj;
-            newText += title.getWorkers() + " Day " + title.getDayWon() + " to today";
-            newText += "\n";
-            newText += title.getTitleHistory();
+            StringBuilder sb = new StringBuilder();
+            for (Dirt dirt : gc.getDirtSheet().getReports()) {
+                if (dirt instanceof TitleRecord
+                        && ((TitleRecord) dirt).getTitle().equals(obj)) {
+                    sb.append(dirt.toString());
+                    sb.append("\n");
+                }
+            }
+            newText = sb.toString();
         } else if (obj instanceof Worker) {
             Worker w = (Worker) obj;
             StringBuilder sb = new StringBuilder();
@@ -93,8 +101,9 @@ public class SimpleDisplayController extends Controller implements Initializable
     }
 
     /**
-     * @param ds the ds to set
+     * @param gc
      */
+    @Override
     public void setGameController(GameController gc) {
         this.gc = gc;
     }

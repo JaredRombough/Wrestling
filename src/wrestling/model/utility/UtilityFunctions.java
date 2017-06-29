@@ -1,10 +1,12 @@
 package wrestling.model.utility;
 
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import wrestling.model.Worker;
 
 public final class UtilityFunctions {
 
@@ -16,7 +18,7 @@ public final class UtilityFunctions {
 
     //shows an image if it exists, handles hide/show of image frame
     public static void showImage(File imageFile, StackPane imageFrame, ImageView imageView) {
-        
+
         if (imageFile.exists() && !imageFile.isDirectory()) {
             //show the border if it is not visible
             if (!imageFrame.visibleProperty().get()) {
@@ -29,4 +31,17 @@ public final class UtilityFunctions {
                 imageFrame.setVisible(false);
             }
     }
+
+    public static String slashNames(List<Worker> workers) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < workers.size(); i++) {
+            sb.append(workers.get(i).getName());
+            if (workers.size() - i > 1) {
+                sb.append("\\");
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

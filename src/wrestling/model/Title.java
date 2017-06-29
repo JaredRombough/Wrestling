@@ -16,7 +16,6 @@ public class Title implements Serializable {
     private Promotion promotion;
     private String name;
     private LocalDate dayWon;
-    private List<TitleRecord> titleHistory = new ArrayList<>();
 
     //vacant title
     public Title(Promotion promotion, int teamSize, String name) {
@@ -36,33 +35,6 @@ public class Title implements Serializable {
     @Override
     public String toString() {
         return this.getName();
-    }
-
-    public String getTitleHistory() {
-
-        String string = "";
-
-        for (TitleRecord tr : titleHistory) {
-            
-            
-            String workerName = "\n\n";
-            
-            if(tr.workers.isEmpty()) {
-                workerName += "Vacant";
-            } else {
-                for(Worker w : tr.workers) {
-                    workerName += w.getName() + "/";
-                }
-                workerName = workerName.substring(0, workerName.length() - 1);
-            }
-            
-            
-            string = workerName + " " + tr.startDate + " to " + tr.endDate + string;
-
-        }
-       
-
-        return string;
     }
 
     /**
@@ -122,7 +94,6 @@ public class Title implements Serializable {
         this.name = name;
     }
 
-
     /**
      * @return the dayWon
      */
@@ -137,41 +108,11 @@ public class Title implements Serializable {
         this.dayWon = dayWon;
     }
 
-    public void addRecord(LocalDate currentDate) {
-
-        List<Worker> recordWorkers = new ArrayList<>();
-        if (!isVacant()) {
-            recordWorkers.addAll(workers);
-
-        }
-
-        if (isVacant() && dayWon != currentDate) {
-            titleHistory.add(new TitleRecord(recordWorkers, dayWon, currentDate));
-        } else if (!isVacant()) {
-            titleHistory.add(new TitleRecord(recordWorkers, dayWon, currentDate));
-        }
-
-    }
-
-
     /**
      * @return the teamSize
      */
     public int getTeamSize() {
         return teamSize;
-    }
-
-    private class TitleRecord {
-
-        private final List<Worker> workers;
-        private final LocalDate startDate;
-        private final LocalDate endDate;
-
-        public TitleRecord(List<Worker> workers, LocalDate startDate, LocalDate endDate) {
-            this.workers = workers;
-            this.startDate = startDate;
-            this.endDate = endDate;
-        }
     }
 
 }

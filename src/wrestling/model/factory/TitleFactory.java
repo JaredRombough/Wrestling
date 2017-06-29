@@ -3,9 +3,12 @@ package wrestling.model.factory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.dirt.Dirt;
 import wrestling.model.GameController;
+import wrestling.model.dirt.News;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
+import wrestling.model.dirt.TitleRecord;
 import wrestling.model.Worker;
 
 /**
@@ -52,10 +55,8 @@ public class TitleFactory {
         for (Worker worker : title.getWorkers()) {
             sb.append(worker.getName());
         }
-
-        gc.getDirtSheet().newDirt(sb.toString());
-
-        title.addRecord(date);
+        gc.getDirtSheet().newDirt(new News(sb.toString(), title.getWorkers(), title.getPromotion()));
+        gc.getDirtSheet().newDirt(new TitleRecord(title));
 
         for (Worker worker : title.getWorkers()) {
             worker.removeTitle(title);
@@ -67,8 +68,6 @@ public class TitleFactory {
     }
 
     public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
-
-        title.addRecord(date);
 
         title.setWorkers(winner);
         for (Worker worker : winner) {

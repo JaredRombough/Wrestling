@@ -1,14 +1,16 @@
 package wrestling.model;
 
+import wrestling.model.dirt.DirtSheet;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
@@ -43,6 +45,8 @@ public final class GameController implements Serializable {
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
 
+    private transient Logger logger = LogManager.getLogger(getClass());
+
     public GameController() throws IOException {
 
         dirtSheet = new DirtSheet(this);
@@ -53,15 +57,12 @@ public final class GameController implements Serializable {
 
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
-
         payDay = gameDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
 
         //eventFactory = new EventFactory(this);
         promotionFactory.preparePromotions(this);
 
     }
-
-    
 
     //is it payday?
     public boolean isPayDay() {
@@ -114,17 +115,12 @@ public final class GameController implements Serializable {
     public List<Worker> allWorkers() {
         return workers;
     }
-    
-    public List<TagTeam> getTagTeams(Promotion promotion)
-    {
+
+    public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
-        for(TagTeam tt : tagTeams)
-        {
-            if(promotion.getFullRoster().containsAll(tt.getWorkers()))
-            {
-                teams.add(tt);
-            }
-        }
+        tagTeams.stream().filter((tt) -> (promotion.getFullRoster().containsAll(tt.getWorkers()))).forEach((tt) -> {
+            teams.add(tt);
+        });
         return teams;
     }
 

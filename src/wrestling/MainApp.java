@@ -8,6 +8,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,11 +37,15 @@ import static javafx.application.Application.launch;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
+    private transient Logger logger;
 
     public static void main(String[] args) {
 
@@ -62,7 +73,10 @@ public class MainApp extends Application {
     private final boolean cssEnabled;
 
     public MainApp() {
+
         this.cssEnabled = true;
+        logger = LogManager.getLogger(getClass());
+        logger.log(Level.INFO, "Logger online");
 
     }
 
@@ -86,31 +100,46 @@ public class MainApp extends Application {
     }
 
     //starts a new game from imported data
-    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws IOException {
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws IOException, Exception {
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;
         this.logosFolder = logosFolder;
 
         Import importer = new Import();
-        this.gameController = importer.importController(dataFolder);
 
-        //confirm the import process was successful before starting game
-        if (gameController.getPromotions().isEmpty()) {
+        String error = "";
+        try {
+
+            error = importer.tryImport(dataFolder);
+
+            if (!error.isEmpty()) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Import error");
+                alert.setHeaderText("Resources could not be validated.");
+                alert.setContentText(error);
+
+                DialogPane dialogPane = alert.getDialogPane();
+                dialogPane.getStylesheets().add("style.css");
+
+                alert.showAndWait();
+
+            } else {
+                this.gameController = importer.getGameController();
+                initRootLayout();
+                showStartGameScreen();
+            }
+        } catch (Exception ex) {
+
+            logger.log(Level.ERROR, ex);
+
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Import error");
-            alert.setHeaderText("No promotions found");
-            alert.setContentText("Returning to title ");
-
-            DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add("style.css");
-
-            alert.showAndWait();
-
-        } else {
-
-            initRootLayout();
-            showStartGameScreen();
+            alert.setHeaderText("Resources could not be validated.");
+            alert.setContentText(error + "\n" + ex.getMessage());
+            throw ex;
         }
+
     }
 
     //continues the last saved game, jumps to browser
@@ -155,7 +184,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 700;
+        int preRunDays = 100;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
