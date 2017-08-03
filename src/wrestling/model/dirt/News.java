@@ -45,4 +45,9 @@ public class News implements Dirt {
         return workers;
     }
 
+    @Override
+    public Promotion getPromotion() {
+        return promotion;
+    }
+
 }

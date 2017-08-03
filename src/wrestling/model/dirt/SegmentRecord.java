@@ -2,7 +2,6 @@ package wrestling.model.dirt;
 
 import java.time.LocalDate;
 import java.util.List;
-import wrestling.model.EventArchive;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
@@ -46,6 +45,11 @@ public class SegmentRecord implements Dirt {
      */
     public EventArchive getEventArchive() {
         return eventArchive;
+    }
+
+    @Override
+    public Promotion getPromotion() {
+        return promotion;
     }
 
 }

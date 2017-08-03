@@ -53,10 +53,15 @@ public class TitleRecord implements Dirt {
         sb.append(UtilityFunctions.slashNames(workers));
 
         sb.append("\t\t\t");
-        sb.append(startDate);
+        sb.append(startDate == null ? "????" : startDate);
         sb.append("\tto\t");
         sb.append(date);
 
         return sb.toString();
+    }
+
+    @Override
+    public Promotion getPromotion() {
+        return promotion;
     }
 }

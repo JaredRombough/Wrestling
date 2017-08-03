@@ -9,7 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import wrestling.model.EventArchive;
+import wrestling.model.dirt.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Title;
 import wrestling.model.Worker;
@@ -33,6 +33,9 @@ public class SimpleDisplayController extends Controller implements Initializable
 
     @FXML
     private TextFlow textFlow;
+
+    @FXML
+    private Text displayTitle;
 
     @FXML
     private StackPane stackPane;
@@ -88,6 +91,11 @@ public class SimpleDisplayController extends Controller implements Initializable
             }
             newText = sb.toString();
         }
+
+        if (obj != null && displayTitle != null && !obj.toString().equals(displayTitle.getText())) {
+            displayTitle.setText(obj.toString());
+        }
+
         Text text = new Text();
         text.setText(newText);
 

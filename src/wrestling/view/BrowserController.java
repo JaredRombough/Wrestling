@@ -26,7 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import wrestling.MainApp;
-import wrestling.model.EventArchive;
+import wrestling.model.dirt.EventArchive;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
@@ -46,7 +46,6 @@ public class BrowserController implements Initializable {
 
     private MainApp mainApp;
     private GameController gameController;
-
 
     @FXML
     private Button rosterButton;
@@ -97,7 +96,6 @@ public class BrowserController implements Initializable {
 
     private Promotion currentPromotion;
 
-
     //keeps track of the last sortedlist so we can clear it when needed
     private SortedList lastSortedList;
 
@@ -105,18 +103,21 @@ public class BrowserController implements Initializable {
     private BrowserMode<EventArchive> browseEvents;
     private BrowserMode<Title> browseTitles;
     private BrowserMode<TagTeam> browseTeams;
+
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
+
     public void setGameController(GameController gameController) throws IOException {
         this.gameController = gameController;
         initializeMore();
     }
+
     /*
     sets the current promotion
     updates relevant labels
     fires the last button to update the list
-    */
+     */
     private void setCurrentPromotion(Promotion newPromotion) {
         this.currentPromotion = newPromotion;
 
@@ -190,7 +191,7 @@ public class BrowserController implements Initializable {
 
         } else if (event.getSource() == eventsButton) {
 
-            browse(browseEvents, currentPromotion.getEventArchives());
+            browse(browseEvents, gameController.getDirtSheet().promotionEvents(currentPromotion));
             updateSelectedButton(eventsButton);
             lastButton = eventsButton;
 
@@ -327,7 +328,6 @@ public class BrowserController implements Initializable {
 
     }
 
-
     private void initializeMore() throws IOException {
 
         initializePromotionCombobox();
@@ -346,7 +346,7 @@ public class BrowserController implements Initializable {
         lastDisplayNode = browseWorkers.displayPane;
 
         browseEvents = new BrowserMode<>(
-                gameController.playerPromotion().getEventArchives(),
+                gameController.getDirtSheet().promotionEvents(gameController.playerPromotion()),
                 "view/SimpleDisplay.fxml");
         browseEvents.comparators = FXCollections.observableArrayList(
                 new EventDateComparator()
@@ -358,7 +358,7 @@ public class BrowserController implements Initializable {
         browseTitles.comparators = FXCollections.observableArrayList(
                 new TitleNameComparator()
         );
-        
+
         browseTeams = new BrowserMode<>(
                 gameController.playerPromotion().getTitles(),
                 "view/SimpleDisplay.fxml");
@@ -371,54 +371,54 @@ public class BrowserController implements Initializable {
         lastButton.fire();
 
     }
+
     /*
     internal class used to handle browsing of different object types
-    */
+     */
     private class BrowserMode<T> {
-        
+
         private SortedList sortedList;
-        
+
         private final ListView listView = new ListView<>();
-        
+
         private final AnchorPane displayPane;
-        
+
         private Controller controller;
-        
+
         private ObservableList comparators;
-        
+
         public BrowserMode(List initialItems, String fxmlPath) throws IOException {
-            
+
             //load the display pane and its controller
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource(fxmlPath));
             displayPane = (AnchorPane) loader.load();
-            
+
             controller = loader.getController();
-            
+
             controller.setMainApp(mainApp);
             controller.setGameController(gameController);
-            
-            
+
             //get the listview ready
             listView.setItems(FXCollections.observableArrayList(initialItems));
-            
+
             //listen for changes in selection on the listview
             listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
                 @Override
                 public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-                    
+
                     if (newValue != null) {
-                        
+
                         //tell the controller what object we're looking at
                         controller.setCurrent(newValue);
-                        
+
                     }
-                    
+
                 }
             });
-            
+
         }
-        
+
     }
 
 }

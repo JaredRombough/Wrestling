@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
+import wrestling.model.Television;
 import wrestling.model.Worker;
 import wrestling.model.factory.WorkerFactory;
 
@@ -46,6 +48,8 @@ public class Import {
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
+    private final List<Television> allTelevision = new ArrayList<>();
+
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
             "belt",
@@ -71,7 +75,9 @@ public class Import {
             workersDat();
             teamsDat();
             beltDat();
+            tvDat();
         } catch (Exception ex) {
+
             sb.append(ex);
             logger.log(Level.ERROR, ex);
             throw ex;
@@ -80,6 +86,7 @@ public class Import {
         gameController.setPromotions(allPromotions);
         gameController.setWorkers(allWorkers);
         gameController.setTagTeams(allTagTeams);
+        gameController.setTelevision(allTelevision);
         logger.log(Level.INFO, gameController);
         //for statistical evaluation of data only
         boolean evaluate = false;
@@ -152,6 +159,77 @@ public class Import {
         AdvancedImport adIm = new AdvancedImport();
         adIm.updateOtherPromotins(allPromotions);
 
+    }
+
+    private void tvDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\tv.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+        List<String> currentHexLine = new ArrayList<>();
+        List<String> currentStringLine = new ArrayList<>();
+        int counter = 0;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            //combine the two characters into one string
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            currentLine += hexStringToLetter(hexValueString);
+            currentHexLine.add(hexValueString);
+            currentStringLine.add(hexStringToLetter(hexValueString));
+
+            counter++;
+
+            if (counter == 51) {
+
+                Television tv = new Television();
+                tv.setName(currentLine.substring(0, 20).trim());
+                String day = currentLine.substring(22, 32);
+
+                switch (day.trim().toUpperCase()) {
+                    case "MONDAY":
+                        tv.setDay(DayOfWeek.MONDAY);
+                        break;
+                    case "TUESDAY":
+                        tv.setDay(DayOfWeek.TUESDAY);
+                        break;
+                    case "WEDNESDAY":
+                        tv.setDay(DayOfWeek.WEDNESDAY);
+                        break;
+                    case "THURSDAY":
+                        tv.setDay(DayOfWeek.THURSDAY);
+                        break;
+                    case "FRIDAY":
+                        tv.setDay(DayOfWeek.FRIDAY);
+                        break;
+                    case "SATURDAY":
+                        tv.setDay(DayOfWeek.SATURDAY);
+                        break;
+                    case "SUNDAY":
+                        tv.setDay(DayOfWeek.SUNDAY);
+                        break;
+
+                }
+                int key = hexStringToInt(currentHexLine.get(21));
+                for (int x = 0; x < promotionKeys.size(); x++) {
+                    if (promotionKeys.get(x) == key) {
+                        tv.setPromotion(allPromotions.get(x));
+                    }
+                }
+
+                allTelevision.add(tv);
+
+                EvaluateData.printNice(logger, currentLine, currentStringLine, currentHexLine);
+
+                counter = 0;
+                currentLine = "";
+                currentHexLine = new ArrayList<>();
+                currentStringLine = new ArrayList<>();
+
+            }
+        }
     }
 
     private void promotionsDat() throws IOException {

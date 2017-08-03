@@ -2,7 +2,6 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import wrestling.model.financial.BankAccount;
 
@@ -17,14 +16,11 @@ public class Promotion implements Serializable {
     private int indexNumber;
     private int popularity;
     private int level;
-    private final List<EventArchive> eventArchives;
     private final List<Title> titles = new ArrayList<>();
     private final List<Contract> contracts;
 
     public Promotion() {
         this.contracts = new ArrayList<>();
-
-        eventArchives = new ArrayList<>();
 
         bankAccount = new BankAccount();
 
@@ -137,15 +133,6 @@ public class Promotion implements Serializable {
             level = 1;
         }
         this.level = level;
-    }
-
-    //used for browsing events
-    public List<EventArchive> getEventArchives() {
-        return Collections.unmodifiableList(eventArchives);
-    }
-
-    public void archiveEvent(EventArchive event) {
-        eventArchives.add(event);
     }
 
     public void addTitle(Title title) {

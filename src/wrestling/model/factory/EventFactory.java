@@ -6,12 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import wrestling.model.Contract;
-import wrestling.model.dirt.Dirt;
-import wrestling.model.EventArchive;
+import wrestling.model.dirt.EventArchive;
+import wrestling.model.dirt.EventType;
 import wrestling.model.GameController;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Segment;
+import wrestling.model.Television;
 import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
 import wrestling.model.utility.UtilityFunctions;
@@ -23,27 +24,38 @@ import wrestling.model.utility.UtilityFunctions;
  */
 public class EventFactory {
 
-    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
+    private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
+
         //this is all that will remain of the event
         EventArchive eventArchive = new EventArchive(
-                promotion.getName(),
+                allWorkers(segments),
+                promotion,
+                eventType,
                 calculateCost(event),
                 gate(event),
-                attendance(event),
-                date,
-                generateSummaryString(event));
+                attendance(event));
+
+        gc.getDirtSheet().newDirt(eventArchive);
 
         processSegments(event, eventArchive);
 
         promotion.gainPopularity();
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
-        promotion.archiveEvent(eventArchive);
-
         processContracts(event);
 
+        return eventArchive;
+
+    }
+
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
+        createEvent(segments, date, promotion, EventType.LIVEEVENT);
+    }
+
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
+        createEvent(segments, date, promotion, EventType.TELEVISION).setTelevision(television);
     }
 
     private String generateSummaryString(TempEvent event) {

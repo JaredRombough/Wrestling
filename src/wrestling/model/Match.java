@@ -23,12 +23,9 @@ public class Match extends Segment implements Serializable {
 
     private final List<Worker> teamB = new ArrayList<>();
 
-
     private boolean hasTeams;
 
     private int matchRating;
-
-
 
     /*
     this constructor takes an arbitrary number of teams
@@ -85,22 +82,26 @@ public class Match extends Segment implements Serializable {
         rules.add(MatchRules.DEFAULT);
 
     }
+
     public List<Worker> teamA() {
         return teamA;
     }
+
     public List<Worker> teamB() {
         return teamB;
     }
+
     @Override
     public List<Worker> allWorkers() {
         List<Worker> allWorkersList = new ArrayList<>();
-        
+
         for (List<Worker> team : teams) {
             allWorkersList.addAll(team);
         }
-        
+
         return allWorkersList;
     }
+
     @Override
     public int segmentRating() {
         return matchRating;
@@ -253,25 +254,30 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public String processSegment(LocalDate date, TitleFactory titleFactory) {
-        
+
         StringBuilder sb = new StringBuilder();
-        
+
         if (title != null) {
 
             if (title.isVacant()) {
 
                 titleFactory.awardTitle(title, winner, date);
-                sb.append(winner.toString()).append(" wins the vacant  ").append(title.getName()).append(" title");
+                sb.append(UtilityFunctions.slashNames(winner))
+                        .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
+                        .append(title.getName()).append(" title");
             } else {
                 for (Worker worker : title.getWorkers()) {
                     if (!winner.contains(worker)) {
-                        sb.append(winner.toString()).append(" defeats ").append(title.getWorkers().toString()).append(" for the ").append(title.getName()).append(" title");
+                        sb.append(UtilityFunctions.slashNames(winner))
+                                .append(winner.size() > 1 ? " defeat " : " defeats ")
+                                .append(UtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
+                                .append(title.getName()).append(" title");
                         titleFactory.titleChange(title, winner, date);
 
                         break;
                     }
 
-                    sb.append(winner.toString()).append(" defends the  ").append(title.getName()).append(" title");
+                    sb.append(UtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
                 }
             }
         }
@@ -331,7 +337,7 @@ public class Match extends Segment implements Serializable {
             //dangerousness rating and a list of injury types
 
         }
-        
+
         return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
     }
 }

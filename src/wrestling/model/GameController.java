@@ -38,6 +38,7 @@ public final class GameController implements Serializable {
     private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
     private List<TagTeam> tagTeams = new ArrayList<>();
+    private List<Television> television = new ArrayList<>();
 
     private final DirtSheet dirtSheet;
     private final ContractFactory contractFactory;
@@ -149,6 +150,10 @@ public final class GameController implements Serializable {
         this.workers = workers;
     }
 
+    public void setTelevision(List<Television> television) {
+        this.television = television;
+    }
+
     private void setAi() {
         //add ai where necessary
         for (Promotion promotion : getPromotions()) {
@@ -206,6 +211,13 @@ public final class GameController implements Serializable {
      */
     public void setTagTeams(List<TagTeam> tagTeams) {
         this.tagTeams = tagTeams;
+    }
+
+    /**
+     * @return the television
+     */
+    public List<Television> getTelevision() {
+        return television;
     }
 
 }

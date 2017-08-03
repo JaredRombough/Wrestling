@@ -229,13 +229,13 @@ public class ContractFactory {
 
     private void reportSigning(Contract c) {
         StringBuilder sb = new StringBuilder();
-        sb.append(c.getPromotion().getShortName()).append(" pop ").append(c.getPromotion().getPopulatirty()).append(" signed ").append(c.getWorker().getName())
-                .append(" pop ").append(c.getWorker().getPopularity()).append(" on ").append(c.getStartDate());
+        sb.append(c.getPromotion().getShortName()).append(" signed ").append(c.getWorker().getName())
+                .append(" on ").append(c.getStartDate());
+
         gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
-    
-    public void reportExpiration(Contract c)
-    {
+
+    public void reportExpiration(Contract c) {
         StringBuilder sb = new StringBuilder();
         sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
         gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));

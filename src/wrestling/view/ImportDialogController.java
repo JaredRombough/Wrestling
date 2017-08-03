@@ -46,11 +46,11 @@ public class ImportDialogController extends Controller implements Initializable 
     private File logosPath;
     private File dataPath;
 
-
     private Stage stage;
     private MainApp mainApp;
+
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException {
+    private void handleButtonAction(ActionEvent event) throws IOException, Exception {
 
         if (event.getSource() == picsPathButton) {
             picsPath = chooseDirectory(picsPath, "Worker Pictures");
@@ -83,7 +83,7 @@ public class ImportDialogController extends Controller implements Initializable 
 
         return importFolder;
     }
-    
+
     /**
      * @param import folder to check
      * @return String containing errors found
@@ -135,7 +135,6 @@ public class ImportDialogController extends Controller implements Initializable 
         logosPath = new File(System.getProperty("user.dir") + "/LOGOS/");
         dataPath = new File(System.getProperty("user.dir") + "/DATA/");
     }
-
 
     @Override
     public void setMainApp(MainApp mainApp) {

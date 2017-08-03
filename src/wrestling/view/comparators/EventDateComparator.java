@@ -1,7 +1,7 @@
 package wrestling.view.comparators;
 
 import java.util.Comparator;
-import wrestling.model.EventArchive;
+import wrestling.model.dirt.EventArchive;
 
 public class EventDateComparator implements Comparator<EventArchive> {
 
