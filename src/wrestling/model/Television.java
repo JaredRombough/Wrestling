@@ -12,6 +12,7 @@ import java.time.DayOfWeek;
  * @author jared
  */
 public class Television {
+
     private DayOfWeek day;
     private String name;
     private Promotion promotion;
@@ -57,4 +58,5 @@ public class Television {
     public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
+
 }

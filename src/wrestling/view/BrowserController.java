@@ -220,13 +220,9 @@ public class BrowserController implements Initializable {
 
         String selectedButtonClass = "selectedButton";
 
-        for (Button b : browseButtons) {
-            if (b.getStyleClass().contains(selectedButtonClass)) {
-
-                b.getStyleClass().remove(selectedButtonClass);
-
-            }
-        }
+        browseButtons.stream().filter((b) -> (b.getStyleClass().contains(selectedButtonClass))).forEach((b) -> {
+            b.getStyleClass().remove(selectedButtonClass);
+        });
 
         if (currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton)) {
             myPromotionButton.getStyleClass().add(selectedButtonClass);

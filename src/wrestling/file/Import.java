@@ -61,39 +61,33 @@ public class Import {
 
         StringBuilder sb = new StringBuilder();
         this.importFolder = importFolder;
-        for (String s : filesNeeded) {
-            File f = new File(importFolder.getPath() + "\\" + s + ".dat");
-            if (!f.exists() || f.isDirectory()) {
-                sb.append(f.toString()).append(" not found.").append("\n");
-            }
-        }
+        filesNeeded.stream().map((s) -> new File(importFolder.getPath() + "\\" + s + ".dat")).filter((f) -> (!f.exists() || f.isDirectory())).forEach((f) -> {
+            sb.append(f.toString()).append(" not found.").append("\n");
+        });
 
         try {
             gameController = new GameController();
-            logger.log(Level.INFO, gameController);
             promotionsDat();
             workersDat();
             teamsDat();
             beltDat();
             tvDat();
+            eventDat();
         } catch (Exception ex) {
 
             sb.append(ex);
             logger.log(Level.ERROR, ex);
-            throw ex;
         }
         processOther();
         gameController.setPromotions(allPromotions);
         gameController.setWorkers(allWorkers);
         gameController.setTagTeams(allTagTeams);
         gameController.setTelevision(allTelevision);
-        logger.log(Level.INFO, gameController);
         //for statistical evaluation of data only
         boolean evaluate = false;
 
         if (evaluate) {
-            EvaluateData evaluateData = new EvaluateData();
-            evaluateData.evaluateData(allPromotions, allWorkers);
+            EvaluateData.evaluateData(allPromotions, allWorkers);
         }
 
         return sb.toString();
@@ -130,11 +124,12 @@ public class Import {
     }
 
     private void processOther() {
-        for (String s : otherPromotionNames) {
+        otherPromotionNames.stream().map((s) -> {
             Promotion p = new Promotion();
             p.setName(s);
             p.setShortName(s);
-
+            return p;
+        }).map((p) -> {
             //calculate promotion level
             int totalPop = 0;
             int totalWorkers = 0;
@@ -148,13 +143,14 @@ public class Import {
             p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
             p.setIndexNumber(allPromotions.size());
             allPromotions.add(p);
+            return p;
+        }).forEach((p) -> {
             for (int i = 0; i < otherWorkers.size(); i++) {
                 if (otherWorkerPromotions.get(i).equals(p.getName())) {
                     getGameController().getContractFactory().createContract(otherWorkers.get(i), p, getGameController().date(), false);
                 }
             }
-
-        }
+        });
 
         AdvancedImport adIm = new AdvancedImport();
         adIm.updateOtherPromotins(allPromotions);
@@ -451,6 +447,39 @@ public class Import {
             getGameController().getContractFactory().createContract(w, p, getGameController().date());
             w.getContract(p).setExclusive(false);
         }
+    }
+
+    private void eventDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\event.dat");
+        byte[] data = Files.readAllBytes(path);
+        List<String> eventNames = new ArrayList<>();
+        List<Integer> eventPromotionKeys = new ArrayList<>();
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+
+        int counter = 0;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+            currentLine += hexStringToLetter(hexValueString);
+            counter++;
+
+            if (counter == 34) {
+                eventPromotionKeys.add(hexStringToInt(hexValueString));
+                System.out.println(eventPromotionKeys);
+            }
+
+            if (counter == 47) {
+                System.out.println(currentLine);
+                eventNames.add(currentLine.substring(1, 32).trim());
+                currentLine = "";
+                counter = 0;
+
+            }
+        }
+
     }
 
     private void beltDat() throws IOException {

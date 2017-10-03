@@ -1,6 +1,8 @@
 package wrestling.model.utility;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import javafx.scene.image.Image;
@@ -27,9 +29,11 @@ public final class UtilityFunctions {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
     }
 
     public static String slashNames(List<Worker> workers) {
@@ -42,6 +46,12 @@ public final class UtilityFunctions {
         }
 
         return sb.toString();
+    }
+
+    public static int weekOfMonth(LocalDate date) {
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth());
+        return ca1.get(Calendar.WEEK_OF_MONTH);
     }
 
 }

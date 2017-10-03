@@ -25,6 +25,7 @@ public class Promotion implements Serializable {
         bankAccount = new BankAccount();
 
         name = "Promotion #" + serialNumber;
+        shortName = "PRO" + serialNumber;
 
         //default popularity of 50 for now
         popularity = 50;
