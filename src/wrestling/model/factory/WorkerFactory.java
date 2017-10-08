@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  *
@@ -52,18 +52,18 @@ public final class WorkerFactory {
         Worker worker = new Worker();
 
         //set the popularity to be proportionate to the level requested
-        worker.setPopularity((level * 20) + UtilityFunctions.randRange(-10, 10));
+        worker.setPopularity((level * 20) + ModelUtilityFunctions.randRange(-10, 10));
 
         //prevent too many maxed out workers
         if (worker.getPopularity() > 100) {
-            worker.setPopularity(100 + UtilityFunctions.randRange(-10, 0));
+            worker.setPopularity(100 + ModelUtilityFunctions.randRange(-10, 0));
         }
 
-        worker.setFlying(UtilityFunctions.randRange(0, 100));
-        worker.setCharisma(UtilityFunctions.randRange(0, 100));
-        worker.setBehaviour(UtilityFunctions.randRange(0, 100));
-        worker.setWrestling(UtilityFunctions.randRange(0, 100));
-        worker.setStriking(UtilityFunctions.randRange(0, 100));
+        worker.setFlying(ModelUtilityFunctions.randRange(0, 100));
+        worker.setCharisma(ModelUtilityFunctions.randRange(0, 100));
+        worker.setBehaviour(ModelUtilityFunctions.randRange(0, 100));
+        worker.setWrestling(ModelUtilityFunctions.randRange(0, 100));
+        worker.setStriking(ModelUtilityFunctions.randRange(0, 100));
 
         worker.setManager(false);
         worker.setMainRoster(true);
@@ -77,12 +77,12 @@ public final class WorkerFactory {
     public static Worker randomWorker() {
         Worker worker = new Worker();
 
-        worker.setPopularity(UtilityFunctions.randRange(0, 100));
-        worker.setFlying(UtilityFunctions.randRange(0, 100));
-        worker.setCharisma(UtilityFunctions.randRange(0, 100));
-        worker.setBehaviour(UtilityFunctions.randRange(0, 100));
-        worker.setWrestling(UtilityFunctions.randRange(0, 100));
-        worker.setStriking(UtilityFunctions.randRange(0, 100));
+        worker.setPopularity(ModelUtilityFunctions.randRange(0, 100));
+        worker.setFlying(ModelUtilityFunctions.randRange(0, 100));
+        worker.setCharisma(ModelUtilityFunctions.randRange(0, 100));
+        worker.setBehaviour(ModelUtilityFunctions.randRange(0, 100));
+        worker.setWrestling(ModelUtilityFunctions.randRange(0, 100));
+        worker.setStriking(ModelUtilityFunctions.randRange(0, 100));
 
         worker.setManager(false);
         worker.setMainRoster(true);

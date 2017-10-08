@@ -9,7 +9,7 @@ import wrestling.model.Contract;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  * attached to the gameController, it is called whenever a new contract is to be
@@ -75,7 +75,7 @@ public class ContractFactory {
             setAppearanceCost(contract);
         }
 
-        int duration = 30 + UtilityFunctions.randRange(0, 30);
+        int duration = 30 + ModelUtilityFunctions.randRange(0, 30);
 
         //scale the duration and exclusivity based on promotion level
         for (int i = 0; i < promotion.getLevel(); i++) {

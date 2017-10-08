@@ -17,11 +17,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.view.utility.ViewUtilityFunctions;
 
 public class WorkerOverviewController extends Controller implements Initializable {
 
@@ -69,7 +72,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
     @FXML
     private StackPane workerImageBorder;
-    
+
     @FXML
     private AnchorPane feedAnchor;
     private AnchorPane feedPane;
@@ -116,9 +119,8 @@ public class WorkerOverviewController extends Controller implements Initializabl
         loadContractPane();
         loadFeed();
     }
-    
-    private void loadFeed()
-    {
+
+    private void loadFeed() {
         //load the contract pane
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -130,13 +132,12 @@ public class WorkerOverviewController extends Controller implements Initializabl
             feedPaneController.setMainApp(this.mainApp);
 
             feedPaneController.setGameController(this.gameController);
-            
-            feedAnchor.getChildren().add(feedPane);
-            
-            
-          
 
-        } catch (IOException e) {
+            feedAnchor.getChildren().add(feedPane);
+
+        } catch (IOException ex) {
+            Logger logger = LogManager.getLogger(this.getClass());
+            logger.log(Level.ERROR, ex);
         }
     }
 
@@ -153,7 +154,9 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             contractPaneController.setGameController(this.gameController);
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            Logger logger = LogManager.getLogger(this.getClass());
+            logger.log(Level.ERROR, ex);
         }
 
         gridPane.add(contractPane, 0, 9, 4, 1);
@@ -172,7 +175,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
             charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
-            UtilityFunctions.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
+            ViewUtilityFunctions.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
                     workerImageBorder,
                     imageView);
 
@@ -254,7 +257,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             contractPaneController.updateLabels();
         }
-        
+
         feedPaneController.setCurrent(currentWorker);
 
     }

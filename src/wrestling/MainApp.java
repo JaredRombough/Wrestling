@@ -100,7 +100,7 @@ public class MainApp extends Application {
     }
 
     //starts a new game from imported data
-    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws IOException, Exception {
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) {
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;
         this.logosFolder = logosFolder;
@@ -113,7 +113,9 @@ public class MainApp extends Application {
             error = importer.tryImport(dataFolder);
 
             if (!error.isEmpty()) {
-
+                
+                logger.log(Level.ERROR, error);
+                
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Import error");
                 alert.setHeaderText("Resources could not be validated.");
@@ -137,7 +139,6 @@ public class MainApp extends Application {
             alert.setTitle("Import error");
             alert.setHeaderText("Resources could not be validated.");
             alert.setContentText(error + "\n" + ex.getMessage());
-            throw ex;
         }
 
     }
@@ -173,7 +174,8 @@ public class MainApp extends Application {
             TitleScreenController controller = loader.getController();
             controller.setMainApp(this);
             controller.setImage(image);
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, ex);
         }
 
     }
@@ -184,7 +186,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 100;
+        int preRunDays = 10;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
@@ -199,20 +201,25 @@ public class MainApp extends Application {
 
         Kryo kryo = new Kryo();
 
-        Output output = new Output(new FileOutputStream("saveGame.bin"));
-
-        kryo.writeObject(output, gameController);
-        output.close();
+        try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
+            kryo.writeObject(output, gameController);
+        } catch (Exception ex) {
+            logger.log(Level.ERROR, ex);
+        }
     }
 
     private GameController loadGame() throws ClassNotFoundException, IOException {
 
         Kryo kryo = new Kryo();
-
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
-        Input input = new Input(new FileInputStream("saveGame.bin"));
-        GameController gc = kryo.readObject(input, GameController.class);
-        input.close();
+
+        GameController gc = null;
+
+        try (Input input = new Input(new FileInputStream("saveGame.bin"))) {
+            gc = kryo.readObject(input, GameController.class);
+        } catch (Exception ex) {
+            logger.log(Level.ERROR, ex);
+        }
 
         return gc;
     }
@@ -252,7 +259,8 @@ public class MainApp extends Application {
             rootLayoutController.setMainApp(this);
             rootLayoutController.setGameController(this.gameController);
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, ex);
         }
     }
 
@@ -278,7 +286,8 @@ public class MainApp extends Application {
             controller.setMainApp(this);
             controller.setGameController(this.gameController);
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, ex);
         }
     }
 
@@ -335,12 +344,10 @@ public class MainApp extends Application {
         showBrowser();
 
         browserController.showLastEvent();
-
     }
 
     public void showEventScreen() {
         rootLayout.setCenter(eventScreenPane);
-
     }
 
     /*
@@ -358,7 +365,8 @@ public class MainApp extends Application {
             controller.setGameController(this.gameController);
             eventScreenController = controller;
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, ex);
         }
     }
 
@@ -379,7 +387,8 @@ public class MainApp extends Application {
 
             rootLayout.setCenter(startGameScreen);
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, ex);
         }
     }
 

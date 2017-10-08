@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import wrestling.model.factory.TitleFactory;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class Match extends Segment implements Serializable {
 
@@ -262,22 +262,22 @@ public class Match extends Segment implements Serializable {
             if (title.isVacant()) {
 
                 titleFactory.awardTitle(title, winner, date);
-                sb.append(UtilityFunctions.slashNames(winner))
+                sb.append(ModelUtilityFunctions.slashNames(winner))
                         .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
                         .append(title.getName()).append(" title");
             } else {
                 for (Worker worker : title.getWorkers()) {
                     if (!winner.contains(worker)) {
-                        sb.append(UtilityFunctions.slashNames(winner))
+                        sb.append(ModelUtilityFunctions.slashNames(winner))
                                 .append(winner.size() > 1 ? " defeat " : " defeats ")
-                                .append(UtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
+                                .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
                                 .append(title.getName()).append(" title");
                         titleFactory.titleChange(title, winner, date);
 
                         break;
                     }
 
-                    sb.append(UtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
+                    sb.append(ModelUtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
                 }
             }
         }
@@ -308,14 +308,14 @@ public class Match extends Segment implements Serializable {
                     }
 
                     for (Worker worker : team) {
-                        if (UtilityFunctions.randRange(1, 3) == 1) {
+                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
                             worker.losePopularity();
                         }
 
                     }
                 } else {
                     for (Worker worker : getWinner()) {
-                        if (UtilityFunctions.randRange(1, 3) == 1) {
+                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
                             worker.gainPopularity();
                         }
                     }

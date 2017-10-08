@@ -5,7 +5,7 @@ import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class TitleRecord implements Dirt {
 
@@ -50,7 +50,7 @@ public class TitleRecord implements Dirt {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(UtilityFunctions.slashNames(workers));
+        sb.append(ModelUtilityFunctions.slashNames(workers));
 
         sb.append("\t\t\t");
         sb.append(startDate == null ? "????" : startDate);

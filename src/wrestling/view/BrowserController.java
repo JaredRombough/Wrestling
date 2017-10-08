@@ -37,6 +37,7 @@ import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
+import wrestling.view.utility.ViewUtilityFunctions;
 
 /**
  *
@@ -162,10 +163,8 @@ public class BrowserController implements Initializable {
 
     //update the listview according to whatever browse mode we are in
     private void setListView(BrowserMode browserMode, List list) {
-        FilteredList<Worker> filteredList
-                = new FilteredList<>(FXCollections.observableArrayList(list), p -> true);
 
-        browserMode.sortedList = new SortedList<>(filteredList);
+        browserMode.sortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true));
 
         updateSortBox(browserMode.comparators);
 
@@ -261,19 +260,27 @@ public class BrowserController implements Initializable {
 
         setListView(browserMode, listToBrowse);
 
-        gridPane.add(browserMode.listView, 0, 1);
-        GridPane.setRowSpan(browserMode.listView, 2);
+        placeListView(browserMode);
 
-        gridPane.add(browserMode.displayPane, 1, 1);
-        GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
-        GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
-        GridPane.setRowSpan(browserMode.displayPane, GridPane.REMAINING);
+        placeDispalyPane(browserMode);
 
         lastListView = browserMode.listView;
         lastDisplayNode = browserMode.displayPane;
         lastSortedList = browserMode.sortedList;
 
         browserMode.listView.getSelectionModel().selectFirst();
+    }
+
+    private void placeListView(BrowserMode browserMode) {
+        gridPane.add(browserMode.listView, 0, 1);
+        GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
+        GridPane.setColumnSpan(browserMode.listView, 1);
+    }
+
+    private void placeDispalyPane(BrowserMode browserMode) {
+        gridPane.add(browserMode.displayPane, 1, 1);
+        GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
+        GridPane.setRowSpan(browserMode.displayPane, GridPane.REMAINING);
     }
 
     @Override
@@ -283,6 +290,8 @@ public class BrowserController implements Initializable {
                 eventsButton, freeAgentsButton, myPromotionButton, rosterButton,
                 stablesButton, staffButton, teamsButton, titlesButton
         ));
+
+        ViewUtilityFunctions.lockGridPane(gridPane);
 
         categoryButton = new Label();
 
@@ -389,6 +398,9 @@ public class BrowserController implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource(fxmlPath));
             displayPane = (AnchorPane) loader.load();
+
+            ViewUtilityFunctions.inititializeRegion(listView);
+            ViewUtilityFunctions.inititializeRegion(displayPane);
 
             controller = loader.getController();
 

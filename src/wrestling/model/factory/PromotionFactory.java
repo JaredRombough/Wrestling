@@ -6,7 +6,7 @@ import java.util.List;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 
 /*
@@ -56,7 +56,7 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = WorkerFactory.randomWorker(UtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = WorkerFactory.randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
                     gameController.getContractFactory().createContract(worker, promotion, gameController.date());
 

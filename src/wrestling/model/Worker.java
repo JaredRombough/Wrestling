@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.factory.EventFactory;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class Worker implements Serializable {
 
@@ -191,7 +191,7 @@ public class Worker implements Serializable {
         }
 
         if (popularity < maxPopularity
-                || UtilityFunctions.randRange(1, 10) == 1) {
+                || ModelUtilityFunctions.randRange(1, 10) == 1) {
 
             int range = 0;
 
@@ -205,7 +205,7 @@ public class Worker implements Serializable {
                 range = 5;
             }
 
-            if (UtilityFunctions.randRange(1, range) == 1) {
+            if (ModelUtilityFunctions.randRange(1, range) == 1) {
 
                 this.popularity += 1;
             }
@@ -221,7 +221,7 @@ public class Worker implements Serializable {
 
     public void losePopularity() {
 
-        if (UtilityFunctions.randRange(1, 10) == 10) {
+        if (ModelUtilityFunctions.randRange(1, 10) == 10) {
             popularity -= 1;
         }
 

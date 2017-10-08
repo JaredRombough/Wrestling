@@ -15,7 +15,7 @@ import wrestling.model.Segment;
 import wrestling.model.Television;
 import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -123,7 +123,7 @@ public class EventFactory {
             }
         }
 
-        attendance += UtilityFunctions.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
+        attendance += ModelUtilityFunctions.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
 
         return attendance;
     }

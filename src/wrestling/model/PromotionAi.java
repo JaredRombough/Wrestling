@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.model.dirt.EventType;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionAi implements Serializable {
 
@@ -20,7 +21,7 @@ public class PromotionAi implements Serializable {
 
     public PromotionAi(Promotion promotion, GameController gameController) {
 
-        eventDates.add(LocalDate.from(gameController.date()).plusDays(UtilityFunctions.randRange(2, 7)));
+        eventDates.add(LocalDate.from(gameController.date()).plusDays(ModelUtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gc = gameController;
         this.pushList = new ArrayList<>();
@@ -332,7 +333,7 @@ public class PromotionAi implements Serializable {
 
             //determine the number of teams (usually 2)
             int teamsNeeded = 2;
-            int random = UtilityFunctions.randRange(1, 10);
+            int random = ModelUtilityFunctions.randRange(1, 10);
             if (random > 8) {
                 teamsNeeded += 10 - random;
             }
@@ -389,7 +390,7 @@ public class PromotionAi implements Serializable {
             //make sure we have enough workers for a match
             if (matchTeams.size() > 1) {
                 //roll for title change
-                if (UtilityFunctions.randRange(1, 10) > 5) {
+                if (ModelUtilityFunctions.randRange(1, 10) > 5) {
                     Collections.swap(matchTeams, 0, 1);
                 }
 

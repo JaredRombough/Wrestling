@@ -38,6 +38,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Segment;
@@ -226,7 +229,9 @@ public class EventScreenController implements Initializable {
 
             updateSegments();
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            Logger logger = LogManager.getLogger(this.getClass());
+            logger.log(Level.ERROR, ex);
         }
     }
 

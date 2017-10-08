@@ -20,7 +20,7 @@ import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.UtilityFunctions;
+import wrestling.view.utility.ViewUtilityFunctions;
 
 public class StartGameScreenController implements Initializable {
 
@@ -92,7 +92,7 @@ public class StartGameScreenController implements Initializable {
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
 
                 updateWorkersListView(newValue);
-                UtilityFunctions.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+                ViewUtilityFunctions.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
                         promotionImageBorder,
                         imageView);
 

@@ -21,6 +21,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
@@ -241,7 +244,9 @@ public class SegmentPaneController implements Initializable {
 
             eventScreenController.updateSegments();
 
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            Logger logger = LogManager.getLogger(this.getClass());
+            logger.log(Level.ERROR, ex);
         }
 
     }
