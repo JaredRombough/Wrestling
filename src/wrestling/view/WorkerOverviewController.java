@@ -23,6 +23,7 @@ import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.utility.ModelUtilityFunctions;
 import wrestling.view.utility.ViewUtilityFunctions;
 
 public class WorkerOverviewController extends Controller implements Initializable {
@@ -231,7 +232,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
             }
 
             //only show the contract pane if the worker can negotiate with the player
-            if (currentWorker.canNegotiate(currentPromotion)) {
+            if (ModelUtilityFunctions.canNegotiate(currentWorker, currentPromotion)) {
                 if (!gridPane.getChildren().contains(contractPane)) {
                     gridPane.add(contractPane, 0, 9, 4, 1);
                 }

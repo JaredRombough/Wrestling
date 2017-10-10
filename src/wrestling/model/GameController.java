@@ -15,6 +15,7 @@ import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  *
@@ -185,7 +186,7 @@ public final class GameController implements Serializable {
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
 
-            if (worker.canNegotiate(promotion)) {
+            if (ModelUtilityFunctions.canNegotiate(worker, promotion)) {
                 freeAgents.add(worker);
             }
         }

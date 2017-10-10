@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import wrestling.model.Contract;
+import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
 public final class ModelUtilityFunctions {
@@ -30,6 +32,26 @@ public final class ModelUtilityFunctions {
         Calendar ca1 = Calendar.getInstance();
         ca1.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth());
         return ca1.get(Calendar.WEEK_OF_MONTH);
+    }
+
+    public static boolean canNegotiate(Worker worker, Promotion promotion) {
+        //this would have to be more robust
+        //such as checking how much time is left on our contract
+        boolean canNegotiate = true;
+
+        if (worker.getPopularity() > promotion.maxPopularity()) {
+            canNegotiate = false;
+        }
+
+        if (worker.hasContract()) {
+            for (Contract contract : worker.getContracts()) {
+                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                    canNegotiate = false;
+                }
+            }
+        }
+
+        return canNegotiate;
     }
 
 }

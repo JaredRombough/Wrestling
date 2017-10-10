@@ -22,12 +22,12 @@ import wrestling.MainApp;
 import wrestling.model.GameController;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class ContractPaneController implements Initializable {
 
     private MainApp mainApp;
     private GameController gameController;
-
 
     @FXML
     private ComboBox typeComboBox;
@@ -44,19 +44,21 @@ public class ContractPaneController implements Initializable {
     private boolean exclusive;
 
     private Worker worker;
+
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
+
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
-        
+
         initializeMore();
     }
 
     public void setWorker(Worker worker) {
         this.worker = worker;
 
-        if (this.worker.canNegotiate(gameController.playerPromotion())) {
+        if (ModelUtilityFunctions.canNegotiate(worker, gameController.playerPromotion())) {
             setDisable(false);
         } else {
             setDisable(true);
@@ -168,8 +170,7 @@ public class ContractPaneController implements Initializable {
     }
 
     private void updateCostLabel() {
-        if (worker != null && worker.canNegotiate(gameController.playerPromotion())) {
-
+        if (worker != null && ModelUtilityFunctions.canNegotiate(worker, gameController.playerPromotion())) {
             costLabel.setText(termString());
         } else {
             costLabel.setText("Under Contract");
