@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.dirt.EventType;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionAi implements Serializable {
@@ -40,7 +39,7 @@ public class PromotionAi implements Serializable {
         List<Worker> departedWorkers = new ArrayList<>();
 
         for (Worker worker : pushList) {
-            if (!promotion.getFullRoster().contains(worker)) {
+            if (!gc.getFullRoster(getPromotion()).contains(worker)) {
                 departedWorkers.add(worker);
             }
         }
@@ -48,10 +47,10 @@ public class PromotionAi implements Serializable {
         pushList.removeAll(departedWorkers);
 
         //list is too small
-        if (getPromotion().getFullRoster().size() > maxPushListSize()
+        if (gc.getFullRoster(getPromotion()).size() > maxPushListSize()
                 && pushList.size() < maxPushListSize()) {
 
-            for (Worker worker : getPromotion().getFullRoster()) {
+            for (Worker worker : gc.getFullRoster(getPromotion())) {
                 if (!pushList.contains(worker) && pushList.size() < maxPushListSize()
                         && !worker.isManager() && worker.isFullTime()) {
                     pushList.add(worker);
@@ -61,13 +60,30 @@ public class PromotionAi implements Serializable {
             }
 
             //list is too big
-        } else if (getPromotion().getFullRoster().size() > maxPushListSize()
+        } else if (gc.getFullRoster(getPromotion()).size() > maxPushListSize()
                 && pushList.size() > maxPushListSize()) {
             while (pushList.size() > maxPushListSize()) {
                 pushList.remove(0);
             }
         }
 
+    }
+
+    public void gainPopularity() {
+        int increment = 1;
+        int maxPop = 100;
+        int maxLevel = 5;
+        int basePop = 10;
+        promotion.setPopularity(promotion.getPopulatirty() + increment);
+
+        if (promotion.getPopulatirty() >= maxPop) {
+            if (promotion.getLevel() != maxLevel) {
+                promotion.setLevel(promotion.getLevel() + increment);
+                promotion.setPopularity(basePop);
+            } else {
+                promotion.setPopularity(maxPop);
+            }
+        }
     }
 
     //call this method every day for each ai
@@ -93,7 +109,7 @@ public class PromotionAi implements Serializable {
             payDay(gc.date());
         }
 
-        while (getPromotion().getActiveRoster().size() < idealRosterSize() && !gc.freeAgents(promotion).isEmpty()) {
+        while (gc.getActiveRoster(getPromotion()).size() < idealRosterSize() && !gc.freeAgents(promotion).isEmpty()) {
             signContract();
         }
 
@@ -102,7 +118,7 @@ public class PromotionAi implements Serializable {
         }
 
         //book a show if we have one scheduled today
-        if (eventDates.contains(gc.date()) && getPromotion().getFullRoster().size() >= 2) {
+        if (eventDates.contains(gc.date()) && gc.getFullRoster(getPromotion()).size() >= 2) {
             bookEvent();
 
             //schedule future events as necessary
@@ -242,13 +258,13 @@ public class PromotionAi implements Serializable {
 
                 //count the workers that are availeable on the date
                 double available = 0;
-                for (Worker worker : getPromotion().getActiveRoster()) {
+                for (Worker worker : gc.getActiveRoster(getPromotion())) {
                     if (!worker.isBooked(eventDate, promotion)) {
                         available++;
                     }
                 }
 
-                double percentAvailable = available / (double) getPromotion().getActiveRoster().size();
+                double percentAvailable = available / (double) gc.getActiveRoster(getPromotion()).size();
 
                 //if a large enough portion of the roster is available, book it
                 if (percentAvailable > threshold) {
@@ -269,7 +285,7 @@ public class PromotionAi implements Serializable {
 
             eventDate = bestDate;
 
-            int workersNeeded = (int) Math.round((threshold - bestThreshold) * getPromotion().getActiveRoster().size());
+            int workersNeeded = (int) Math.round((threshold - bestThreshold) * gc.getActiveRoster(getPromotion()).size());
 
             for (int i = 0; i < workersNeeded; i++) {
                 signContract(gc.date());
@@ -278,7 +294,7 @@ public class PromotionAi implements Serializable {
         }
 
         //book the roster for the date
-        for (Worker worker : getPromotion().getFullRoster()) {
+        for (Worker worker : gc.getFullRoster(getPromotion())) {
             if (!worker.isBooked(eventDate)) {
                 worker.getContract(getPromotion()).bookDate(eventDate);
 
@@ -439,7 +455,7 @@ public class PromotionAi implements Serializable {
     private List<Worker> getEventRoster() {
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = getPromotion().getFullRoster();
+        List<Worker> eventRoster = gc.getFullRoster(getPromotion());
         List<Worker> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked

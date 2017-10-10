@@ -37,11 +37,11 @@ public class EventFactory {
                 gate(event),
                 attendance(event));
 
-        gc.getDirtSheet().newDirt(eventArchive);
+        gameController.getDirtSheet().newDirt(eventArchive);
 
         processSegments(event, eventArchive);
 
-        promotion.gainPopularity();
+        gameController.getPromotionAi(promotion).gainPopularity();
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         processContracts(event);
@@ -84,7 +84,7 @@ public class EventFactory {
         bld.append("\n");
         bld.append("Gross profit: $").append(gate(event));
         bld.append("\n");
-        bld.append("Roster size: ").append(event.getPromotion().getFullRoster().size());
+        bld.append("Roster size: ").append(gameController.getFullRoster(event.getPromotion()).size());
         bld.append("\n");
         bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
 
@@ -139,7 +139,7 @@ public class EventFactory {
 
             Contract c = worker.getContract(event.getPromotion());
             if (!c.appearance(event.getDate())) {
-                gc.getContractFactory().reportExpiration(c);
+                gameController.getContractFactory().reportExpiration(c);
             }
 
         }
@@ -150,7 +150,7 @@ public class EventFactory {
         for (Segment segment : event.getSegments()) {
             if (segment.isComplete()) {
 
-                gc.getDirtSheet().newDirt(new SegmentRecord(segment.processSegment(event.getDate(), gc.getTitleFactory()),
+                gameController.getDirtSheet().newDirt(new SegmentRecord(segment.processSegment(event.getDate(), gameController.getTitleFactory()),
                         segment.allWorkers(),
                         event.getPromotion(),
                         ea));
@@ -224,10 +224,10 @@ public class EventFactory {
         return attendance(event) * ticketPrice;
     }
 
-    private final GameController gc;
+    private final GameController gameController;
 
     public EventFactory(GameController gc) {
-        this.gc = gc;
+        this.gameController = gc;
     }
 
     //class to temporarily hold event info to make things cleaner

@@ -34,6 +34,7 @@ public final class GameController implements Serializable {
     private LocalDate gameDate;
     private LocalDate payDay;
     private Promotion playerPromotion;
+    //private PromotionAi playerPromotionAi;
     private List<Promotion> promotions = new ArrayList<>();
     private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
@@ -46,7 +47,7 @@ public final class GameController implements Serializable {
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
 
-    private transient Logger logger = LogManager.getLogger(getClass());
+    private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
 
@@ -99,10 +100,53 @@ public final class GameController implements Serializable {
 
     }
 
+    public List<Worker> getActiveRoster(Promotion promotion) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : promotion.getContracts()) {
+            if (contract.getWorker().isFullTime() && !contract.getWorker().isManager()) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getFullRoster(Promotion promotion) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : promotion.getContracts()) {
+            roster.add(contract.getWorker());
+        }
+
+        return roster;
+    }
+
+    public int averageWorkerPopularity(Promotion promotion) {
+        int totalPop = 0;
+        int averagePop = 0;
+
+        if (!getFullRoster(promotion).isEmpty()) {
+            for (Worker worker : getFullRoster(promotion)) {
+                totalPop += worker.getPopularity();
+            }
+            averagePop = totalPop / getFullRoster(promotion).size();
+        }
+
+        return averagePop;
+    }
+
     public LocalDate date() {
         return gameDate;
     }
 
+    /*
+    public void setPlayerPromotion(Promotion promotion) {
+        playerPromotion = promotion;
+        //set the Ai for non-player promotions
+        setAi();
+    }*/
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
         //set the Ai for non-player promotions
@@ -113,13 +157,24 @@ public final class GameController implements Serializable {
         return playerPromotion;
     }
 
+    public PromotionAi getPromotionAi(Promotion promotion) {
+        PromotionAi returnAi = null;
+        for (PromotionAi ai : promotionAis) {
+            if (ai.getPromotion().equals(promotion)) {
+                returnAi = ai;
+            }
+        }
+
+        return returnAi;
+    }
+
     public List<Worker> allWorkers() {
         return workers;
     }
 
     public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
-        tagTeams.stream().filter((tt) -> (promotion.getFullRoster().containsAll(tt.getWorkers()))).forEach((tt) -> {
+        tagTeams.stream().filter((tt) -> (getFullRoster(promotion).containsAll(tt.getWorkers()))).forEach((tt) -> {
             teams.add(tt);
         });
         return teams;

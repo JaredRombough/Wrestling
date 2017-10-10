@@ -14,7 +14,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
@@ -165,7 +164,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
     @Override
     public void updateLabels() {
 
-        if (currentPromotion.getFullRoster().contains(currentWorker)
+        if (gameController.getFullRoster(currentPromotion).contains(currentWorker)
                 || gameController.freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
@@ -242,7 +241,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
                 gridPane.getChildren().remove(contractPane);
             }
 
-        } else if (!currentPromotion.getFullRoster().contains(currentWorker)) {
+        } else if (!gameController.getFullRoster(currentPromotion).contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
             //try to eliminate this possibility if we haven't already
             currentWorker = null;

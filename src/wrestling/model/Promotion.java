@@ -37,29 +37,6 @@ public class Promotion implements Serializable {
         return bankAccount;
     }
 
-    public List<Worker> getActiveRoster() {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contracts) {
-            if (contract.getWorker().isFullTime() && !contract.getWorker().isManager()) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
-    }
-
-    public List<Worker> getFullRoster() {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contracts) {
-            roster.add(contract.getWorker());
-        }
-
-        return roster;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -88,38 +65,6 @@ public class Promotion implements Serializable {
         }
         this.popularity = popularity;
 
-    }
-
-    public int averageWorkerPopularity() {
-        int totalPop = 0;
-        int averagePop = 0;
-
-        if (!getFullRoster().isEmpty()) {
-            for (Worker worker : getFullRoster()) {
-                totalPop += worker.getPopularity();
-            }
-            averagePop = totalPop / getFullRoster().size();
-        }
-
-        return averagePop;
-    }
-
-    public void gainPopularity(int score) {
-        if (score > (level * 20)) {
-            gainPopularity();
-        }
-    }
-
-    public void gainPopularity() {
-        popularity += 1;
-        if (popularity >= 100) {
-            if (level != 5) {
-                level += 1;
-                popularity = 10;
-            } else {
-                popularity = 100;
-            }
-        }
     }
 
     public int getLevel() {

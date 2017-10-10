@@ -84,11 +84,11 @@ public class Import {
         gameController.setTagTeams(allTagTeams);
         gameController.setTelevision(allTelevision);
         //for statistical evaluation of data only
-        boolean evaluate = false;
+     /* boolean evaluate = false;
 
         if (evaluate) {
             EvaluateData.evaluateData(allPromotions, allWorkers);
-        }
+        }*/
 
         return sb.toString();
 
