@@ -105,11 +105,11 @@ public class StartGameScreenController implements Initializable {
     private void updateWorkersListView(Promotion newValue) {
         currentPromotionName.setText(newValue.toString().trim());
         currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
-                + "Workers: " + newValue.getFullRoster().size() + "\n"
-                + "Average Popularity: " + newValue.averageWorkerPopularity());
+                + "Workers: " + gameController.getFullRoster(newValue).size() + "\n"
+                + "Average Popularity: " + gameController.averageWorkerPopularity(newValue));
 
         ObservableList<Worker> rosterList = FXCollections.observableArrayList();
-        for (Worker current : newValue.getFullRoster()) {
+        for (Worker current : gameController.getFullRoster(newValue)) {
             rosterList.add(current);
         }
         workersListView.setItems(rosterList);
