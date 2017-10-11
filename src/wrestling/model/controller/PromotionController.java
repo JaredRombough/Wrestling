@@ -1,4 +1,4 @@
-package wrestling.model;
+package wrestling.model.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -6,9 +6,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import wrestling.model.Contract;
+import wrestling.model.Match;
+import wrestling.model.Promotion;
+import wrestling.model.Segment;
+import wrestling.model.Television;
+import wrestling.model.Title;
+import wrestling.model.Worker;
 import wrestling.model.utility.ModelUtilityFunctions;
 
-public class PromotionAi implements Serializable {
+public class PromotionController implements Serializable {
 
     private final Promotion promotion;
 
@@ -18,7 +25,7 @@ public class PromotionAi implements Serializable {
     //list of dates on which the promotion has events scheduled
     private List<LocalDate> eventDates = new ArrayList<>();
 
-    public PromotionAi(Promotion promotion, GameController gameController) {
+    public PromotionController(Promotion promotion, GameController gameController) {
 
         eventDates.add(LocalDate.from(gameController.date()).plusDays(ModelUtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
@@ -93,7 +100,7 @@ public class PromotionAi implements Serializable {
         //update all the contracts associated with the current promotion
         List<Contract> tempContractList = new ArrayList<>(promotion.getContracts());
         for (Contract contract : tempContractList) {
-            if (!contract.nextDay()) {
+            if (!contract.getController().nextDay()) {
                 gc.getContractFactory().reportExpiration(contract);
                 stripTitles(contract);
             }
@@ -159,7 +166,7 @@ public class PromotionAi implements Serializable {
     private void payDay(LocalDate date) {
 
         for (Contract c : getPromotion().getContracts()) {
-            c.payDay(date);
+            c.getController().payDay(date);
         }
     }
 
@@ -186,7 +193,7 @@ public class PromotionAi implements Serializable {
     private void signContract(LocalDate date) {
 
         for (Worker worker : gc.freeAgents(getPromotion())) {
-            if (worker.getPopularity() <= getPromotion().maxPopularity() && !worker.isBooked(date)) {
+            if (worker.getPopularity() <= getPromotion().maxPopularity() && !worker.getController().isBooked(date)) {
 
                 gc.getContractFactory().createContract(worker, getPromotion(), gc.date());
 
@@ -259,7 +266,7 @@ public class PromotionAi implements Serializable {
                 //count the workers that are availeable on the date
                 double available = 0;
                 for (Worker worker : gc.getActiveRoster(getPromotion())) {
-                    if (!worker.isBooked(eventDate, promotion)) {
+                    if (!worker.getController().isBooked(eventDate, promotion)) {
                         available++;
                     }
                 }
@@ -295,8 +302,8 @@ public class PromotionAi implements Serializable {
 
         //book the roster for the date
         for (Worker worker : gc.getFullRoster(getPromotion())) {
-            if (!worker.isBooked(eventDate)) {
-                worker.getContract(getPromotion()).bookDate(eventDate);
+            if (!worker.getController().isBooked(eventDate)) {
+                worker.getController().getContract(getPromotion()).bookDate(eventDate);
 
             }
         }
@@ -462,7 +469,7 @@ public class PromotionAi implements Serializable {
         for (Worker worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
-            if (worker.isBooked(gc.date(), getPromotion())) {
+            if (worker.getController().isBooked(gc.date(), getPromotion())) {
                 unavailable.add(worker);
             }
         }

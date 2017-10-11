@@ -27,7 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import wrestling.MainApp;
 import wrestling.model.dirt.EventArchive;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;

@@ -3,9 +3,10 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.controller.PromotionController;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 
@@ -13,7 +14,6 @@ import wrestling.model.utility.ModelUtilityFunctions;
 for generating promotions in a random game
  */
 public class PromotionFactory {
-    
 
     public void preparePromotions(GameController gameController) throws IOException {
 
@@ -36,7 +36,7 @@ public class PromotionFactory {
 
             while (currentPromotions < target) {
 
-                Promotion newPromotion = new Promotion();
+                Promotion newPromotion = newPromotion();
 
                 newPromotion.setLevel(currentLevel);
 
@@ -56,7 +56,7 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = WorkerFactory.randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = gameController.getWorkerFactory().randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
                     gameController.getContractFactory().createContract(worker, promotion, gameController.date());
 
@@ -76,10 +76,16 @@ public class PromotionFactory {
 
     }
 
-    private final GameController gc;
+    private final GameController gameController;
 
     public PromotionFactory(GameController gc) {
-        this.gc = gc;
+        this.gameController = gc;
+    }
+
+    public Promotion newPromotion() {
+        Promotion promotion = new Promotion();
+        promotion.setController(new PromotionController(promotion, gameController));
+        return promotion;
     }
 
 }

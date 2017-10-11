@@ -17,7 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 
 public class RootLayoutController implements Initializable {
 

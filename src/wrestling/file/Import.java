@@ -13,12 +13,11 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Television;
 import wrestling.model.Worker;
-import wrestling.model.factory.WorkerFactory;
 
 /**
  *
@@ -77,6 +76,7 @@ public class Import {
 
             sb.append(ex);
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
         processOther();
         gameController.setPromotions(allPromotions);
@@ -84,7 +84,7 @@ public class Import {
         gameController.setTagTeams(allTagTeams);
         gameController.setTelevision(allTelevision);
         //for statistical evaluation of data only
-     /* boolean evaluate = false;
+        /* boolean evaluate = false;
 
         if (evaluate) {
             EvaluateData.evaluateData(allPromotions, allWorkers);
@@ -125,7 +125,7 @@ public class Import {
 
     private void processOther() {
         otherPromotionNames.stream().map((s) -> {
-            Promotion p = new Promotion();
+            Promotion p = gameController.getPromotionFactory().newPromotion();
             p.setName(s);
             p.setShortName(s);
             return p;
@@ -259,7 +259,7 @@ public class Import {
 
             if (counter == (25 * 16) - 3) {
 
-                Promotion promotion = new Promotion();
+                Promotion promotion = gameController.getPromotionFactory().newPromotion();
 
                 counter = 0;
 
@@ -359,7 +359,8 @@ public class Import {
 
             if (counter == (19 * 16) + 3) {
 
-                Worker worker = WorkerFactory.randomWorker();
+                Worker worker = gameController.getWorkerFactory().randomWorker();
+
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
                 worker.setImageString(currentLine.substring(45, 65).trim());
@@ -442,10 +443,10 @@ public class Import {
             }
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
             getGameController().getContractFactory().createContract(w, p, getGameController().date());
-            w.getContract(p).setExclusive(false);
+            w.getController().getContract(p).setExclusive(false);
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
             getGameController().getContractFactory().createContract(w, p, getGameController().date());
-            w.getContract(p).setExclusive(false);
+            w.getController().getContract(p).setExclusive(false);
         }
     }
 

@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 
 public class FinancialScreenController extends Controller implements Initializable {
 

@@ -8,11 +8,12 @@ import java.util.Set;
 import wrestling.model.Contract;
 import wrestling.model.dirt.EventArchive;
 import wrestling.model.dirt.EventType;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Segment;
 import wrestling.model.Television;
+import wrestling.model.Title;
 import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
 import wrestling.model.utility.ModelUtilityFunctions;
@@ -41,7 +42,7 @@ public class EventFactory {
 
         processSegments(event, eventArchive);
 
-        gameController.getPromotionAi(promotion).gainPopularity();
+        promotion.getController().gainPopularity();
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         processContracts(event);
@@ -137,8 +138,8 @@ public class EventFactory {
 
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            Contract c = worker.getContract(event.getPromotion());
-            if (!c.appearance(event.getDate())) {
+            Contract c = worker.getController().getContract(event.getPromotion());
+            if (!c.getController().appearance(event.getDate())) {
                 gameController.getContractFactory().reportExpiration(c);
             }
 
@@ -148,9 +149,15 @@ public class EventFactory {
 
     private void processSegments(TempEvent event, EventArchive ea) {
         for (Segment segment : event.getSegments()) {
+
             if (segment.isComplete()) {
 
-                gameController.getDirtSheet().newDirt(new SegmentRecord(segment.processSegment(event.getDate(), gameController.getTitleFactory()),
+                if (segment instanceof Match) {
+                    for (Worker w : ((Match) segment).getWinner()) {
+                        w.getController().gainPopularity();
+                    }
+                }
+                gameController.getDirtSheet().newDirt(new SegmentRecord(processSegment(segment),
                         segment.allWorkers(),
                         event.getPromotion(),
                         ea));
@@ -159,6 +166,94 @@ public class EventFactory {
 
         }
 
+    }
+
+    private String processSegment(Segment segment) {
+
+        String string = "";
+
+        if (segment instanceof Match) {
+            string = processMatch((Match) segment);
+        }
+
+        return string;
+
+    }
+
+    private String processMatch(Match match) {
+
+        StringBuilder sb = new StringBuilder();
+        Title title = match.getTitle();
+        List<Worker> winner = match.getWinner();
+
+        if (title != null) {
+
+            if (title.isVacant()) {
+
+                gameController.getTitleFactory().awardTitle(title, winner, gameController.date());
+                sb.append(ModelUtilityFunctions.slashNames(winner))
+                        .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
+                        .append(title.getName()).append(" title");
+            } else {
+                for (Worker worker : title.getWorkers()) {
+                    if (!winner.contains(worker)) {
+                        sb.append(ModelUtilityFunctions.slashNames(winner))
+                                .append(winner.size() > 1 ? " defeat " : " defeats ")
+                                .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
+                                .append(title.getName()).append(" title");
+                        gameController.getTitleFactory().titleChange(title, winner, gameController.date());
+
+                        break;
+                    }
+
+                    sb.append(ModelUtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
+                }
+            }
+        }
+        int winnerPop = 0;
+
+        //calculate the average popularity of the winning team
+        //but should it be max popularity?
+        for (Worker worker : winner) {
+            winnerPop += worker.getPopularity();
+        }
+
+        winnerPop = winnerPop / winner.size();
+
+        for (List<Worker> team : match.getTeams()) {
+
+            if (!team.equals(winner)) {
+                int teamPop = 0;
+
+                for (Worker worker : team) {
+                    teamPop += worker.getPopularity();
+                }
+
+                teamPop = teamPop / winner.size();
+
+                if (teamPop > winnerPop) {
+                    for (Worker worker : winner) {
+                        worker.getController().gainPopularity();
+                    }
+
+                    for (Worker worker : team) {
+                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
+                            worker.getController().losePopularity();
+                        }
+
+                    }
+                } else {
+                    for (Worker worker : winner) {
+                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
+                            worker.getController().gainPopularity();
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
     }
 
     //this will return a list of all workers currently booked
@@ -188,9 +283,9 @@ public class EventFactory {
 
         int currentCost = 0;
 
-        for (Worker currentWorker : allWorkers(event.getSegments())) {
+        for (Worker worker : allWorkers(event.getSegments())) {
 
-            currentCost += currentWorker.getContract(event.getPromotion()).getAppearanceCost();
+            currentCost += worker.getController().getContract(event.getPromotion()).getAppearanceCost();
         }
 
         return currentCost;

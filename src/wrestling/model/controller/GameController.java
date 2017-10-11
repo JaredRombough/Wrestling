@@ -1,4 +1,4 @@
-package wrestling.model;
+package wrestling.model.controller;
 
 import wrestling.model.dirt.DirtSheet;
 import java.io.IOException;
@@ -11,11 +11,16 @@ import java.util.List;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import wrestling.model.Contract;
+import wrestling.model.Promotion;
+import wrestling.model.TagTeam;
+import wrestling.model.Television;
+import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.factory.WorkerFactory;
 
 /**
  *
@@ -35,9 +40,7 @@ public final class GameController implements Serializable {
     private LocalDate gameDate;
     private LocalDate payDay;
     private Promotion playerPromotion;
-    //private PromotionAi playerPromotionAi;
     private List<Promotion> promotions = new ArrayList<>();
-    private List<PromotionAi> promotionAis = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
     private List<TagTeam> tagTeams = new ArrayList<>();
     private List<Television> television = new ArrayList<>();
@@ -47,6 +50,7 @@ public final class GameController implements Serializable {
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
+    private final WorkerFactory workerFactory;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
@@ -57,6 +61,7 @@ public final class GameController implements Serializable {
         eventFactory = new EventFactory(this);
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(this);
+        workerFactory = new WorkerFactory(this);
 
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
@@ -83,10 +88,10 @@ public final class GameController implements Serializable {
     public void nextDay() {
 
         //iterate through all promotions
-        for (PromotionAi pAi : promotionAis) {
-
-            pAi.dailyUpdate();
-
+        for (Promotion promotion : promotions) {
+            if (!promotion.equals(playerPromotion)) {
+                promotion.getController().dailyUpdate();
+            }
         }
 
         //if it is payday, advance next payday to two fridays in the future
@@ -150,23 +155,10 @@ public final class GameController implements Serializable {
     }*/
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
-        //set the Ai for non-player promotions
-        setAi();
     }
 
     public Promotion playerPromotion() {
         return playerPromotion;
-    }
-
-    public PromotionAi getPromotionAi(Promotion promotion) {
-        PromotionAi returnAi = null;
-        for (PromotionAi ai : promotionAis) {
-            if (ai.getPromotion().equals(promotion)) {
-                returnAi = ai;
-            }
-        }
-
-        return returnAi;
     }
 
     public List<Worker> allWorkers() {
@@ -186,7 +178,7 @@ public final class GameController implements Serializable {
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
 
-            if (ModelUtilityFunctions.canNegotiate(worker, promotion)) {
+            if (canNegotiate(worker, promotion)) {
                 freeAgents.add(worker);
             }
         }
@@ -208,16 +200,6 @@ public final class GameController implements Serializable {
 
     public void setTelevision(List<Television> television) {
         this.television = television;
-    }
-
-    private void setAi() {
-        //add ai where necessary
-        for (Promotion promotion : getPromotions()) {
-            if (!promotion.equals(playerPromotion)) {
-                promotionAis.add(new PromotionAi(promotion, this));
-            }
-
-        }
     }
 
     /**
@@ -274,6 +256,40 @@ public final class GameController implements Serializable {
      */
     public List<Television> getTelevision() {
         return television;
+    }
+
+    public boolean canNegotiate(Worker worker, Promotion promotion) {
+        //this would have to be more robust
+        //such as checking how much time is left on our contract
+        boolean canNegotiate = true;
+
+        if (worker.getPopularity() > promotion.maxPopularity()) {
+            canNegotiate = false;
+        }
+
+        if (worker.getController().hasContract()) {
+            for (Contract contract : worker.getController().getContracts()) {
+                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                    canNegotiate = false;
+                }
+            }
+        }
+
+        return canNegotiate;
+    }
+
+    /**
+     * @return the workerFactory
+     */
+    public WorkerFactory getWorkerFactory() {
+        return workerFactory;
+    }
+
+    /**
+     * @return the promotionFactory
+     */
+    public PromotionFactory getPromotionFactory() {
+        return promotionFactory;
     }
 
 }

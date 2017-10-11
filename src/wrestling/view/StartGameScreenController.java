@@ -17,7 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtilityFunctions;

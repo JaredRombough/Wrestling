@@ -1,12 +1,9 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.factory.TitleFactory;
-import wrestling.model.utility.ModelUtilityFunctions;
 
 public class Match extends Segment implements Serializable {
 
@@ -95,7 +92,7 @@ public class Match extends Segment implements Serializable {
     public List<Worker> allWorkers() {
         List<Worker> allWorkersList = new ArrayList<>();
 
-        for (List<Worker> team : teams) {
+        for (List<Worker> team : getTeams()) {
             allWorkersList.addAll(team);
         }
 
@@ -108,16 +105,16 @@ public class Match extends Segment implements Serializable {
     }
 
     public void setWinner(int winnerIndex) {
-        if (winnerIndex < teams.size()) {
-            setWinner(teams.get(winnerIndex));
+        if (winnerIndex < getTeams().size()) {
+            setWinner(getTeams().get(winnerIndex));
         }
 
     }
 
     public void setWinner(List<Worker> winningTeam) {
-        if (teams.contains(winningTeam)) {
+        if (getTeams().contains(winningTeam)) {
             this.winner = winningTeam;
-            Collections.swap(teams, teams.indexOf(winningTeam), 0);
+            Collections.swap(getTeams(), getTeams().indexOf(winningTeam), 0);
         }
     }
 
@@ -130,8 +127,8 @@ public class Match extends Segment implements Serializable {
 
     private boolean isHandicapMatch() {
         boolean handicap = false;
-        int size = teams.get(0).size();
-        for (List<Worker> team : teams) {
+        int size = getTeams().get(0).size();
+        for (List<Worker> team : getTeams()) {
             if (team.size() != size && !team.isEmpty()) {
                 handicap = true;
                 break;
@@ -153,9 +150,9 @@ public class Match extends Segment implements Serializable {
 
             } else if (rules.get(0).equals(MatchRules.DEFAULT)) {
 
-                if (teams.size() == 2) {
+                if (getTeams().size() == 2) {
 
-                    switch (teams.get(0).size()) {
+                    switch (getTeams().get(0).size()) {
                         case 1:
                             string += "Singles Match\n";
                             break;
@@ -176,14 +173,14 @@ public class Match extends Segment implements Serializable {
                     }
 
                 } else {
-                    string += teams.size() + "-Way Match\n";
+                    string += getTeams().size() + "-Way Match\n";
                 }
             } else {
                 string += rules.get(0).description() + " Match\n";
             }
 
-            for (int t = 0; t < teams.size(); t++) {
-                List<Worker> team = teams.get(t);
+            for (int t = 0; t < getTeams().size(); t++) {
+                List<Worker> team = getTeams().get(t);
 
                 for (int i = 0; i < team.size(); i++) {
                     string += team.get(i).getShortName();
@@ -197,7 +194,7 @@ public class Match extends Segment implements Serializable {
                 if (t == 0 && !string.isEmpty()) {
                     string += " def. ";
 
-                } else if (t < teams.size() - 1 && !string.isEmpty()) {
+                } else if (t < getTeams().size() - 1 && !string.isEmpty()) {
                     string += ", ";
                 }
 
@@ -237,7 +234,7 @@ public class Match extends Segment implements Serializable {
 
         float ratingsTotal = 0;
 
-        for (List<Worker> team : teams) {
+        for (List<Worker> team : getTeams()) {
             float rating = 0;
             for (Worker worker : team) {
 
@@ -248,96 +245,22 @@ public class Match extends Segment implements Serializable {
 
         }
 
-        matchRating = Math.round(ratingsTotal / teams.size());
+        matchRating = Math.round(ratingsTotal / getTeams().size());
 
     }
 
-    @Override
-    public String processSegment(LocalDate date, TitleFactory titleFactory) {
-
-        StringBuilder sb = new StringBuilder();
-
-        if (title != null) {
-
-            if (title.isVacant()) {
-
-                titleFactory.awardTitle(title, winner, date);
-                sb.append(ModelUtilityFunctions.slashNames(winner))
-                        .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
-                        .append(title.getName()).append(" title");
-            } else {
-                for (Worker worker : title.getWorkers()) {
-                    if (!winner.contains(worker)) {
-                        sb.append(ModelUtilityFunctions.slashNames(winner))
-                                .append(winner.size() > 1 ? " defeat " : " defeats ")
-                                .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
-                                .append(title.getName()).append(" title");
-                        titleFactory.titleChange(title, winner, date);
-
-                        break;
-                    }
-
-                    sb.append(ModelUtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
-                }
-            }
-        }
-        int winnerPop = 0;
-
-        //calculate the average popularity of the winning team
-        //but should it be max popularity?
-        for (Worker worker : getWinner()) {
-            winnerPop += worker.getPopularity();
-        }
-
-        winnerPop = winnerPop / getWinner().size();
-
-        for (List<Worker> team : teams) {
-
-            if (!team.equals(getWinner())) {
-                int teamPop = 0;
-
-                for (Worker worker : team) {
-                    teamPop += worker.getPopularity();
-                }
-
-                teamPop = teamPop / getWinner().size();
-
-                if (teamPop > winnerPop) {
-                    for (Worker worker : getWinner()) {
-                        worker.gainPopularity();
-                    }
-
-                    for (Worker worker : team) {
-                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            worker.losePopularity();
-                        }
-
-                    }
-                } else {
-                    for (Worker worker : getWinner()) {
-                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            worker.gainPopularity();
-                        }
-                    }
-                }
-
-            }
-        }
-
-        //process injuries
-        for (Worker w : allWorkers()) {
-            //check worker against injury rule for the match type
-            //would need some exceptions if valets or guest refs or whatever are involved
-            //for a match we can filter nonparticipants here
-            //pass participants
-            //and they come back with specific injuries? eventually
-            //for an angle we can pass different workers to different functions based on role?
-            //have a 'bump' function
-            //or rather than have a million different injury methods, just have a
-            //dangerousness rating and a list of injury types
-
-        }
-
-        return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
+    /**
+     * @return the title
+     */
+    public Title getTitle() {
+        return title;
     }
+
+    /**
+     * @return the teams
+     */
+    public List<List<Worker>> getTeams() {
+        return teams;
+    }
+
 }

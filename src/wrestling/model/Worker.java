@@ -1,14 +1,9 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import wrestling.model.factory.EventFactory;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.controller.WorkerController;
 
 public class Worker implements Serializable {
 
@@ -44,34 +39,17 @@ public class Worker implements Serializable {
     private boolean fullTime;
     private boolean mainRoster;
 
-    private final List<Contract> contracts = new ArrayList<>();
-    private final List<EventFactory> bookings = new ArrayList<>();
     private final List<Title> titles = new ArrayList<>();
     private int minimumPopularity;
 
-    public Worker() {
+    private WorkerController controller;
 
+    public Worker() {
         minimumPopularity = 0;
 
         name = "Worker #" + serialNumber;
         serialNumber++;
 
-    }
-
-    public void addBooking(EventFactory event) {
-        bookings.add(event);
-    }
-
-    public List<EventFactory> getBookings() {
-        return bookings;
-    }
-
-    public void addContract(Contract contract) {
-        this.contracts.add(contract);
-    }
-
-    public void removeContract(Contract contract) {
-        this.contracts.remove(contract);
     }
 
     public void addTitle(Title title) {
@@ -82,135 +60,9 @@ public class Worker implements Serializable {
         this.getTitles().remove(title);
     }
 
-    public List<Contract> getContracts() {
-        return contracts;
-    }
-
-    public boolean hasContract() {
-        return !this.contracts.isEmpty();
-    }
-
-    private transient Logger log = LogManager.getLogger(this.getClass());
-
-    public Contract getContract(Promotion promotion) {
-
-        Contract thisContract = null;
-        for (Contract current : contracts) {
-            if (current.getPromotion().equals(promotion)) {
-                thisContract = current;
-            }
-        }
-
-        if (thisContract == null) {
-            log.log(Level.ERROR, "NULL CONTRACT\n" + name + "\n" + promotion.getName());
-        }
-
-        return thisContract;
-    }
-
-    public String contractString() {
-
-        StringBuilder bld = new StringBuilder();
-        for (Contract current : contracts) {
-
-            bld.append(current.getTerms());
-            bld.append("\n");
-        }
-        return bld.toString();
-    }
-
     @Override
     public String toString() {
         return this.getName();
-    }
-
-    //checks if a worker is booked at all on a given date
-    public boolean isBooked(LocalDate date) {
-        boolean isBooked = false;
-
-        for (Contract contract : contracts) {
-            if (contract.getBookedDates().contains(date)) {
-                isBooked = true;
-            }
-        }
-
-        return isBooked;
-
-    }
-
-    //checks if a worker is booked on a certain date
-    //returns false if the booking is with the given promotion
-    public boolean isBooked(LocalDate date, Promotion p) {
-        boolean isBooked = isBooked(date);
-
-        if (getContract(p).getBookedDates().contains(date)) {
-            isBooked = false;
-        }
-
-        return isBooked;
-
-    }
-
-    //once workers reach a level of popularity, they can never  drop below 50% of that
-    private void updateMinimumPopularity() {
-
-        if ((popularity / 2) > minimumPopularity) {
-            minimumPopularity = popularity / 2;
-        }
-    }
-
-    public void gainPopularity() {
-
-        int maxPopularity = 0;
-
-        for (Contract contract : contracts) {
-            if (contract.getPromotion().maxPopularity() > maxPopularity) {
-                maxPopularity = contract.getPromotion().maxPopularity();
-            }
-        }
-
-        if (popularity < maxPopularity
-                || ModelUtilityFunctions.randRange(1, 10) == 1) {
-
-            int range = 0;
-
-            if (popularity >= 90) {
-                range = 20;
-            } else if (popularity < 90 && popularity >= 80) {
-                range = 10;
-            } else if (popularity < 80 && popularity >= 70) {
-                range = 7;
-            } else if (popularity < 70) {
-                range = 5;
-            }
-
-            if (ModelUtilityFunctions.randRange(1, range) == 1) {
-
-                this.popularity += 1;
-            }
-        }
-
-        if (popularity > 100) {
-            popularity = 100;
-        }
-
-        updateMinimumPopularity();
-
-    }
-
-    public void losePopularity() {
-
-        if (ModelUtilityFunctions.randRange(1, 10) == 10) {
-            popularity -= 1;
-        }
-
-        if (popularity < 0) {
-            popularity = 0;
-        }
-
-        if (popularity < minimumPopularity) {
-            popularity = minimumPopularity;
-        }
     }
 
     /**
@@ -309,9 +161,10 @@ public class Worker implements Serializable {
      */
     public void setPopularity(int popularity) {
         this.popularity = popularity;
-
-        updateMinimumPopularity();
-
+        //once workers reach a level of popularity, they can never  drop below 50% of that
+        if ((popularity / 2) > getMinimumPopularity()) {
+            setMinimumPopularity(popularity / 2);
+        }
     }
 
     /**
@@ -389,6 +242,34 @@ public class Worker implements Serializable {
      */
     public void setImageString(String imageString) {
         this.imageString = imageString;
+    }
+
+    /**
+     * @return the minimumPopularity
+     */
+    public int getMinimumPopularity() {
+        return minimumPopularity;
+    }
+
+    /**
+     * @param minimumPopularity the minimumPopularity to set
+     */
+    public void setMinimumPopularity(int minimumPopularity) {
+        this.minimumPopularity = minimumPopularity;
+    }
+
+    /**
+     * @return the workerController
+     */
+    public WorkerController getController() {
+        return controller;
+    }
+
+    /**
+     * @param controller the workerController to set
+     */
+    public void setController(WorkerController controller) {
+        this.controller = controller;
     }
 
 }

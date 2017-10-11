@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 
 public class DirtSheet {
@@ -32,7 +32,7 @@ public class DirtSheet {
     public List<Dirt> getReports() {
         return reports;
     }
-    
+
     public List<EventArchive> promotionEvents(Promotion promotion) {
         List<EventArchive> events = new ArrayList<>();
         reports.stream().filter((dirt) -> (dirt instanceof EventArchive && dirt.getPromotion().equals(promotion))).forEach((dirt) -> {

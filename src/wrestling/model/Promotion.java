@@ -3,6 +3,7 @@ package wrestling.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.controller.PromotionController;
 import wrestling.model.financial.BankAccount;
 
 public class Promotion implements Serializable {
@@ -18,6 +19,7 @@ public class Promotion implements Serializable {
     private int level;
     private final List<Title> titles = new ArrayList<>();
     private final List<Contract> contracts;
+    private PromotionController controller;
 
     public Promotion() {
         this.contracts = new ArrayList<>();
@@ -142,6 +144,20 @@ public class Promotion implements Serializable {
      */
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    /**
+     * @return the controller
+     */
+    public PromotionController getController() {
+        return controller;
+    }
+
+    /**
+     * @param controller the controller to set
+     */
+    public void setController(PromotionController controller) {
+        this.controller = controller;
     }
 
 }

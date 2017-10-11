@@ -19,10 +19,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Worker;
-import wrestling.model.factory.ContractFactory;
-import wrestling.model.utility.ModelUtilityFunctions;
 
 public class ContractPaneController implements Initializable {
 
@@ -58,7 +56,7 @@ public class ContractPaneController implements Initializable {
     public void setWorker(Worker worker) {
         this.worker = worker;
 
-        if (ModelUtilityFunctions.canNegotiate(worker, gameController.playerPromotion())) {
+        if (gameController.canNegotiate(worker, gameController.playerPromotion())) {
             setDisable(false);
         } else {
             setDisable(true);
@@ -170,7 +168,7 @@ public class ContractPaneController implements Initializable {
     }
 
     private void updateCostLabel() {
-        if (worker != null && ModelUtilityFunctions.canNegotiate(worker, gameController.playerPromotion())) {
+        if (worker != null && gameController.canNegotiate(worker, gameController.playerPromotion())) {
             costLabel.setText(termString());
         } else {
             costLabel.setText("Under Contract");

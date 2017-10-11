@@ -2,10 +2,9 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.factory.TitleFactory;
+import wrestling.model.controller.ContractController;
 
 /**
  *
@@ -31,82 +30,10 @@ public class Contract implements Serializable {
     private int biWeeklyCost;
     private List<LocalDate> bookedDates = new ArrayList<>();
 
+    private ContractController controller;
+
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
-
-    }
-
-    //depreciates monthly contracts
-    public boolean nextDay() {
-        boolean stillExists = true;
-        duration--;
-
-        if (duration <= 0) {
-            terminateContract();
-            stillExists = false;
-        }
-        
-        return stillExists;
-    }
-
-    //handles appearance-based contracts
-    public boolean appearance(LocalDate date) {
-        boolean stillExists = true;
-        //make the promotion 'pay' the worker for the appearance
-        promotion.bankAccount().removeFunds(appearanceCost, 'w', date);
-
-        if (duration <= 0) {
-            terminateContract();
-            stillExists = false;
-        }
-        
-        return stillExists;
-    }
-
-    public void payDay(LocalDate date) {
-
-        if (biWeeklyCost != 0) {
-
-            long daysBetween = DAYS.between(startDate, date);
-            long payment = 0;
-            if (daysBetween < 14) {
-                payment += biWeeklyCost * (daysBetween / 14);
-            } else {
-                payment = biWeeklyCost;
-            }
-
-            promotion.bankAccount().removeFunds(Math.toIntExact(payment), 'w', date);
-
-        }
-
-    }
-
-    //for when a bigger promotion signs a written contract
-    //that overrides this open contract
-    public void buyOutContract() {
-
-        duration = 0;
-    }
-
-    private void terminateContract() {
-
-        worker.removeContract(this);
-
-        promotion.removeContract(this);
-
-    }
-
-    public String getTerms() {
-        String string = promotion.getName() + " Length: " + duration
-                + " days. ";
-
-        if (exclusive) {
-            string += "$" + getBiWeeklyCost() + " Bi-Weekly.";
-        } else {
-            string += "$" + getAppearanceCost() + " per appearance.";
-        }
-
-        return string;
     }
 
     public void bookDate(LocalDate date) {
@@ -217,6 +144,20 @@ public class Contract implements Serializable {
      */
     public void setBiWeeklyCost(int biWeeklyCost) {
         this.biWeeklyCost = biWeeklyCost;
+    }
+
+    /**
+     * @return the controller
+     */
+    public ContractController getController() {
+        return controller;
+    }
+
+    /**
+     * @param controller the controller to set
+     */
+    public void setController(ContractController controller) {
+        this.controller = controller;
     }
 
 }

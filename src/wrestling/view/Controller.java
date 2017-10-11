@@ -2,7 +2,7 @@ package wrestling.view;
 
 import javafx.fxml.Initializable;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 
 public abstract class Controller implements Initializable {
 

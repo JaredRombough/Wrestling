@@ -6,9 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import wrestling.model.dirt.News;
 import wrestling.model.Contract;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.controller.ContractController;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -18,19 +19,16 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class ContractFactory {
 
-    private GameController gc;
+    private GameController gameController;
 
     public ContractFactory(GameController gameController) {
-        this.gc = gameController;
+        this.gameController = gameController;
     }
 
     //create a contract with predetermined attributes
     public void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
-        Contract contract = new Contract();
-
-        contract.setWorker(worker);
-        contract.setPromotion(promotion);
+        Contract contract = createContract(worker, promotion);
 
         contract.setDuration(duration);
 
@@ -44,17 +42,14 @@ public class ContractFactory {
 
         //assign the contract
         promotion.addContract(contract);
-        worker.addContract(contract);
+        worker.getController().addContract(contract);
     }
 
     //create a contract with set exclusivity (only used by import)
     public void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
 
         //create the contract
-        Contract contract = new Contract();
-
-        contract.setWorker(worker);
-        contract.setPromotion(promotion);
+        Contract contract = createContract(worker, promotion);
 
         //exclusive contracts are default for top level promotions
         if (exclusive) {
@@ -63,11 +58,11 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
-            for (Contract c : worker.getContracts()) {
+            for (Contract c : worker.getController().getContracts()) {
 
                 if (!c.getPromotion().equals(promotion)) {
 
-                    c.buyOutContract();
+                    c.getController().buyOutContract();
                 }
             }
         } else {
@@ -87,7 +82,7 @@ public class ContractFactory {
 
         //assign the contract
         promotion.addContract(contract);
-        worker.addContract(contract);
+        worker.getController().addContract(contract);
 
         reportSigning(contract);
 
@@ -97,10 +92,7 @@ public class ContractFactory {
     public void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
 
         //create the contract
-        Contract contract = new Contract();
-
-        contract.setWorker(worker);
-        contract.setPromotion(promotion);
+        Contract contract = createContract(worker, promotion);
 
         //exclusive contracts are default for top level promotions
         if (promotion.getLevel() == 5) {
@@ -109,11 +101,11 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
-            for (Contract c : worker.getContracts()) {
+            for (Contract c : worker.getController().getContracts()) {
 
                 if (!c.getPromotion().equals(promotion)) {
 
-                    c.buyOutContract();
+                    c.getController().buyOutContract();
                 }
             }
         } else {
@@ -133,10 +125,18 @@ public class ContractFactory {
 
         //assign the contract
         promotion.addContract(contract);
-        worker.addContract(contract);
+        worker.getController().addContract(contract);
 
         reportSigning(contract);
 
+    }
+
+    private Contract createContract(Worker worker, Promotion promotion) {
+        Contract contract = new Contract();
+        contract.setWorker(worker);
+        contract.setPromotion(promotion);
+        contract.setController(new ContractController(contract, gameController));
+        return contract;
     }
 
     public int calculateAppearanceCost(Worker worker, boolean exclusive) {
@@ -232,13 +232,13 @@ public class ContractFactory {
         sb.append(c.getPromotion().getShortName()).append(" signed ").append(c.getWorker().getName())
                 .append(" on ").append(c.getStartDate());
 
-        gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
+        gameController.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
 
     public void reportExpiration(Contract c) {
         StringBuilder sb = new StringBuilder();
         sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
-        gc.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
+        gameController.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
 
 }

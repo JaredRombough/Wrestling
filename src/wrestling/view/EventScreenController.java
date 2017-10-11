@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.GameController;
+import wrestling.model.controller.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
@@ -191,7 +191,7 @@ public class EventScreenController implements Initializable {
 
         for (Segment segment : segments) {
             for (Worker worker : segment.allWorkers()) {
-                currentCost += worker.getContract(gameController.playerPromotion()).getAppearanceCost();
+                currentCost += worker.getController().getContract(gameController.playerPromotion()).getAppearanceCost();
             }
 
         }
@@ -348,7 +348,7 @@ public class EventScreenController implements Initializable {
 
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
-            if (!currentSegment().allWorkers().contains(worker) && !worker.isBooked(gameController.date())) {
+            if (!currentSegment().allWorkers().contains(worker) && !worker.getController().isBooked(gameController.date())) {
                 workersList.add(worker);
             }
 
