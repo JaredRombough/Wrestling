@@ -42,14 +42,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.controller.GameController;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-public class EventScreenController implements Initializable {
-
-    private MainApp mainApp;
-    private GameController gameController;
+public class EventScreenController extends Controller implements Initializable {
 
     private int totalSegments;
 
@@ -170,6 +166,7 @@ public class EventScreenController implements Initializable {
     }
 
     //updates lists and labels
+    @Override
     public void updateLabels() {
 
         totalCostLabel.setText("Total Cost: $" + currentCost());
@@ -307,7 +304,8 @@ public class EventScreenController implements Initializable {
     /*
     additional initialization to be called externally after we have our mainApp etc.
      */
-    private void initializeMore() {
+    @Override
+    public void initializeMore() {
 
         //here we set a blank event
         initializeSegmentListView();
@@ -379,17 +377,6 @@ public class EventScreenController implements Initializable {
             }
         });
 
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-    }
-
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
     }
 
     private static class SegmentNameItem {

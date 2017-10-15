@@ -20,15 +20,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtilityFunctions;
 
 public class WorkerOverviewController extends Controller implements Initializable {
-
-    private MainApp mainApp;
-    private GameController gameController;
 
     private AnchorPane contractPane;
     private ContractPaneController contractPaneController;
@@ -81,18 +77,6 @@ public class WorkerOverviewController extends Controller implements Initializabl
     private Promotion currentPromotion;
 
     @Override
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    @Override
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
-    }
-
-    @Override
     public void setCurrent(Object obj) {
 
         Worker newWorker = (Worker) obj;
@@ -114,7 +98,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
     }
 
     @Override
-    void initializeMore() {
+    public void initializeMore() {
         loadContractPane();
         loadFeed();
     }
@@ -128,9 +112,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             feedPaneController = (SimpleDisplayController) loader.getController();
 
-            feedPaneController.setMainApp(this.mainApp);
-
-            feedPaneController.setGameController(this.gameController);
+            feedPaneController.setDependencies(mainApp, gameController);
 
             feedAnchor.getChildren().add(feedPane);
 
@@ -149,9 +131,7 @@ public class WorkerOverviewController extends Controller implements Initializabl
 
             contractPaneController = (ContractPaneController) loader.getController();
 
-            contractPaneController.setMainApp(this.mainApp);
-
-            contractPaneController.setGameController(this.gameController);
+            contractPaneController.setDependencies(mainApp, gameController);
 
         } catch (IOException ex) {
             Logger logger = LogManager.getLogger(this.getClass());

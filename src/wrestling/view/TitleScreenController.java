@@ -16,9 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import wrestling.MainApp;
 
-public class TitleScreenController implements Initializable {
-
-    private MainApp mainApp;
+public class TitleScreenController extends Controller implements Initializable {
 
     @FXML
     private Button newRandomGameButton;
@@ -59,7 +57,7 @@ public class TitleScreenController implements Initializable {
         AnchorPane importDialog = (AnchorPane) loader.load();
 
         ImportDialogController controller = loader.getController();
-        controller.setMainApp(this.mainApp);
+        controller.setDependencies(mainApp, gameController);
         controller.updateLabels();
         controller.setStage(importPopup);
 
@@ -76,11 +74,6 @@ public class TitleScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
 
     }
     

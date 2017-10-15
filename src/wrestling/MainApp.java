@@ -105,9 +105,9 @@ public class MainApp extends Application {
             error = importer.tryImport(dataFolder);
 
             if (!error.isEmpty()) {
-                
+
                 logger.log(Level.ERROR, error);
-                
+
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Import error");
                 alert.setHeaderText("Resources could not be validated.");
@@ -164,7 +164,7 @@ public class MainApp extends Application {
             getPrimaryStage().show();
 
             TitleScreenController controller = loader.getController();
-            controller.setMainApp(this);
+            controller.setDependencies(this, gameController);
             controller.setImage(image);
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
@@ -248,8 +248,7 @@ public class MainApp extends Application {
 
             //load and store the controller
             rootLayoutController = loader.getController();
-            rootLayoutController.setMainApp(this);
-            rootLayoutController.setGameController(this.gameController);
+            rootLayoutController.setDependencies(this, gameController);
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
@@ -275,8 +274,8 @@ public class MainApp extends Application {
             workerOverviewPane = (AnchorPane) loader.load();
 
             WorkerOverviewController controller = loader.getController();
-            controller.setMainApp(this);
-            controller.setGameController(this.gameController);
+
+            controller.setDependencies(this, gameController);
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
@@ -294,8 +293,7 @@ public class MainApp extends Application {
 
         browserController = loader.getController();
 
-        browserController.setMainApp(this);
-        browserController.setGameController(this.gameController);
+        browserController.setDependencies(this, gameController);
 
     }
 
@@ -309,8 +307,7 @@ public class MainApp extends Application {
 
         financialController = loader.getController();
 
-        financialController.setMainApp(this);
-        financialController.setGameController(this.gameController);
+        financialController.setDependencies(this, gameController);
     }
 
     /*
@@ -353,8 +350,7 @@ public class MainApp extends Application {
             eventScreenPane = (AnchorPane) loader.load();
 
             EventScreenController controller = loader.getController();
-            controller.setMainApp(this);
-            controller.setGameController(this.gameController);
+            controller.setDependencies(this, gameController);
             eventScreenController = controller;
 
         } catch (IOException ex) {
@@ -374,8 +370,7 @@ public class MainApp extends Application {
             AnchorPane startGameScreen = (AnchorPane) loader.load();
 
             StartGameScreenController controller = loader.getController();
-            controller.setMainApp(this);
-            controller.setGameController(this.gameController);
+            controller.setDependencies(this, gameController);
 
             rootLayout.setCenter(startGameScreen);
 

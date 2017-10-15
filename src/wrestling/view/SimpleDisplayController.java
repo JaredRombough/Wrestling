@@ -40,28 +40,21 @@ public class SimpleDisplayController extends Controller implements Initializable
     @FXML
     private StackPane stackPane;
 
-    private GameController gc;
-
     @Override
-    void initializeMore() {
-
-    }
-
-    @Override
-    void setCurrent(Object obj) {
+    public void setCurrent(Object obj) {
         this.obj = obj;
         updateLabels();
     }
 
     @Override
-    void updateLabels() {
+    public void updateLabels() {
 
         String newText = "";
 
         //call the appropriate method based on object type
         if (obj instanceof EventArchive) {
             StringBuilder sb = new StringBuilder();
-            for (Dirt dirt : gc.getDirtSheet().getReports()) {
+            for (Dirt dirt : gameController.getDirtSheet().getReports()) {
                 if (dirt instanceof SegmentRecord
                         && ((SegmentRecord) dirt).getEventArchive().equals(obj)) {
                     sb.append(dirt.toString());
@@ -71,7 +64,7 @@ public class SimpleDisplayController extends Controller implements Initializable
             newText = sb.toString();
         } else if (obj instanceof Title) {
             StringBuilder sb = new StringBuilder();
-            for (Dirt dirt : gc.getDirtSheet().getReports()) {
+            for (Dirt dirt : gameController.getDirtSheet().getReports()) {
                 if (dirt instanceof TitleRecord
                         && ((TitleRecord) dirt).getTitle().equals(obj)) {
                     sb.append(dirt.toString());
@@ -82,10 +75,10 @@ public class SimpleDisplayController extends Controller implements Initializable
         } else if (obj instanceof Worker) {
             Worker w = (Worker) obj;
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < gc.getDirtSheet().getReports().size(); i++) {
-                if (gc.getDirtSheet().getReports().get(i).getWorkers() != null
-                        && gc.getDirtSheet().getReports().get(i).getWorkers().contains(w)) {
-                    sb.append(gc.getDirtSheet().getReports().get(i).toString());
+            for (int i = 0; i < gameController.getDirtSheet().getReports().size(); i++) {
+                if (gameController.getDirtSheet().getReports().get(i).getWorkers() != null
+                        && gameController.getDirtSheet().getReports().get(i).getWorkers().contains(w)) {
+                    sb.append(gameController.getDirtSheet().getReports().get(i).toString());
                     sb.append("\n");
                 }
             }
@@ -106,14 +99,6 @@ public class SimpleDisplayController extends Controller implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-    }
-
-    /**
-     * @param gc
-     */
-    @Override
-    public void setGameController(GameController gc) {
-        this.gc = gc;
     }
 
 }

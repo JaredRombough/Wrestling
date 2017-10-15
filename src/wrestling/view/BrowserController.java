@@ -25,9 +25,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.dirt.EventArchive;
-import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
@@ -43,10 +45,7 @@ import wrestling.view.utility.ViewUtilityFunctions;
  *
  * main browser, to be used for checking data for almost everything
  */
-public class BrowserController implements Initializable {
-
-    private MainApp mainApp;
-    private GameController gameController;
+public class BrowserController extends Controller implements Initializable {
 
     @FXML
     private Button rosterButton;
@@ -104,15 +103,6 @@ public class BrowserController implements Initializable {
     private BrowserMode<EventArchive> browseEvents;
     private BrowserMode<Title> browseTitles;
     private BrowserMode<TagTeam> browseTeams;
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    public void setGameController(GameController gameController) throws IOException {
-        this.gameController = gameController;
-        initializeMore();
-    }
 
     /*
     sets the current promotion
@@ -173,6 +163,7 @@ public class BrowserController implements Initializable {
         browserMode.listView.setItems(browserMode.sortedList);
     }
 
+    @Override
     public void updateLabels() {
         setCurrentPromotion(currentPromotion);
 
@@ -333,47 +324,52 @@ public class BrowserController implements Initializable {
 
     }
 
-    private void initializeMore() throws IOException {
+    @Override
+    public void initializeMore() {
+        try {
+            initializePromotionCombobox();
 
-        initializePromotionCombobox();
+            browseWorkers = new BrowserMode<>(
+                    gameController.getFullRoster(gameController.playerPromotion()),
+                    "view/WorkerOverview.fxml");
+            browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
+                    new WorkerPopularityComparator()
+            );
 
-        browseWorkers = new BrowserMode<>(
-                gameController.getFullRoster(gameController.playerPromotion()),
-                "view/WorkerOverview.fxml");
-        browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
-                new WorkerPopularityComparator()
-        );
+            //right now this acts as the default view for the screen
+            //set whatever we want the default view to be to the lastbutton
+            //so it will fire later
+            lastButton = rosterButton;
+            lastDisplayNode = browseWorkers.displayPane;
 
-        //right now this acts as the default view for the screen
-        //set whatever we want the default view to be to the lastbutton
-        //so it will fire later
-        lastButton = rosterButton;
-        lastDisplayNode = browseWorkers.displayPane;
+            browseEvents = new BrowserMode<>(
+                    gameController.getDirtSheet().promotionEvents(gameController.playerPromotion()),
+                    "view/SimpleDisplay.fxml");
+            browseEvents.comparators = FXCollections.observableArrayList(
+                    new EventDateComparator()
+            );
 
-        browseEvents = new BrowserMode<>(
-                gameController.getDirtSheet().promotionEvents(gameController.playerPromotion()),
-                "view/SimpleDisplay.fxml");
-        browseEvents.comparators = FXCollections.observableArrayList(
-                new EventDateComparator()
-        );
+            browseTitles = new BrowserMode<>(
+                    gameController.playerPromotion().getTitles(),
+                    "view/SimpleDisplay.fxml");
+            browseTitles.comparators = FXCollections.observableArrayList(
+                    new TitleNameComparator()
+            );
 
-        browseTitles = new BrowserMode<>(
-                gameController.playerPromotion().getTitles(),
-                "view/SimpleDisplay.fxml");
-        browseTitles.comparators = FXCollections.observableArrayList(
-                new TitleNameComparator()
-        );
+            browseTeams = new BrowserMode<>(
+                    gameController.playerPromotion().getTitles(),
+                    "view/SimpleDisplay.fxml");
+            browseTeams.comparators = FXCollections.observableArrayList(
+                    new TagTeamNameComparator()
+            );
 
-        browseTeams = new BrowserMode<>(
-                gameController.playerPromotion().getTitles(),
-                "view/SimpleDisplay.fxml");
-        browseTeams.comparators = FXCollections.observableArrayList(
-                new TagTeamNameComparator()
-        );
+            promotionComboBox.setValue(gameController.playerPromotion());
 
-        promotionComboBox.setValue(gameController.playerPromotion());
-
-        lastButton.fire();
+            lastButton.fire();
+        } catch (Exception ex) {
+            Logger logger = LogManager.getLogger(this.getClass());
+            logger.log(Level.ERROR, ex);
+        }
 
     }
 
@@ -404,8 +400,7 @@ public class BrowserController implements Initializable {
 
             controller = loader.getController();
 
-            controller.setMainApp(mainApp);
-            controller.setGameController(gameController);
+            controller.setDependencies(mainApp, gameController);
 
             //get the listview ready
             listView.setItems(FXCollections.observableArrayList(initialItems));

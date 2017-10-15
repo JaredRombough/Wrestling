@@ -9,8 +9,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import wrestling.MainApp;
-import wrestling.model.controller.GameController;
 
 public class FinancialScreenController extends Controller implements Initializable {
 
@@ -37,30 +35,6 @@ public class FinancialScreenController extends Controller implements Initializab
     private Label workerExpense3;
 
     private List<Label> workerExpenseLabels;
-
-    private MainApp mainApp;
-    private GameController gameController;
-
-    @Override
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    @Override
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-        initializeMore();
-    }
-
-    @Override
-    void initializeMore() {
-
-    }
-
-    @Override
-    void setCurrent(Object obj) {
-
-    }
 
     private String sheetCell(char type, int monthsAgo) {
 

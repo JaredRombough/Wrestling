@@ -25,7 +25,8 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.model.Worker;
 
-public class TeamPaneController implements Initializable {
+public class TeamPaneController extends Controller implements Initializable {
+
     private static final double CELL_HEIGHT = 33;
     private static final String TAB_DRAG_KEY = "anchorpane";
 
@@ -53,7 +54,6 @@ public class TeamPaneController implements Initializable {
         this.segmentPaneController = segmentPaneController;
     }
 
-
     public int getTeamNumber() {
         return this.teamNumber;
     }
@@ -65,7 +65,6 @@ public class TeamPaneController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
-
     }
 
     public void removeWorker(Worker worker) {
@@ -73,9 +72,7 @@ public class TeamPaneController implements Initializable {
         if (teamListView.getItems().contains(worker)) {
             teamListView.getItems().remove(worker);
         }
-
     }
-
 
     public void updateLabels() {
 
@@ -92,9 +89,7 @@ public class TeamPaneController implements Initializable {
 
         mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
         teamListView.setMinHeight(height);
-
     }
-
 
     private void preparePaneForSorting() {
         draggingTab = new SimpleObjectProperty<>();
@@ -153,6 +148,7 @@ public class TeamPaneController implements Initializable {
         });
     }
 
+    @Override
     public void initializeMore() {
 
         preparePaneForSorting();
@@ -213,36 +209,37 @@ public class TeamPaneController implements Initializable {
 
         return string;
     }
+
     private class DragDropHandler implements EventHandler<DragEvent> {
-        
+
         private final ObservableList<Worker> itemList;
-        
+
         DragDropHandler(ObservableList<Worker> itemList) {
-            
+
             this.itemList = itemList;
-            
+
         }
-        
+
         @Override
         public void handle(DragEvent event) {
-            
+
             LocalDragboard ldb = LocalDragboard.getINSTANCE();
             if (ldb.hasType(Worker.class)) {
                 Worker worker = ldb.getValue(Worker.class);
-                
+
                 segmentPaneController.removeWorker(worker);
                 itemList.add(worker);
-                
+
                 updateLabels();
                 segmentPaneController.updateLabels();
                 eventScreenController.updateSegments();
-                
+
                 //Clear, otherwise we end up with the worker stuck on the dragboard?
                 ldb.clearAll();
-                
+
             }
         }
-        
+
     }
 
 }

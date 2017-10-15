@@ -53,12 +53,6 @@ public class Match extends Segment implements Serializable {
         this.finish = finish;
     }
 
-    public Match(final List<List<Worker>> teams, final List<MatchRules> rules, final List<MatchFinishes> finish, Title title) {
-        this(teams, title);
-        this.rules = rules;
-        this.finish = finish;
-    }
-
     public Match(final List<List<Worker>> teams, Title title) {
 
         this.title = title;
@@ -120,7 +114,6 @@ public class Match extends Segment implements Serializable {
 
     @Override
     public boolean isComplete() {
-
         //consider a match completed if it has any workers (placeholder)
         return !allWorkers().isEmpty() && !getWinner().isEmpty();
     }

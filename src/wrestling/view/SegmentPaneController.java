@@ -31,7 +31,7 @@ import wrestling.model.MatchRules;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-public class SegmentPaneController implements Initializable {
+public class SegmentPaneController extends Controller implements Initializable {
     private static final int DEFAULTTEAMS = 2;
 
     @FXML
@@ -62,6 +62,7 @@ public class SegmentPaneController implements Initializable {
 
     }
 
+    @Override
     public void initializeMore() {
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {

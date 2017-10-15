@@ -14,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import wrestling.MainApp;
 
 /*
 popup dialog window for setting import paths and starting import game
@@ -47,7 +46,6 @@ public class ImportDialogController extends Controller implements Initializable 
     private File dataPath;
 
     private Stage stage;
-    private MainApp mainApp;
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException, Exception {
@@ -110,17 +108,7 @@ public class ImportDialogController extends Controller implements Initializable 
     }
 
     @Override
-    void initializeMore() {
-
-    }
-
-    @Override
-    void setCurrent(Object obj) {
-
-    }
-
-    @Override
-    void updateLabels() {
+    public void updateLabels() {
 
         picsPathLabel.setText(picsPath.toString());
         logosPathLabel.setText(logosPath.toString());
@@ -135,10 +123,4 @@ public class ImportDialogController extends Controller implements Initializable 
         logosPath = new File(System.getProperty("user.dir") + "/LOGOS/");
         dataPath = new File(System.getProperty("user.dir") + "/DATA/");
     }
-
-    @Override
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
 }

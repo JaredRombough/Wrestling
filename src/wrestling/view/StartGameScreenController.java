@@ -16,13 +16,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import wrestling.MainApp;
-import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtilityFunctions;
 
-public class StartGameScreenController implements Initializable {
+public class StartGameScreenController extends Controller implements Initializable {
 
     @FXML
     private ListView promotionListView;
@@ -45,9 +43,6 @@ public class StartGameScreenController implements Initializable {
     @FXML
     private ImageView imageView;
 
-    private GameController gameController;
-    private MainApp mainApp;
-
     private Promotion selectedPromotion;
 
     @Override
@@ -55,14 +50,8 @@ public class StartGameScreenController implements Initializable {
 
     }
 
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-    }
-
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
+    @Override
+    public void initializeMore() {
         //now that we have the game controller we can set the promotions to the listview
         ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
 
@@ -71,15 +60,10 @@ public class StartGameScreenController implements Initializable {
             if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
             }
-
         }
 
         promotionListView.setItems(promotionsObservableList);
 
-        initializeMore();
-    }
-
-    public void initializeMore() {
         initializePromotionsListView();
         updateWorkersListView(
                 (Promotion) promotionListView.getSelectionModel().getSelectedItem());

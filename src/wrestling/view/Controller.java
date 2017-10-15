@@ -6,22 +6,19 @@ import wrestling.model.controller.GameController;
 
 public abstract class Controller implements Initializable {
 
-    private MainApp mainApp;
-    private GameController gameController;
+    public MainApp mainApp;
+    public GameController gameController;
 
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    public void setGameController(GameController gameController) {
+    public void setDependencies(MainApp mainApp, GameController gameController) {
         this.gameController = gameController;
+        this.mainApp = mainApp;
         initializeMore();
     }
 
-    abstract void initializeMore();
+    public void initializeMore() {};
 
-    abstract void setCurrent(Object obj);
+    public void setCurrent(Object obj) {};
 
-    abstract void updateLabels();
+    public void updateLabels() {};
 
 }

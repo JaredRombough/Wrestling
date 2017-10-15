@@ -19,10 +19,7 @@ import javafx.scene.control.Label;
 import wrestling.MainApp;
 import wrestling.model.controller.GameController;
 
-public class RootLayoutController implements Initializable {
-
-    private MainApp mainApp;
-    private GameController gameController;
+public class RootLayoutController extends Controller implements Initializable {
 
     @FXML
     private Button eventButton;
@@ -118,17 +115,5 @@ public class RootLayoutController implements Initializable {
         nextDayButton.setDisable(disable);
         eventButton.setDisable(disable);
         financialButton.setDisable(disable);
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-    }
-
-    public void setGameController(GameController gameController) {
-        this.gameController = gameController;
-
-        initializeMore();
-
     }
 }
