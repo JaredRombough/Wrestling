@@ -45,7 +45,7 @@ import wrestling.view.utility.ViewUtilityFunctions;
  *
  * main browser, to be used for checking data for almost everything
  */
-public class BrowserController extends Controller implements Initializable {
+public class BrowserController extends ControllerBase implements Initializable {
 
     @FXML
     private Button rosterButton;
@@ -384,7 +384,7 @@ public class BrowserController extends Controller implements Initializable {
 
         private final AnchorPane displayPane;
 
-        private Controller controller;
+        private ControllerBase controller;
 
         private ObservableList comparators;
 

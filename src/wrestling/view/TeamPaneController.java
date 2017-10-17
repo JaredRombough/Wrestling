@@ -25,7 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import wrestling.model.Worker;
 
-public class TeamPaneController extends Controller implements Initializable {
+public class TeamPaneController extends ControllerBase implements Initializable {
 
     private static final double CELL_HEIGHT = 33;
     private static final String TAB_DRAG_KEY = "anchorpane";

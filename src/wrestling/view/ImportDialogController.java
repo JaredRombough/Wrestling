@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 /*
 popup dialog window for setting import paths and starting import game
  */
-public class ImportDialogController extends Controller implements Initializable {
+public class ImportDialogController extends ControllerBase implements Initializable {
 
     @FXML
     private Button picsPathButton;

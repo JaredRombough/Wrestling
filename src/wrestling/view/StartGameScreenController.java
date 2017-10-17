@@ -20,7 +20,7 @@ import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtilityFunctions;
 
-public class StartGameScreenController extends Controller implements Initializable {
+public class StartGameScreenController extends ControllerBase implements Initializable {
 
     @FXML
     private ListView promotionListView;

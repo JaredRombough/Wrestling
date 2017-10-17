@@ -4,7 +4,7 @@ import javafx.fxml.Initializable;
 import wrestling.MainApp;
 import wrestling.model.controller.GameController;
 
-public abstract class Controller implements Initializable {
+public abstract class ControllerBase implements Initializable {
 
     public MainApp mainApp;
     public GameController gameController;

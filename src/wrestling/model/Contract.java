@@ -30,8 +30,6 @@ public class Contract implements Serializable {
     private int biWeeklyCost;
     private List<LocalDate> bookedDates = new ArrayList<>();
 
-    private ContractController controller;
-
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
     }
@@ -145,19 +143,4 @@ public class Contract implements Serializable {
     public void setBiWeeklyCost(int biWeeklyCost) {
         this.biWeeklyCost = biWeeklyCost;
     }
-
-    /**
-     * @return the controller
-     */
-    public ContractController getController() {
-        return controller;
-    }
-
-    /**
-     * @param controller the controller to set
-     */
-    public void setController(ContractController controller) {
-        this.controller = controller;
-    }
-
 }

@@ -86,8 +86,8 @@ public class WorkerController implements Serializable {
         int maxPopularity = 0;
 
         for (Contract contract : contracts) {
-            if (contract.getPromotion().maxPopularity() > maxPopularity) {
-                maxPopularity = contract.getPromotion().maxPopularity();
+            if (ModelUtilityFunctions.maxPopularity(contract.getPromotion()) > maxPopularity) {
+                maxPopularity = ModelUtilityFunctions.maxPopularity(contract.getPromotion());
             }
         }
 
@@ -148,7 +148,7 @@ public class WorkerController implements Serializable {
         StringBuilder bld = new StringBuilder();
         for (Contract current : contracts) {
 
-            bld.append(current.getController().getTerms());
+            bld.append(gameController.getContractController().getTerms(current));
             bld.append("\n");
         }
         return bld.toString();

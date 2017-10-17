@@ -7,21 +7,13 @@ import wrestling.model.Contract;
 
 public class ContractController implements Serializable {
 
-    private final Contract contract;
-    private final GameController gameController;
-
-    public ContractController(Contract contract, GameController gameController) {
-        this.contract = contract;
-        this.gameController = gameController;
-    }
-
     //depreciates monthly contracts
-    public boolean nextDay() {
+    public boolean nextDay(Contract contract) {
         boolean stillExists = true;
         contract.setDuration(contract.getDuration() - 1);
 
         if (contract.getDuration() <= 0) {
-            terminateContract();
+            terminateContract(contract);
             stillExists = false;
         }
 
@@ -29,20 +21,20 @@ public class ContractController implements Serializable {
     }
 
     //handles appearance-based contracts
-    public boolean appearance(LocalDate date) {
+    public boolean appearance(LocalDate date, Contract contract) {
         boolean stillExists = true;
         //make the promotion 'pay' the worker for the appearance
         contract.getPromotion().bankAccount().removeFunds(contract.getAppearanceCost(), 'w', date);
 
         if (contract.getDuration() <= 0) {
-            terminateContract();
+            terminateContract(contract);
             stillExists = false;
         }
 
         return stillExists;
     }
 
-    public void payDay(LocalDate date) {
+    public void payDay(LocalDate date, Contract contract) {
 
         if (contract.getBiWeeklyCost() != 0) {
 
@@ -62,12 +54,12 @@ public class ContractController implements Serializable {
 
     //for when a bigger promotion signs a written contract
     //that overrides this open contract
-    public void buyOutContract() {
+    public void buyOutContract(Contract contract) {
 
         contract.setDuration(0);
     }
 
-    private void terminateContract() {
+    private void terminateContract(Contract contract) {
 
         contract.getWorker().getController().removeContract(contract);
 
@@ -75,7 +67,7 @@ public class ContractController implements Serializable {
 
     }
 
-    public String getTerms() {
+    public String getTerms(Contract contract) {
         String string = contract.getPromotion().getName() + " Length: " + contract.getDuration()
                 + " days. ";
 

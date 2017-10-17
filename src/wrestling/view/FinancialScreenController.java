@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
-public class FinancialScreenController extends Controller implements Initializable {
+public class FinancialScreenController extends ControllerBase implements Initializable {
 
     private List<List<Label>> sheetLabels;
 

@@ -21,6 +21,7 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  *
@@ -52,6 +53,8 @@ public final class GameController implements Serializable {
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
 
+    private final ContractController contractController;
+
     private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
@@ -62,6 +65,7 @@ public final class GameController implements Serializable {
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(this);
         workerFactory = new WorkerFactory(this);
+        contractController = new ContractController(this);
 
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
@@ -263,7 +267,7 @@ public final class GameController implements Serializable {
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
 
-        if (worker.getPopularity() > promotion.maxPopularity()) {
+        if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion)) {
             canNegotiate = false;
         }
 
@@ -290,6 +294,13 @@ public final class GameController implements Serializable {
      */
     public PromotionFactory getPromotionFactory() {
         return promotionFactory;
+    }
+
+    /**
+     * @return the contractController
+     */
+    public ContractController getContractController() {
+        return contractController;
     }
 
 }

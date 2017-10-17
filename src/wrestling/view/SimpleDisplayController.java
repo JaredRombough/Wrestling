@@ -21,7 +21,7 @@ import wrestling.model.dirt.TitleRecord;
 /*
 basic anchor pane for displaying a string on a label, used by browser
  */
-public class SimpleDisplayController extends Controller implements Initializable {
+public class SimpleDisplayController extends ControllerBase implements Initializable {
 
     private Object obj;
 

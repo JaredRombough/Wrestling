@@ -19,7 +19,7 @@ import javafx.scene.control.Label;
 import wrestling.MainApp;
 import wrestling.model.controller.GameController;
 
-public class RootLayoutController extends Controller implements Initializable {
+public class RootLayoutController extends ControllerBase implements Initializable {
 
     @FXML
     private Button eventButton;

@@ -45,7 +45,7 @@ import wrestling.MainApp;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-public class EventScreenController extends Controller implements Initializable {
+public class EventScreenController extends ControllerBase implements Initializable {
 
     private int totalSegments;
 

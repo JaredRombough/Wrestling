@@ -59,10 +59,8 @@ public class ContractFactory {
 
             //'buy out' any the other contracts the worker has
             for (Contract c : worker.getController().getContracts()) {
-
                 if (!c.getPromotion().equals(promotion)) {
-
-                    c.getController().buyOutContract();
+                    gameController.getContractController().buyOutContract(c);
                 }
             }
         } else {
@@ -104,8 +102,7 @@ public class ContractFactory {
             for (Contract c : worker.getController().getContracts()) {
 
                 if (!c.getPromotion().equals(promotion)) {
-
-                    c.getController().buyOutContract();
+                    gameController.getContractController().buyOutContract(c);
                 }
             }
         } else {
@@ -135,7 +132,6 @@ public class ContractFactory {
         Contract contract = new Contract();
         contract.setWorker(worker);
         contract.setPromotion(promotion);
-        contract.setController(new ContractController(contract, gameController));
         return contract;
     }
 

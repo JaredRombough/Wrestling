@@ -119,7 +119,7 @@ public class EventFactory {
         int draws = 0;
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            if (worker.getPopularity() > event.getPromotion().maxPopularity() - 10) {
+            if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(event.getPromotion()) - 10) {
                 draws++;
             }
         }
@@ -139,7 +139,7 @@ public class EventFactory {
         for (Worker worker : allWorkers(event.getSegments())) {
 
             Contract c = worker.getController().getContract(event.getPromotion());
-            if (!c.getController().appearance(event.getDate())) {
+            if (!gameController.getContractController().appearance(event.getDate(), c)) {
                 gameController.getContractFactory().reportExpiration(c);
             }
 
@@ -252,7 +252,7 @@ public class EventFactory {
 
             }
         }
-        
+
         return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
     }
 

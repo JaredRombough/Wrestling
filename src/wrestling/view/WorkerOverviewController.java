@@ -24,7 +24,7 @@ import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtilityFunctions;
 
-public class WorkerOverviewController extends Controller implements Initializable {
+public class WorkerOverviewController extends ControllerBase implements Initializable {
 
     private AnchorPane contractPane;
     private ContractPaneController contractPaneController;

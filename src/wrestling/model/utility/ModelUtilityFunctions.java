@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
 public final class ModelUtilityFunctions {
@@ -30,6 +31,11 @@ public final class ModelUtilityFunctions {
         Calendar ca1 = Calendar.getInstance();
         ca1.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth());
         return ca1.get(Calendar.WEEK_OF_MONTH);
+    }
+    
+    //the maximum popularity worker the promotion can hire
+    public static int maxPopularity(Promotion promotion) {
+        return promotion.getLevel() * 20;
     }
 
 }

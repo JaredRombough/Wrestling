@@ -20,7 +20,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.model.Worker;
 
-public class ContractPaneController extends Controller implements Initializable {
+public class ContractPaneController extends ControllerBase implements Initializable {
 
     @FXML
     private ComboBox typeComboBox;

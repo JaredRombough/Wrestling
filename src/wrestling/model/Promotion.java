@@ -66,7 +66,6 @@ public class Promotion implements Serializable {
             popularity = 1;
         }
         this.popularity = popularity;
-
     }
 
     public int getLevel() {
@@ -105,12 +104,7 @@ public class Promotion implements Serializable {
     public List<Contract> getContracts() {
         return contracts;
     }
-
-    //the maximum popularity worker the promotion can hire
-    public int maxPopularity() {
-        return level * 20;
-    }
-
+    
     /**
      * @return the titles
      */

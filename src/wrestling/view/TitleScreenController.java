@@ -16,7 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import wrestling.MainApp;
 
-public class TitleScreenController extends Controller implements Initializable {
+public class TitleScreenController extends ControllerBase implements Initializable {
 
     @FXML
     private Button newRandomGameButton;

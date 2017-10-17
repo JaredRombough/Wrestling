@@ -31,7 +31,7 @@ import wrestling.model.MatchRules;
 import wrestling.model.Segment;
 import wrestling.model.Worker;
 
-public class SegmentPaneController extends Controller implements Initializable {
+public class SegmentPaneController extends ControllerBase implements Initializable {
     private static final int DEFAULTTEAMS = 2;
 
     @FXML
