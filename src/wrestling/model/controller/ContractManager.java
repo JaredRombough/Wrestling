@@ -53,6 +53,19 @@ public class ContractManager implements Serializable {
         return workerContracts;
     }
 
+    public Contract getContract(Worker worker, Promotion promotion) {
+        Contract workerContract = null;
+        for (Contract contract : contracts) {
+            if (contract.isActive() && contract.getWorker().equals(worker)
+                    && contract.getPromotion().equals(promotion)) {
+                workerContract = contract;
+                break;
+            }
+        }
+
+        return workerContract;
+    }
+
     public List<Worker> getActiveRoster(Promotion promotion) {
 
         List<Worker> roster = new ArrayList<>();
@@ -71,6 +84,19 @@ public class ContractManager implements Serializable {
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getPromotion().equals(promotion)) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getPushed(Promotion promotion) {
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (contract.isActive() && contract.getPromotion().equals(promotion)
+                    && contract.isPushed()) {
                 roster.add(contract.getWorker());
             }
 
@@ -133,9 +159,6 @@ public class ContractManager implements Serializable {
 
     private void terminateContract(Contract contract) {
         contract.setActive(false);
-        //contract.getWorker().getController().removeContract(contract);
-
-        //contract.getPromotion().removeContract(contract);
     }
 
     public String getTerms(Contract contract) {
@@ -150,5 +173,4 @@ public class ContractManager implements Serializable {
 
         return string;
     }
-
 }

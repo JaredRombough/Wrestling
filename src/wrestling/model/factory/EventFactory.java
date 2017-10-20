@@ -253,7 +253,7 @@ public class EventFactory {
             }
         }
 
-        return sb.toString().isEmpty() ? toString().replace("\n", " ") : sb.toString();
+        return sb.toString().isEmpty() ? match.toString().replace("\n", " ") : sb.toString();
     }
 
     //this will return a list of all workers currently booked

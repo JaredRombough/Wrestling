@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.controller.ContractManager;
 
 /**
  *
@@ -17,7 +16,7 @@ public class Contract implements Serializable {
 
     private Promotion promotion;
     private Worker worker;
-    
+
     private boolean active;
 
     //total number of days/appearances left
@@ -26,6 +25,8 @@ public class Contract implements Serializable {
     private LocalDate startDate;
 
     private boolean exclusive;
+
+    private boolean pushed;
 
     private int appearanceCost;
 
@@ -159,5 +160,19 @@ public class Contract implements Serializable {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * @return the pushed
+     */
+    public boolean isPushed() {
+        return pushed;
+    }
+
+    /**
+     * @param pushed the pushed to set
+     */
+    public void setPushed(boolean pushed) {
+        this.pushed = pushed;
     }
 }

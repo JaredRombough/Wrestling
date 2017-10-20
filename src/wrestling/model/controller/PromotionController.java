@@ -22,16 +22,13 @@ public class PromotionController implements Serializable {
     private final GameController gameController;
     private final ContractManager contractManager;
 
-    private final List<Worker> pushList;
     //list of dates on which the promotion has events scheduled
     private List<LocalDate> eventDates = new ArrayList<>();
 
     public PromotionController(Promotion promotion, GameController gameController) {
-
         eventDates.add(LocalDate.from(gameController.date()).plusDays(ModelUtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
-        this.pushList = new ArrayList<>();
         this.contractManager = gameController.getContractManager();
     }
 
@@ -43,39 +40,30 @@ public class PromotionController implements Serializable {
         return 2 + (getPromotion().getLevel() * 2);
     }
 
-    public void updatePushList() {
+    private void updatePushed() {
 
-        List<Worker> departedWorkers = new ArrayList<>();
+        List<Worker> pushList = contractManager.getPushed(promotion);
+        int diff = maxPushListSize() - pushList.size();
 
-        for (Worker worker : pushList) {
-            if (!contractManager.getFullRoster(getPromotion()).contains(worker)) {
-                departedWorkers.add(worker);
-            }
-        }
-
-        pushList.removeAll(departedWorkers);
-
-        //list is too small
-        if (contractManager.getFullRoster(getPromotion()).size() > maxPushListSize()
-                && pushList.size() < maxPushListSize()) {
-
+        if (diff > 0) {
+            int i = 0;
             for (Worker worker : contractManager.getFullRoster(getPromotion())) {
-                if (!pushList.contains(worker) && pushList.size() < maxPushListSize()
-                        && !worker.isManager() && worker.isFullTime()) {
-                    pushList.add(worker);
-                } else if (pushList.size() >= maxPushListSize()) {
+                if (!pushList.contains(worker) && !worker.isManager() && worker.isFullTime()) {
+                    contractManager.getContract(worker, promotion).setPushed(true);
+                }
+                if (i >= diff) {
+                    break;
+                }
+                i++;
+            }
+        } else if (diff < 0) {
+            for (int i = 0; i < pushList.size(); i++) {
+                contractManager.getContract(pushList.get(i), promotion).setPushed(false);
+                if (i >= Math.abs(diff)) {
                     break;
                 }
             }
-
-            //list is too big
-        } else if (contractManager.getFullRoster(getPromotion()).size() > maxPushListSize()
-                && pushList.size() > maxPushListSize()) {
-            while (pushList.size() > maxPushListSize()) {
-                pushList.remove(0);
-            }
         }
-
     }
 
     public void gainPopularity() {
@@ -101,8 +89,8 @@ public class PromotionController implements Serializable {
 
         dailyUpdateContracts();
 
-        if (pushList.size() != maxPushListSize()) {
-            updatePushList();
+        if (contractManager.getPushed(promotion).size() != maxPushListSize()) {
+            updatePushed();
         }
 
         if (gameController.isPayDay()) {
@@ -320,6 +308,8 @@ public class PromotionController implements Serializable {
     private List<Segment> bookSegments() {
         //maximum segments for the event
         int maxSegments = 8;
+
+        List<Worker> pushList = contractManager.getPushed(promotion);
 
         //bigger promotions get more segments
         if (getPromotion().getLevel() > 3) {
