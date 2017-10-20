@@ -144,7 +144,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     @Override
     public void updateLabels() {
 
-        if (gameController.getFullRoster(currentPromotion).contains(currentWorker)
+        if (gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)
                 || gameController.freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
@@ -221,7 +221,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 gridPane.getChildren().remove(contractPane);
             }
 
-        } else if (!gameController.getFullRoster(currentPromotion).contains(currentWorker)) {
+        } else if (!gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
             //try to eliminate this possibility if we haven't already
             currentWorker = null;

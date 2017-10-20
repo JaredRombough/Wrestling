@@ -9,7 +9,7 @@ import wrestling.model.Contract;
 import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.controller.ContractController;
+import wrestling.model.controller.ContractManager;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -19,10 +19,12 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class ContractFactory {
 
-    private GameController gameController;
+    private final GameController gameController;
+    private final ContractManager contractManager;
 
     public ContractFactory(GameController gameController) {
         this.gameController = gameController;
+        this.contractManager = gameController.getContractManager();
     }
 
     //create a contract with predetermined attributes
@@ -39,10 +41,6 @@ public class ContractFactory {
         }
 
         contract.setStartDate(startDate);
-
-        //assign the contract
-        promotion.addContract(contract);
-        worker.getController().addContract(contract);
     }
 
     //create a contract with set exclusivity (only used by import)
@@ -58,9 +56,9 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
-            for (Contract c : worker.getController().getContracts()) {
+            for (Contract c : contractManager.getContracts(worker)) {
                 if (!c.getPromotion().equals(promotion)) {
-                    gameController.getContractController().buyOutContract(c);
+                    contractManager.buyOutContract(c);
                 }
             }
         } else {
@@ -78,12 +76,7 @@ public class ContractFactory {
         contract.setDuration(duration);
         contract.setStartDate(startDate);
 
-        //assign the contract
-        promotion.addContract(contract);
-        worker.getController().addContract(contract);
-
         reportSigning(contract);
-
     }
 
     //create a default contract
@@ -99,10 +92,10 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             //'buy out' any the other contracts the worker has
-            for (Contract c : worker.getController().getContracts()) {
+            for (Contract c : contractManager.getContracts(worker)) {
 
                 if (!c.getPromotion().equals(promotion)) {
-                    gameController.getContractController().buyOutContract(c);
+                    contractManager.buyOutContract(c);
                 }
             }
         } else {
@@ -120,18 +113,14 @@ public class ContractFactory {
         contract.setDuration(duration);
         contract.setStartDate(startDate);
 
-        //assign the contract
-        promotion.addContract(contract);
-        worker.getController().addContract(contract);
-
         reportSigning(contract);
-
     }
 
     private Contract createContract(Worker worker, Promotion promotion) {
         Contract contract = new Contract();
         contract.setWorker(worker);
         contract.setPromotion(promotion);
+        contractManager.addContract(contract);
         return contract;
     }
 
@@ -166,8 +155,6 @@ public class ContractFactory {
      */
     private void setAppearanceCost(Contract contract) {
 
-        int unitCost = 0;
-
         List<Integer> pricePoints = new ArrayList<>();
 
         pricePoints.addAll(Arrays.asList(0, 10, 20, 50, 75, 100, 250, 500, 1000, 10000, 100000));
@@ -177,7 +164,7 @@ public class ContractFactory {
 
         int ppIndex = (int) nearest10 / 10;
 
-        unitCost = pricePoints.get(ppIndex);
+        int unitCost = pricePoints.get(ppIndex);
 
         if (nearest10 != 100) {
             double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;

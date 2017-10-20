@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.controller.ContractController;
+import wrestling.model.controller.ContractManager;
 
 /**
  *
@@ -17,6 +17,8 @@ public class Contract implements Serializable {
 
     private Promotion promotion;
     private Worker worker;
+    
+    private boolean active;
 
     //total number of days/appearances left
     private int duration;
@@ -32,6 +34,7 @@ public class Contract implements Serializable {
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
+        active = true;
     }
 
     public void bookDate(LocalDate date) {
@@ -142,5 +145,19 @@ public class Contract implements Serializable {
      */
     public void setBiWeeklyCost(int biWeeklyCost) {
         this.biWeeklyCost = biWeeklyCost;
+    }
+
+    /**
+     * @return the active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * @param active the active to set
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -60,9 +60,9 @@ public class PromotionFactory {
 
                     gameController.getContractFactory().createContract(worker, promotion, gameController.date());
 
-                } while (gameController.getFullRoster(promotion).size() < rosterSize);
+                } while (gameController.getContractManager().getFullRoster(promotion).size() < rosterSize);
 
-                allWorkers.addAll(gameController.getFullRoster(promotion));
+                allWorkers.addAll(gameController.getContractManager().getFullRoster(promotion));
             }
 
             //add all the workers and promotions we have generated for this

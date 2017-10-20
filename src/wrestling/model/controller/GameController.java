@@ -53,19 +53,20 @@ public final class GameController implements Serializable {
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
 
-    private final ContractController contractController;
+    private final ContractManager contractManager;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
 
+        contractManager = new ContractManager();
         dirtSheet = new DirtSheet(this);
         contractFactory = new ContractFactory(this);
         eventFactory = new EventFactory(this);
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(this);
         workerFactory = new WorkerFactory(this);
-        contractController = new ContractController(this);
+        
 
         //set the initial date here
         gameDate = LocalDate.of(2015, 1, 1);
@@ -110,38 +111,17 @@ public final class GameController implements Serializable {
 
     }
 
-    public List<Worker> getActiveRoster(Promotion promotion) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : promotion.getContracts()) {
-            if (contract.getWorker().isFullTime() && !contract.getWorker().isManager()) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
-    }
-
-    public List<Worker> getFullRoster(Promotion promotion) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : promotion.getContracts()) {
-            roster.add(contract.getWorker());
-        }
-
-        return roster;
-    }
+    
 
     public int averageWorkerPopularity(Promotion promotion) {
         int totalPop = 0;
         int averagePop = 0;
 
-        if (!getFullRoster(promotion).isEmpty()) {
-            for (Worker worker : getFullRoster(promotion)) {
+        if (!contractManager.getFullRoster(promotion).isEmpty()) {
+            for (Worker worker : contractManager.getFullRoster(promotion)) {
                 totalPop += worker.getPopularity();
             }
-            averagePop = totalPop / getFullRoster(promotion).size();
+            averagePop = totalPop / contractManager.getFullRoster(promotion).size();
         }
 
         return averagePop;
@@ -171,7 +151,7 @@ public final class GameController implements Serializable {
 
     public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
-        tagTeams.stream().filter((tt) -> (getFullRoster(promotion).containsAll(tt.getWorkers()))).forEach((tt) -> {
+        tagTeams.stream().filter((tt) -> (contractManager.getFullRoster(promotion).containsAll(tt.getWorkers()))).forEach((tt) -> {
             teams.add(tt);
         });
         return teams;
@@ -271,8 +251,8 @@ public final class GameController implements Serializable {
             canNegotiate = false;
         }
 
-        if (worker.getController().hasContract()) {
-            for (Contract contract : worker.getController().getContracts()) {
+        if (contractManager.hasContract(worker)) {
+            for (Contract contract : contractManager.getContracts(worker)) {
                 if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
                     canNegotiate = false;
                 }
@@ -299,8 +279,8 @@ public final class GameController implements Serializable {
     /**
      * @return the contractController
      */
-    public ContractController getContractController() {
-        return contractController;
+    public ContractManager getContractManager() {
+        return contractManager;
     }
 
 }

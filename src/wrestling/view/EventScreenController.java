@@ -340,7 +340,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         //get the workers and add them to the listview on the left
         ObservableList<Worker> workersList = FXCollections.observableArrayList();
 
-        List<Worker> roster = gameController.getFullRoster(gameController.playerPromotion());
+        List<Worker> roster = gameController.getContractManager().getFullRoster(gameController.playerPromotion());
 
         for (Worker worker : roster) {
 

@@ -85,7 +85,7 @@ public class EventFactory {
         bld.append("\n");
         bld.append("Gross profit: $").append(gate(event));
         bld.append("\n");
-        bld.append("Roster size: ").append(gameController.getFullRoster(event.getPromotion()).size());
+        bld.append("Roster size: ").append(gameController.getContractManager().getFullRoster(event.getPromotion()).size());
         bld.append("\n");
         bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
 
@@ -139,7 +139,7 @@ public class EventFactory {
         for (Worker worker : allWorkers(event.getSegments())) {
 
             Contract c = worker.getController().getContract(event.getPromotion());
-            if (!gameController.getContractController().appearance(event.getDate(), c)) {
+            if (!gameController.getContractManager().appearance(event.getDate(), c)) {
                 gameController.getContractFactory().reportExpiration(c);
             }
 

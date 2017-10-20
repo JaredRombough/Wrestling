@@ -18,12 +18,10 @@ public class Promotion implements Serializable {
     private int popularity;
     private int level;
     private final List<Title> titles = new ArrayList<>();
-    private final List<Contract> contracts;
     private PromotionController controller;
 
     public Promotion() {
-        this.contracts = new ArrayList<>();
-
+        
         bankAccount = new BankAccount();
 
         name = "Promotion #" + serialNumber;
@@ -89,20 +87,6 @@ public class Promotion implements Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public void addContract(Contract contract) {
-        this.contracts.add(contract);
-
-    }
-
-    public void removeContract(Contract contract) {
-        this.contracts.remove(contract);
-
-    }
-
-    public List<Contract> getContracts() {
-        return contracts;
     }
     
     /**

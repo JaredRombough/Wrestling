@@ -34,7 +34,6 @@ public class Worker implements Serializable {
     private int behaviour;
     private int popularity;
 
-    //should these be specified in the contract, instead of in the worker object?
     private boolean manager;
     private boolean fullTime;
     private boolean mainRoster;

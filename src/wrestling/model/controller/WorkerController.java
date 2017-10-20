@@ -17,7 +17,8 @@ public class WorkerController implements Serializable {
 
     private final Worker worker;
     private final GameController gameController;
-    private final List<Contract> contracts = new ArrayList<>();
+    private final ContractManager contractManager;
+    //private final List<Contract> contracts = new ArrayList<>();
     private final List<EventFactory> bookings = new ArrayList<>();
 
     //list of dates on which the worker has events scheduled
@@ -26,22 +27,23 @@ public class WorkerController implements Serializable {
     public WorkerController(Worker worker, GameController gameController) {
         this.worker = worker;
         this.gameController = gameController;
+        this.contractManager = gameController.getContractManager();
     }
-
+    /*
     public List<Contract> getContracts() {
         return contracts;
     }
 
     public boolean hasContract() {
         return !this.contracts.isEmpty();
-    }
+    }*/
 
     private transient Logger log = LogManager.getLogger(this.getClass());
 
     public Contract getContract(Promotion promotion) {
 
         Contract thisContract = null;
-        for (Contract current : contracts) {
+        for (Contract current : contractManager.getContracts(getWorker())) {
             if (current.getPromotion().equals(promotion)) {
                 thisContract = current;
             }
@@ -58,7 +60,7 @@ public class WorkerController implements Serializable {
     public boolean isBooked(LocalDate date) {
         boolean isBooked = false;
 
-        for (Contract contract : contracts) {
+        for (Contract contract : contractManager.getContracts(getWorker())) {
             if (contract.getBookedDates().contains(date)) {
                 isBooked = true;
             }
@@ -85,7 +87,7 @@ public class WorkerController implements Serializable {
 
         int maxPopularity = 0;
 
-        for (Contract contract : contracts) {
+        for (Contract contract : contractManager.getContracts(getWorker())) {
             if (ModelUtilityFunctions.maxPopularity(contract.getPromotion()) > maxPopularity) {
                 maxPopularity = ModelUtilityFunctions.maxPopularity(contract.getPromotion());
             }
@@ -135,20 +137,21 @@ public class WorkerController implements Serializable {
         return bookings;
     }
 
+    /*
     public void addContract(Contract contract) {
         this.contracts.add(contract);
     }
 
     public void removeContract(Contract contract) {
         this.contracts.remove(contract);
-    }
+    }*/
 
     public String contractString() {
 
         StringBuilder bld = new StringBuilder();
-        for (Contract current : contracts) {
+        for (Contract current : contractManager.getContracts(getWorker())) {
 
-            bld.append(gameController.getContractController().getTerms(current));
+            bld.append(gameController.getContractManager().getTerms(current));
             bld.append("\n");
         }
         return bld.toString();

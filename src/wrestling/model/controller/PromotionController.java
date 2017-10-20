@@ -20,6 +20,7 @@ public class PromotionController implements Serializable {
     private final Promotion promotion;
 
     private final GameController gameController;
+    private final ContractManager contractManager;
 
     private final List<Worker> pushList;
     //list of dates on which the promotion has events scheduled
@@ -31,6 +32,7 @@ public class PromotionController implements Serializable {
         this.promotion = promotion;
         this.gameController = gameController;
         this.pushList = new ArrayList<>();
+        this.contractManager = gameController.getContractManager();
     }
 
     private int idealRosterSize() {
@@ -46,7 +48,7 @@ public class PromotionController implements Serializable {
         List<Worker> departedWorkers = new ArrayList<>();
 
         for (Worker worker : pushList) {
-            if (!gameController.getFullRoster(getPromotion()).contains(worker)) {
+            if (!contractManager.getFullRoster(getPromotion()).contains(worker)) {
                 departedWorkers.add(worker);
             }
         }
@@ -54,10 +56,10 @@ public class PromotionController implements Serializable {
         pushList.removeAll(departedWorkers);
 
         //list is too small
-        if (gameController.getFullRoster(getPromotion()).size() > maxPushListSize()
+        if (contractManager.getFullRoster(getPromotion()).size() > maxPushListSize()
                 && pushList.size() < maxPushListSize()) {
 
-            for (Worker worker : gameController.getFullRoster(getPromotion())) {
+            for (Worker worker : contractManager.getFullRoster(getPromotion())) {
                 if (!pushList.contains(worker) && pushList.size() < maxPushListSize()
                         && !worker.isManager() && worker.isFullTime()) {
                     pushList.add(worker);
@@ -67,7 +69,7 @@ public class PromotionController implements Serializable {
             }
 
             //list is too big
-        } else if (gameController.getFullRoster(getPromotion()).size() > maxPushListSize()
+        } else if (contractManager.getFullRoster(getPromotion()).size() > maxPushListSize()
                 && pushList.size() > maxPushListSize()) {
             while (pushList.size() > maxPushListSize()) {
                 pushList.remove(0);
@@ -108,7 +110,7 @@ public class PromotionController implements Serializable {
             payDay(gameController.date());
         }
 
-        while (gameController.getActiveRoster(getPromotion()).size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
+        while (contractManager.getActiveRoster(getPromotion()).size() < idealRosterSize() && !gameController.freeAgents(promotion).isEmpty()) {
             signContract();
         }
 
@@ -117,7 +119,7 @@ public class PromotionController implements Serializable {
         }
 
         //book a show if we have one scheduled today
-        if (eventDates.contains(gameController.date()) && gameController.getFullRoster(getPromotion()).size() >= 2) {
+        if (eventDates.contains(gameController.date()) && contractManager.getFullRoster(getPromotion()).size() >= 2) {
             bookEvent();
 
             //schedule future events as necessary
@@ -156,9 +158,9 @@ public class PromotionController implements Serializable {
 
     public void dailyUpdateContracts() {
         //update all the contracts associated with the current promotion
-        List<Contract> tempContractList = new ArrayList<>(promotion.getContracts());
+        List<Contract> tempContractList = new ArrayList<>(contractManager.getContracts(promotion));
         for (Contract contract : tempContractList) {
-            if (!gameController.getContractController().nextDay(contract)) {
+            if (!gameController.getContractManager().nextDay(contract)) {
                 gameController.getContractFactory().reportExpiration(contract);
                 stripTitles(contract);
             }
@@ -168,8 +170,8 @@ public class PromotionController implements Serializable {
     //pay everyone
     private void payDay(LocalDate date) {
 
-        for (Contract c : getPromotion().getContracts()) {
-            gameController.getContractController().payDay(date, c);
+        for (Contract c : contractManager.getContracts(promotion)) {
+            gameController.getContractManager().payDay(date, c);
         }
     }
 
@@ -268,13 +270,13 @@ public class PromotionController implements Serializable {
 
                 //count the workers that are availeable on the date
                 double available = 0;
-                for (Worker worker : gameController.getActiveRoster(getPromotion())) {
+                for (Worker worker : contractManager.getActiveRoster(getPromotion())) {
                     if (!worker.getController().isBooked(eventDate, promotion)) {
                         available++;
                     }
                 }
 
-                double percentAvailable = available / (double) gameController.getActiveRoster(getPromotion()).size();
+                double percentAvailable = available / (double) contractManager.getActiveRoster(getPromotion()).size();
 
                 //if a large enough portion of the roster is available, book it
                 if (percentAvailable > threshold) {
@@ -295,7 +297,7 @@ public class PromotionController implements Serializable {
 
             eventDate = bestDate;
 
-            int workersNeeded = (int) Math.round((threshold - bestThreshold) * gameController.getActiveRoster(getPromotion()).size());
+            int workersNeeded = (int) Math.round((threshold - bestThreshold) * contractManager.getActiveRoster(getPromotion()).size());
 
             for (int i = 0; i < workersNeeded; i++) {
                 signContract(gameController.date());
@@ -304,7 +306,7 @@ public class PromotionController implements Serializable {
         }
 
         //book the roster for the date
-        for (Worker worker : gameController.getFullRoster(getPromotion())) {
+        for (Worker worker : contractManager.getFullRoster(getPromotion())) {
             if (!worker.getController().isBooked(eventDate)) {
                 worker.getController().getContract(getPromotion()).bookDate(eventDate);
 
@@ -465,7 +467,7 @@ public class PromotionController implements Serializable {
     private List<Worker> getEventRoster() {
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = gameController.getFullRoster(getPromotion());
+        List<Worker> eventRoster = contractManager.getFullRoster(getPromotion());
         List<Worker> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked

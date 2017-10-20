@@ -175,7 +175,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         if (event.getSource() == rosterButton) {
 
-            browse(browseWorkers, gameController.getFullRoster(currentPromotion));
+            browse(browseWorkers, gameController.getContractManager().getFullRoster(currentPromotion));
             updateSelectedButton(rosterButton);
             lastButton = rosterButton;
 
@@ -330,7 +330,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             initializePromotionCombobox();
 
             browseWorkers = new BrowserMode<>(
-                    gameController.getFullRoster(gameController.playerPromotion()),
+                    gameController.getContractManager().getFullRoster(gameController.playerPromotion()),
                     "view/WorkerOverview.fxml");
             browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
                     new WorkerPopularityComparator()
