@@ -73,7 +73,7 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 
         this.primaryStage = primaryStage;
         this.getPrimaryStage().setTitle("Wrestling");
@@ -92,7 +92,7 @@ public class MainApp extends Application {
     }
 
     //starts a new game from imported data
-    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) {
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;
         this.logosFolder = logosFolder;
@@ -131,6 +131,8 @@ public class MainApp extends Application {
             alert.setTitle("Import error");
             alert.setHeaderText("Resources could not be validated.");
             alert.setContentText(error + "\n" + ex.getMessage());
+
+            throw ex;
         }
 
     }
@@ -143,7 +145,7 @@ public class MainApp extends Application {
     }
 
     //shows initial title screen
-    private void showTitleScreen() {
+    private void showTitleScreen() throws IOException {
 
         try {
 
@@ -168,6 +170,7 @@ public class MainApp extends Application {
             controller.setImage(image);
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
 
     }
@@ -197,6 +200,7 @@ public class MainApp extends Application {
             kryo.writeObject(output, gameController);
         } catch (Exception ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
     }
 
@@ -211,6 +215,7 @@ public class MainApp extends Application {
             gc = kryo.readObject(input, GameController.class);
         } catch (Exception ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
 
         return gc;
@@ -228,7 +233,7 @@ public class MainApp extends Application {
     /**
      * Initializes the root layout.
      */
-    public void initRootLayout() {
+    public void initRootLayout() throws IOException {
         try {
 
             // Load root layout from fxml file.
@@ -252,6 +257,7 @@ public class MainApp extends Application {
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
     }
 
@@ -266,7 +272,7 @@ public class MainApp extends Application {
     /*
     loads the worker overview
      */
-    private void loadWorkerOverview() {
+    private void loadWorkerOverview() throws IOException {
         try {
 
             FXMLLoader loader = new FXMLLoader();
@@ -279,6 +285,7 @@ public class MainApp extends Application {
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
     }
 
@@ -342,7 +349,7 @@ public class MainApp extends Application {
     /*
     loads the event screen (for booking events)
      */
-    private void loadEventScreen() {
+    private void loadEventScreen() throws IOException {
         try {
 
             FXMLLoader loader = new FXMLLoader();
@@ -355,6 +362,7 @@ public class MainApp extends Application {
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
     }
 
@@ -362,7 +370,7 @@ public class MainApp extends Application {
     loads and shows a start game screen
     currently these methods are combined because we only do it once
      */
-    public void showStartGameScreen() {
+    public void showStartGameScreen() throws IOException {
         try {
 
             FXMLLoader loader = new FXMLLoader();
@@ -376,6 +384,7 @@ public class MainApp extends Application {
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw ex;
         }
     }
 

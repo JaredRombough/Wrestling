@@ -54,12 +54,14 @@ public final class GameController implements Serializable {
     private final WorkerFactory workerFactory;
 
     private final ContractManager contractManager;
+    private final PromotionEventManager promotionEventManager;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
 
         contractManager = new ContractManager();
+        promotionEventManager = new PromotionEventManager();
         dirtSheet = new DirtSheet(this);
         contractFactory = new ContractFactory(this);
         eventFactory = new EventFactory(this);
@@ -281,6 +283,13 @@ public final class GameController implements Serializable {
      */
     public ContractManager getContractManager() {
         return contractManager;
+    }
+
+    /**
+     * @return the promotionEventManager
+     */
+    public PromotionEventManager getPromotionEventManager() {
+        return promotionEventManager;
     }
 
 }

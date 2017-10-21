@@ -21,15 +21,14 @@ public class PromotionController implements Serializable {
 
     private final GameController gameController;
     private final ContractManager contractManager;
-
-    //list of dates on which the promotion has events scheduled
-    private List<LocalDate> eventDates = new ArrayList<>();
+    private final PromotionEventManager eventManager;
 
     public PromotionController(Promotion promotion, GameController gameController) {
-        eventDates.add(LocalDate.from(gameController.date()).plusDays(ModelUtilityFunctions.randRange(2, 7)));
         this.promotion = promotion;
         this.gameController = gameController;
         this.contractManager = gameController.getContractManager();
+        this.eventManager = gameController.getPromotionEventManager();
+        eventManager.addEventDate((gameController.date()).plusDays(ModelUtilityFunctions.randRange(2, 7)), promotion);
     }
 
     private int idealRosterSize() {
@@ -107,16 +106,15 @@ public class PromotionController implements Serializable {
         }
 
         //book a show if we have one scheduled today
-        if (eventDates.contains(gameController.date()) && contractManager.getFullRoster(getPromotion()).size() >= 2) {
+        if (eventManager.hasEventOnDate(promotion, gameController.date())
+                && contractManager.getFullRoster(getPromotion()).size() >= 2) {
             bookEvent();
 
             //schedule future events as necessary
-            while (futureEvents() <= eventAmountTarget()) {
-
+            int futureDates = eventManager.eventsAfterDate(promotion, gameController.date());
+            for (int i = futureDates; i < eventAmountTarget(); i++) {
                 bookNextEvent();
-
             }
-
         }
 
     }
@@ -225,19 +223,6 @@ public class PromotionController implements Serializable {
         return target;
     }
 
-    private int futureEvents() {
-
-        int futureEvents = 0;
-
-        for (LocalDate ed : eventDates) {
-            if (ed.isAfter(gameController.date())) {
-                futureEvents++;
-            }
-        }
-
-        return futureEvents;
-    }
-
     private void bookNextEvent() {
 
         LocalDate eventDate = LocalDate.ofYearDay(gameController.date().getYear(), gameController.date().getDayOfYear());
@@ -254,7 +239,7 @@ public class PromotionController implements Serializable {
             eventDate = LocalDate.from(eventDate).plusDays(1);
 
             //if we don't already have an event scheduled on this date
-            if (!eventDates.contains(eventDate)) {
+            if (!eventManager.hasEventOnDate(promotion, eventDate)) {
 
                 //count the workers that are availeable on the date
                 double available = 0;
@@ -301,8 +286,7 @@ public class PromotionController implements Serializable {
             }
         }
 
-        eventDates.add(eventDate);
-
+        eventManager.addEventDate(eventDate, promotion);
     }
 
     private List<Segment> bookSegments() {
