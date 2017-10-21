@@ -3,7 +3,6 @@ package wrestling.model.controller;
 import wrestling.model.dirt.DirtSheet;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,25 +58,24 @@ public final class GameController implements Serializable {
     public GameController() throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 1));
+        
         dirtSheet = new DirtSheet(dateManager);
+        
         titleManager = new TitleManager(dirtSheet);
-
-        contractManager = new ContractManager();
+        contractManager = new ContractManager(dirtSheet);
+        
         promotionEventManager = new PromotionEventManager();
 
-        promotionController = new PromotionController(this);
-        contractFactory = new ContractFactory(this);
         eventFactory = new EventFactory(this);
+        contractFactory = new ContractFactory(this);
         promotionFactory = new PromotionFactory(this);
-        titleFactory = new TitleFactory(this);
+        titleFactory = new TitleFactory(titleManager);
         workerFactory = new WorkerFactory(this);
+        
+        promotionController = new PromotionController(this);
 
         promotionFactory.preparePromotions(this);
 
-    }
-
-    public boolean isPayDay() {
-        return getDateManager().today().getDayOfWeek().equals(DayOfWeek.FRIDAY);
     }
 
     //only called by MainApp
@@ -89,6 +87,8 @@ public final class GameController implements Serializable {
                 getPromotionController().dailyUpdate(promotion);
             }
         }
+        
+        dateManager.nextDay();
     }
 
     public int averageWorkerPopularity(Promotion promotion) {

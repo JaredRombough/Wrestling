@@ -1,7 +1,6 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.controller.WorkerController;
 
@@ -38,7 +37,6 @@ public class Worker implements Serializable {
     private boolean fullTime;
     private boolean mainRoster;
 
-    private final List<Title> titles = new ArrayList<>();
     private int minimumPopularity;
 
     private WorkerController controller;
@@ -49,14 +47,6 @@ public class Worker implements Serializable {
         name = "Worker #" + serialNumber;
         serialNumber++;
 
-    }
-
-    public void addTitle(Title title) {
-        this.getTitles().add(title);
-    }
-
-    public void removeTitle(Title title) {
-        this.getTitles().remove(title);
     }
 
     @Override
@@ -220,13 +210,6 @@ public class Worker implements Serializable {
      */
     public void setMainRoster(boolean mainRoster) {
         this.mainRoster = mainRoster;
-    }
-
-    /**
-     * @return the titles
-     */
-    public List<Title> getTitles() {
-        return titles;
     }
 
     /**

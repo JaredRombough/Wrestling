@@ -1,8 +1,6 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.financial.BankAccount;
 
@@ -17,7 +15,7 @@ public class Promotion implements Serializable {
     private int indexNumber;
     private int popularity;
     private int level;
-    private final List<Title> titles = new ArrayList<>();
+    
     private PromotionController controller;
 
     public Promotion() {
@@ -80,20 +78,9 @@ public class Promotion implements Serializable {
         this.level = level;
     }
 
-    public void addTitle(Title title) {
-        this.getTitles().add(title);
-    }
-
     @Override
     public String toString() {
         return name;
-    }
-    
-    /**
-     * @return the titles
-     */
-    public List<Title> getTitles() {
-        return titles;
     }
 
     /**

@@ -16,6 +16,11 @@ import wrestling.model.Television;
 import wrestling.model.Title;
 import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
+import wrestling.model.controller.ContractManager;
+import wrestling.model.controller.DateManager;
+import wrestling.model.controller.PromotionController;
+import wrestling.model.controller.TitleManager;
+import wrestling.model.dirt.DirtSheet;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -25,7 +30,19 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class EventFactory {
 
-    private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+    private final ContractManager contractManager;
+    private final DirtSheet dirtSheet;
+    private final TitleManager titleManager;
+    private final DateManager dateManager;
+
+    public EventFactory(GameController gameController) {
+        this.contractManager = gameController.getContractManager();
+        this.dirtSheet = gameController.getDirtSheet();
+        this.titleManager = gameController.getTitleManager();
+        this.dateManager = gameController.getDateManager();
+    }
+
+    private EventArchive createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
 
@@ -38,11 +55,11 @@ public class EventFactory {
                 gate(event),
                 attendance(event));
 
-        gameController.getDirtSheet().newDirt(eventArchive);
+        dirtSheet.newDirt(eventArchive);
 
         processSegments(event, eventArchive);
 
-        gameController.getPromotionController().gainPopularity(promotion);
+        promotionController.gainPopularity(promotion);
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         processContracts(event);
@@ -51,12 +68,12 @@ public class EventFactory {
 
     }
 
-    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
-        createEvent(segments, date, promotion, EventType.LIVEEVENT);
+    public void createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion) {
+        createEvent(promotionController, segments, date, promotion, EventType.LIVEEVENT);
     }
 
-    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
-        createEvent(segments, date, promotion, EventType.TELEVISION).setTelevision(television);
+    public void createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
+        createEvent(promotionController, segments, date, promotion, EventType.TELEVISION).setTelevision(television);
     }
 
     private String generateSummaryString(TempEvent event) {
@@ -85,7 +102,7 @@ public class EventFactory {
         bld.append("\n");
         bld.append("Gross profit: $").append(gate(event));
         bld.append("\n");
-        bld.append("Roster size: ").append(gameController.getContractManager().getFullRoster(event.getPromotion()).size());
+        bld.append("Roster size: ").append(contractManager.getFullRoster(event.getPromotion()).size());
         bld.append("\n");
         bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
 
@@ -138,9 +155,9 @@ public class EventFactory {
 
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            Contract c = worker.getController().getContract(event.getPromotion());
-            if (!gameController.getContractManager().appearance(event.getDate(), c)) {
-                gameController.getContractFactory().reportExpiration(c);
+            Contract contract = worker.getController().getContract(event.getPromotion());
+            if (!contractManager.appearance(event.getDate(), contract)) {
+                contractManager.reportExpiration(contract);
             }
 
         }
@@ -157,7 +174,7 @@ public class EventFactory {
                         w.getController().gainPopularity();
                     }
                 }
-                gameController.getDirtSheet().newDirt(new SegmentRecord(processSegment(segment),
+                dirtSheet.newDirt(new SegmentRecord(processSegment(segment),
                         segment.allWorkers(),
                         event.getPromotion(),
                         ea));
@@ -190,7 +207,7 @@ public class EventFactory {
 
             if (title.isVacant()) {
 
-                gameController.getTitleFactory().awardTitle(title, winner, gameController.getDateManager().today());
+                titleManager.awardTitle(title, winner, dateManager.today());
                 sb.append(ModelUtilityFunctions.slashNames(winner))
                         .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
                         .append(title.getName()).append(" title");
@@ -201,7 +218,7 @@ public class EventFactory {
                                 .append(winner.size() > 1 ? " defeat " : " defeats ")
                                 .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
                                 .append(title.getName()).append(" title");
-                        gameController.getTitleFactory().titleChange(title, winner, gameController.getDateManager().today());
+                        titleManager.titleChange(title, winner, dateManager.today());
 
                         break;
                     }
@@ -273,7 +290,7 @@ public class EventFactory {
         //and convert it to a set, removing duplicates
         Set<Worker> allWorkersSet = new LinkedHashSet<>(allWorkers);
         //convert the set back to a list with no duplicates
-        allWorkers = new ArrayList<Worker>(allWorkersSet);
+        allWorkers = new ArrayList<>(allWorkersSet);
 
         return allWorkers;
     }
@@ -317,12 +334,6 @@ public class EventFactory {
         }
 
         return attendance(event) * ticketPrice;
-    }
-
-    private final GameController gameController;
-
-    public EventFactory(GameController gc) {
-        this.gameController = gc;
     }
 
     //class to temporarily hold event info to make things cleaner

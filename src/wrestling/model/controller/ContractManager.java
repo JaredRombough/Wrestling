@@ -8,14 +8,18 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.dirt.DirtSheet;
+import wrestling.model.dirt.News;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class ContractManager implements Serializable {
 
     private final List<Contract> contracts;
+    private final DirtSheet dirtSheet;
 
-    public ContractManager() {
+    public ContractManager(DirtSheet dirtSheet) {
         contracts = new ArrayList<>();
+        this.dirtSheet = dirtSheet;
     }
 
     public void addContract(Contract contract) {
@@ -154,8 +158,16 @@ public class ContractManager implements Serializable {
     //for when a bigger promotion signs a written contract
     //that overrides this open contract
     public void buyOutContract(Contract contract) {
-
         contract.setDuration(0);
+    }
+
+    public void buyOutContracts(Worker worker, Promotion newExclusivePromotion) {
+        //'buy out' any the other contracts the worker has
+        for (Contract c : getContracts(worker)) {
+            if (!c.getPromotion().equals(newExclusivePromotion)) {
+                buyOutContract(c);
+            }
+        }
     }
 
     private void terminateContract(Contract contract) {
@@ -174,7 +186,7 @@ public class ContractManager implements Serializable {
 
         return string;
     }
-    
+
     public boolean canNegotiate(Worker worker, Promotion promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
@@ -194,6 +206,19 @@ public class ContractManager implements Serializable {
 
         return canNegotiate;
     }
-    
-    
+
+    public void reportSigning(Contract c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(c.getPromotion().getShortName()).append(" signed ").append(c.getWorker().getName())
+                .append(" on ").append(c.getStartDate());
+
+        dirtSheet.newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
+    }
+
+    public void reportExpiration(Contract c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
+        dirtSheet.newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
+    }
+
 }

@@ -131,7 +131,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateSegments();
 
         //create the event with the segments assembled
-        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.playerPromotion());
+        gameController.getEventFactory().createEvent(gameController.getPromotionController(), segments, gameController.getDateManager().today(), gameController.playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again

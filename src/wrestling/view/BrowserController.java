@@ -197,7 +197,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } else if (event.getSource() == titlesButton) {
             updateSelectedButton(titlesButton);
-            browse(browseTitles, currentPromotion.getTitles());
+            browse(browseTitles, gameController.getTitleManager().getTitles(currentPromotion));
 
             lastButton = titlesButton;
         } else if (event.getSource() == teamsButton) {
@@ -350,14 +350,14 @@ public class BrowserController extends ControllerBase implements Initializable {
             );
 
             browseTitles = new BrowserMode<>(
-                    gameController.playerPromotion().getTitles(),
+                    gameController.getTitleManager().getTitles(gameController.playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseTitles.comparators = FXCollections.observableArrayList(
                     new TitleNameComparator()
             );
 
             browseTeams = new BrowserMode<>(
-                    gameController.playerPromotion().getTitles(),
+                    gameController.getTagTeams(gameController.playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseTeams.comparators = FXCollections.observableArrayList(
                     new TagTeamNameComparator()

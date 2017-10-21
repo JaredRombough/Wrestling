@@ -55,12 +55,8 @@ public class ContractFactory {
             contract.setExclusive(true);
             setBiWeeklyCost(contract);
 
-            //'buy out' any the other contracts the worker has
-            for (Contract c : contractManager.getContracts(worker)) {
-                if (!c.getPromotion().equals(promotion)) {
-                    contractManager.buyOutContract(c);
-                }
-            }
+            contractManager.buyOutContracts(worker, promotion);
+            
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
@@ -73,10 +69,7 @@ public class ContractFactory {
             duration += 30;
         }
 
-        contract.setDuration(duration);
-        contract.setStartDate(startDate);
-
-        reportSigning(contract);
+        initializeContract(contract, duration, startDate);
     }
 
     //create a default contract
@@ -91,13 +84,8 @@ public class ContractFactory {
             contract.setExclusive(true);
             setBiWeeklyCost(contract);
 
-            //'buy out' any the other contracts the worker has
-            for (Contract c : contractManager.getContracts(worker)) {
-
-                if (!c.getPromotion().equals(promotion)) {
-                    contractManager.buyOutContract(c);
-                }
-            }
+            contractManager.buyOutContracts(worker, promotion);
+            
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
@@ -110,10 +98,7 @@ public class ContractFactory {
             duration += 30;
         }
 
-        contract.setDuration(duration);
-        contract.setStartDate(startDate);
-
-        reportSigning(contract);
+        initializeContract(contract, duration, startDate);
     }
 
     private Contract createContract(Worker worker, Promotion promotion) {
@@ -122,6 +107,13 @@ public class ContractFactory {
         contract.setPromotion(promotion);
         contractManager.addContract(contract);
         return contract;
+    }
+    
+    private void initializeContract(Contract contract, int duration, LocalDate startDate) {
+        contract.setDuration(duration);
+        contract.setStartDate(startDate);
+
+        contractManager.reportSigning(contract);
     }
 
     public int calculateAppearanceCost(Worker worker, boolean exclusive) {
@@ -209,19 +201,4 @@ public class ContractFactory {
         contract.setBiWeeklyCost(unitCost);
 
     }
-
-    private void reportSigning(Contract c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(c.getPromotion().getShortName()).append(" signed ").append(c.getWorker().getName())
-                .append(" on ").append(c.getStartDate());
-
-        gameController.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
-    }
-
-    public void reportExpiration(Contract c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
-        gameController.getDirtSheet().newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
-    }
-
 }

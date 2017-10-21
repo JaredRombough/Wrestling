@@ -1,5 +1,6 @@
 package wrestling.model.controller;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 public class DateManager {
@@ -20,6 +21,11 @@ public class DateManager {
      */
     public LocalDate today() {
         return gameDate;
+    }
+    
+    
+    public boolean isPayDay() {
+        return gameDate.getDayOfWeek().equals(DayOfWeek.FRIDAY);
     }
 
 }

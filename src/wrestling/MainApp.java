@@ -181,7 +181,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 10;
+        int preRunDays = 100;
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();

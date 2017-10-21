@@ -13,6 +13,8 @@ import wrestling.model.Segment;
 import wrestling.model.Television;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.factory.ContractFactory;
+import wrestling.model.factory.EventFactory;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionController implements Serializable {
@@ -21,12 +23,18 @@ public class PromotionController implements Serializable {
     private final ContractManager contractManager;
     private final PromotionEventManager eventManager;
     private final DateManager dateManager;
+    private final TitleManager titleManager;
+    private final ContractFactory contractFactory;
+    private final EventFactory eventFactory;
 
     public PromotionController(GameController gameController) {
         this.gameController = gameController;
         this.contractManager = gameController.getContractManager();
         this.eventManager = gameController.getPromotionEventManager();
         this.dateManager = gameController.getDateManager();
+        this.titleManager = gameController.getTitleManager();
+        this.contractFactory = gameController.getContractFactory();
+        this.eventFactory = gameController.getEventFactory();
 
     }
 
@@ -91,7 +99,7 @@ public class PromotionController implements Serializable {
             updatePushed(promotion);
         }
 
-        if (gameController.isPayDay()) {
+        if (dateManager.isPayDay()) {
             payDay(promotion, dateManager.today());
         }
 
@@ -135,9 +143,9 @@ public class PromotionController implements Serializable {
         //update all the contracts associated with the current promotion
         List<Contract> tempContractList = new ArrayList<>(contractManager.getContracts(promotion));
         for (Contract contract : tempContractList) {
-            if (!gameController.getContractManager().nextDay(contract)) {
-                gameController.getContractFactory().reportExpiration(contract);
-                gameController.getTitleManager().stripTitles(promotion, contract, dateManager.today());
+            if (!contractManager.nextDay(contract)) {
+                contractManager.reportExpiration(contract);
+                titleManager.stripTitles(promotion, contract, dateManager.today());
             }
         }
     }
@@ -161,7 +169,7 @@ public class PromotionController implements Serializable {
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)) {
 
-                gameController.getContractFactory().createContract(worker, promotion, dateManager.today());
+                contractFactory.createContract(worker, promotion, dateManager.today());
 
                 break;
             }
@@ -175,7 +183,7 @@ public class PromotionController implements Serializable {
         for (Worker worker : gameController.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion) && !worker.getController().isBooked(date)) {
 
-                gameController.getContractFactory().createContract(worker, promotion, dateManager.today());
+                contractFactory.createContract(worker, promotion, dateManager.today());
 
                 break;
             }
@@ -419,12 +427,12 @@ public class PromotionController implements Serializable {
     //book an event
     private void bookEvent(Promotion promotion) {
 
-        gameController.getEventFactory().createEvent(bookSegments(promotion), dateManager.today(), promotion);
+        eventFactory.createEvent(this, bookSegments(promotion), dateManager.today(), promotion);
 
     }
 
     private void bookEvent(Promotion promotion, Television television) {
-        gameController.getEventFactory().createEvent(bookSegments(promotion), dateManager.today(), promotion, television);
+        eventFactory.createEvent(this, bookSegments(promotion), dateManager.today(), promotion, television);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {
@@ -470,7 +478,7 @@ public class PromotionController implements Serializable {
 
         List<Title> eventTitles = new ArrayList<>();
 
-        for (Title title : promotion.getTitles()) {
+        for (Title title : titleManager.getTitles(promotion)) {
 
             if (title.getWorkers().isEmpty()) {
                 eventTitles.add(title);

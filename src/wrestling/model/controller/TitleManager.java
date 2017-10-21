@@ -21,10 +21,24 @@ public class TitleManager {
         this.dirtSheet = dirtSheet;
     }
     
+    public void addTitle(Title title) {
+        titles.add(title);
+    }
     
+    public List<Title> getTitles(Promotion promotion) {
+        List<Title> titles = new ArrayList();
+        for(Title title : titles) {
+            if(title.getPromotion().equals(promotion)) {
+                titles.add(title);
+            }
+        }
+        
+        return titles;
+    }
+
     //check if we have any outstanding titles from expired contracts
     public void stripTitles(Promotion promotion, Contract contract, LocalDate date) {
-        for (Title title : promotion.getTitles()) {
+        for (Title title : getTitles(promotion)) {
             for (Worker worker : title.getWorkers()) {
                 if (worker.equals(contract.getWorker())) {
                     stripTitle(title, date);
@@ -32,7 +46,7 @@ public class TitleManager {
             }
         }
     }
-    
+
     public void stripTitle(Title title, LocalDate date) {
 
         StringBuilder sb = new StringBuilder();
@@ -44,14 +58,19 @@ public class TitleManager {
         dirtSheet.newDirt(new News(sb.toString(), title.getWorkers(), title.getPromotion()));
         dirtSheet.newDirt(new TitleRecord(title));
 
-        for (Worker worker : title.getWorkers()) {
-            worker.removeTitle(title);
-        }
-
         title.vacateTitle();
         title.setDayWon(date);
-
     }
 
+    //here we would update the title's tracker of reigns also        
+    public void titleChange(Title title, List<Worker> winner, LocalDate date) {
+        stripTitle(title, date);
+        awardTitle(title, winner, date);
+    }
+
+    public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
+        title.setWorkers(winner);
+        title.setDayWon(date);
+    }
 
 }
