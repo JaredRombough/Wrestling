@@ -103,7 +103,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     public void updateCurrentDateLabel() {
 
-        currentDateLabel.setText(gameController.date().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
+        currentDateLabel.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
     }
 
     public void updateCurrentFundsLabel() {

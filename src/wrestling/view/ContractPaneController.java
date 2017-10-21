@@ -41,7 +41,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
     public void setWorker(Worker worker) {
         this.worker = worker;
 
-        if (gameController.canNegotiate(worker, gameController.playerPromotion())) {
+        if (gameController.getContractManager().canNegotiate(worker, gameController.playerPromotion())) {
             setDisable(false);
         } else {
             setDisable(true);
@@ -124,21 +124,18 @@ public class ContractPaneController extends ControllerBase implements Initializa
     }
 
     private void signContract() {
-
         gameController.getContractFactory().createContract(
                 worker,
                 gameController.playerPromotion(),
                 exclusive,
                 duration(),
-                gameController.date());
-
+                gameController.getDateManager().today());
     }
 
+    @Override
     public void updateLabels() {
-
         updateLengthComboBox();
         updateCostLabel();
-
     }
 
     private String termString() {
@@ -154,7 +151,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
     }
 
     private void updateCostLabel() {
-        if (worker != null && gameController.canNegotiate(worker, gameController.playerPromotion())) {
+        if (worker != null && gameController.getContractManager().canNegotiate(worker, gameController.playerPromotion())) {
             costLabel.setText(termString());
         } else {
             costLabel.setText("Under Contract");

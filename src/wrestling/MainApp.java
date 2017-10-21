@@ -185,7 +185,7 @@ public class MainApp extends Application {
 
         for (int i = 0; i < preRunDays; i++) {
             nextDay();
-            System.out.println("day: " + gameController.date());
+            System.out.println("day: " + gameController.getDateManager().today());
 
         }
 

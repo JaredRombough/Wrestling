@@ -147,7 +147,7 @@ public class Import {
         }).forEach((p) -> {
             for (int i = 0; i < otherWorkers.size(); i++) {
                 if (otherWorkerPromotions.get(i).equals(p.getName())) {
-                    getGameController().getContractFactory().createContract(otherWorkers.get(i), p, getGameController().date(), false);
+                    getGameController().getContractFactory().createContract(otherWorkers.get(i), p, getGameController().getDateManager().today(), false);
                 }
             }
         });
@@ -437,15 +437,15 @@ public class Import {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
             if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
-                getGameController().getContractFactory().createContract(w, p, getGameController().date(), true);
+                getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), true);
             } else {
-                getGameController().getContractFactory().createContract(w, p, getGameController().date(), false);
+                getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), false);
             }
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
-            getGameController().getContractFactory().createContract(w, p, getGameController().date());
+            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
             w.getController().getContract(p).setExclusive(false);
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
-            getGameController().getContractFactory().createContract(w, p, getGameController().date());
+            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
             w.getController().getContract(p).setExclusive(false);
         }
     }

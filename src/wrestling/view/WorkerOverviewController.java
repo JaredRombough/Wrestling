@@ -211,7 +211,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
 
             //only show the contract pane if the worker can negotiate with the player
-            if (gameController.canNegotiate(currentWorker, currentPromotion)) {
+            if (gameController.getContractManager().canNegotiate(currentWorker, currentPromotion)) {
                 if (!gridPane.getChildren().contains(contractPane)) {
                     gridPane.add(contractPane, 0, 9, 4, 1);
                 }

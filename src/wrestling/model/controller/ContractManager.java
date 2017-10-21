@@ -8,6 +8,7 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class ContractManager implements Serializable {
 
@@ -173,4 +174,26 @@ public class ContractManager implements Serializable {
 
         return string;
     }
+    
+    public boolean canNegotiate(Worker worker, Promotion promotion) {
+        //this would have to be more robust
+        //such as checking how much time is left on our contract
+        boolean canNegotiate = true;
+
+        if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion)) {
+            canNegotiate = false;
+        }
+
+        if (hasContract(worker)) {
+            for (Contract contract : getContracts(worker)) {
+                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                    canNegotiate = false;
+                }
+            }
+        }
+
+        return canNegotiate;
+    }
+    
+    
 }

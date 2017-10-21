@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Television;
@@ -21,7 +19,6 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
-import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  *
@@ -38,8 +35,6 @@ public final class GameController implements Serializable {
         return list.get(randomizer.nextInt(list.size()));
     }
 
-    private LocalDate gameDate;
-    private LocalDate payDay;
     private Promotion playerPromotion;
     private List<Promotion> promotions = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
@@ -53,42 +48,36 @@ public final class GameController implements Serializable {
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
 
+    private final DateManager dateManager;
     private final ContractManager contractManager;
     private final PromotionEventManager promotionEventManager;
+    private final TitleManager titleManager;
+    private final PromotionController promotionController;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
+        //set the initial date here
+        dateManager = new DateManager(LocalDate.of(2015, 1, 1));
+        dirtSheet = new DirtSheet(dateManager);
+        titleManager = new TitleManager(dirtSheet);
 
         contractManager = new ContractManager();
         promotionEventManager = new PromotionEventManager();
-        dirtSheet = new DirtSheet(this);
+
+        promotionController = new PromotionController(this);
         contractFactory = new ContractFactory(this);
         eventFactory = new EventFactory(this);
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(this);
         workerFactory = new WorkerFactory(this);
-        
 
-        //set the initial date here
-        gameDate = LocalDate.of(2015, 1, 1);
-        payDay = gameDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-
-        //eventFactory = new EventFactory(this);
         promotionFactory.preparePromotions(this);
 
     }
 
-    //is it payday?
     public boolean isPayDay() {
-        boolean isPayDay = false;
-
-        if (gameDate.isEqual(payDay)) {
-
-            isPayDay = true;
-        }
-
-        return isPayDay;
+        return getDateManager().today().getDayOfWeek().equals(DayOfWeek.FRIDAY);
     }
 
     //only called by MainApp
@@ -97,23 +86,10 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotions) {
             if (!promotion.equals(playerPromotion)) {
-                promotion.getController().dailyUpdate();
+                getPromotionController().dailyUpdate(promotion);
             }
         }
-
-        //if it is payday, advance next payday to two fridays in the future
-        if (isPayDay()) {
-            payDay = payDay.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-            payDay = payDay.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-
-        }
-
-        //advance the day by one
-        gameDate = LocalDate.from(gameDate).plusDays(1);
-
     }
-
-    
 
     public int averageWorkerPopularity(Promotion promotion) {
         int totalPop = 0;
@@ -129,16 +105,6 @@ public final class GameController implements Serializable {
         return averagePop;
     }
 
-    public LocalDate date() {
-        return gameDate;
-    }
-
-    /*
-    public void setPlayerPromotion(Promotion promotion) {
-        playerPromotion = promotion;
-        //set the Ai for non-player promotions
-        setAi();
-    }*/
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
     }
@@ -164,7 +130,7 @@ public final class GameController implements Serializable {
         List<Worker> freeAgents = new ArrayList<>();
         for (Worker worker : workers) {
 
-            if (canNegotiate(worker, promotion)) {
+            if (contractManager.canNegotiate(worker, promotion)) {
                 freeAgents.add(worker);
             }
         }
@@ -174,10 +140,6 @@ public final class GameController implements Serializable {
 
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
-
-        for (Promotion promotion : promotions) {
-            promotion.bankAccount().addFunds(10000);
-        }
     }
 
     public void setWorkers(List<Worker> workers) {
@@ -244,26 +206,6 @@ public final class GameController implements Serializable {
         return television;
     }
 
-    public boolean canNegotiate(Worker worker, Promotion promotion) {
-        //this would have to be more robust
-        //such as checking how much time is left on our contract
-        boolean canNegotiate = true;
-
-        if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion)) {
-            canNegotiate = false;
-        }
-
-        if (contractManager.hasContract(worker)) {
-            for (Contract contract : contractManager.getContracts(worker)) {
-                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
-                    canNegotiate = false;
-                }
-            }
-        }
-
-        return canNegotiate;
-    }
-
     /**
      * @return the workerFactory
      */
@@ -290,6 +232,27 @@ public final class GameController implements Serializable {
      */
     public PromotionEventManager getPromotionEventManager() {
         return promotionEventManager;
+    }
+
+    /**
+     * @return the promotionController
+     */
+    public PromotionController getPromotionController() {
+        return promotionController;
+    }
+
+    /**
+     * @return the dateManager
+     */
+    public DateManager getDateManager() {
+        return dateManager;
+    }
+
+    /**
+     * @return the titleManager
+     */
+    public TitleManager getTitleManager() {
+        return titleManager;
     }
 
 }

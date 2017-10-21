@@ -38,14 +38,14 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
     private String sheetCell(char type, int monthsAgo) {
 
-        LocalDate startDate = gameController.date().minusMonths(monthsAgo).withDayOfMonth(1);
+        LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
-        LocalDate endDate = gameController.date();
+        LocalDate endDate = gameController.getDateManager().today();
 
         if (monthsAgo == 0) {
-            endDate = gameController.date();
+            endDate = gameController.getDateManager().today();
         } else {
-            endDate = gameController.date().withDayOfMonth(monthsAgo).minusDays(1);
+            endDate = gameController.getDateManager().today().withDayOfMonth(monthsAgo).minusDays(1);
         }
 
         int amount = gameController.playerPromotion().bankAccount().getTransactionTotal(

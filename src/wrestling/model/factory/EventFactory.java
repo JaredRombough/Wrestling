@@ -42,7 +42,7 @@ public class EventFactory {
 
         processSegments(event, eventArchive);
 
-        promotion.getController().gainPopularity();
+        gameController.getPromotionController().gainPopularity(promotion);
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         processContracts(event);
@@ -190,7 +190,7 @@ public class EventFactory {
 
             if (title.isVacant()) {
 
-                gameController.getTitleFactory().awardTitle(title, winner, gameController.date());
+                gameController.getTitleFactory().awardTitle(title, winner, gameController.getDateManager().today());
                 sb.append(ModelUtilityFunctions.slashNames(winner))
                         .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
                         .append(title.getName()).append(" title");
@@ -201,7 +201,7 @@ public class EventFactory {
                                 .append(winner.size() > 1 ? " defeat " : " defeats ")
                                 .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
                                 .append(title.getName()).append(" title");
-                        gameController.getTitleFactory().titleChange(title, winner, gameController.date());
+                        gameController.getTitleFactory().titleChange(title, winner, gameController.getDateManager().today());
 
                         break;
                     }

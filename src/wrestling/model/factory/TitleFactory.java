@@ -41,30 +41,12 @@ public class TitleFactory {
     //here we would update the title's tracker of reigns also        
     public void titleChange(Title title, List<Worker> winner, LocalDate date) {
 
-        stripTitle(title, date);
+        gameController.getTitleManager().stripTitle(title, date);
         awardTitle(title, winner, date);
 
     }
 
-    public void stripTitle(Title title, LocalDate date) {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(title.getName());
-        sb.append("dropped on ").append(date).append(" by ");
-        for (Worker worker : title.getWorkers()) {
-            sb.append(worker.getName());
-        }
-        gc.getDirtSheet().newDirt(new News(sb.toString(), title.getWorkers(), title.getPromotion()));
-        gc.getDirtSheet().newDirt(new TitleRecord(title));
-
-        for (Worker worker : title.getWorkers()) {
-            worker.removeTitle(title);
-        }
-
-        title.vacateTitle();
-        title.setDayWon(date);
-
-    }
+    
 
     public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
 
@@ -76,10 +58,10 @@ public class TitleFactory {
 
     }
 
-    private GameController gc;
+    private GameController gameController;
 
     public TitleFactory(GameController gc) {
-        this.gc = gc;
+        this.gameController = gc;
     }
 
 }

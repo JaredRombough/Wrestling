@@ -18,7 +18,6 @@ public class WorkerController implements Serializable {
     private final Worker worker;
     private final GameController gameController;
     private final ContractManager contractManager;
-    //private final List<Contract> contracts = new ArrayList<>();
     private final List<EventFactory> bookings = new ArrayList<>();
 
     //list of dates on which the worker has events scheduled
@@ -29,14 +28,6 @@ public class WorkerController implements Serializable {
         this.gameController = gameController;
         this.contractManager = gameController.getContractManager();
     }
-    /*
-    public List<Contract> getContracts() {
-        return contracts;
-    }
-
-    public boolean hasContract() {
-        return !this.contracts.isEmpty();
-    }*/
 
     private transient Logger log = LogManager.getLogger(this.getClass());
 
@@ -136,15 +127,6 @@ public class WorkerController implements Serializable {
     public List<EventFactory> getBookings() {
         return bookings;
     }
-
-    /*
-    public void addContract(Contract contract) {
-        this.contracts.add(contract);
-    }
-
-    public void removeContract(Contract contract) {
-        this.contracts.remove(contract);
-    }*/
 
     public String contractString() {
 

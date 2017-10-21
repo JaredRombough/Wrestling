@@ -7,21 +7,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
+import wrestling.model.controller.DateManager;
 
 public class DirtSheet {
 
     private final List<Dirt> reports;
-    private final GameController gc;
+    private final DateManager dateManager;
     private final transient Logger logger;
 
-    public DirtSheet(GameController gameController) {
+    public DirtSheet(DateManager dateManager) {
         reports = new ArrayList<>();
-        gc = gameController;
+        this.dateManager = dateManager;
         logger = LogManager.getLogger(this.getClass());
     }
 
     public void newDirt(Dirt dirt) {
-        dirt.setDate(gc.date());
+        dirt.setDate(dateManager.today());
         reports.add(dirt);
         logger.log(Level.INFO, dirt.getDate() + " " + dirt.toString());
     }

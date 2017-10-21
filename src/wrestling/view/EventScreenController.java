@@ -131,7 +131,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateSegments();
 
         //create the event with the segments assembled
-        gameController.getEventFactory().createEvent(segments, gameController.date(), gameController.playerPromotion());
+        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -346,7 +346,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
-            if (!currentSegment().allWorkers().contains(worker) && !worker.getController().isBooked(gameController.date())) {
+            if (!currentSegment().allWorkers().contains(worker) && !worker.getController().isBooked(gameController.getDateManager().today())) {
                 workersList.add(worker);
             }
 

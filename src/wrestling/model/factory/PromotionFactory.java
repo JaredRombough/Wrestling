@@ -58,7 +58,7 @@ public class PromotionFactory {
 
                     Worker worker = gameController.getWorkerFactory().randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    gameController.getContractFactory().createContract(worker, promotion, gameController.date());
+                    gameController.getContractFactory().createContract(worker, promotion, gameController.getDateManager().today());
 
                 } while (gameController.getContractManager().getFullRoster(promotion).size() < rosterSize);
 
@@ -84,7 +84,8 @@ public class PromotionFactory {
 
     public Promotion newPromotion() {
         Promotion promotion = new Promotion();
-        promotion.setController(new PromotionController(promotion, gameController));
+        promotion.bankAccount().addFunds(10000);
+        gameController.getPromotionEventManager().addEventDate((gameController.getDateManager().today()).plusDays(ModelUtilityFunctions.randRange(2, 7)), promotion);
         return promotion;
     }
 
