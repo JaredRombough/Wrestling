@@ -81,6 +81,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     
     }
 
+    @Override
     public void updateLabels() {
 
         updateCurrentDateLabel();
@@ -93,6 +94,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         setButtonsDisable(true);
     }
 
+    @Override
     public void initializeMore() {
         updateCurrentDateLabel();
         updateSelectedButton(browserButton);

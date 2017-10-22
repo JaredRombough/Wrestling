@@ -6,21 +6,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import wrestling.model.Contract;
-import wrestling.model.dirt.EventArchive;
-import wrestling.model.dirt.EventType;
-import wrestling.model.controller.GameController;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Segment;
 import wrestling.model.Television;
 import wrestling.model.Title;
-import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
 import wrestling.model.controller.ContractManager;
 import wrestling.model.controller.DateManager;
 import wrestling.model.controller.TitleManager;
 import wrestling.model.controller.WorkerManager;
 import wrestling.model.dirt.DirtSheet;
+import wrestling.model.dirt.EventArchive;
+import wrestling.model.dirt.EventType;
+import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -240,7 +239,7 @@ public class EventFactory {
             winnerPop += worker.getPopularity();
         }
 
-        winnerPop = winnerPop / winner.size();
+        winnerPop /= winner.size();
 
         for (List<Worker> team : match.getTeams()) {
 
@@ -251,7 +250,7 @@ public class EventFactory {
                     teamPop += worker.getPopularity();
                 }
 
-                teamPop = teamPop / winner.size();
+                teamPop /= winner.size();
 
                 if (teamPop > winnerPop) {
                     for (Worker worker : winner) {

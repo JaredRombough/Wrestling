@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.Worker;
-import wrestling.model.controller.GameController;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**

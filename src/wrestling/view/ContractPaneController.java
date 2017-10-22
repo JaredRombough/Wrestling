@@ -76,11 +76,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
         typeComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue.equals("Exclusive")) {
-                    exclusive = true;
-                } else {
-                    exclusive = false;
-                }
+                exclusive = newValue.equals("Exclusive");
 
                 updateLabels();
 

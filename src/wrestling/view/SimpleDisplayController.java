@@ -9,10 +9,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import wrestling.model.dirt.EventArchive;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.dirt.Dirt;
+import wrestling.model.dirt.EventArchive;
 import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.dirt.TitleRecord;
 

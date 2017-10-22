@@ -252,6 +252,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
+    @Override
     public void updateLabels() {
         for (TeamPaneController controller : teamPaneControllers) {
             controller.updateLabels();

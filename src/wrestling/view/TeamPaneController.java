@@ -74,6 +74,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         }
     }
 
+    @Override
     public void updateLabels() {
 
         updateTeamListViewHeight();
@@ -117,6 +118,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
             }
         });
         mainPane.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
             public void handle(final DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
@@ -127,7 +129,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
                     int targetIndex = parent.getChildren().indexOf(mainPane);
 
-                    List<Node> nodes = new ArrayList<Node>(parent.getChildren());
+                    List<Node> nodes = new ArrayList<>(parent.getChildren());
                     if (sourceIndex < targetIndex) {
                         Collections.rotate(
                                 nodes.subList(sourceIndex, targetIndex + 1), -1);
