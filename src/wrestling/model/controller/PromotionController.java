@@ -19,27 +19,36 @@ import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionController implements Serializable {
 
-    private final ContractManager contractManager;
-    private final PromotionEventManager eventManager;
-    private final DateManager dateManager;
-    private final TitleManager titleManager;
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
-    private final WorkerManager workerManager;
+
     private final BookingManager bookingManager;
+    private final ContractManager contractManager;
+    private final DateManager dateManager;
+    private final PromotionEventManager eventManager;
     private final TelevisionManager televisionManager;
+    private final TitleManager titleManager;
+    private final WorkerManager workerManager;
 
-    public PromotionController(GameController gameController) {
-        this.contractManager = gameController.getContractManager();
-        this.eventManager = gameController.getPromotionEventManager();
-        this.dateManager = gameController.getDateManager();
-        this.titleManager = gameController.getTitleManager();
-        this.contractFactory = gameController.getContractFactory();
-        this.eventFactory = gameController.getEventFactory();
-        this.workerManager = gameController.getWorkerManager();
-        this.bookingManager = gameController.getBookingManager();
-        this.televisionManager = gameController.getTelevisionManager();
-
+    public PromotionController(
+            ContractFactory contractFactory,
+            EventFactory eventFactory,
+            BookingManager bookingManager,
+            ContractManager contractManager,
+            DateManager dateManager,
+            PromotionEventManager eventManager,
+            TelevisionManager televisionManager,
+            TitleManager titleManager,
+            WorkerManager workerManager) {
+        this.contractFactory = contractFactory;
+        this.eventFactory = eventFactory;
+        this.bookingManager = bookingManager;
+        this.contractManager = contractManager;
+        this.dateManager = dateManager;
+        this.eventManager = eventManager;
+        this.televisionManager = televisionManager;
+        this.titleManager = titleManager;
+        this.workerManager = workerManager;
     }
 
     private int idealRosterSize(Promotion promotion) {

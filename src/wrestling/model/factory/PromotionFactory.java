@@ -3,25 +3,48 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.controller.ContractManager;
+import wrestling.model.controller.DateManager;
+import wrestling.model.controller.PromotionEventManager;
+import wrestling.model.controller.PromotionManager;
+import wrestling.model.controller.WorkerManager;
 import wrestling.model.utility.ModelUtilityFunctions;
-
 
 /*
 for generating promotions in a random game
  */
 public class PromotionFactory {
 
+    private final ContractFactory contractFactory;
+    private final WorkerFactory workerFactory;
 
-    private final GameController gameController;
+    private final ContractManager contractManager;
+    private final DateManager dateManager;
+    private final PromotionEventManager eventManager;
+    private final PromotionManager promotionManager;
+    private final WorkerManager workerManager;
 
-    public PromotionFactory(GameController gameController) {
-        this.gameController = gameController;
+    public PromotionFactory(
+            ContractFactory contractFactory,
+            WorkerFactory workerFactory,
+            ContractManager contractManager,
+            DateManager dateManager,
+            PromotionEventManager eventManager,
+            PromotionManager promotionManager,
+            WorkerManager workerManager) {
+        this.contractFactory = contractFactory;
+        this.workerFactory = workerFactory;
+        this.contractManager = contractManager;
+        this.dateManager = dateManager;
+        this.eventManager = eventManager;
+        this.promotionManager = promotionManager;
+        this.workerManager = workerManager;
     }
-    public void preparePromotions(GameController gameController) throws IOException {
-        
+
+    public void preparePromotions() throws IOException {
+
         List<Promotion> promotions = new ArrayList<>();
         List<Worker> allWorkers = new ArrayList<>();
 
@@ -61,13 +84,13 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = gameController.getWorkerFactory().randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = workerFactory.randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
-                    gameController.getContractFactory().createContract(worker, promotion, gameController.getDateManager().today());
+                    contractFactory.createContract(worker, promotion, dateManager.today());
 
-                } while (gameController.getContractManager().getFullRoster(promotion).size() < rosterSize);
+                } while (contractManager.getFullRoster(promotion).size() < rosterSize);
 
-                allWorkers.addAll(gameController.getContractManager().getFullRoster(promotion));
+                allWorkers.addAll(contractManager.getFullRoster(promotion));
             }
 
             //add all the workers and promotions we have generated for this
@@ -75,14 +98,14 @@ public class PromotionFactory {
             promotions.addAll(currentLevelPromotions);
 
         }
-        gameController.getPromotionManager().addPromotions(promotions);
-        gameController.getWorkerManager().addWorkers(allWorkers);
+        promotionManager.addPromotions(promotions);
+        workerManager.addWorkers(allWorkers);
     }
 
     public Promotion newPromotion() {
         Promotion promotion = new Promotion();
         promotion.bankAccount().addFunds(10000);
-        gameController.getPromotionEventManager().addEventDate((gameController.getDateManager().today()).plusDays(ModelUtilityFunctions.randRange(2, 7)), promotion);
+        eventManager.addEventDate((dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7)), promotion);
         return promotion;
     }
 

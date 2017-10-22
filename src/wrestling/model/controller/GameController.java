@@ -4,11 +4,7 @@ import wrestling.model.dirt.DirtSheet;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import wrestling.model.Promotion;
-import wrestling.model.TagTeam;
-import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
@@ -46,25 +42,47 @@ public final class GameController implements Serializable {
         dirtSheet = new DirtSheet(dateManager);
 
         titleManager = new TitleManager(dirtSheet);
+        titleFactory = new TitleFactory(titleManager);
+
         contractManager = new ContractManager(dirtSheet);
 
         promotionEventManager = new PromotionEventManager();
         bookingManager = new BookingManager();
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
+        workerFactory = new WorkerFactory();
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
-        eventFactory = new EventFactory(this);
         contractFactory = new ContractFactory(contractManager);
+        eventFactory = new EventFactory(
+                dirtSheet,
+                contractManager,
+                dateManager,
+                titleManager,
+                workerManager);
 
-        promotionFactory = new PromotionFactory(this);
-        titleFactory = new TitleFactory(titleManager);
-        workerFactory = new WorkerFactory(this);
+        promotionFactory = new PromotionFactory(
+                contractFactory,
+                workerFactory,
+                contractManager,
+                dateManager,
+                promotionEventManager,
+                promotionManager,
+                workerManager);
 
-        promotionController = new PromotionController(this);
+        promotionController = new PromotionController(
+                contractFactory,
+                eventFactory,
+                bookingManager,
+                contractManager,
+                dateManager,
+                promotionEventManager,
+                televisionManager,
+                titleManager,
+                workerManager);
 
         if (randomGame) {
-            promotionFactory.preparePromotions(this);
+            promotionFactory.preparePromotions();
         }
 
     }

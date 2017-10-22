@@ -30,18 +30,23 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class EventFactory {
 
-    private final ContractManager contractManager;
     private final DirtSheet dirtSheet;
-    private final TitleManager titleManager;
+    private final ContractManager contractManager;
     private final DateManager dateManager;
+    private final TitleManager titleManager;
     private final WorkerManager workerManager;
 
-    public EventFactory(GameController gameController) {
-        this.contractManager = gameController.getContractManager();
-        this.dirtSheet = gameController.getDirtSheet();
-        this.titleManager = gameController.getTitleManager();
-        this.dateManager = gameController.getDateManager();
-        this.workerManager = gameController.getWorkerManager();
+    public EventFactory(
+            DirtSheet dirtSheet,
+            ContractManager contractManager,
+            DateManager dateManager,
+            TitleManager titleManager,
+            WorkerManager workerManager) {
+        this.dirtSheet = dirtSheet;
+        this.contractManager = contractManager;
+        this.dateManager = dateManager;
+        this.titleManager = titleManager;
+        this.workerManager = workerManager;
     }
 
     private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
