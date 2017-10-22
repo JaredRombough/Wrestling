@@ -41,7 +41,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
     public void setWorker(Worker worker) {
         this.worker = worker;
 
-        if (gameController.getContractManager().canNegotiate(worker, gameController.playerPromotion())) {
+        if (gameController.getContractManager().canNegotiate(worker, gameController.getPromotionManager().playerPromotion())) {
             setDisable(false);
         } else {
             setDisable(true);
@@ -68,7 +68,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
 
         List<String> exclusiveOpen = new ArrayList<>(Arrays.asList("Open"));
 
-        if (gameController.playerPromotion().getLevel() == 5) {
+        if (gameController.getPromotionManager().playerPromotion().getLevel() == 5) {
             exclusiveOpen.add("Exclusive");
         }
 
@@ -126,7 +126,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
     private void signContract() {
         gameController.getContractFactory().createContract(
                 worker,
-                gameController.playerPromotion(),
+                gameController.getPromotionManager().playerPromotion(),
                 exclusive,
                 duration(),
                 gameController.getDateManager().today());
@@ -151,7 +151,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
     }
 
     private void updateCostLabel() {
-        if (worker != null && gameController.getContractManager().canNegotiate(worker, gameController.playerPromotion())) {
+        if (worker != null && gameController.getContractManager().canNegotiate(worker, gameController.getPromotionManager().playerPromotion())) {
             costLabel.setText(termString());
         } else {
             costLabel.setText("Under Contract");

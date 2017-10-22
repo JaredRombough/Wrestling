@@ -105,7 +105,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     public void updateCurrentFundsLabel() {
-        currentFundsLabel.setText("Funds: $" + gameController.playerPromotion().bankAccount().getFunds());
+        currentFundsLabel.setText("Funds: $" + gameController.getPromotionManager().playerPromotion().bankAccount().getFunds());
     }
 
     public void setButtonsDisable(boolean disable) {

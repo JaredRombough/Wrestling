@@ -55,7 +55,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
         //now that we have the game controller we can set the promotions to the listview
         ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
 
-        for (Promotion current : gameController.getPromotions()) {
+        for (Promotion current : gameController.getPromotionManager().getPromotions()) {
             //dont' want the player to pick the free agents. probably want a cleaner solution though.
             if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
@@ -90,7 +90,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
         currentPromotionName.setText(newValue.toString().trim());
         currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
                 + "Workers: " + gameController.getContractManager().getFullRoster(newValue).size() + "\n"
-                + "Average Popularity: " + gameController.averageWorkerPopularity(newValue));
+                + "Average Popularity: " + gameController.getContractManager().averageWorkerPopularity(newValue));
 
         ObservableList<Worker> rosterList = FXCollections.observableArrayList();
         for (Worker current : gameController.getContractManager().getFullRoster(newValue)) {
@@ -106,7 +106,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
     private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
 
         if (event.getSource().equals(startGameButton)) {
-            gameController.setPlayerPromotion(selectedPromotion);
+            gameController.getPromotionManager().setPlayerPromotion(selectedPromotion);
             mainApp.startGame();
 
         }

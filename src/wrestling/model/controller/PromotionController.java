@@ -19,7 +19,6 @@ import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionController implements Serializable {
 
-    private final GameController gameController;
     private final ContractManager contractManager;
     private final PromotionEventManager eventManager;
     private final DateManager dateManager;
@@ -28,9 +27,9 @@ public class PromotionController implements Serializable {
     private final EventFactory eventFactory;
     private final WorkerManager workerManager;
     private final BookingManager bookingManager;
+    private final TelevisionManager televisionManager;
 
     public PromotionController(GameController gameController) {
-        this.gameController = gameController;
         this.contractManager = gameController.getContractManager();
         this.eventManager = gameController.getPromotionEventManager();
         this.dateManager = gameController.getDateManager();
@@ -39,6 +38,7 @@ public class PromotionController implements Serializable {
         this.eventFactory = gameController.getEventFactory();
         this.workerManager = gameController.getWorkerManager();
         this.bookingManager = gameController.getBookingManager();
+        this.televisionManager = gameController.getTelevisionManager();
 
     }
 
@@ -115,7 +115,7 @@ public class PromotionController implements Serializable {
             activeRosterSize++;
         }
 
-        for (Television tv : tvToday(promotion)) {
+        for (Television tv : televisionManager.tvOnDay(promotion, dateManager.today())) {
             bookEvent(promotion, tv);
             eventsBooked++;
         }
@@ -137,18 +137,6 @@ public class PromotionController implements Serializable {
             gainPopularity(promotion);
         }
 
-    }
-
-    private List<Television> tvToday(Promotion promotion) {
-        List<Television> today = new ArrayList<>();
-        for (Television tv : gameController.getTelevision()) {
-            if (tv.getPromotion().equals(promotion)
-                    && tv.getDay().equals(dateManager.today().getDayOfWeek())) {
-                today.add(tv);
-            }
-        }
-
-        return today;
     }
 
     private void dailyUpdateContracts(Promotion promotion) {
@@ -279,7 +267,6 @@ public class PromotionController implements Serializable {
             for (int i = 0; i < workersNeeded; i++) {
                 signContract(promotion, dateManager.today());
             }
-
         }
 
         //book the roster for the date
@@ -389,7 +376,6 @@ public class PromotionController implements Serializable {
                         break;
                     }
                 }
-
             }
 
             //make sure we have enough workers for a match
@@ -402,7 +388,6 @@ public class PromotionController implements Serializable {
                 Match match = new Match(matchTeams, title);
                 segments.add(match);
             }
-
         }
 
         //fill up the segments if we don't have enough for some reason
@@ -474,7 +459,6 @@ public class PromotionController implements Serializable {
         sortByPopularity(eventRoster);
 
         return eventRoster;
-
     }
 
     //returns a list of titles available for an event
@@ -497,10 +481,8 @@ public class PromotionController implements Serializable {
                 if (titleWorkersPresent) {
                     eventTitles.add(title);
                 }
-
             }
         }
-
         return eventTitles;
     }
 }

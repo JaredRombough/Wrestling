@@ -48,7 +48,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
             endDate = gameController.getDateManager().today().withDayOfMonth(monthsAgo).minusDays(1);
         }
 
-        int amount = gameController.playerPromotion().bankAccount().getTransactionTotal(
+        int amount = gameController.getPromotionManager().playerPromotion().bankAccount().getTransactionTotal(
                 type,
                 startDate,
                 endDate);

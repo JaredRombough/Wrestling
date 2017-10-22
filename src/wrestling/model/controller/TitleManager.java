@@ -26,14 +26,14 @@ public class TitleManager {
     }
     
     public List<Title> getTitles(Promotion promotion) {
-        List<Title> titles = new ArrayList();
+        List<Title> promotionTitles = new ArrayList();
         for(Title title : titles) {
             if(title.getPromotion().equals(promotion)) {
-                titles.add(title);
+                promotionTitles.add(title);
             }
         }
         
-        return titles;
+        return promotionTitles;
     }
 
     //check if we have any outstanding titles from expired contracts

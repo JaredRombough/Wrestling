@@ -187,13 +187,13 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } else if (event.getSource() == freeAgentsButton) {
 
-            browse(browseWorkers, gameController.getWorkerManager().freeAgents(gameController.playerPromotion()));
+            browse(browseWorkers, gameController.getWorkerManager().freeAgents(gameController.getPromotionManager().playerPromotion()));
             updateSelectedButton(freeAgentsButton);
             //this will send the user back to the roster browsing if they switch to another promotion
             lastButton = rosterButton;
         } else if (event.getSource() == myPromotionButton) {
             updateSelectedButton(myPromotionButton);
-            setCurrentPromotion(gameController.playerPromotion());
+            setCurrentPromotion(gameController.getPromotionManager().playerPromotion());
 
         } else if (event.getSource() == titlesButton) {
             updateSelectedButton(titlesButton);
@@ -202,7 +202,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             lastButton = titlesButton;
         } else if (event.getSource() == teamsButton) {
             updateSelectedButton(teamsButton);
-            browse(browseTeams, gameController.getTagTeams(currentPromotion));
+            browse(browseTeams, gameController.getTagTeamManager().getTagTeams(currentPromotion));
         }
     }
 
@@ -214,7 +214,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             b.getStyleClass().remove(selectedButtonClass);
         });
 
-        if (currentPromotion.equals(gameController.playerPromotion()) && !button.equals(freeAgentsButton)) {
+        if (currentPromotion.equals(gameController.getPromotionManager().playerPromotion()) && !button.equals(freeAgentsButton)) {
             myPromotionButton.getStyleClass().add(selectedButtonClass);
         }
 
@@ -228,7 +228,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     on the list
      */
     public void showLastEvent() {
-        setCurrentPromotion(gameController.playerPromotion());
+        setCurrentPromotion(gameController.getPromotionManager().playerPromotion());
         browseEvents.listView.getSelectionModel().selectFirst();
         eventsButton.fire();
     }
@@ -294,7 +294,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private void initializePromotionCombobox() {
 
         //set up the promotion combobox
-        promotionComboBox.getItems().addAll(gameController.getPromotions());
+        promotionComboBox.getItems().addAll(gameController.getPromotionManager().getPromotions());
 
         // show the promotion acronym
         Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
@@ -330,7 +330,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             initializePromotionCombobox();
 
             browseWorkers = new BrowserMode<>(
-                    gameController.getContractManager().getFullRoster(gameController.playerPromotion()),
+                    gameController.getContractManager().getFullRoster(gameController.getPromotionManager().playerPromotion()),
                     "view/WorkerOverview.fxml");
             browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
                     new WorkerPopularityComparator()
@@ -343,27 +343,27 @@ public class BrowserController extends ControllerBase implements Initializable {
             lastDisplayNode = browseWorkers.displayPane;
 
             browseEvents = new BrowserMode<>(
-                    gameController.getDirtSheet().promotionEvents(gameController.playerPromotion()),
+                    gameController.getDirtSheet().promotionEvents(gameController.getPromotionManager().playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseEvents.comparators = FXCollections.observableArrayList(
                     new EventDateComparator()
             );
 
             browseTitles = new BrowserMode<>(
-                    gameController.getTitleManager().getTitles(gameController.playerPromotion()),
+                    gameController.getTitleManager().getTitles(gameController.getPromotionManager().playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseTitles.comparators = FXCollections.observableArrayList(
                     new TitleNameComparator()
             );
 
             browseTeams = new BrowserMode<>(
-                    gameController.getTagTeams(gameController.playerPromotion()),
+                    gameController.getTagTeamManager().getTagTeams(gameController.getPromotionManager().playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseTeams.comparators = FXCollections.observableArrayList(
                     new TagTeamNameComparator()
             );
 
-            promotionComboBox.setValue(gameController.playerPromotion());
+            promotionComboBox.setValue(gameController.getPromotionManager().playerPromotion());
 
             lastButton.fire();
         } catch (Exception ex) {

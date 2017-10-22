@@ -232,4 +232,17 @@ public class ContractManager implements Serializable {
         return bld.toString();
     }
 
+    public int averageWorkerPopularity(Promotion promotion) {
+        int totalPop = 0;
+        int averagePop = 0;
+
+        if (!getFullRoster(promotion).isEmpty()) {
+            for (Worker worker : getFullRoster(promotion)) {
+                totalPop += worker.getPopularity();
+            }
+            averagePop = totalPop / getFullRoster(promotion).size();
+        }
+
+        return averagePop;
+    }
 }

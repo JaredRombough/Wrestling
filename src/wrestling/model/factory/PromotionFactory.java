@@ -75,7 +75,7 @@ public class PromotionFactory {
             promotions.addAll(currentLevelPromotions);
 
         }
-        gameController.setPromotions(promotions);
+        gameController.getPromotionManager().addPromotions(promotions);
         gameController.getWorkerManager().addWorkers(allWorkers);
     }
 

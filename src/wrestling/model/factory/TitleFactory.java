@@ -13,7 +13,7 @@ import wrestling.model.controller.TitleManager;
  */
 public class TitleFactory {
 
-    private TitleManager titleManager;
+    private final TitleManager titleManager;
 
     public TitleFactory(TitleManager titleManager) {
         this.titleManager = titleManager;
@@ -33,9 +33,7 @@ public class TitleFactory {
     //create a title with predetermined attributes
     public void createTitle(Promotion promotion, List<Worker> workers, String name) {
         Title title = new Title(promotion, workers, name);
-
         titleManager.addTitle(title);
-
     }
 
 }

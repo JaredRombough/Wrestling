@@ -86,7 +86,7 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        this.gameController = new GameController();
+        this.gameController = new GameController(true);
         initRootLayout();
         showStartGameScreen();
     }

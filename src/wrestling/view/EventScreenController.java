@@ -131,7 +131,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateSegments();
 
         //create the event with the segments assembled
-        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.playerPromotion());
+        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.getPromotionManager().playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -188,7 +188,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         for (Segment segment : segments) {
             for (Worker worker : segment.allWorkers()) {
-                currentCost += gameController.getContractManager().getContract(worker, gameController.playerPromotion()).getAppearanceCost();
+                currentCost += gameController.getContractManager().getContract(worker, gameController.getPromotionManager().playerPromotion()).getAppearanceCost();
             }
 
         }
@@ -340,7 +340,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         //get the workers and add them to the listview on the left
         ObservableList<Worker> workersList = FXCollections.observableArrayList();
 
-        List<Worker> roster = gameController.getContractManager().getFullRoster(gameController.playerPromotion());
+        List<Worker> roster = gameController.getContractManager().getFullRoster(gameController.getPromotionManager().playerPromotion());
 
         for (Worker worker : roster) {
             //we only want to include workers that aren't already in the segment

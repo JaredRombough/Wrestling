@@ -65,7 +65,7 @@ public class Import {
         });
 
         try {
-            gameController = new GameController();
+            gameController = new GameController(false);
             promotionsDat();
             workersDat();
             teamsDat();
@@ -79,10 +79,10 @@ public class Import {
             throw ex;
         }
         processOther();
-        gameController.setPromotions(allPromotions);
+        gameController.getPromotionManager().addPromotions(allPromotions);
         gameController.getWorkerManager().addWorkers(allWorkers);
-        gameController.setTagTeams(allTagTeams);
-        gameController.setTelevision(allTelevision);
+        gameController.getTagTeamManager().addTagTeams(allTagTeams);
+        gameController.getTelevisionManager().addTelevision(allTelevision);
         //for statistical evaluation of data only
         /* boolean evaluate = false;
 
