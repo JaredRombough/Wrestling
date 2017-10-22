@@ -443,10 +443,10 @@ public class Import {
             }
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
             getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
-            w.getController().getContract(p).setExclusive(false);
+            gameController.getContractManager().getContract(w, p).setExclusive(false);
         } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
             getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
-            w.getController().getContract(p).setExclusive(false);
+            gameController.getContractManager().getContract(w, p).setExclusive(false);
         }
     }
 

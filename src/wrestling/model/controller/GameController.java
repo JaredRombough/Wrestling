@@ -52,26 +52,30 @@ public final class GameController implements Serializable {
     private final PromotionEventManager promotionEventManager;
     private final TitleManager titleManager;
     private final PromotionController promotionController;
+    private final WorkerController workerController;
+    private final BookingManager bookingManager;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
     public GameController() throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 1));
-        
+
         dirtSheet = new DirtSheet(dateManager);
-        
+
         titleManager = new TitleManager(dirtSheet);
         contractManager = new ContractManager(dirtSheet);
-        
-        promotionEventManager = new PromotionEventManager();
 
+        promotionEventManager = new PromotionEventManager();
+        bookingManager = new BookingManager();
+        workerController = new WorkerController(contractManager);
         eventFactory = new EventFactory(this);
-        contractFactory = new ContractFactory(this);
+        contractFactory = new ContractFactory(contractManager);
+
         promotionFactory = new PromotionFactory(this);
         titleFactory = new TitleFactory(titleManager);
         workerFactory = new WorkerFactory(this);
-        
+
         promotionController = new PromotionController(this);
 
         promotionFactory.preparePromotions(this);
@@ -87,7 +91,7 @@ public final class GameController implements Serializable {
                 getPromotionController().dailyUpdate(promotion);
             }
         }
-        
+
         dateManager.nextDay();
     }
 
@@ -253,6 +257,20 @@ public final class GameController implements Serializable {
      */
     public TitleManager getTitleManager() {
         return titleManager;
+    }
+
+    /**
+     * @return the bookingManager
+     */
+    public BookingManager getBookingManager() {
+        return bookingManager;
+    }
+
+    /**
+     * @return the workerController
+     */
+    public WorkerController getWorkerController() {
+        return workerController;
     }
 
 }

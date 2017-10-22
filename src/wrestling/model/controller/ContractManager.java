@@ -221,4 +221,15 @@ public class ContractManager implements Serializable {
         dirtSheet.newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
 
+    public String contractString(Worker worker) {
+
+        StringBuilder bld = new StringBuilder();
+        for (Contract current : getContracts(worker)) {
+
+            bld.append(getTerms(current));
+            bld.append("\n");
+        }
+        return bld.toString();
+    }
+
 }

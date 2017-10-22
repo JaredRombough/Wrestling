@@ -6,7 +6,6 @@ import java.util.List;
 import wrestling.model.controller.GameController;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.controller.PromotionController;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 
@@ -78,8 +77,8 @@ public class PromotionFactory {
 
     private final GameController gameController;
 
-    public PromotionFactory(GameController gc) {
-        this.gameController = gc;
+    public PromotionFactory(GameController gameController) {
+        this.gameController = gameController;
     }
 
     public Promotion newPromotion() {

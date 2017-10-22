@@ -20,6 +20,7 @@ import wrestling.model.controller.ContractManager;
 import wrestling.model.controller.DateManager;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.controller.TitleManager;
+import wrestling.model.controller.WorkerController;
 import wrestling.model.dirt.DirtSheet;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -34,15 +35,17 @@ public class EventFactory {
     private final DirtSheet dirtSheet;
     private final TitleManager titleManager;
     private final DateManager dateManager;
+    private final WorkerController workerController;
 
     public EventFactory(GameController gameController) {
         this.contractManager = gameController.getContractManager();
         this.dirtSheet = gameController.getDirtSheet();
         this.titleManager = gameController.getTitleManager();
         this.dateManager = gameController.getDateManager();
+        this.workerController = gameController.getWorkerController();
     }
 
-    private EventArchive createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+    private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
         TempEvent event = new TempEvent(segments, date, promotion);
 
@@ -58,8 +61,6 @@ public class EventFactory {
         dirtSheet.newDirt(eventArchive);
 
         processSegments(event, eventArchive);
-
-        promotionController.gainPopularity(promotion);
         promotion.bankAccount().addFunds(gate(event), 'e', date);
 
         processContracts(event);
@@ -68,12 +69,12 @@ public class EventFactory {
 
     }
 
-    public void createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion) {
-        createEvent(promotionController, segments, date, promotion, EventType.LIVEEVENT);
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
+        createEvent(segments, date, promotion, EventType.LIVEEVENT);
     }
 
-    public void createEvent(PromotionController promotionController, final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
-        createEvent(promotionController, segments, date, promotion, EventType.TELEVISION).setTelevision(television);
+    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
+        createEvent(segments, date, promotion, EventType.TELEVISION).setTelevision(television);
     }
 
     private String generateSummaryString(TempEvent event) {
@@ -155,7 +156,7 @@ public class EventFactory {
 
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            Contract contract = worker.getController().getContract(event.getPromotion());
+            Contract contract = contractManager.getContract(worker, event.getPromotion());
             if (!contractManager.appearance(event.getDate(), contract)) {
                 contractManager.reportExpiration(contract);
             }
@@ -171,7 +172,7 @@ public class EventFactory {
 
                 if (segment instanceof Match) {
                     for (Worker w : ((Match) segment).getWinner()) {
-                        w.getController().gainPopularity();
+                        workerController.gainPopularity(w);
                     }
                 }
                 dirtSheet.newDirt(new SegmentRecord(processSegment(segment),
@@ -250,19 +251,19 @@ public class EventFactory {
 
                 if (teamPop > winnerPop) {
                     for (Worker worker : winner) {
-                        worker.getController().gainPopularity();
+                        workerController.gainPopularity(worker);
                     }
 
                     for (Worker worker : team) {
                         if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            worker.getController().losePopularity();
+                            workerController.losePopularity(worker);
                         }
 
                     }
                 } else {
                     for (Worker worker : winner) {
                         if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            worker.getController().gainPopularity();
+                            workerController.gainPopularity(worker);
                         }
                     }
                 }
@@ -302,7 +303,7 @@ public class EventFactory {
 
         for (Worker worker : allWorkers(event.getSegments())) {
 
-            currentCost += worker.getController().getContract(event.getPromotion()).getAppearanceCost();
+            currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
         }
 
         return currentCost;

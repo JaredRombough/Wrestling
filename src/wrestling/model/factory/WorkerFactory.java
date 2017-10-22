@@ -121,8 +121,7 @@ public class WorkerFactory {
 
     private Worker newWorker() {
         Worker worker = new Worker();
-        worker.setController(new WorkerController(worker, gameController));
-
+        
         return worker;
     }
 }

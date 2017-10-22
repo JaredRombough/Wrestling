@@ -19,12 +19,10 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class ContractFactory {
 
-    private final GameController gameController;
     private final ContractManager contractManager;
 
-    public ContractFactory(GameController gameController) {
-        this.gameController = gameController;
-        this.contractManager = gameController.getContractManager();
+    public ContractFactory(ContractManager contractManager) {
+        this.contractManager = contractManager;
     }
 
     //create a contract with predetermined attributes

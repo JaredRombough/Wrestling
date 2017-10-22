@@ -187,10 +187,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 }
 
                 l.getStyleClass().add(style);
-
             }
 
-            Text text = new Text(currentWorker.getController().contractString());
+            Text text = new Text(gameController.getContractManager().contractString(currentWorker));
 
             contractInfo.setContent(text);
 
@@ -232,7 +231,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             strikingLabel.setText("");
             behaviourLabel.setText("");
             popularityLabel.setText("");
-            //contractInfo.setText("");
 
             contractPaneController.updateLabels();
         }

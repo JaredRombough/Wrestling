@@ -93,6 +93,8 @@ public class PromotionController implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate(Promotion promotion) {
 
+        int eventsBooked = 0;
+
         dailyUpdateContracts(promotion);
 
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
@@ -111,6 +113,7 @@ public class PromotionController implements Serializable {
 
         for (Television tv : tvToday(promotion)) {
             bookEvent(promotion, tv);
+            eventsBooked++;
         }
 
         //book a show if we have one scheduled today
@@ -122,7 +125,12 @@ public class PromotionController implements Serializable {
             int futureDates = eventManager.eventsAfterDate(promotion, dateManager.today());
             for (int i = futureDates; i < eventAmountTarget(promotion); i++) {
                 bookNextEvent(promotion);
+                eventsBooked++;
             }
+        }
+
+        if (eventsBooked > 0) {
+            gainPopularity(promotion);
         }
 
     }
@@ -181,7 +189,7 @@ public class PromotionController implements Serializable {
     private void signContract(Promotion promotion, LocalDate date) {
 
         for (Worker worker : gameController.freeAgents(promotion)) {
-            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion) && !worker.getController().isBooked(date)) {
+            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion) && !gameController.getBookingManager().isBooked(worker, date)) {
 
                 contractFactory.createContract(worker, promotion, dateManager.today());
 
@@ -241,7 +249,7 @@ public class PromotionController implements Serializable {
                 //count the workers that are availeable on the date
                 double available = 0;
                 for (Worker worker : contractManager.getActiveRoster(promotion)) {
-                    if (!worker.getController().isBooked(eventDate, promotion)) {
+                    if (gameController.getBookingManager().isAvailable(worker, eventDate, promotion)) {
                         available++;
                     }
                 }
@@ -277,9 +285,8 @@ public class PromotionController implements Serializable {
 
         //book the roster for the date
         for (Worker worker : contractManager.getFullRoster(promotion)) {
-            if (!worker.getController().isBooked(eventDate)) {
-                worker.getController().getContract(promotion).bookDate(eventDate);
-
+            if (!gameController.getBookingManager().isBooked(worker, eventDate)) {
+                contractManager.getContract(worker, promotion).bookDate(eventDate);
             }
         }
 
@@ -426,13 +433,11 @@ public class PromotionController implements Serializable {
 
     //book an event
     private void bookEvent(Promotion promotion) {
-
-        eventFactory.createEvent(this, bookSegments(promotion), dateManager.today(), promotion);
-
+        eventFactory.createEvent(bookSegments(promotion), dateManager.today(), promotion);
     }
 
     private void bookEvent(Promotion promotion, Television television) {
-        eventFactory.createEvent(this, bookSegments(promotion), dateManager.today(), promotion, television);
+        eventFactory.createEvent(bookSegments(promotion), dateManager.today(), promotion, television);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {
@@ -445,7 +450,7 @@ public class PromotionController implements Serializable {
         for (Worker worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
-            if (worker.getController().isBooked(dateManager.today(), promotion)) {
+            if (!gameController.getBookingManager().isAvailable(worker, dateManager.today(), promotion)) {
                 unavailable.add(worker);
             }
         }

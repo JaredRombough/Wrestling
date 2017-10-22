@@ -7,6 +7,7 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -131,7 +132,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateSegments();
 
         //create the event with the segments assembled
-        gameController.getEventFactory().createEvent(gameController.getPromotionController(), segments, gameController.getDateManager().today(), gameController.playerPromotion());
+        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -188,7 +189,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         for (Segment segment : segments) {
             for (Worker worker : segment.allWorkers()) {
-                currentCost += worker.getController().getContract(gameController.playerPromotion()).getAppearanceCost();
+                currentCost += gameController.getContractManager().getContract(worker, gameController.playerPromotion()).getAppearanceCost();
             }
 
         }
@@ -343,13 +344,12 @@ public class EventScreenController extends ControllerBase implements Initializab
         List<Worker> roster = gameController.getContractManager().getFullRoster(gameController.playerPromotion());
 
         for (Worker worker : roster) {
-
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
-            if (!currentSegment().allWorkers().contains(worker) && !worker.getController().isBooked(gameController.getDateManager().today())) {
+            if (!currentSegment().allWorkers().contains(worker)
+                    && !gameController.getBookingManager().isBooked(worker, gameController.getDateManager().today())) {
                 workersList.add(worker);
             }
-
         }
 
         workersListView.setItems(workersList);
