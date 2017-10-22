@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Promotion;
@@ -24,19 +23,9 @@ import wrestling.model.factory.WorkerFactory;
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
-
-    /*
-    returns a random worker from a list of workers
-     */
-    public static Worker getRandomFromList(List<Worker> list) {
-        Random randomizer = new Random();
-
-        return list.get(randomizer.nextInt(list.size()));
-    }
-
+    
     private Promotion playerPromotion;
     private List<Promotion> promotions = new ArrayList<>();
-    private List<Worker> workers = new ArrayList<>();
     private List<TagTeam> tagTeams = new ArrayList<>();
     private List<Television> television = new ArrayList<>();
 
@@ -52,7 +41,7 @@ public final class GameController implements Serializable {
     private final PromotionEventManager promotionEventManager;
     private final TitleManager titleManager;
     private final PromotionController promotionController;
-    private final WorkerController workerController;
+    private final WorkerManager workerManager;
     private final BookingManager bookingManager;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
@@ -68,7 +57,7 @@ public final class GameController implements Serializable {
 
         promotionEventManager = new PromotionEventManager();
         bookingManager = new BookingManager();
-        workerController = new WorkerController(contractManager);
+        workerManager = new WorkerManager(contractManager);
         eventFactory = new EventFactory(this);
         contractFactory = new ContractFactory(contractManager);
 
@@ -117,10 +106,6 @@ public final class GameController implements Serializable {
         return playerPromotion;
     }
 
-    public List<Worker> allWorkers() {
-        return workers;
-    }
-
     public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
         tagTeams.stream().filter((tt) -> (contractManager.getFullRoster(promotion).containsAll(tt.getWorkers()))).forEach((tt) -> {
@@ -129,26 +114,11 @@ public final class GameController implements Serializable {
         return teams;
     }
 
-    public List<Worker> freeAgents(Promotion promotion) {
-
-        List<Worker> freeAgents = new ArrayList<>();
-        for (Worker worker : workers) {
-
-            if (contractManager.canNegotiate(worker, promotion)) {
-                freeAgents.add(worker);
-            }
-        }
-
-        return freeAgents;
-    }
-
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
     }
 
-    public void setWorkers(List<Worker> workers) {
-        this.workers = workers;
-    }
+    
 
     public void setTelevision(List<Television> television) {
         this.television = television;
@@ -267,10 +237,10 @@ public final class GameController implements Serializable {
     }
 
     /**
-     * @return the workerController
+     * @return the workerManager
      */
-    public WorkerController getWorkerController() {
-        return workerController;
+    public WorkerManager getWorkerManager() {
+        return workerManager;
     }
 
 }

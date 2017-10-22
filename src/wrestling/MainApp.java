@@ -37,13 +37,13 @@ public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
-    private transient Logger logger;
 
     public static void main(String[] args) {
 
         launch(args);
 
     }
+    private transient Logger logger;
 
     private Stage primaryStage;
     private BorderPane rootLayout;

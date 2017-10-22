@@ -14,8 +14,14 @@ for generating promotions in a random game
  */
 public class PromotionFactory {
 
-    public void preparePromotions(GameController gameController) throws IOException {
 
+    private final GameController gameController;
+
+    public PromotionFactory(GameController gameController) {
+        this.gameController = gameController;
+    }
+    public void preparePromotions(GameController gameController) throws IOException {
+        
         List<Promotion> promotions = new ArrayList<>();
         List<Worker> allWorkers = new ArrayList<>();
 
@@ -69,16 +75,8 @@ public class PromotionFactory {
             promotions.addAll(currentLevelPromotions);
 
         }
-
         gameController.setPromotions(promotions);
-        gameController.setWorkers(allWorkers);
-
-    }
-
-    private final GameController gameController;
-
-    public PromotionFactory(GameController gameController) {
-        this.gameController = gameController;
+        gameController.getWorkerManager().addWorkers(allWorkers);
     }
 
     public Promotion newPromotion() {

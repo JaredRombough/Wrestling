@@ -187,7 +187,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } else if (event.getSource() == freeAgentsButton) {
 
-            browse(browseWorkers, gameController.freeAgents(gameController.playerPromotion()));
+            browse(browseWorkers, gameController.getWorkerManager().freeAgents(gameController.playerPromotion()));
             updateSelectedButton(freeAgentsButton);
             //this will send the user back to the roster browsing if they switch to another promotion
             lastButton = rosterButton;

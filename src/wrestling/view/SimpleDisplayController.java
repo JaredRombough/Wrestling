@@ -10,7 +10,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import wrestling.model.dirt.EventArchive;
-import wrestling.model.controller.GameController;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.dirt.Dirt;

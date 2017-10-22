@@ -80,7 +80,7 @@ public class Import {
         }
         processOther();
         gameController.setPromotions(allPromotions);
-        gameController.setWorkers(allWorkers);
+        gameController.getWorkerManager().addWorkers(allWorkers);
         gameController.setTagTeams(allTagTeams);
         gameController.setTelevision(allTelevision);
         //for statistical evaluation of data only

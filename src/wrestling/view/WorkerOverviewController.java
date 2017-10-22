@@ -145,7 +145,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     public void updateLabels() {
 
         if (gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)
-                || gameController.freeAgents(currentPromotion).contains(currentWorker)) {
+                || gameController.getWorkerManager().freeAgents(currentPromotion).contains(currentWorker)) {
             nameLabel.setText(currentWorker.getName());
             wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
             flyingLabel.setText(Integer.toString(currentWorker.getFlying()));

@@ -1,8 +1,6 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import java.util.List;
-import wrestling.model.controller.WorkerController;
 
 public class Worker implements Serializable {
 
@@ -39,14 +37,10 @@ public class Worker implements Serializable {
 
     private int minimumPopularity;
 
-    private WorkerController controller;
-
     public Worker() {
         minimumPopularity = 0;
-
         name = "Worker #" + serialNumber;
         serialNumber++;
-
     }
 
     @Override
@@ -239,19 +233,4 @@ public class Worker implements Serializable {
     public void setMinimumPopularity(int minimumPopularity) {
         this.minimumPopularity = minimumPopularity;
     }
-
-    /**
-     * @return the workerController
-     */
-    public WorkerController getController() {
-        return controller;
-    }
-
-    /**
-     * @param controller the workerController to set
-     */
-    public void setController(WorkerController controller) {
-        this.controller = controller;
-    }
-
 }

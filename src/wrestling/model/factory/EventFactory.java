@@ -18,9 +18,8 @@ import wrestling.model.dirt.SegmentRecord;
 import wrestling.model.Worker;
 import wrestling.model.controller.ContractManager;
 import wrestling.model.controller.DateManager;
-import wrestling.model.controller.PromotionController;
 import wrestling.model.controller.TitleManager;
-import wrestling.model.controller.WorkerController;
+import wrestling.model.controller.WorkerManager;
 import wrestling.model.dirt.DirtSheet;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -35,14 +34,14 @@ public class EventFactory {
     private final DirtSheet dirtSheet;
     private final TitleManager titleManager;
     private final DateManager dateManager;
-    private final WorkerController workerController;
+    private final WorkerManager workerManager;
 
     public EventFactory(GameController gameController) {
         this.contractManager = gameController.getContractManager();
         this.dirtSheet = gameController.getDirtSheet();
         this.titleManager = gameController.getTitleManager();
         this.dateManager = gameController.getDateManager();
-        this.workerController = gameController.getWorkerController();
+        this.workerManager = gameController.getWorkerManager();
     }
 
     private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
@@ -172,7 +171,7 @@ public class EventFactory {
 
                 if (segment instanceof Match) {
                     for (Worker w : ((Match) segment).getWinner()) {
-                        workerController.gainPopularity(w);
+                        workerManager.gainPopularity(w);
                     }
                 }
                 dirtSheet.newDirt(new SegmentRecord(processSegment(segment),
@@ -251,19 +250,19 @@ public class EventFactory {
 
                 if (teamPop > winnerPop) {
                     for (Worker worker : winner) {
-                        workerController.gainPopularity(worker);
+                        workerManager.gainPopularity(worker);
                     }
 
                     for (Worker worker : team) {
                         if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            workerController.losePopularity(worker);
+                            workerManager.losePopularity(worker);
                         }
 
                     }
                 } else {
                     for (Worker worker : winner) {
                         if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            workerController.gainPopularity(worker);
+                            workerManager.gainPopularity(worker);
                         }
                     }
                 }

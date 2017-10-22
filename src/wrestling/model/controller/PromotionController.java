@@ -26,6 +26,8 @@ public class PromotionController implements Serializable {
     private final TitleManager titleManager;
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
+    private final WorkerManager workerManager;
+    private final BookingManager bookingManager;
 
     public PromotionController(GameController gameController) {
         this.gameController = gameController;
@@ -35,6 +37,8 @@ public class PromotionController implements Serializable {
         this.titleManager = gameController.getTitleManager();
         this.contractFactory = gameController.getContractFactory();
         this.eventFactory = gameController.getEventFactory();
+        this.workerManager = gameController.getWorkerManager();
+        this.bookingManager = gameController.getBookingManager();
 
     }
 
@@ -106,7 +110,7 @@ public class PromotionController implements Serializable {
         }
 
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
-        while (activeRosterSize < idealRosterSize(promotion) && !gameController.freeAgents(promotion).isEmpty()) {
+        while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
             signContract(promotion);
             activeRosterSize++;
         }
@@ -174,29 +178,24 @@ public class PromotionController implements Serializable {
     //sign a contract with the first suitable worker found
     private void signContract(Promotion promotion) {
 
-        for (Worker worker : gameController.freeAgents(promotion)) {
+        for (Worker worker : workerManager.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)) {
-
                 contractFactory.createContract(worker, promotion, dateManager.today());
-
                 break;
             }
         }
-
     }
 
     //sign a contract with the first suitable worker found
     private void signContract(Promotion promotion, LocalDate date) {
 
-        for (Worker worker : gameController.freeAgents(promotion)) {
-            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion) && !gameController.getBookingManager().isBooked(worker, date)) {
-
+        for (Worker worker : workerManager.freeAgents(promotion)) {
+            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)
+                    && !bookingManager.isBooked(worker, date)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
-
                 break;
             }
         }
-
     }
 
     //determine how many future events the promotion is meant to have at a given time
@@ -249,7 +248,7 @@ public class PromotionController implements Serializable {
                 //count the workers that are availeable on the date
                 double available = 0;
                 for (Worker worker : contractManager.getActiveRoster(promotion)) {
-                    if (gameController.getBookingManager().isAvailable(worker, eventDate, promotion)) {
+                    if (bookingManager.isAvailable(worker, eventDate, promotion)) {
                         available++;
                     }
                 }
@@ -285,7 +284,7 @@ public class PromotionController implements Serializable {
 
         //book the roster for the date
         for (Worker worker : contractManager.getFullRoster(promotion)) {
-            if (!gameController.getBookingManager().isBooked(worker, eventDate)) {
+            if (!bookingManager.isBooked(worker, eventDate)) {
                 contractManager.getContract(worker, promotion).bookDate(eventDate);
             }
         }
@@ -450,7 +449,7 @@ public class PromotionController implements Serializable {
         for (Worker worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
-            if (!gameController.getBookingManager().isAvailable(worker, dateManager.today(), promotion)) {
+            if (!bookingManager.isAvailable(worker, dateManager.today(), promotion)) {
                 unavailable.add(worker);
             }
         }
