@@ -5,7 +5,7 @@ import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.controller.TitleManager;
+import wrestling.model.manager.TitleManager;
 
 /**
  * called whenever a new title is to be created

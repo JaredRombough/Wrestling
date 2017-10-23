@@ -1,4 +1,4 @@
-package wrestling.model.controller;
+package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;

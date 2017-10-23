@@ -1,6 +1,9 @@
 package wrestling.file;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,40 +67,40 @@ public class Import {
             sb.append(f.toString()).append(" not found.").append("\n");
         });
 
-        try {
-            gameController = new GameController(false);
-            promotionsDat();
-            workersDat();
-            teamsDat();
-            beltDat();
-            tvDat();
-            eventDat();
-        } catch (Exception ex) {
+        if (sb.length() == 0) {
+            try {
+                gameController = new GameController(false);
+                promotionsDat();
+                workersDat();
+                teamsDat();
+                beltDat();
+                tvDat();
+                eventDat();
+            } catch (Exception ex) {
 
-            sb.append(ex);
-            logger.log(Level.ERROR, ex);
-            throw ex;
+                sb.append(ex);
+                logger.log(Level.ERROR, ex);
+                throw ex;
+            }
+            processOther();
+            gameController.getPromotionManager().addPromotions(allPromotions);
+            gameController.getWorkerManager().addWorkers(allWorkers);
+            gameController.getTagTeamManager().addTagTeams(allTagTeams);
+            gameController.getTelevisionManager().addTelevision(allTelevision);
+            
+            //for statistical evaluation of data only
+            /* boolean evaluate = false;
+            if (evaluate) {
+                EvaluateData.evaluateData(allPromotions, allWorkers);
+            }*/
         }
-        processOther();
-        gameController.getPromotionManager().addPromotions(allPromotions);
-        gameController.getWorkerManager().addWorkers(allWorkers);
-        gameController.getTagTeamManager().addTagTeams(allTagTeams);
-        gameController.getTelevisionManager().addTelevision(allTelevision);
-        //for statistical evaluation of data only
-        /* boolean evaluate = false;
-
-        if (evaluate) {
-            EvaluateData.evaluateData(allPromotions, allWorkers);
-        }*/
 
         return sb.toString();
 
     }
 
     private int hexStringToInt(String hexValueString) {
-
         return Integer.parseInt(hexValueString, 16);
-
     }
 
     private String hexStringToLetter(String hexValueString) {
@@ -111,13 +114,9 @@ public class Import {
         //otherwise just put a blank in our string
         //this will need to be more complex if we import more than just names
         if (intLetter >= 0 && intLetter <= 499) {
-
             letter += String.valueOf((char) (intLetter));
-
         } else {
-
             letter += " ";
-
         }
 
         return letter;
@@ -152,9 +151,7 @@ public class Import {
             }
         });
 
-        AdvancedImport adIm = new AdvancedImport();
-        adIm.updateOtherPromotins(allPromotions);
-
+        updateOtherPromotions(allPromotions, importFolder);
     }
 
     private void tvDat() throws IOException {
@@ -252,7 +249,6 @@ public class Import {
                 if (level == 6) {
                     level = 5;
                 }
-
             }
 
             counter++;
@@ -480,7 +476,6 @@ public class Import {
 
             }
         }
-
     }
 
     private void beltDat() throws IOException {
@@ -582,12 +577,39 @@ public class Import {
 
                         }
                     }
-
                 }
-
             }
         }
+    }
 
+    public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {
+
+        Logger logger = LogManager.getLogger(this.getClass());
+        List<String> advancedImportData = new ArrayList();
+        try {
+            String path = importFolder.getPath() + "\\advancedImport.txt";
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            String line;
+            while ((line = br.readLine()) != null) {
+                advancedImportData.add(line);
+            }
+        } catch (FileNotFoundException ex) {
+            logger.log(Level.ERROR, "Advanced Import file not found");
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, "Advanced Import file read error");
+        }
+
+        for (Promotion promotion : promotions) {
+            for (int i = 0; i < advancedImportData.size(); i++) {
+                if (advancedImportData.get(i).equals(promotion.getName())
+                        && advancedImportData.size() >= i + 3) {
+                    promotion.setName(advancedImportData.get(i + 1));
+                    promotion.setShortName(advancedImportData.get(i + 2));
+                    promotion.setImagePath(advancedImportData.get(i + 3));
+                    break;
+                }
+            }
+        }
     }
 
     /**

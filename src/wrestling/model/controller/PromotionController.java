@@ -15,6 +15,13 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
+import wrestling.model.manager.BookingManager;
+import wrestling.model.manager.ContractManager;
+import wrestling.model.manager.DateManager;
+import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.TelevisionManager;
+import wrestling.model.manager.TitleManager;
+import wrestling.model.manager.WorkerManager;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class PromotionController implements Serializable {
@@ -324,7 +331,7 @@ public class PromotionController implements Serializable {
         List<Worker> matchBooked = new ArrayList<>();
 
         //get a list of titles available for the event
-        List<Title> eventTitles = getEventTitles(promotion, eventRoster);
+        List<Title> eventTitles = titleManager.getEventTitles(promotion, eventRoster);
 
         //book title matches
         for (Title title : eventTitles) {
@@ -468,30 +475,5 @@ public class PromotionController implements Serializable {
         sortByPopularity(eventRoster);
 
         return eventRoster;
-    }
-
-    //returns a list of titles available for an event
-    private List<Title> getEventTitles(Promotion promotion, List<Worker> eventRoster) {
-
-        List<Title> eventTitles = new ArrayList<>();
-
-        for (Title title : titleManager.getTitles(promotion)) {
-
-            if (title.getWorkers().isEmpty()) {
-                eventTitles.add(title);
-            } else {
-                boolean titleWorkersPresent = true;
-
-                for (Worker worker : title.getWorkers()) {
-                    if (!eventRoster.contains(worker)) {
-                        titleWorkersPresent = false;
-                    }
-                }
-                if (titleWorkersPresent) {
-                    eventTitles.add(title);
-                }
-            }
-        }
-        return eventTitles;
     }
 }

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Promotion;
-import wrestling.model.controller.DateManager;
+import wrestling.model.manager.DateManager;
 
 public class DirtSheet {
 

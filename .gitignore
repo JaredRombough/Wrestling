@@ -74,4 +74,5 @@ src/log4j2.xml
 src/log4j.dtd
 *.log
 src/log4j2-test.xml
-src/wrestling/file/AdvancedImport.java
+/src/wrestling/file/AdvancedImport.java
+advancedImport.txt

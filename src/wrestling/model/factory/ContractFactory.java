@@ -7,7 +7,7 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.controller.ContractManager;
+import wrestling.model.manager.ContractManager;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**

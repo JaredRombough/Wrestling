@@ -1,4 +1,4 @@
-package wrestling.model.controller;
+package wrestling.model.manager;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package wrestling.model.controller;
+package wrestling.model.manager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,19 +20,19 @@ public class TitleManager {
         titles = new ArrayList();
         this.dirtSheet = dirtSheet;
     }
-    
+
     public void addTitle(Title title) {
         titles.add(title);
     }
-    
+
     public List<Title> getTitles(Promotion promotion) {
         List<Title> promotionTitles = new ArrayList();
-        for(Title title : titles) {
-            if(title.getPromotion().equals(promotion)) {
+        for (Title title : titles) {
+            if (title.getPromotion().equals(promotion)) {
                 promotionTitles.add(title);
             }
         }
-        
+
         return promotionTitles;
     }
 
@@ -71,6 +71,30 @@ public class TitleManager {
     public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
         title.setWorkers(winner);
         title.setDayWon(date);
+    }
+
+    //returns a list of titles available for an event
+    public List<Title> getEventTitles(Promotion promotion, List<Worker> eventRoster) {
+
+        List<Title> eventTitles = new ArrayList<>();
+
+        for (Title title : getTitles(promotion)) {
+            if (title.getWorkers().isEmpty()) {
+                eventTitles.add(title);
+            } else {
+                boolean titleWorkersPresent = true;
+
+                for (Worker worker : title.getWorkers()) {
+                    if (!eventRoster.contains(worker)) {
+                        titleWorkersPresent = false;
+                    }
+                }
+                if (titleWorkersPresent) {
+                    eventTitles.add(title);
+                }
+            }
+        }
+        return eventTitles;
     }
 
 }

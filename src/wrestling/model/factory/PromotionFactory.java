@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.controller.ContractManager;
-import wrestling.model.controller.DateManager;
-import wrestling.model.controller.PromotionEventManager;
-import wrestling.model.controller.PromotionManager;
-import wrestling.model.controller.WorkerManager;
+import wrestling.model.manager.ContractManager;
+import wrestling.model.manager.DateManager;
+import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.WorkerManager;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /*

@@ -10,6 +10,15 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
+import wrestling.model.manager.BookingManager;
+import wrestling.model.manager.ContractManager;
+import wrestling.model.manager.DateManager;
+import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.TagTeamManager;
+import wrestling.model.manager.TelevisionManager;
+import wrestling.model.manager.TitleManager;
+import wrestling.model.manager.WorkerManager;
 
 /**
  *
@@ -28,12 +37,13 @@ public final class GameController implements Serializable {
     private final ContractManager contractManager;
     private final PromotionEventManager promotionEventManager;
     private final TitleManager titleManager;
-    private final PromotionController promotionController;
     private final WorkerManager workerManager;
     private final BookingManager bookingManager;
     private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
+    
+    private final PromotionController promotionController;
 
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
@@ -54,6 +64,7 @@ public final class GameController implements Serializable {
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
+        
         eventFactory = new EventFactory(
                 dirtSheet,
                 contractManager,
