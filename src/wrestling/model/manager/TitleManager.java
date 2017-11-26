@@ -6,19 +6,21 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
+import wrestling.model.TitleWorker;
 import wrestling.model.Worker;
-import wrestling.model.dirt.DirtSheet;
-import wrestling.model.dirt.News;
-import wrestling.model.dirt.TitleRecord;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 public class TitleManager {
 
     private final List<Title> titles;
-    private final DirtSheet dirtSheet;
+    private final List<TitleWorker> titleWorkers;
+    
+    private final DateManager dateManager;
 
-    public TitleManager(DirtSheet dirtSheet) {
-        titles = new ArrayList();
-        this.dirtSheet = dirtSheet;
+    public TitleManager(DateManager dateManager) {
+        titles = new ArrayList<>();
+        titleWorkers = new ArrayList<>();
+        this.dateManager = dateManager;
     }
 
     public void addTitle(Title title) {
@@ -36,41 +38,64 @@ public class TitleManager {
         return promotionTitles;
     }
 
+    public List<Worker> getCurrentChampionWorkers(Title title) {
+        List<Worker> workers = new ArrayList<>();
+        for (TitleWorker titleWorker : titleWorkers) {
+            if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
+                workers.add(titleWorker.getWorker());
+            }
+        }
+        return workers;
+    }
+
+    public List<TitleWorker> getCurrentChampionTitleWorkers(Title title) {
+        List<TitleWorker> workers = new ArrayList<>();
+        for (TitleWorker titleWorker : titleWorkers) {
+            if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
+                workers.add(titleWorker);
+            }
+        }
+        return workers;
+    }
+    
+    public boolean isVacant(Title title) {
+        return getCurrentChampionTitleWorkers(title).isEmpty();
+    }
+
     //check if we have any outstanding titles from expired contracts
-    public void stripTitles(Promotion promotion, Contract contract, LocalDate date) {
+    public void stripTitles(Promotion promotion, Contract contract) {
         for (Title title : getTitles(promotion)) {
-            for (Worker worker : title.getWorkers()) {
+            for (Worker worker : getCurrentChampionWorkers(title)) {
                 if (worker.equals(contract.getWorker())) {
-                    stripTitle(title, date);
+                    stripTitle(title);
                 }
             }
         }
     }
 
-    public void stripTitle(Title title, LocalDate date) {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(title.getName());
-        sb.append("dropped on ").append(date).append(" by ");
-        for (Worker worker : title.getWorkers()) {
-            sb.append(worker.getName());
+    public void stripTitle(Title title) {
+        List<TitleWorker> currentChamps = getCurrentChampionTitleWorkers(title);
+        for (TitleWorker titleWorker : currentChamps) {
+            titleWorker.setDayLost(dateManager.today());
         }
-        dirtSheet.newDirt(new News(sb.toString(), title.getWorkers(), title.getPromotion()));
-        dirtSheet.newDirt(new TitleRecord(title));
-
-        title.vacateTitle();
-        title.setDayWon(date);
     }
 
     //here we would update the title's tracker of reigns also        
-    public void titleChange(Title title, List<Worker> winner, LocalDate date) {
-        stripTitle(title, date);
-        awardTitle(title, winner, date);
+    public void titleChange(Title title, List<Worker> winner) {
+        stripTitle(title);
+        awardTitle(title, winner);
     }
 
-    public void awardTitle(Title title, List<Worker> winner, LocalDate date) {
-        title.setWorkers(winner);
-        title.setDayWon(date);
+    public void awardTitle(Title title, Worker winner) {
+        List<Worker> workerAsList = new ArrayList<>();
+        workerAsList.add(winner);
+        awardTitle(title, workerAsList);
+    }
+
+    public void awardTitle(Title title, List<Worker> winner) {
+        for (Worker worker : winner) {
+            titleWorkers.add(new TitleWorker(title, worker, dateManager.today()));
+        }
     }
 
     //returns a list of titles available for an event
@@ -79,12 +104,13 @@ public class TitleManager {
         List<Title> eventTitles = new ArrayList<>();
 
         for (Title title : getTitles(promotion)) {
-            if (title.getWorkers().isEmpty()) {
+            List<Worker> champs = getCurrentChampionWorkers(title);
+            if (champs.isEmpty()) {
                 eventTitles.add(title);
             } else {
                 boolean titleWorkersPresent = true;
 
-                for (Worker worker : title.getWorkers()) {
+                for (Worker worker : champs) {
                     if (!eventRoster.contains(worker)) {
                         titleWorkersPresent = false;
                     }
@@ -95,6 +121,22 @@ public class TitleManager {
             }
         }
         return eventTitles;
+    }
+
+    public String titleReignString(Title title) {
+
+        StringBuilder sb = new StringBuilder();
+        List<Worker> champWorkers = getCurrentChampionWorkers(title);
+        List<TitleWorker> champTitleWorkers = getCurrentChampionTitleWorkers(title);
+        sb.append(ModelUtilityFunctions.slashNames(champWorkers));
+        LocalDate dayWon = champTitleWorkers.get(0).getDayWon();
+        LocalDate dayLost = champTitleWorkers.get(0).getDayLost();
+        sb.append("\t\t\t");
+        sb.append(dayWon == null ? "????" : dayWon);
+        sb.append("\tto\t");
+        sb.append(dayLost == null ? "present" : dayLost);
+
+        return sb.toString();
     }
 
 }

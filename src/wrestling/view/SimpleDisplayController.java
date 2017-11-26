@@ -9,12 +9,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import wrestling.model.Event;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.dirt.Dirt;
-import wrestling.model.dirt.EventArchive;
-import wrestling.model.dirt.SegmentRecord;
-import wrestling.model.dirt.TitleRecord;
 
 
 /*
@@ -51,37 +48,12 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         String newText = "";
 
         //call the appropriate method based on object type
-        if (obj instanceof EventArchive) {
-            StringBuilder sb = new StringBuilder();
-            for (Dirt dirt : gameController.getDirtSheet().getReports()) {
-                if (dirt instanceof SegmentRecord
-                        && ((SegmentRecord) dirt).getEventArchive().equals(obj)) {
-                    sb.append(dirt.toString());
-                    sb.append("\n");
-                }
-            }
-            newText = sb.toString();
+        if (obj instanceof Event) {
+            newText = "insert event info here";
         } else if (obj instanceof Title) {
-            StringBuilder sb = new StringBuilder();
-            for (Dirt dirt : gameController.getDirtSheet().getReports()) {
-                if (dirt instanceof TitleRecord
-                        && ((TitleRecord) dirt).getTitle().equals(obj)) {
-                    sb.append(dirt.toString());
-                    sb.append("\n");
-                }
-            }
-            newText = sb.toString();
+            newText = "insert title info here";
         } else if (obj instanceof Worker) {
-            Worker w = (Worker) obj;
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < gameController.getDirtSheet().getReports().size(); i++) {
-                if (gameController.getDirtSheet().getReports().get(i).getWorkers() != null
-                        && gameController.getDirtSheet().getReports().get(i).getWorkers().contains(w)) {
-                    sb.append(gameController.getDirtSheet().getReports().get(i).toString());
-                    sb.append("\n");
-                }
-            }
-            newText = sb.toString();
+            newText = "insert worker info here";
         }
 
         if (obj != null && displayTitle != null && !obj.toString().equals(displayTitle.getText())) {

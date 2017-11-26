@@ -1,5 +1,7 @@
 package wrestling.model;
 
+import wrestling.model.interfaces.MatchRule;
+
 public enum MatchRules implements MatchRule {
 
     DEFAULT {

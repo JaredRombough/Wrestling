@@ -21,7 +21,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     @FXML
     private Button eventButton;
-    
+
     @FXML
     private Button financialButton;
 
@@ -53,32 +53,29 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             mainApp.showEventScreen();
 
         } else if (event.getSource() == nextDayButton) {
-            
+
             mainApp.nextDay();
 
         } else if (event.getSource() == browserButton) {
             updateSelectedButton(browserButton);
             mainApp.showBrowser();
-            
+
         } else if (event.getSource() == financialButton) {
             updateSelectedButton(financialButton);
             mainApp.showFinancial();
         }
 
     }
-    
-    private void updateSelectedButton(Button button)
-    {
-        for(Node b : buttonBar.getButtons())
-        {
-            if(b.getStyleClass().contains("selectedButton"))
-            {
+
+    private void updateSelectedButton(Button button) {
+        for (Node b : buttonBar.getButtons()) {
+            if (b.getStyleClass().contains("selectedButton")) {
                 b.getStyleClass().remove("selectedButton");
             }
         }
-        
+
         button.getStyleClass().add("selectedButton");
-    
+
     }
 
     @Override
@@ -107,7 +104,9 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     public void updateCurrentFundsLabel() {
-        currentFundsLabel.setText("Funds: $" + gameController.getPromotionManager().playerPromotion().bankAccount().getFunds());
+        currentFundsLabel.setText
+        ("Funds: $" + gameController.getPromotionManager()
+                .getBankAccount(gameController.getPromotionManager().playerPromotion()).getFunds());
     }
 
     public void setButtonsDisable(boolean disable) {

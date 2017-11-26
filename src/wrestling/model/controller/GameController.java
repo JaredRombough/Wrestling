@@ -1,19 +1,20 @@
 package wrestling.model.controller;
 
+import wrestling.model.factory.MatchFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.Promotion;
-import wrestling.model.dirt.DirtSheet;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
-import wrestling.model.manager.BookingManager;
+import wrestling.model.manager.EventWorkerManager;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.MatchManager;
+import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TelevisionManager;
@@ -26,49 +27,53 @@ import wrestling.model.manager.WorkerManager;
  */
 public final class GameController implements Serializable {
 
-    private final DirtSheet dirtSheet;
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
+    private final MatchFactory matchFactory;
 
     private final DateManager dateManager;
     private final ContractManager contractManager;
-    private final PromotionEventManager promotionEventManager;
+    private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final BookingManager bookingManager;
+    private final EventWorkerManager bookingManager;
     private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
-    
+    private final MatchManager matchManager;
+
     private final PromotionController promotionController;
 
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 1));
 
-        dirtSheet = new DirtSheet(dateManager);
+        titleManager = new TitleManager(dateManager);
 
-        titleManager = new TitleManager(dirtSheet);
-        titleFactory = new TitleFactory(titleManager);
-
-        contractManager = new ContractManager(dirtSheet);
-
-        promotionEventManager = new PromotionEventManager();
-        bookingManager = new BookingManager();
+        bookingManager = new EventWorkerManager();
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
+        matchManager = new MatchManager();
+
+        contractManager = new ContractManager(promotionManager);
+        eventManager = new EventManager(contractManager, matchManager);
+
+        titleFactory = new TitleFactory(titleManager);
+        matchFactory = new MatchFactory(matchManager);
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
-        
+
         eventFactory = new EventFactory(
-                dirtSheet,
                 contractManager,
-                dateManager,
+                eventManager,
+                matchFactory,
+                matchManager,
+                promotionManager,
                 titleManager,
                 workerManager);
 
@@ -77,17 +82,18 @@ public final class GameController implements Serializable {
                 workerFactory,
                 contractManager,
                 dateManager,
-                promotionEventManager,
+                eventManager,
                 promotionManager,
                 workerManager);
 
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
+                matchFactory,
                 bookingManager,
                 contractManager,
                 dateManager,
-                promotionEventManager,
+                eventManager,
                 televisionManager,
                 titleManager,
                 workerManager);
@@ -131,13 +137,6 @@ public final class GameController implements Serializable {
     }
 
     /**
-     * @return the dirtSheet
-     */
-    public DirtSheet getDirtSheet() {
-        return dirtSheet;
-    }
-
-    /**
      * @return the workerFactory
      */
     public WorkerFactory getWorkerFactory() {
@@ -161,8 +160,8 @@ public final class GameController implements Serializable {
     /**
      * @return the promotionEventManager
      */
-    public PromotionEventManager getPromotionEventManager() {
-        return promotionEventManager;
+    public EventManager getEventManager() {
+        return eventManager;
     }
 
     /**
@@ -189,7 +188,7 @@ public final class GameController implements Serializable {
     /**
      * @return the bookingManager
      */
-    public BookingManager getBookingManager() {
+    public EventWorkerManager getBookingManager() {
         return bookingManager;
     }
 
@@ -219,6 +218,20 @@ public final class GameController implements Serializable {
      */
     public TagTeamManager getTagTeamManager() {
         return tagTeamManager;
+    }
+
+    /**
+     * @return the matchFactory
+     */
+    public MatchFactory getMatchFactory() {
+        return matchFactory;
+    }
+
+    /**
+     * @return the matchManager
+     */
+    public MatchManager getMatchManager() {
+        return matchManager;
     }
 
 }

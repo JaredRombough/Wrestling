@@ -1,24 +1,26 @@
 package wrestling.model.controller;
 
+import wrestling.model.factory.MatchFactory;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import wrestling.model.Event;
 import wrestling.model.Contract;
+import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
-import wrestling.model.Segment;
-import wrestling.model.Television;
+import wrestling.model.interfaces.Segment;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
-import wrestling.model.manager.BookingManager;
+import wrestling.model.manager.EventWorkerManager;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.EventManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
@@ -28,11 +30,12 @@ public class PromotionController implements Serializable {
 
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
+    private final MatchFactory matchFactory;
 
-    private final BookingManager bookingManager;
+    private final EventWorkerManager bookingManager;
     private final ContractManager contractManager;
     private final DateManager dateManager;
-    private final PromotionEventManager eventManager;
+    private final EventManager eventManager;
     private final TelevisionManager televisionManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
@@ -40,15 +43,17 @@ public class PromotionController implements Serializable {
     public PromotionController(
             ContractFactory contractFactory,
             EventFactory eventFactory,
-            BookingManager bookingManager,
+            MatchFactory matchFactory,
+            EventWorkerManager bookingManager,
             ContractManager contractManager,
             DateManager dateManager,
-            PromotionEventManager eventManager,
+            EventManager eventManager,
             TelevisionManager televisionManager,
             TitleManager titleManager,
             WorkerManager workerManager) {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
+        this.matchFactory = matchFactory;
         this.bookingManager = bookingManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
@@ -131,11 +136,6 @@ public class PromotionController implements Serializable {
             activeRosterSize++;
         }
 
-        for (Television tv : televisionManager.tvOnDay(promotion, dateManager.today())) {
-            bookEvent(promotion, tv);
-            eventsBooked++;
-        }
-
         //book a show if we have one scheduled today
         if (eventManager.hasEventOnDate(promotion, dateManager.today())
                 && contractManager.getFullRoster(promotion).size() >= 2) {
@@ -160,8 +160,7 @@ public class PromotionController implements Serializable {
         List<Contract> tempContractList = new ArrayList<>(contractManager.getContracts(promotion));
         for (Contract contract : tempContractList) {
             if (!contractManager.nextDay(contract)) {
-                contractManager.reportExpiration(contract);
-                titleManager.stripTitles(promotion, contract, dateManager.today());
+                titleManager.stripTitles(promotion, contract);
             }
         }
     }
@@ -285,14 +284,15 @@ public class PromotionController implements Serializable {
             }
         }
 
+        Event event = new Event(promotion, eventDate);
+        eventManager.addEvent(event);
+
         //book the roster for the date
         for (Worker worker : contractManager.getFullRoster(promotion)) {
             if (!bookingManager.isBooked(worker, eventDate)) {
-                contractManager.getContract(worker, promotion).bookDate(eventDate);
+                eventManager.addEventWorker(new EventWorker(event, worker));
             }
         }
-
-        eventManager.addEventDate(eventDate, promotion);
     }
 
     private List<Segment> bookSegments(Promotion promotion) {
@@ -347,11 +347,12 @@ public class PromotionController implements Serializable {
             }
 
             List<List<Worker>> matchTeams = new ArrayList<>();
+            List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
 
             //if the title is not vacant, make the title holders team 1
-            if (!title.isVacant()) {
-                matchTeams.add(title.getWorkers());
-                matchBooked.addAll(title.getWorkers());
+            if (!champs.isEmpty()) {
+                matchTeams.add(champs);
+                matchBooked.addAll(champs);
             }
 
             //list to hold the lists we will draw workers from
@@ -401,7 +402,7 @@ public class PromotionController implements Serializable {
                     Collections.swap(matchTeams, 0, 1);
                 }
 
-                Match match = new Match(matchTeams, title);
+                Match match = matchFactory.CreateMatch(matchTeams, title);
                 segments.add(match);
             }
         }
@@ -416,7 +417,7 @@ public class PromotionController implements Serializable {
                     List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
                     List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
                     List<List<Worker>> teams = new ArrayList<>(Arrays.asList(teamA, teamB));
-                    Match match = new Match(teams);
+                    Match match = matchFactory.CreateMatch(teams);
 
                     segments.add(match);
                 }
@@ -434,10 +435,6 @@ public class PromotionController implements Serializable {
     //book an event
     private void bookEvent(Promotion promotion) {
         eventFactory.createEvent(bookSegments(promotion), dateManager.today(), promotion);
-    }
-
-    private void bookEvent(Promotion promotion, Television television) {
-        eventFactory.createEvent(bookSegments(promotion), dateManager.today(), promotion, television);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {

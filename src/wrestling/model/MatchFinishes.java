@@ -1,5 +1,7 @@
 package wrestling.model;
 
+import wrestling.model.interfaces.MatchFinish;
+
 public enum MatchFinishes implements MatchFinish {
 
     CLEAN {

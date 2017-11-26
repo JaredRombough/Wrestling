@@ -3,11 +3,13 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.Event;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.PromotionEventManager;
+import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.utility.ModelUtilityFunctions;
@@ -22,7 +24,7 @@ public class PromotionFactory {
 
     private final ContractManager contractManager;
     private final DateManager dateManager;
-    private final PromotionEventManager eventManager;
+    private final EventManager eventManager;
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
 
@@ -31,7 +33,7 @@ public class PromotionFactory {
             WorkerFactory workerFactory,
             ContractManager contractManager,
             DateManager dateManager,
-            PromotionEventManager eventManager,
+            EventManager eventManager,
             PromotionManager promotionManager,
             WorkerManager workerManager) {
         this.contractFactory = contractFactory;
@@ -79,8 +81,7 @@ public class PromotionFactory {
             for (Promotion promotion : currentLevelPromotions) {
 
                 //add funds (this could be based on promotion level)
-                promotion.bankAccount().addFunds(startingFunds * promotion.getLevel());
-
+                promotionManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
                 //assign workers based on promotion level
                 do {
 
@@ -104,8 +105,10 @@ public class PromotionFactory {
 
     public Promotion newPromotion() {
         Promotion promotion = new Promotion();
-        promotion.bankAccount().addFunds(10000);
-        eventManager.addEventDate((dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7)), promotion);
+        BankAccount bankAccount = new BankAccount(promotion);
+        bankAccount.addFunds(10000);
+        promotionManager.addBankAccount(bankAccount);
+        eventManager.addEvent(new Event(promotion, (dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7))));
         return promotion;
     }
 

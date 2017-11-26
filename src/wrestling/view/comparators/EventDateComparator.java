@@ -1,12 +1,12 @@
 package wrestling.view.comparators;
 
 import java.util.Comparator;
-import wrestling.model.dirt.EventArchive;
+import wrestling.model.Event;
 
-public class EventDateComparator implements Comparator<EventArchive> {
+public class EventDateComparator implements Comparator<Event> {
 
     @Override
-    public int compare(EventArchive e1, EventArchive e2) {
+    public int compare(Event e1, Event e2) {
 
         if (e1 != null && e2 != null) {
 

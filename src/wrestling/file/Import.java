@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
+import wrestling.model.TagTeamWorker;
 import wrestling.model.Television;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
@@ -87,7 +88,7 @@ public class Import {
             gameController.getWorkerManager().addWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTelevisionManager().addTelevision(allTelevision);
-            
+
             //for statistical evaluation of data only
             /* boolean evaluate = false;
             if (evaluate) {
@@ -140,7 +141,7 @@ public class Import {
             }
             int avgPop = totalPop / totalWorkers;
             p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
-            p.setIndexNumber(allPromotions.size());
+            p.setPromotionID(allPromotions.size());
             allPromotions.add(p);
             return p;
         }).forEach((p) -> {
@@ -260,7 +261,7 @@ public class Import {
                 counter = 0;
 
                 //trim the line to get the promotion name etc
-                promotion.setIndexNumber(promotionKeys.get(promotionKeys.size() - 1));
+                promotion.setPromotionID(promotionKeys.get(promotionKeys.size() - 1));
                 promotion.setName(currentLine.substring(3, 43).trim());
                 promotion.setShortName(currentLine.substring(43, 49).trim());
                 promotion.setImagePath(currentLine.substring(49, 65).trim());
@@ -313,7 +314,8 @@ public class Import {
 
                     if (workerIDs.get(x).equals(id1)
                             || workerIDs.get(x).equals(id2)) {
-                        team.getWorkers().add(allWorkers.get(x));
+                        TagTeamWorker tagTeamWorker = new TagTeamWorker(team, allWorkers.get(x));
+                        gameController.getTagTeamManager().addTagTeamWorker(tagTeamWorker);
                     }
                 }
                 team.setExperience(hexStringToInt(currentHexLine.get(55)));

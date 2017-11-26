@@ -8,18 +8,17 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.dirt.DirtSheet;
-import wrestling.model.dirt.News;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class ContractManager implements Serializable {
 
     private final List<Contract> contracts;
-    private final DirtSheet dirtSheet;
+    
+    private final PromotionManager promotionManager;
 
-    public ContractManager(DirtSheet dirtSheet) {
+    public ContractManager(PromotionManager promotionManager) {
         contracts = new ArrayList<>();
-        this.dirtSheet = dirtSheet;
+        this.promotionManager = promotionManager;
     }
 
     public void addContract(Contract contract) {
@@ -124,17 +123,12 @@ public class ContractManager implements Serializable {
     }
 
     //handles appearance-based contracts
-    public boolean appearance(LocalDate date, Contract contract) {
-        boolean stillExists = true;
+    public void appearance(LocalDate date, Contract contract) {
         //make the promotion 'pay' the worker for the appearance
-        contract.getPromotion().bankAccount().removeFunds(contract.getAppearanceCost(), 'w', date);
-
+        promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), 'w', date);
         if (contract.getDuration() <= 0) {
             terminateContract(contract);
-            stillExists = false;
         }
-
-        return stillExists;
     }
 
     public void payDay(LocalDate date, Contract contract) {
@@ -149,7 +143,7 @@ public class ContractManager implements Serializable {
                 payment = contract.getBiWeeklyCost();
             }
 
-            contract.getPromotion().bankAccount().removeFunds(Math.toIntExact(payment), 'w', date);
+            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(payment), 'w', date);
 
         }
 
@@ -205,20 +199,6 @@ public class ContractManager implements Serializable {
         }
 
         return canNegotiate;
-    }
-
-    public void reportSigning(Contract c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(c.getPromotion().getShortName()).append(" signed ").append(c.getWorker().getName())
-                .append(" on ").append(c.getStartDate());
-
-        dirtSheet.newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
-    }
-
-    public void reportExpiration(Contract c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Contract between ").append(c.getWorker()).append(" and ").append(c.getPromotion()).append(" has expired");
-        dirtSheet.newDirt(new News(sb.toString(), c.getWorker(), c.getPromotion()));
     }
 
     public String contractString(Worker worker) {

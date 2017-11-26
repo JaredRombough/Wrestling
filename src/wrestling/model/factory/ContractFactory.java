@@ -52,7 +52,7 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             contractManager.buyOutContracts(worker, promotion);
-            
+
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
@@ -81,7 +81,7 @@ public class ContractFactory {
             setBiWeeklyCost(contract);
 
             contractManager.buyOutContracts(worker, promotion);
-            
+
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
@@ -104,12 +104,10 @@ public class ContractFactory {
         contractManager.addContract(contract);
         return contract;
     }
-    
+
     private void initializeContract(Contract contract, int duration, LocalDate startDate) {
         contract.setDuration(duration);
         contract.setStartDate(startDate);
-
-        contractManager.reportSigning(contract);
     }
 
     public int calculateAppearanceCost(Worker worker, boolean exclusive) {
@@ -164,7 +162,6 @@ public class ContractFactory {
         }
 
         contract.setAppearanceCost(unitCost);
-
     }
 
     /*
@@ -195,6 +192,5 @@ public class ContractFactory {
         }
 
         contract.setBiWeeklyCost(unitCost);
-
     }
 }

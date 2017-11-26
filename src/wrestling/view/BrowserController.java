@@ -33,7 +33,7 @@ import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.dirt.EventArchive;
+import wrestling.model.Event;
 import wrestling.view.comparators.EventDateComparator;
 import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
@@ -100,7 +100,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private SortedList lastSortedList;
 
     private BrowserMode<Worker> browseWorkers;
-    private BrowserMode<EventArchive> browseEvents;
+    private BrowserMode<Event> browseEvents;
     private BrowserMode<Title> browseTitles;
     private BrowserMode<TagTeam> browseTeams;
 
@@ -121,7 +121,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                 + "Level " + currentPromotion.getLevel()
                 + "\tPopularity " + currentPromotion.getPopulatirty()
-                + "\tFunds: " + currentPromotion.bankAccount().getFunds());
+                + "\tFunds: " + gameController.getPromotionManager().getBankAccount(currentPromotion).getFunds());
 
         //tell the workeroverviewcontroller which promotion we are looking at
         //other controllers would be notified here too if necessary
@@ -181,7 +181,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } else if (event.getSource() == eventsButton) {
 
-            browse(browseEvents, gameController.getDirtSheet().promotionEvents(currentPromotion));
+            browse(browseEvents, gameController.getEventManager().getEvents(currentPromotion));
             updateSelectedButton(eventsButton);
             lastButton = eventsButton;
 
@@ -343,7 +343,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             lastDisplayNode = browseWorkers.displayPane;
 
             browseEvents = new BrowserMode<>(
-                    gameController.getDirtSheet().promotionEvents(gameController.getPromotionManager().playerPromotion()),
+                    gameController.getEventManager().getEvents(gameController.getPromotionManager().playerPromotion()),
                     "view/SimpleDisplay.fxml");
             browseEvents.comparators = FXCollections.observableArrayList(
                     new EventDateComparator()

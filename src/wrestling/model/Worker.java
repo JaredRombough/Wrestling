@@ -4,20 +4,13 @@ import java.io.Serializable;
 
 public class Worker implements Serializable {
 
-    private static int serialNumber = 0;
+    private static int workerID = 0;
 
     /**
-     * @return the serialNumber
+     * @return the workerID
      */
-    public static int getSerialNumber() {
-        return serialNumber;
-    }
-
-    /**
-     * @param aSerialNumber the serialNumber to set
-     */
-    public static void setSerialNumber(int aSerialNumber) {
-        serialNumber = aSerialNumber;
+    public static int getWorkerID() {
+        return workerID;
     }
 
     private String name;
@@ -39,8 +32,8 @@ public class Worker implements Serializable {
 
     public Worker() {
         minimumPopularity = 0;
-        name = "Worker #" + serialNumber;
-        serialNumber++;
+        name = "Worker #" + workerID;
+        workerID++;
     }
 
     @Override

@@ -2,24 +2,24 @@ package wrestling.model.factory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import wrestling.model.Contract;
+import wrestling.model.Event;
+import wrestling.model.EventType;
+import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
-import wrestling.model.Segment;
-import wrestling.model.Television;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.Segment;
+import wrestling.model.interfaces.iEvent;
 import wrestling.model.manager.ContractManager;
-import wrestling.model.manager.DateManager;
+import wrestling.model.manager.EventManager;
+import wrestling.model.manager.MatchManager;
+import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.dirt.DirtSheet;
-import wrestling.model.dirt.EventArchive;
-import wrestling.model.dirt.EventType;
-import wrestling.model.dirt.SegmentRecord;
+import wrestling.model.temp.TempSegment;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -29,125 +29,67 @@ import wrestling.model.utility.ModelUtilityFunctions;
  */
 public class EventFactory {
 
-    private final DirtSheet dirtSheet;
     private final ContractManager contractManager;
-    private final DateManager dateManager;
+    private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
+    private final MatchManager matchManager;
+    private final MatchFactory matchFactory;
+    private final PromotionManager promotionManager;
 
     public EventFactory(
-            DirtSheet dirtSheet,
             ContractManager contractManager,
-            DateManager dateManager,
+            EventManager eventManager,
+            MatchFactory matchFactory,
+            MatchManager matchManager,
+            PromotionManager promotionManager,
             TitleManager titleManager,
             WorkerManager workerManager) {
-        this.dirtSheet = dirtSheet;
         this.contractManager = contractManager;
-        this.dateManager = dateManager;
+        this.eventManager = eventManager;
+        this.matchFactory = matchFactory;
+        this.matchManager = matchManager;
+        this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
     }
 
-    private EventArchive createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+    private void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
-        TempEvent event = new TempEvent(segments, date, promotion);
+        TempEvent tempEvent = new TempEvent(segments, date, promotion);
 
-        //this is all that will remain of the event
-        EventArchive eventArchive = new EventArchive(
-                allWorkers(segments),
+        Event event = new Event(
                 promotion,
+                date,
                 eventType,
-                calculateCost(event),
-                gate(event),
-                attendance(event));
+                eventManager.calculateCost(tempEvent),
+                eventManager.gate(tempEvent),
+                eventManager.attendance(tempEvent));
 
-        dirtSheet.newDirt(eventArchive);
+        processSegments(tempEvent);
+        promotionManager.getBankAccount(promotion).addFunds(eventManager.gate(tempEvent), 'e', date);
+        eventManager.addEvent(event);
+        for (Worker worker : eventManager.allWorkers(tempEvent.getSegments())) {
+            EventWorker eventWorker = new EventWorker(event, worker);
+            eventManager.addEventWorker(eventWorker);
+        }
+        processContracts(tempEvent);
+    }
 
-        processSegments(event, eventArchive);
-        promotion.bankAccount().addFunds(gate(event), 'e', date);
-
-        processContracts(event);
-
-        return eventArchive;
-
+    public void createEventFromTemp(final List<TempSegment> segments, LocalDate date, Promotion promotion) {
+        createEvent(converTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
     }
 
     public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
         createEvent(segments, date, promotion, EventType.LIVEEVENT);
     }
 
-    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, Television television) {
-        createEvent(segments, date, promotion, EventType.TELEVISION).setTelevision(television);
-    }
-
-    private String generateSummaryString(TempEvent event) {
-        StringBuilder bld = new StringBuilder();
-
-        for (Segment segment : event.getSegments()) {
-
-            if (segment.isComplete()) {
-                bld.append(segment.toString());
-                if (segment instanceof Match) {
-
-                    bld.append("\n");
-                    bld.append("Rating: ").append(((Match) segment).segmentRating());
-
-                }
-                bld.append("\n");
-
-            }
+    private List<Segment> converTempToSegment(List<TempSegment> tempSegments) {
+        List<Segment> segments = new ArrayList<>();
+        for (TempSegment tempSegment : tempSegments) {
+            segments.add(matchFactory.CreateMatch(tempSegment.getTeams(), tempSegment.getRules(), tempSegment.getFinish()));
         }
-
-        bld.append("\n");
-
-        bld.append("Total cost: $").append(calculateCost(event));
-        bld.append("\n");
-        bld.append("Attendance: ").append(attendance(event));
-        bld.append("\n");
-        bld.append("Gross profit: $").append(gate(event));
-        bld.append("\n");
-        bld.append("Roster size: ").append(contractManager.getFullRoster(event.getPromotion()).size());
-        bld.append("\n");
-        bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
-
-        return bld.toString();
-    }
-
-    private int attendance(TempEvent event) {
-        int attendance = 0;
-
-        switch (event.getPromotion().getLevel()) {
-            case 1:
-                attendance += 20;
-                break;
-            case 2:
-                attendance += 50;
-                break;
-            case 3:
-                attendance += 100;
-                break;
-            case 4:
-                attendance += 250;
-                break;
-            case 5:
-                attendance += 4000;
-                break;
-            default:
-                break;
-        }
-
-        //how many workers are draws?
-        int draws = 0;
-        for (Worker worker : allWorkers(event.getSegments())) {
-
-            if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(event.getPromotion()) - 10) {
-                draws++;
-            }
-        }
-
-        attendance += ModelUtilityFunctions.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
-
-        return attendance;
+        return segments;
     }
 
     /*
@@ -156,37 +98,17 @@ public class EventFactory {
     also notifies contracts of appearances
      */
     private void processContracts(TempEvent event) {
-
-        for (Worker worker : allWorkers(event.getSegments())) {
-
-            Contract contract = contractManager.getContract(worker, event.getPromotion());
-            if (!contractManager.appearance(event.getDate(), contract)) {
-                contractManager.reportExpiration(contract);
-            }
-
-        }
-
+        eventManager.allWorkers(event.getSegments()).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
+            contractManager.appearance(event.getDate(), contract);
+        });
     }
 
-    private void processSegments(TempEvent event, EventArchive ea) {
-        for (Segment segment : event.getSegments()) {
-
-            if (segment.isComplete()) {
-
-                if (segment instanceof Match) {
-                    for (Worker w : ((Match) segment).getWinner()) {
-                        workerManager.gainPopularity(w);
-                    }
-                }
-                dirtSheet.newDirt(new SegmentRecord(processSegment(segment),
-                        segment.allWorkers(),
-                        event.getPromotion(),
-                        ea));
-
-            }
-
-        }
-
+    private void processSegments(TempEvent event) {
+        event.getSegments().stream().filter((segment) -> (segment instanceof Match)).forEach((segment) -> {
+            matchManager.getWinners((Match) segment).stream().forEach((w) -> {
+                workerManager.gainPopularity(w);
+            });
+        });
     }
 
     private String processSegment(Segment segment) {
@@ -204,25 +126,26 @@ public class EventFactory {
     private String processMatch(Match match) {
 
         StringBuilder sb = new StringBuilder();
-        Title title = match.getTitle();
-        List<Worker> winner = match.getWinner();
+        Title title = matchManager.getTitle(match);
+        List<Worker> winner = matchManager.getWinners(match);
+        List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
 
         if (title != null) {
 
-            if (title.isVacant()) {
+            if (champs.isEmpty()) {
 
-                titleManager.awardTitle(title, winner, dateManager.today());
+                titleManager.awardTitle(title, winner);
                 sb.append(ModelUtilityFunctions.slashNames(winner))
                         .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
                         .append(title.getName()).append(" title");
             } else {
-                for (Worker worker : title.getWorkers()) {
+                for (Worker worker : champs) {
                     if (!winner.contains(worker)) {
                         sb.append(ModelUtilityFunctions.slashNames(winner))
                                 .append(winner.size() > 1 ? " defeat " : " defeats ")
-                                .append(ModelUtilityFunctions.slashNames(title.getWorkers())).append(" for the ")
+                                .append(ModelUtilityFunctions.slashNames(champs)).append(" for the ")
                                 .append(title.getName()).append(" title");
-                        titleManager.titleChange(title, winner, dateManager.today());
+                        titleManager.titleChange(title, winner);
 
                         break;
                     }
@@ -241,7 +164,7 @@ public class EventFactory {
 
         winnerPop /= winner.size();
 
-        for (List<Worker> team : match.getTeams()) {
+        for (List<Worker> team : matchManager.getTeams(match)) {
 
             if (!team.equals(winner)) {
                 int teamPop = 0;
@@ -277,71 +200,8 @@ public class EventFactory {
         return sb.toString().isEmpty() ? match.toString().replace("\n", " ") : sb.toString();
     }
 
-    //this will return a list of all workers currently booked
-    //without any duplicates
-    //so if a worker is in two different segments he is only on the list
-    //one time. useful for cost calculation so we don't pay people
-    //twice for the same show
-    private List<Worker> allWorkers(List<Segment> segments) {
-
-        List allWorkers = new ArrayList<>();
-        for (Segment currentSegment : segments) {
-            allWorkers.addAll(currentSegment.allWorkers());
-
-        }
-
-        //this should take the list of workers generated above
-        //and convert it to a set, removing duplicates
-        Set<Worker> allWorkersSet = new LinkedHashSet<>(allWorkers);
-        //convert the set back to a list with no duplicates
-        allWorkers = new ArrayList<>(allWorkersSet);
-
-        return allWorkers;
-    }
-
-    //dynamic current cost calculation to be called while the player is booking
-    private int calculateCost(TempEvent event) {
-
-        int currentCost = 0;
-
-        for (Worker worker : allWorkers(event.getSegments())) {
-
-            currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
-        }
-
-        return currentCost;
-    }
-
-    //gross profit for the event
-    private int gate(TempEvent event) {
-
-        int ticketPrice = 0;
-
-        switch (event.getPromotion().getLevel()) {
-            case 1:
-                ticketPrice += 5;
-                break;
-            case 2:
-                ticketPrice += 10;
-                break;
-            case 3:
-                ticketPrice += 15;
-                break;
-            case 4:
-                ticketPrice += 20;
-                break;
-            case 5:
-                ticketPrice += 35;
-                break;
-            default:
-                break;
-        }
-
-        return attendance(event) * ticketPrice;
-    }
-
     //class to temporarily hold event info to make things cleaner
-    private class TempEvent {
+    private class TempEvent implements iEvent {
 
         private final List<Segment> segments;
         private final LocalDate date;
@@ -370,6 +230,7 @@ public class EventFactory {
         /**
          * @return the promotion
          */
+        @Override
         public Promotion getPromotion() {
             return promotion;
         }

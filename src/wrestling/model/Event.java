@@ -1,58 +1,46 @@
-package wrestling.model.dirt;
+package wrestling.model;
 
 import java.time.LocalDate;
-import java.util.List;
-import wrestling.model.Promotion;
-import wrestling.model.Television;
-import wrestling.model.Worker;
+import wrestling.model.interfaces.iEvent;
 
-/**
- *
- * for storing a completed event
- *
- *
- */
-public class EventArchive implements Dirt {
+public class Event implements iEvent {
+
+    private final Promotion promotion;
 
     private LocalDate date;
-    private final List<Worker> workers;
-    private final Promotion promotion;
-    private final EventType eventType;
-    private final int cost;
-    private final int gate;
-    private final int attendance;
+    private EventType eventType;
+    private int cost;
+    private int gate;
+    private int attendance;
     private Television television;
 
-    public EventArchive(List<Worker> workers, Promotion promotion, EventType eventType, int cost, int gate, int attendance) {
-        this.workers = workers;
+    public Event(Promotion promotion, LocalDate date, EventType eventType, int cost, int gate, int attendance) {
         this.promotion = promotion;
+        this.date = date;
         this.eventType = eventType;
         this.cost = cost;
         this.gate = gate;
         this.attendance = attendance;
     }
 
-    @Override
-    public String toString() {
-        return promotion.getName() + " event " + date.toString();
-    }
-
-    @Override
-    public void setDate(LocalDate date) {
+    public Event(Promotion promotion, LocalDate date) {
+        this.promotion = promotion;
         this.date = date;
     }
 
     @Override
+    public String toString() {
+        return promotion.getShortName() + " event " + date.toString();
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public LocalDate getDate() {
         return date;
     }
 
-    @Override
-    public List<Worker> getWorkers() {
-        return workers;
-    }
-
-    @Override
     public Promotion getPromotion() {
         return promotion;
     }
@@ -97,6 +85,34 @@ public class EventArchive implements Dirt {
      */
     public void setTelevision(Television television) {
         this.television = television;
+    }
+
+    /**
+     * @param eventType the eventType to set
+     */
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    /**
+     * @param gate the gate to set
+     */
+    public void setGate(int gate) {
+        this.gate = gate;
+    }
+
+    /**
+     * @param attendance the attendance to set
+     */
+    public void setAttendance(int attendance) {
+        this.attendance = attendance;
     }
 
 }

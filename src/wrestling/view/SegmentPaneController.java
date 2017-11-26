@@ -3,7 +3,6 @@ package wrestling.view;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -25,13 +24,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
-import wrestling.model.Segment;
+import wrestling.model.temp.TempSegment;
 import wrestling.model.Worker;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
+
     private static final int DEFAULTTEAMS = 2;
 
     @FXML
@@ -238,6 +237,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             controller.setEventScreenController(eventScreenController);
             controller.setSegmentPaneController(this);
             controller.setTeamNumber(teamPaneControllers.size() - 1);
+            // calling initialize more here doesn't follow the controllerBase pattern
             controller.initializeMore();
 
             teamsPane.getChildren().add(teamPane);
@@ -305,13 +305,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
-    public Segment getSegment() {
+    public TempSegment getTempMatch() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-
-        return new Match(getTeams(),
-                Arrays.asList((MatchRules) matchRules.getSelectionModel().getSelectedItem()),
-                Arrays.asList((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem()));
+        TempSegment match = new TempSegment();
+        match.setFinish((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem());
+        match.setRules((MatchRules) matchRules.getSelectionModel().getSelectedItem());
+        match.setTeams(getTeams());
+        return match;
     }
 
     /*
@@ -339,5 +340,4 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         return teams;
     }
-
 }

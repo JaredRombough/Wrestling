@@ -1,26 +1,19 @@
 package wrestling.model;
 
 import java.io.Serializable;
-import wrestling.model.controller.PromotionController;
-import wrestling.model.financial.BankAccount;
 
 public class Promotion implements Serializable {
 
     private static int serialNumber = 0;
 
-    private final BankAccount bankAccount;
     private String name;
     private String shortName;
     private String imagePath;
-    private int indexNumber;
+    private int promotionID;
     private int popularity;
     private int level;
-    
-    private PromotionController controller;
 
     public Promotion() {
-        
-        bankAccount = new BankAccount();
 
         name = "Promotion #" + serialNumber;
         shortName = "PRO" + serialNumber;
@@ -31,10 +24,6 @@ public class Promotion implements Serializable {
         serialNumber++;
     }
 
-    public BankAccount bankAccount() {
-        return bankAccount;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -43,12 +32,12 @@ public class Promotion implements Serializable {
         return name;
     }
 
-    public void setIndexNumber(int indexNumber) {
-        this.indexNumber = indexNumber;
+    public void setPromotionID(int promotionID) {
+        this.promotionID = promotionID;
     }
 
     public int indexNumber() {
-        return indexNumber;
+        return promotionID;
     }
 
     public int getPopulatirty() {
@@ -110,19 +99,4 @@ public class Promotion implements Serializable {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-
-    /**
-     * @return the controller
-     */
-    public PromotionController getController() {
-        return controller;
-    }
-
-    /**
-     * @param controller the controller to set
-     */
-    public void setController(PromotionController controller) {
-        this.controller = controller;
-    }
-
 }

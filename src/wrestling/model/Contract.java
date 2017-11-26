@@ -2,8 +2,6 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -31,15 +29,10 @@ public class Contract implements Serializable {
     private int appearanceCost;
 
     private int biWeeklyCost;
-    private List<LocalDate> bookedDates = new ArrayList<>();
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
         active = true;
-    }
-
-    public void bookDate(LocalDate date) {
-        getBookedDates().add(date);
     }
 
     /**
@@ -125,13 +118,6 @@ public class Contract implements Serializable {
      */
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
-    }
-
-    /**
-     * @return the bookedDates
-     */
-    public List<LocalDate> getBookedDates() {
-        return bookedDates;
     }
 
     /**

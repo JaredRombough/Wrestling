@@ -42,7 +42,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.Segment;
+import wrestling.model.Match;
+import wrestling.model.interfaces.Segment;
+import wrestling.model.temp.TempSegment;
 import wrestling.model.Worker;
 
 public class EventScreenController extends ControllerBase implements Initializable {
@@ -72,13 +74,13 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
-    private final List<Segment> segments = new ArrayList<>();
+    private final List<TempSegment> segments = new ArrayList<>();
 
     //this would be for keeping track of the index number of the currently
     //selected segment
     private Number currentSegmentNumber;
 
-    private Segment currentSegment() {
+    private TempSegment currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
     }
 
@@ -131,7 +133,11 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateSegments();
 
         //create the event with the segments assembled
-        gameController.getEventFactory().createEvent(segments, gameController.getDateManager().today(), gameController.getPromotionManager().playerPromotion());
+        gameController.getEventFactory().createEventFromTemp(
+                segments,
+                gameController.getDateManager().today(),
+                gameController.getPromotionManager().playerPromotion()
+        );
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -159,7 +165,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segments.clear();
         for (SegmentPaneController currentController : segmentPaneControllers) {
-            segments.add(currentController.getSegment());
+            segments.add(currentController.getTempMatch());
         }
 
         updateLabels();
@@ -171,10 +177,10 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         totalCostLabel.setText("Total Cost: $" + currentCost());
 
-        for (SegmentNameItem current : segmentListView.getItems()) {
+        for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
 
-            current.segment.set(segments.get(segmentListView.getItems().indexOf(current)));
-            current.name.set(current.segment.get().toString());
+            segmentNameItem.segment.set(segments.get(segmentListView.getItems().indexOf(segmentNameItem)));
+            segmentNameItem.name.set(gameController.getMatchManager().getMatchString((TempSegment) segmentNameItem.segment.get()));
         }
 
         updateWorkerListView();
@@ -187,12 +193,12 @@ public class EventScreenController extends ControllerBase implements Initializab
         int currentCost = 0;
 
         for (Segment segment : segments) {
-            for (Worker worker : segment.allWorkers()) {
-                currentCost += gameController.getContractManager().getContract(worker, gameController.getPromotionManager().playerPromotion()).getAppearanceCost();
+            if (segment instanceof Match) {
+                for (Worker worker : gameController.getMatchManager().getWorkers((Match) segment)) {
+                    currentCost += gameController.getContractManager().getContract(worker, gameController.getPromotionManager().playerPromotion()).getAppearanceCost();
+                }
             }
-
         }
-
         return currentCost;
     }
 
@@ -216,12 +222,12 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentPaneControllers.add(controller);
 
             controller.setEventScreenController(this);
-            controller.initializeMore();
+            controller.setDependencies(mainApp, gameController);
 
             //update the segment listview
             SegmentNameItem item = new SegmentNameItem();
             segmentListView.getItems().add(item);
-            item.segment.set(controller.getSegment());
+            item.segment.set(controller.getTempMatch());
             item.name.set("Segment " + segments.size());
 
             updateSegments();
@@ -345,7 +351,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         for (Worker worker : roster) {
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
-            if (!currentSegment().allWorkers().contains(worker)
+            if (!currentSegment().getWorkers().contains(worker)
                     && !gameController.getBookingManager().isBooked(worker, gameController.getDateManager().today())) {
                 workersList.add(worker);
             }

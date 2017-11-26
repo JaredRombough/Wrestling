@@ -1,6 +1,5 @@
 package wrestling.model.factory;
 
-import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
@@ -22,18 +21,17 @@ public class TitleFactory {
     //create a title with predetermined attributes
     public void createTitle(Promotion promotion, Worker worker, String name) {
 
-        List<Worker> workers = new ArrayList<>();
-        workers.add(worker);
-
-        Title title = new Title(promotion, workers, name);
+        Title title = new Title(promotion, 1, name);
 
         titleManager.addTitle(title);
+        titleManager.awardTitle(title, worker);
     }
 
     //create a title with predetermined attributes
     public void createTitle(Promotion promotion, List<Worker> workers, String name) {
-        Title title = new Title(promotion, workers, name);
+        Title title = new Title(promotion, workers.size(), name);
         titleManager.addTitle(title);
+        titleManager.awardTitle(title, workers);
     }
 
 }

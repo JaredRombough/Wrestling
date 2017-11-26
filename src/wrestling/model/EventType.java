@@ -1,5 +1,5 @@
 
-package wrestling.model.dirt;
+package wrestling.model;
 
 
 public enum EventType {

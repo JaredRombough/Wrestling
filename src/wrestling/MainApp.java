@@ -37,6 +37,7 @@ public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
+    private static final int PRE_RUN_DAYS = 30;
 
     public static void main(String[] args) {
 
@@ -181,9 +182,7 @@ public class MainApp extends Application {
         updateLabels();
 
         //number of days to run automatically at start of game
-        int preRunDays = 100;
-
-        for (int i = 0; i < preRunDays; i++) {
+        for (int i = 0; i < PRE_RUN_DAYS; i++) {
             nextDay();
             System.out.println("day: " + gameController.getDateManager().today());
 
