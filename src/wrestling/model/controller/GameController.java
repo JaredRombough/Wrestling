@@ -60,7 +60,10 @@ public final class GameController implements Serializable {
         matchManager = new MatchManager();
 
         contractManager = new ContractManager(promotionManager);
-        eventManager = new EventManager(contractManager, matchManager);
+        eventManager = new EventManager(
+                contractManager,
+                dateManager,
+                matchManager);
 
         titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(matchManager);

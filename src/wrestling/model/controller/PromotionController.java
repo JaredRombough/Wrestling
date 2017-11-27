@@ -137,15 +137,19 @@ public class PromotionController implements Serializable {
         }
 
         //book a show if we have one scheduled today
-        if (eventManager.hasEventOnDate(promotion, dateManager.today())
-                && contractManager.getFullRoster(promotion).size() >= 2) {
-            bookEvent(promotion);
+        Event eventToday = eventManager.getEventOnDate(promotion, dateManager.today());
+        if (eventToday != null) {
+            if (contractManager.getFullRoster(promotion).size() >= 2) {
+                bookEvent(eventToday, promotion);
 
-            //schedule future events as necessary
-            int futureDates = eventManager.eventsAfterDate(promotion, dateManager.today());
-            for (int i = futureDates; i < eventAmountTarget(promotion); i++) {
-                bookNextEvent(promotion);
-                eventsBooked++;
+                //schedule future events as necessary
+                int futureDates = eventManager.eventsAfterDate(promotion, dateManager.today());
+                for (int i = futureDates; i < eventAmountTarget(promotion); i++) {
+                    bookNextEvent(promotion);
+                    eventsBooked++;
+                }
+            } else {
+                //cancel event
             }
         }
 
@@ -246,7 +250,7 @@ public class PromotionController implements Serializable {
             eventDate = LocalDate.from(eventDate).plusDays(1);
 
             //if we don't already have an event scheduled on this date
-            if (!eventManager.hasEventOnDate(promotion, eventDate)) {
+            if (eventManager.getEventOnDate(promotion, eventDate) == null) {
 
                 //count the workers that are availeable on the date
                 double available = 0;
@@ -433,8 +437,8 @@ public class PromotionController implements Serializable {
     }
 
     //book an event
-    private void bookEvent(Promotion promotion) {
-        eventFactory.createEvent(bookSegments(promotion), dateManager.today(), promotion);
+    private void bookEvent(Event event, Promotion promotion) {
+        eventFactory.createEvent(event, bookSegments(promotion), dateManager.today(), promotion);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {

@@ -20,15 +20,21 @@ public class EventManager {
     private final List<Event> events;
     private final List<EventWorker> eventWorkers;
     private final List<MatchEvent> matchEvents;
+
+    private final DateManager dateManager;
     private final MatchManager matchManager;
     private final ContractManager contractManager;
 
-    public EventManager(ContractManager contractManager, MatchManager matchManager) {
+    public EventManager(
+            ContractManager contractManager,
+            DateManager dateManager,
+            MatchManager matchManager) {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
         this.matchManager = matchManager;
         this.contractManager = contractManager;
+        this.dateManager = dateManager;
     }
 
     public void addEvent(Event event) {
@@ -51,16 +57,14 @@ public class EventManager {
         return promotionEvents;
     }
 
-    public boolean hasEventOnDate(Promotion promotion, LocalDate date) {
-        boolean hasEvent = false;
+    public Event getEventOnDate(Promotion promotion, LocalDate date) {
         for (Event event : events) {
             if (event.getDate().equals(date)
                     && event.getPromotion().equals(promotion)) {
-                hasEvent = true;
-                break;
+                return event;
             }
         }
-        return hasEvent;
+        return null;
     }
 
     public int eventsAfterDate(Promotion promotion, LocalDate date) {
@@ -79,7 +83,7 @@ public class EventManager {
         });
         return matches;
     }
-    
+
     //this will return a list of all workers currently booked
     //without any duplicates
     //so if a worker is in two different segments he is only on the list
@@ -102,7 +106,6 @@ public class EventManager {
 
         return allWorkers;
     }
-
 
     //dynamic current cost calculation to be called while the player is booking
     public int calculateCost(iEvent event) {
@@ -182,17 +185,19 @@ public class EventManager {
     public String generateSummaryString(Event event) {
         StringBuilder bld = new StringBuilder();
 
+        if (event.getDate().isAfter(dateManager.today())) {
+            bld.append("This event is in the future");
+        }
+
         for (Segment segment : getMatches(event)) {
-
-            bld.append(segment.toString());
             if (segment instanceof Match) {
-
+                bld.append(matchManager.getMatchString((Match) segment));
                 bld.append("\n");
                 bld.append("Rating: ").append(((Match) segment).getRating());
-
+            } else {
+                bld.append("not a match");
             }
             bld.append("\n");
-
         }
 
         bld.append("\n");

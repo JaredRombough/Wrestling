@@ -8,6 +8,7 @@ import wrestling.model.Event;
 import wrestling.model.EventType;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
+import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.Worker;
@@ -66,22 +67,37 @@ public class EventFactory {
                 eventManager.gate(tempEvent),
                 eventManager.attendance(tempEvent));
 
-        processSegments(tempEvent);
-        promotionManager.getBankAccount(promotion).addFunds(eventManager.gate(tempEvent), 'e', date);
+        processEvent(event, segments, date, promotion);
+    }
+
+    private void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+
+        TempEvent tempEvent = new TempEvent(segments, date, promotion);
+
+        event.setCost(eventManager.calculateCost(tempEvent));
+        event.setGate(eventManager.gate(tempEvent));
+        event.setAttendance(eventManager.attendance(tempEvent));
+
+        processEvent(event, segments, date, promotion);
+    }
+
+    private void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
+        processSegments(event, segments);
+        promotionManager.getBankAccount(promotion).addFunds(eventManager.gate(event), 'e', date);
         eventManager.addEvent(event);
-        for (Worker worker : eventManager.allWorkers(tempEvent.getSegments())) {
+        for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
         }
-        processContracts(tempEvent);
+        processContracts(event, segments);
     }
 
     public void createEventFromTemp(final List<TempSegment> segments, LocalDate date, Promotion promotion) {
         createEvent(converTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
     }
 
-    public void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion) {
-        createEvent(segments, date, promotion, EventType.LIVEEVENT);
+    public void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
+        createEvent(event, segments, date, promotion, EventType.LIVEEVENT);
     }
 
     private List<Segment> converTempToSegment(List<TempSegment> tempSegments) {
@@ -97,18 +113,19 @@ public class EventFactory {
     and takes money from the promotion accordingly
     also notifies contracts of appearances
      */
-    private void processContracts(TempEvent event) {
-        eventManager.allWorkers(event.getSegments()).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
+    private void processContracts(iEvent event, List<Segment> segments) {
+        eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
             contractManager.appearance(event.getDate(), contract);
         });
     }
 
-    private void processSegments(TempEvent event) {
-        event.getSegments().stream().filter((segment) -> (segment instanceof Match)).forEach((segment) -> {
+    private void processSegments(Event event, List<Segment> segments) {
+        segments.stream().filter((segment) -> (segment instanceof Match)).forEach(((segment) -> {
+            eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
             matchManager.getWinners((Match) segment).stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });
-        });
+        }));
     }
 
     private String processSegment(Segment segment) {

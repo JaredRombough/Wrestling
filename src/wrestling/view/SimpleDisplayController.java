@@ -12,6 +12,7 @@ import javafx.scene.text.TextFlow;
 import wrestling.model.Event;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.manager.EventManager;
 
 
 /*
@@ -20,6 +21,7 @@ basic anchor pane for displaying a string on a label, used by browser
 public class SimpleDisplayController extends ControllerBase implements Initializable {
 
     private Object obj;
+    private EventManager eventManager;
 
     @FXML
     private ScrollPane scrollPane;
@@ -35,6 +37,11 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @FXML
     private StackPane stackPane;
+    
+    @Override
+    public void initializeMore() {
+        this.eventManager = gameController.getEventManager();
+    }
 
     @Override
     public void setCurrent(Object obj) {
@@ -49,7 +56,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
         //call the appropriate method based on object type
         if (obj instanceof Event) {
-            newText = "insert event info here";
+            newText = eventManager.generateSummaryString((Event) obj);
         } else if (obj instanceof Title) {
             newText = "insert title info here";
         } else if (obj instanceof Worker) {

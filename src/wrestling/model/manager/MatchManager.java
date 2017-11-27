@@ -67,7 +67,7 @@ public class MatchManager {
 
     private List<MatchWorker> getMatchWorkers(Match match) {
         List<MatchWorker> getMatchWorkers = new ArrayList<>();
-        getMatchWorkers.stream().filter((matchWorker) -> (matchWorker.getMatch().equals(match))).forEach((matchWorker) -> {
+        matchWorkers.stream().filter((matchWorker) -> (matchWorker.getMatch().equals(match))).forEach((matchWorker) -> {
             getMatchWorkers.add(matchWorker);
         });
         return getMatchWorkers;
