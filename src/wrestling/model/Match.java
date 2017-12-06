@@ -5,7 +5,7 @@ import wrestling.model.interfaces.MatchRule;
 
 public class Match implements Segment {
 
-    private final MatchRule rules;
+    private final MatchRules rules;
     private final MatchFinishes finish;
     private final int rating;
 
@@ -25,7 +25,7 @@ public class Match implements Segment {
     /**
      * @return the rules
      */
-    public MatchRule getRules() {
+    public MatchRules getRules() {
         return rules;
     }
 

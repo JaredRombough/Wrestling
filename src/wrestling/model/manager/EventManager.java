@@ -202,16 +202,12 @@ public class EventManager {
 
         bld.append("\n");
 
-        bld.append("Total cost: $").append(calculateCost(event));
+        bld.append("Total cost: $").append(event.getCost());
         bld.append("\n");
-        bld.append("Attendance: ").append(attendance(event));
+        bld.append("Attendance: ").append(event.getAttendance());
         bld.append("\n");
-        bld.append("Gross profit: $").append(gate(event));
-        bld.append("\n");
-        bld.append("Roster size: ").append(contractManager.getFullRoster(event.getPromotion()).size());
-        bld.append("\n");
-        bld.append("Promotion Level: ").append(event.getPromotion().getLevel()).append(" (").append(event.getPromotion().getPopulatirty()).append(")");
-
+        bld.append("Gross profit: $").append(event.getGate());
+        
         return bld.toString();
     }
 }

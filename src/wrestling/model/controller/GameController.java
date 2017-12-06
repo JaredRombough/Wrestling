@@ -57,7 +57,7 @@ public final class GameController implements Serializable {
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
-        matchManager = new MatchManager();
+        matchManager = new MatchManager(dateManager);
 
         contractManager = new ContractManager(promotionManager);
         eventManager = new EventManager(
@@ -66,7 +66,7 @@ public final class GameController implements Serializable {
                 matchManager);
 
         titleFactory = new TitleFactory(titleManager);
-        matchFactory = new MatchFactory(matchManager);
+        matchFactory = new MatchFactory(matchManager, dateManager);
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);

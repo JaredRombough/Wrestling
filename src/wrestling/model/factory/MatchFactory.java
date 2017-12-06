@@ -9,116 +9,70 @@ import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
+import wrestling.model.temp.SegmentView;
 
 public class MatchFactory implements Serializable {
 
     private final MatchManager matchManager;
+    private final DateManager dateManager;
 
-    public MatchFactory(MatchManager matchManager) {
+    public MatchFactory(MatchManager matchManager, DateManager dateManager) {
         this.matchManager = matchManager;
+        this.dateManager = dateManager;
     }
 
     /*
     this constructor takes an arbitrary number of teams
      */
     public Match CreateMatch(final List<List<Worker>> teams) {
-
-        int rating = 0;
-        if (teams.size() > 1) {
-            rating = calculateMatchRating(teams);
-        }
-
-        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, rating);
-
-        for (List<Worker> team : teams) {
-            for (Worker worker : team) {
-                matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
-            }
-        }
-
+        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
+        saveMatch(match, teams);
         return match;
-
     }
 
     public Match CreateMatch(final List<List<Worker>> teams, final MatchRules rules, final MatchFinishes finish) {
-        int rating = 0;
-        if (teams.size() > 1) {
-            rating = calculateMatchRating(teams);
-        }
-
-        Match match = new Match(rules, finish, rating);
-
-        for (List<Worker> team : teams) {
-            for (Worker worker : team) {
-                matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
-            }
-        }
-
+        Match match = new Match(rules, finish, calculateMatchRating(teams));
+        saveMatch(match, teams);
         return match;
     }
 
     public Match CreateMatch(final List<List<Worker>> teams, Title title) {
+        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
+        saveMatch(match, teams, title);
+        return match;
 
-        int rating = 0;
-        if (teams.size() > 1) {
-            rating = calculateMatchRating(teams);
-        }
+    }
 
-        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, rating);
+    private void saveMatch(Match match, List<List<Worker>> teams, Title title) {
+        matchManager.addMatchTitle(new MatchTitle(match, title));
+        saveMatch(match, teams);
+    }
 
+    private void saveMatch(Match match, List<List<Worker>> teams) {
+        SegmentView segmentView = new SegmentView();
+        segmentView.setFinish(match.getFinish());
+        segmentView.setRules(match.getRules());
+        segmentView.setTeams(teams);
+        segmentView.setRating(match.getRating());
+        segmentView.setDate(dateManager.today());
+        matchManager.addSegmentView(segmentView);
+        
         for (List<Worker> team : teams) {
             for (Worker worker : team) {
                 matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
             }
         }
-
-        matchManager.addMatchTitle(new MatchTitle(match, title));
-
-        return match;
-
+        
+        matchManager.addMatch(match);
     }
 
-    /*
-    @Override
-    public List<Worker> allWorkers() {
-        List<Worker> allWorkersList = new ArrayList<>();
-
-        for (List<Worker> team : getTeams()) {
-            allWorkersList.addAll(team);
-        }
-
-        return allWorkersList;
-    }
-
-    public void setWinner(int winnerIndex) {
-        if (winnerIndex < getTeams().size()) {
-            setWinner(getTeams().get(winnerIndex));
-        }
-
-    }
-
-    public void setWinner(List<Worker> winningTeam) {
-        if (getTeams().contains(winningTeam)) {
-            this.winner = winningTeam;
-            Collections.swap(getTeams(), getTeams().indexOf(winningTeam), 0);
-        }
-    }
-
-    @Override
-    public boolean isComplete() {
-        //consider a match completed if it has any workers (placeholder)
-        return !allWorkers().isEmpty() && !getWinner().isEmpty();
-    }
-
-    
-
-    public List<Worker> getWinner() {
-
-        return this.winner;
-    }
-     */
     private int calculateMatchRating(List<List<Worker>> teams) {
+
+        if (teams.size() < 1) {
+            return 0;
+        }
 
         float ratingsTotal = 0;
 

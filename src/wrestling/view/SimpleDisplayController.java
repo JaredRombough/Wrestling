@@ -37,7 +37,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @FXML
     private StackPane stackPane;
-    
+
     @Override
     public void initializeMore() {
         this.eventManager = gameController.getEventManager();
@@ -60,7 +60,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         } else if (obj instanceof Title) {
             newText = "insert title info here";
         } else if (obj instanceof Worker) {
-            newText = "insert worker info here";
+            newText = gameController.getMatchManager().getMatchStringForMonths((Worker) obj, 3);
         }
 
         if (obj != null && displayTitle != null && !obj.toString().equals(displayTitle.getText())) {

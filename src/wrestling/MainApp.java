@@ -37,7 +37,7 @@ public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
-    private static final int PRE_RUN_DAYS = 30;
+    private static final int PRE_RUN_DAYS = 130;
 
     public static void main(String[] args) {
 

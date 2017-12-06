@@ -20,7 +20,7 @@ import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.temp.TempSegment;
+import wrestling.model.temp.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
@@ -92,7 +92,7 @@ public class EventFactory {
         processContracts(event, segments);
     }
 
-    public void createEventFromTemp(final List<TempSegment> segments, LocalDate date, Promotion promotion) {
+    public void createEventFromTemp(final List<SegmentView> segments, LocalDate date, Promotion promotion) {
         createEvent(converTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
     }
 
@@ -100,9 +100,9 @@ public class EventFactory {
         createEvent(event, segments, date, promotion, EventType.LIVEEVENT);
     }
 
-    private List<Segment> converTempToSegment(List<TempSegment> tempSegments) {
+    private List<Segment> converTempToSegment(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
-        for (TempSegment tempSegment : tempSegments) {
+        for (SegmentView tempSegment : tempSegments) {
             segments.add(matchFactory.CreateMatch(tempSegment.getTeams(), tempSegment.getRules(), tempSegment.getFinish()));
         }
         return segments;

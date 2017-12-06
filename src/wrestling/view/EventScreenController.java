@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Match;
 import wrestling.model.interfaces.Segment;
-import wrestling.model.temp.TempSegment;
+import wrestling.model.temp.SegmentView;
 import wrestling.model.Worker;
 
 public class EventScreenController extends ControllerBase implements Initializable {
@@ -74,13 +74,13 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
-    private final List<TempSegment> segments = new ArrayList<>();
+    private final List<SegmentView> segments = new ArrayList<>();
 
     //this would be for keeping track of the index number of the currently
     //selected segment
     private Number currentSegmentNumber;
 
-    private TempSegment currentSegment() {
+    private SegmentView currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
     }
 
@@ -180,7 +180,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
 
             segmentNameItem.segment.set(segments.get(segmentListView.getItems().indexOf(segmentNameItem)));
-            segmentNameItem.name.set(gameController.getMatchManager().getMatchString((TempSegment) segmentNameItem.segment.get()));
+            segmentNameItem.name.set(gameController.getMatchManager().getMatchString((SegmentView) segmentNameItem.segment.get()));
         }
 
         updateWorkerListView();

@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
-import wrestling.model.temp.TempSegment;
+import wrestling.model.temp.SegmentView;
 import wrestling.model.Worker;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
@@ -305,10 +305,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
-    public TempSegment getTempMatch() {
+    public SegmentView getTempMatch() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-        TempSegment match = new TempSegment();
+        SegmentView match = new SegmentView();
         match.setFinish((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem());
         match.setRules((MatchRules) matchRules.getSelectionModel().getSelectedItem());
         match.setTeams(getTeams());

@@ -3,14 +3,13 @@ package wrestling.model.manager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.Event;
 import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
 import wrestling.model.interfaces.MatchRule;
 import wrestling.model.MatchRules;
 import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
-import wrestling.model.temp.TempSegment;
+import wrestling.model.temp.SegmentView;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 
@@ -19,11 +18,15 @@ public class MatchManager {
     private final List<Match> matches;
     private final List<MatchWorker> matchWorkers;
     private final List<MatchTitle> matchTitles;
+    private final List<SegmentView> segmentViews;
+    private final DateManager dateManager;
 
-    public MatchManager() {
+    public MatchManager(DateManager dateManager) {
         matches = new ArrayList<>();
         matchWorkers = new ArrayList<>();
         matchTitles = new ArrayList<>();
+        segmentViews = new ArrayList<>();
+        this.dateManager = dateManager;
     }
 
     public void addMatchWorker(MatchWorker matchWorker) {
@@ -32,6 +35,14 @@ public class MatchManager {
 
     public void addMatchTitle(MatchTitle matchTitle) {
         matchTitles.add(matchTitle);
+    }
+
+    public void addMatch(Match match) {
+        matches.add(match);
+    }
+
+    public void addSegmentView(SegmentView segmentView) {
+        segmentViews.add(segmentView);
     }
 
     public Title getTitle(Match match) {
@@ -96,11 +107,26 @@ public class MatchManager {
         return teams;
     }
 
+
+        StringBuilder sb = new StringBuilder();
+
+        for (SegmentView segmentView : segmentViews) {
+            if (segmentView.getWorkers().contains(worker)
+                    && segmentView.getDate().isBefore(dateManager.today().minusMonths(months))) {
+                sb.append(getMatchString(segmentView));
+                sb.append("\n");
+            }
+        }
+
+        return sb.length() > 0 ? sb.toString() : "No recent matches";
+
+    }
+
     public String getMatchString(Match match) {
         return getMatchString(getTeams(match), match.getRules(), match.getFinish());
     }
 
-    public String getMatchString(TempSegment segment) {
+    public String getMatchString(SegmentView segment) {
         return getMatchString(segment.getTeams(), segment.getRules(), segment.getFinish());
     }
 
