@@ -187,6 +187,8 @@ public class EventManager {
 
         if (event.getDate().isAfter(dateManager.today())) {
             bld.append("This event is in the future");
+        } else if (event.getDate().equals(dateManager.today())) {
+            bld.append("This event is scheduled for later today");
         }
 
         for (Segment segment : getMatches(event)) {
@@ -209,5 +211,13 @@ public class EventManager {
         bld.append("Gross profit: $").append(event.getGate());
         
         return bld.toString();
+    }
+    
+    public void addInitialEvents(List<Promotion> promotions, Promotion playerPromotion) {
+        for(Promotion promotion : promotions) {
+            if(!promotion.equals(playerPromotion)) {
+                addEvent(new Event(promotion, (dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7))));
+            }
+        }
     }
 }

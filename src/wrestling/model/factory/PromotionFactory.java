@@ -108,7 +108,6 @@ public class PromotionFactory {
         BankAccount bankAccount = new BankAccount(promotion);
         bankAccount.addFunds(10000);
         promotionManager.addBankAccount(bankAccount);
-        eventManager.addEvent(new Event(promotion, (dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7))));
         return promotion;
     }
 

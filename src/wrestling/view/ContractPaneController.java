@@ -41,7 +41,8 @@ public class ContractPaneController extends ControllerBase implements Initializa
     public void setWorker(Worker worker) {
         this.worker = worker;
 
-        if (gameController.getContractManager().canNegotiate(worker, gameController.getPromotionManager().playerPromotion())) {
+        if (worker == null || 
+                gameController.getContractManager().canNegotiate(worker, gameController.getPromotionManager().playerPromotion())) {
             setDisable(false);
         } else {
             setDisable(true);

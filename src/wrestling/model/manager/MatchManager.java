@@ -107,6 +107,7 @@ public class MatchManager {
         return teams;
     }
 
+    public String getMatchStringForMonths(Worker worker, int months) {
 
         StringBuilder sb = new StringBuilder();
 

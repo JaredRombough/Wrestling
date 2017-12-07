@@ -63,9 +63,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = gameController.getMatchManager().getMatchStringForMonths((Worker) obj, 3);
         }
 
-        if (obj != null && displayTitle != null && !obj.toString().equals(displayTitle.getText())) {
-            displayTitle.setText(obj.toString());
-        }
+        displayTitle.setText(obj != null ? obj.toString() : "");
 
         Text text = new Text();
         text.setText(newText);
