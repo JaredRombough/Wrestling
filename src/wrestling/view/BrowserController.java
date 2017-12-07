@@ -410,11 +410,8 @@ public class BrowserController extends ControllerBase implements Initializable {
                 @Override
                 public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
 
-
-                        //tell the controller what object we're looking at
-                        controller.setCurrent(newValue);
-
-                    }
+                    //tell the controller what object we're looking at
+                    controller.setCurrent(newValue);
 
                 }
             });
