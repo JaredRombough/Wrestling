@@ -144,20 +144,18 @@ public class TitleManager {
         return eventTitles;
     }
 
-    public String getMatchStringForMonths(Title title, int months) {
+    public String getTitleReignStrings(Title title) {
 
         StringBuilder sb = new StringBuilder();
 
         TitleView titleView = getTitleView(title);
 
         for (TitleReign titleReign : titleView.getTitleReigns()) {
-            if (titleReign.getDayWon().isBefore(dateManager.today().minusMonths(months))) {
                 sb.append(titleReignString(titleReign));
                 sb.append("\n");
-            }
         }
 
-        return sb.length() > 0 ? sb.toString() : "No recent matches";
+        return sb.length() > 0 ? sb.toString() : "No title reigns on record";
 
     }
 

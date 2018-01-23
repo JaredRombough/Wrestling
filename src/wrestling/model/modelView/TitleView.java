@@ -24,7 +24,7 @@ public class TitleView {
     }
 
     public void addReign(List<Worker> workers, LocalDate dayWon) {
-        TitleReign titleReign = new TitleReign(workers, dayWon);
+        titleReigns.add(new TitleReign(workers, dayWon));
     }
 
     /**
