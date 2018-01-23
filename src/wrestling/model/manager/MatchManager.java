@@ -9,7 +9,7 @@ import wrestling.model.interfaces.MatchRule;
 import wrestling.model.MatchRules;
 import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
-import wrestling.model.temp.SegmentView;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 
@@ -86,8 +86,8 @@ public class MatchManager {
 
     public List<List<Worker>> getTeams(Match match) {
         List<List<Worker>> teams = new ArrayList<>();
-        int teamInt = 0;
         List<Worker> team = new ArrayList<>();
+        teams.add(team);
 
         List<MatchWorker> allMatchWorkers = getMatchWorkers(match);
 
@@ -99,8 +99,8 @@ public class MatchManager {
                 team.add(matchWorker.getWorker());
                 lastTeam = matchWorker.getTeam();
             } else {
-                teams.add(team);
                 team = new ArrayList<>();
+                teams.add(team);
                 team.add(matchWorker.getWorker());
             }
         }

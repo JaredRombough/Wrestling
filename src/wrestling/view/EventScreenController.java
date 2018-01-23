@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Match;
 import wrestling.model.interfaces.Segment;
-import wrestling.model.temp.SegmentView;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.Worker;
 
 public class EventScreenController extends ControllerBase implements Initializable {
@@ -131,10 +131,20 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         //have to update the event segments first
         updateSegments();
+        
+        List<SegmentView> eventSegments = new ArrayList<>();
+        
+        //eliminate empty segments here
+        for(SegmentView segmentView : segments) {
+            if(!segmentView.getWorkers().isEmpty()) {
+                eventSegments.add(segmentView);
+            }
+        }
+
 
         //create the event with the segments assembled
         gameController.getEventFactory().createEventFromTemp(
-                segments,
+                eventSegments,
                 gameController.getDateManager().today(),
                 gameController.getPromotionManager().playerPromotion()
         );

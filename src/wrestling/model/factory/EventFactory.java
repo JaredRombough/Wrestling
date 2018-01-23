@@ -20,7 +20,7 @@ import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.temp.SegmentView;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 /**

@@ -8,23 +8,32 @@ import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.TitleWorker;
 import wrestling.model.Worker;
+import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TitleReign;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class TitleManager {
 
     private final List<Title> titles;
     private final List<TitleWorker> titleWorkers;
-    
+    private final List<TitleView> titleViews;
+
     private final DateManager dateManager;
 
     public TitleManager(DateManager dateManager) {
         titles = new ArrayList<>();
         titleWorkers = new ArrayList<>();
+        this.titleViews = new ArrayList<>();
         this.dateManager = dateManager;
     }
 
     public void addTitle(Title title) {
         titles.add(title);
+    }
+
+    public void addTitleView(TitleView titleView) {
+        titleViews.add(titleView);
     }
 
     public List<Title> getTitles(Promotion promotion) {
@@ -57,7 +66,7 @@ public class TitleManager {
         }
         return workers;
     }
-    
+
     public boolean isVacant(Title title) {
         return getCurrentChampionTitleWorkers(title).isEmpty();
     }
@@ -94,8 +103,20 @@ public class TitleManager {
 
     public void awardTitle(Title title, List<Worker> winner) {
         for (Worker worker : winner) {
-            titleWorkers.add(new TitleWorker(title, worker, dateManager.today()));
+            TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
+            titleWorkers.add(titleWorker);
+
         }
+        getTitleView(title).addReign(winner, dateManager.today());
+    }
+
+    private TitleView getTitleView(Title title) {
+        for (TitleView titleView : titleViews) {
+            if (titleView.getTitle().equals(title)) {
+                return titleView;
+            }
+        }
+        return null;
     }
 
     //returns a list of titles available for an event
@@ -123,20 +144,40 @@ public class TitleManager {
         return eventTitles;
     }
 
-    public String titleReignString(Title title) {
+    public String getMatchStringForMonths(Title title, int months) {
 
         StringBuilder sb = new StringBuilder();
-        List<Worker> champWorkers = getCurrentChampionWorkers(title);
-        List<TitleWorker> champTitleWorkers = getCurrentChampionTitleWorkers(title);
+
+        TitleView titleView = getTitleView(title);
+
+        for (TitleReign titleReign : titleView.getTitleReigns()) {
+            if (titleReign.getDayWon().isBefore(dateManager.today().minusMonths(months))) {
+                sb.append(titleReignString(titleReign));
+                sb.append("\n");
+            }
+        }
+
+        return sb.length() > 0 ? sb.toString() : "No recent matches";
+
+    }
+
+    public String titleReignString(TitleReign titleReign) {
+
+        StringBuilder sb = new StringBuilder();
+        List<Worker> champWorkers = titleReign.getWorkers();
+
         sb.append(ModelUtilityFunctions.slashNames(champWorkers));
-        LocalDate dayWon = champTitleWorkers.get(0).getDayWon();
-        LocalDate dayLost = champTitleWorkers.get(0).getDayLost();
         sb.append("\t\t\t");
-        sb.append(dayWon == null ? "????" : dayWon);
+        sb.append(titleReign.getDayWon() == null ? "????" : titleReign.getDayWon());
         sb.append("\tto\t");
-        sb.append(dayLost == null ? "present" : dayLost);
+        sb.append(titleReign.getDayLost() == null ? "present" : titleReign.getDayLost());
 
         return sb.toString();
     }
-
+    /*
+    champions
+    dayown
+    daylost
+    
+     */
 }

@@ -1,4 +1,4 @@
-package wrestling.model.temp;
+package wrestling.model.modelView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

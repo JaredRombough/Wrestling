@@ -11,7 +11,7 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
-import wrestling.model.temp.SegmentView;
+import wrestling.model.modelView.SegmentView;
 
 public class MatchFactory implements Serializable {
 

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Event;
@@ -24,6 +27,8 @@ public class EventManager {
     private final DateManager dateManager;
     private final MatchManager matchManager;
     private final ContractManager contractManager;
+
+    private final transient Logger logger = LogManager.getLogger(getClass());
 
     public EventManager(
             ContractManager contractManager,
@@ -193,11 +198,15 @@ public class EventManager {
 
         for (Segment segment : getMatches(event)) {
             if (segment instanceof Match) {
-                bld.append(matchManager.getMatchString((Match) segment));
-                bld.append("\n");
-                bld.append("Rating: ").append(((Match) segment).getRating());
+                if (!matchManager.getWorkers((Match) segment).isEmpty()) {
+                    bld.append(matchManager.getMatchString((Match) segment));
+                    bld.append("\n");
+                    bld.append("Rating: ").append(((Match) segment).getRating());
+                } else {
+                    logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
+                }
             } else {
-                bld.append("not a match");
+                logger.log(Level.ERROR, "Encountered invalid segment when constructing event summary string");
             }
             bld.append("\n");
         }
@@ -209,13 +218,13 @@ public class EventManager {
         bld.append("Attendance: ").append(event.getAttendance());
         bld.append("\n");
         bld.append("Gross profit: $").append(event.getGate());
-        
+
         return bld.toString();
     }
-    
+
     public void addInitialEvents(List<Promotion> promotions, Promotion playerPromotion) {
-        for(Promotion promotion : promotions) {
-            if(!promotion.equals(playerPromotion)) {
+        for (Promotion promotion : promotions) {
+            if (!promotion.equals(playerPromotion)) {
                 addEvent(new Event(promotion, (dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7))));
             }
         }
