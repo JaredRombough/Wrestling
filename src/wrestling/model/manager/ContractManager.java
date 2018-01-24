@@ -185,12 +185,16 @@ public class ContractManager implements Serializable {
         //this would have to be more robust
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
-
-        if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion)) {
+        
+        if(getContracts(worker).size() > 5) {
             canNegotiate = false;
         }
 
-        if (hasContract(worker)) {
+        if (canNegotiate && worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion)) {
+            canNegotiate = false;
+        }
+
+        if (canNegotiate && hasContract(worker)) {
             for (Contract contract : getContracts(worker)) {
                 if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
                     canNegotiate = false;

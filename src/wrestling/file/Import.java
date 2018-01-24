@@ -586,19 +586,22 @@ public class Import {
 
     public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {
 
-        Logger logger = LogManager.getLogger(this.getClass());
         List<String> advancedImportData = new ArrayList();
+        String path = "";
+        
         try {
-            String path = importFolder.getPath() + "\\advancedImport.txt";
+            path = importFolder.getPath() + "\\advancedImport.txt";
             BufferedReader br = new BufferedReader(new FileReader(path));
             String line;
             while ((line = br.readLine()) != null) {
                 advancedImportData.add(line);
             }
         } catch (FileNotFoundException ex) {
-            logger.log(Level.ERROR, "Advanced Import file not found");
+            logger.log(Level.ERROR, "Advanced Import file not found at " + path);
+            logger.log(Level.ERROR, "Proceding without advanced import");
         } catch (IOException ex) {
             logger.log(Level.ERROR, "Advanced Import file read error");
+            logger.log(Level.ERROR, "Proceding without advanced import");
         }
 
         for (Promotion promotion : promotions) {
