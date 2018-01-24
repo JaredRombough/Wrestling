@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import wrestling.MainApp;
@@ -29,6 +30,9 @@ public class TitleScreenController extends ControllerBase implements Initializab
     
     @FXML
     private ImageView imageView;
+    
+    @FXML
+    private Text versionText;
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
@@ -73,12 +77,17 @@ public class TitleScreenController extends ControllerBase implements Initializab
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-
+    public void initializeMore() {
+        versionText.setText("Version " + mainApp.getVERSION());
     }
     
     public void setImage(Image image)
     {
         this.imageView.setImage(image);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+       
     }
 }

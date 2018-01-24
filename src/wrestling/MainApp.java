@@ -38,12 +38,14 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 130;
+    private static final String VERSION = "0.0.1";
 
     public static void main(String[] args) {
 
         launch(args);
 
     }
+
     private transient Logger logger;
 
     private Stage primaryStage;
@@ -446,6 +448,13 @@ public class MainApp extends Application {
     public File getDataFolder() {
 
         return (dataFolder == null) ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
+    }
+
+    /**
+     * @return the VERSION
+     */
+    public String getVERSION() {
+        return VERSION;
     }
 
 }
