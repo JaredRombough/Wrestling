@@ -78,7 +78,8 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initializeMore() {
-        versionText.setText("Version " + mainApp.getVERSION());
+        versionText.setText("Version " + mainApp.getVERSION() + "\n" + 
+                "For feedback and support contact " + mainApp.getCONTACT());
     }
     
     public void setImage(Image image)

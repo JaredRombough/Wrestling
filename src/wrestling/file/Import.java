@@ -215,8 +215,6 @@ public class Import {
 
                 allTelevision.add(tv);
 
-                EvaluateData.printNice(logger, currentLine, currentStringLine, currentHexLine);
-
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
@@ -467,11 +465,9 @@ public class Import {
 
             if (counter == 34) {
                 eventPromotionKeys.add(hexStringToInt(hexValueString));
-                System.out.println(eventPromotionKeys);
             }
 
             if (counter == 47) {
-                System.out.println(currentLine);
                 eventNames.add(currentLine.substring(1, 32).trim());
                 currentLine = "";
                 counter = 0;
