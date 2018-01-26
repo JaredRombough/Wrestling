@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -26,12 +29,11 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.BrowserController;
-import wrestling.view.EventScreenController;
-import wrestling.view.FinancialScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.StartGameScreenController;
 import wrestling.view.TitleScreenController;
-import wrestling.view.WorkerOverviewController;
+import wrestling.view.utility.Screen;
+import wrestling.view.utility.ScreenCode;
 
 public class MainApp extends Application {
 
@@ -54,13 +56,8 @@ public class MainApp extends Application {
     private RootLayoutController rootLayoutController;
     private GameController gameController;
 
-    private AnchorPane eventScreenPane;
-    private EventScreenController eventScreenController;
     private AnchorPane workerOverviewPane;
-    private AnchorPane browserPane;
-    private BrowserController browserController;
-    private AnchorPane financialPane;
-    private FinancialScreenController financialController;
+    private final List<Screen> screens;
 
     private File picsFolder;
     private File logosFolder;
@@ -69,11 +66,11 @@ public class MainApp extends Application {
     private final boolean cssEnabled;
 
     public MainApp() {
+        this.screens = new ArrayList<>();
 
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
         logger.log(Level.INFO, "Logger online");
-
     }
 
     @Override
@@ -181,14 +178,13 @@ public class MainApp extends Application {
 
     public void startGame() throws IOException {
         prepareScreens();
-        showBrowser();
+        show(ScreenCode.BROWSER);
         updateLabels();
 
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
             nextDay();
-            System.out.println("day: " + gameController.getDateManager().today());
-
+            logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
         }
 
         setButtonsDisable(false);
@@ -226,10 +222,16 @@ public class MainApp extends Application {
     private void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
-        loadWorkerOverview();
-        loadEventScreen();
-        loadBrowser();
-        loadFinancial();
+        List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(ScreenCode.FINANCIAL,
+                ScreenCode.CALENDAR,
+                ScreenCode.BROWSER,
+                ScreenCode.EVENT_SCREEN,
+                ScreenCode.WORKER_OVERVIEW
+        ));
+
+        for (ScreenCode screen : screensToLoad) {
+            screens.add(loadScreenFromResource(screen));
+        }
     }
 
     /**
@@ -271,101 +273,39 @@ public class MainApp extends Application {
 
     }
 
-    /*
-    loads the worker overview
-     */
-    private void loadWorkerOverview() throws IOException {
-        try {
+    private Screen loadScreenFromResource(ScreenCode code) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        Screen screen = new Screen();
+        loader.setLocation(MainApp.class.getResource(code.resource()));
+        screen.anchorPane = (AnchorPane) loader.load();
+        screen.controller = loader.getController();
+        screen.controller.setDependencies(this, gameController);
+        screen.code = code;
+        return screen;
+    }
 
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/WorkerOverview.fxml"));
-            workerOverviewPane = (AnchorPane) loader.load();
+    public void show(ScreenCode code) {
+        Screen screen = getByCode(code);
+        rootLayout.setCenter(screen.anchorPane);
+        screen.controller.updateLabels();
 
-            WorkerOverviewController controller = loader.getController();
+    }
 
-            controller.setDependencies(this, gameController);
-
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-            throw ex;
+    private Screen getByCode(ScreenCode code) {
+        for (Screen screen : screens) {
+            if (screen.code == code) {
+                return screen;
+            }
         }
-    }
-
-    /*
-    loads the browser
-     */
-    private void loadBrowser() throws IOException {
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MainApp.class.getResource("view/Browser.fxml"));
-        browserPane = (AnchorPane) loader.load();
-
-        browserController = loader.getController();
-
-        browserController.setDependencies(this, gameController);
-
-    }
-
-    /*
-    loads the financial overview screen
-     */
-    private void loadFinancial() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MainApp.class.getResource("view/FinancialScreen.fxml"));
-        financialPane = (AnchorPane) loader.load();
-
-        financialController = loader.getController();
-
-        financialController.setDependencies(this, gameController);
-    }
-
-    /*
-    shows the browser
-     */
-    public void showBrowser() {
-
-        rootLayout.setCenter(browserPane);
-    }
-
-    /*
-    shows the financial screen
-     */
-    public void showFinancial() {
-        rootLayout.setCenter(financialPane);
-        financialController.updateLabels();
+        return null;
     }
 
     /*
     shows the browser and selects the most recent event
      */
     public void showLastEvent() {
-        showBrowser();
-
-        browserController.showLastEvent();
-    }
-
-    public void showEventScreen() {
-        rootLayout.setCenter(eventScreenPane);
-    }
-
-    /*
-    loads the event screen (for booking events)
-     */
-    private void loadEventScreen() throws IOException {
-        try {
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/EventScreen.fxml"));
-            eventScreenPane = (AnchorPane) loader.load();
-
-            EventScreenController controller = loader.getController();
-            controller.setDependencies(this, gameController);
-            eventScreenController = controller;
-
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-            throw ex;
-        }
+        show(ScreenCode.BROWSER);
+        ((BrowserController) getByCode(ScreenCode.BROWSER).controller).showLastEvent();
     }
 
     /*
@@ -399,18 +339,21 @@ public class MainApp extends Application {
      */
     private void updateLabels() {
         rootLayoutController.updateLabels();
-        browserController.updateLabels();
-        eventScreenController.updateLabels();
-        financialController.updateLabels();
+        for (Screen screen : screens) {
+            if (screen.code.alwaysUpdate()) {
+                updateLabels(screen.code);
+            }
+        }
 
     }
 
+    private void updateLabels(ScreenCode code) {
+        getByCode(code).controller.updateLabels();
+    }
+
     public void nextDay() throws IOException {
-
         gameController.nextDay();
-
         saveGame();
-
         updateLabels();
     }
 

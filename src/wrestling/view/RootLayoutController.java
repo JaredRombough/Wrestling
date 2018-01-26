@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package wrestling.view;
 
 import java.io.IOException;
@@ -16,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import wrestling.view.utility.ScreenCode;
 
 public class RootLayoutController extends ControllerBase implements Initializable {
 
@@ -29,7 +25,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private Button nextDayButton;
 
     @FXML
-    private Label currentDateLabel;
+    private Button calendarButton;
 
     @FXML
     private Label currentFundsLabel;
@@ -50,22 +46,21 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
         if (event.getSource() == eventButton) {
             updateSelectedButton(eventButton);
-            mainApp.showEventScreen();
-
+            mainApp.show(ScreenCode.EVENT_SCREEN);
         } else if (event.getSource() == nextDayButton) {
-
             mainApp.nextDay();
-
         } else if (event.getSource() == browserButton) {
             updateSelectedButton(browserButton);
-            mainApp.showBrowser();
-
+            mainApp.show(ScreenCode.BROWSER);
         } else if (event.getSource() == financialButton) {
             updateSelectedButton(financialButton);
-            mainApp.showFinancial();
+            mainApp.show(ScreenCode.FINANCIAL);
+        } else if (event.getSource() == calendarButton) {
+            updateSelectedButton(calendarButton);
+            mainApp.show(ScreenCode.CALENDAR);
         }
 
-    }
+        }
 
     private void updateSelectedButton(Button button) {
         for (Node b : buttonBar.getButtons()) {
@@ -95,17 +90,16 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     public void initializeMore() {
         updateCurrentDateLabel();
         updateSelectedButton(browserButton);
+        calendarButton.setDisable(true);
 
     }
 
     public void updateCurrentDateLabel() {
-
-        currentDateLabel.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
+        calendarButton.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
     }
 
     public void updateCurrentFundsLabel() {
-        currentFundsLabel.setText
-        ("Funds: $" + gameController.getPromotionManager()
+        currentFundsLabel.setText("Funds: $" + gameController.getPromotionManager()
                 .getBankAccount(gameController.getPromotionManager().playerPromotion()).getFunds());
     }
 

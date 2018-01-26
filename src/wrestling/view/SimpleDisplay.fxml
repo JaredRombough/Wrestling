@@ -22,7 +22,7 @@
          </rowConstraints>
          <children>
             <ScrollPane fx:id="scrollPane" prefHeight="200.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
-            <Text fx:id="displayTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <Text fx:id="displayTitle" strokeType="OUTSIDE" strokeWidth="0.0" />
          </children>
       </GridPane>
    </children>
