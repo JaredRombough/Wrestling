@@ -55,8 +55,6 @@ public class MainApp extends Application {
     private BorderPane rootLayout;
     private RootLayoutController rootLayoutController;
     private GameController gameController;
-
-    private AnchorPane workerOverviewPane;
     private final List<Screen> screens;
 
     private File picsFolder;
@@ -222,7 +220,8 @@ public class MainApp extends Application {
     private void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
-        List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(ScreenCode.FINANCIAL,
+        List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(
+                ScreenCode.FINANCIAL,
                 ScreenCode.CALENDAR,
                 ScreenCode.BROWSER,
                 ScreenCode.EVENT_SCREEN,
@@ -236,6 +235,7 @@ public class MainApp extends Application {
 
     /**
      * Initializes the root layout.
+     * @throws java.io.IOException
      */
     public void initRootLayout() throws IOException {
         try {
@@ -263,14 +263,6 @@ public class MainApp extends Application {
             logger.log(Level.ERROR, ex);
             throw ex;
         }
-    }
-
-    /**
-     * Shows the worker overview
-     */
-    public void showWorkerOverview() {
-        rootLayout.setCenter(workerOverviewPane);
-
     }
 
     private Screen loadScreenFromResource(ScreenCode code) throws IOException {
