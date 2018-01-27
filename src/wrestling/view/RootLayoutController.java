@@ -46,7 +46,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
         if (event.getSource() == eventButton) {
             updateSelectedButton(eventButton);
-            mainApp.show(ScreenCode.EVENT_SCREEN);
+            mainApp.show(ScreenCode.EVENT);
         } else if (event.getSource() == nextDayButton) {
             mainApp.nextDay();
         } else if (event.getSource() == browserButton) {

@@ -30,7 +30,6 @@ import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.BrowserController;
 import wrestling.view.RootLayoutController;
-import wrestling.view.StartGameScreenController;
 import wrestling.view.TitleScreenController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -52,8 +51,6 @@ public class MainApp extends Application {
     private transient Logger logger;
 
     private Stage primaryStage;
-    private BorderPane rootLayout;
-    private RootLayoutController rootLayoutController;
     private GameController gameController;
     private final List<Screen> screens;
 
@@ -147,15 +144,10 @@ public class MainApp extends Application {
     private void showTitleScreen() throws IOException {
 
         try {
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/TitleScreen.fxml"));
-            AnchorPane titleScreen = (AnchorPane) loader.load();
+            Screen titleScreen = loadScreenFromResource(ScreenCode.TITLE);
 
             // Show the scene containing the root layout.
-            Scene scene = new Scene(titleScreen);
-            BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("title.jpg"));
-            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            Scene scene = new Scene(titleScreen.pane);
 
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
@@ -164,14 +156,17 @@ public class MainApp extends Application {
             getPrimaryStage().setScene(scene);
             getPrimaryStage().show();
 
-            TitleScreenController controller = loader.getController();
-            controller.setDependencies(this, gameController);
-            controller.setImage(image);
+            ((TitleScreenController) titleScreen.controller).setImage(loadTitleScreenImage());
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
             throw ex;
         }
 
+    }
+
+    private Image loadTitleScreenImage() throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("title.jpg"));
+        return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 
     public void startGame() throws IOException {
@@ -220,11 +215,10 @@ public class MainApp extends Application {
     private void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
-        List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(
-                ScreenCode.FINANCIAL,
+        List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(ScreenCode.FINANCIAL,
                 ScreenCode.CALENDAR,
                 ScreenCode.BROWSER,
-                ScreenCode.EVENT_SCREEN,
+                ScreenCode.EVENT,
                 ScreenCode.WORKER_OVERVIEW
         ));
 
@@ -235,18 +229,16 @@ public class MainApp extends Application {
 
     /**
      * Initializes the root layout.
+     *
      * @throws java.io.IOException
      */
     public void initRootLayout() throws IOException {
         try {
 
-            // Load root layout from fxml file.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
-            rootLayout = (BorderPane) loader.load();
+            screens.add(loadScreenFromResource(ScreenCode.ROOT));
 
             // Show the scene containing the root layout.
-            Scene scene = new Scene(rootLayout);
+            Scene scene = new Scene(getByCode(ScreenCode.ROOT).pane);
 
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
@@ -254,11 +246,6 @@ public class MainApp extends Application {
 
             getPrimaryStage().setScene(scene);
             getPrimaryStage().show();
-
-            //load and store the controller
-            rootLayoutController = loader.getController();
-            rootLayoutController.setDependencies(this, gameController);
-
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
             throw ex;
@@ -269,7 +256,16 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader();
         Screen screen = new Screen();
         loader.setLocation(MainApp.class.getResource(code.resource()));
-        screen.anchorPane = (AnchorPane) loader.load();
+        switch (code) {
+            case ROOT: {
+                screen.pane = (BorderPane) loader.load();
+                break;
+            }
+            default:
+                screen.pane = (AnchorPane) loader.load();
+                break;
+        }
+
         screen.controller = loader.getController();
         screen.controller.setDependencies(this, gameController);
         screen.code = code;
@@ -278,7 +274,7 @@ public class MainApp extends Application {
 
     public void show(ScreenCode code) {
         Screen screen = getByCode(code);
-        rootLayout.setCenter(screen.anchorPane);
+        ((BorderPane) getByCode(ScreenCode.ROOT).pane).setCenter(screen.pane);
         screen.controller.updateLabels();
 
     }
@@ -306,22 +302,13 @@ public class MainApp extends Application {
      */
     public void showStartGameScreen() throws IOException {
         try {
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/StartGameScreen.fxml"));
-            AnchorPane startGameScreen = (AnchorPane) loader.load();
-
-            StartGameScreenController controller = loader.getController();
-            controller.setDependencies(this, gameController);
-
-            rootLayout.setCenter(startGameScreen);
-
+            Screen startGameScreen = loadScreenFromResource(ScreenCode.START);
+            ((BorderPane) getByCode(ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
             throw ex;
         }
     }
-
 
     /*
     calls the root layout to update the labels
@@ -330,13 +317,11 @@ public class MainApp extends Application {
     in labels outside of their screens it can be handled here
      */
     private void updateLabels() {
-        rootLayoutController.updateLabels();
         for (Screen screen : screens) {
             if (screen.code.alwaysUpdate()) {
                 updateLabels(screen.code);
             }
         }
-
     }
 
     private void updateLabels(ScreenCode code) {
@@ -354,7 +339,7 @@ public class MainApp extends Application {
     and don't yet want to allow screen switching freedom
      */
     private void setButtonsDisable(boolean disable) {
-        rootLayoutController.setButtonsDisable(disable);
+        ((RootLayoutController) getByCode(ScreenCode.ROOT).controller).setButtonsDisable(disable);
     }
 
     /**

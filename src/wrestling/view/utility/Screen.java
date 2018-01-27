@@ -1,10 +1,10 @@
 package wrestling.view.utility;
 
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import wrestling.view.ControllerBase;
 
 public class Screen {
     public ControllerBase controller;
-    public AnchorPane anchorPane;
+    public Pane pane;
     public ScreenCode code;
 }
