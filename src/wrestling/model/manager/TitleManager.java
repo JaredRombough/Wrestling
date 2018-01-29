@@ -1,6 +1,5 @@
 package wrestling.model.manager;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Contract;
@@ -8,7 +7,6 @@ import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.TitleWorker;
 import wrestling.model.Worker;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.utility.ModelUtilityFunctions;
@@ -172,10 +170,5 @@ public class TitleManager {
 
         return sb.toString();
     }
-    /*
-    champions
-    dayown
-    daylost
     
-     */
 }

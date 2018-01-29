@@ -593,11 +593,13 @@ public class Import {
                 advancedImportData.add(line);
             }
         } catch (FileNotFoundException ex) {
-            logger.log(Level.ERROR, "Advanced Import file not found at " + path);
+            logger.log(Level.ERROR, "Advanced Import file not found at " + path, ex);
             logger.log(Level.ERROR, "Proceding without advanced import");
+            advancedImportData = new ArrayList();
         } catch (IOException ex) {
-            logger.log(Level.ERROR, "Advanced Import file read error");
+            logger.log(Level.ERROR, "Advanced Import file read error", ex);
             logger.log(Level.ERROR, "Proceding without advanced import");
+            advancedImportData = new ArrayList();
         }
 
         for (Promotion promotion : promotions) {

@@ -3,7 +3,6 @@ package wrestling.model.factory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventType;
 import wrestling.model.EventWorker;
@@ -240,6 +239,7 @@ public class EventFactory {
         /**
          * @return the date
          */
+        @Override
         public LocalDate getDate() {
             return date;
         }

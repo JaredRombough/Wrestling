@@ -3,7 +3,6 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Event;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.model.financial.BankAccount;
@@ -24,7 +23,6 @@ public class PromotionFactory {
 
     private final ContractManager contractManager;
     private final DateManager dateManager;
-    private final EventManager eventManager;
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
 
@@ -33,14 +31,12 @@ public class PromotionFactory {
             WorkerFactory workerFactory,
             ContractManager contractManager,
             DateManager dateManager,
-            EventManager eventManager,
             PromotionManager promotionManager,
             WorkerManager workerManager) {
         this.contractFactory = contractFactory;
         this.workerFactory = workerFactory;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
-        this.eventManager = eventManager;
         this.promotionManager = promotionManager;
         this.workerManager = workerManager;
     }

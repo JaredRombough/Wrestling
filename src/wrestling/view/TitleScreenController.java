@@ -15,6 +15,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 
 public class TitleScreenController extends ControllerBase implements Initializable {
@@ -27,24 +30,42 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
     @FXML
     private Button continueGameButton;
-    
+
     @FXML
     private ImageView imageView;
-    
+
     @FXML
     private Text versionText;
 
+    private transient Logger logger = LogManager.getLogger(getClass());
+
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
+    private void handleButtonAction(ActionEvent event) {
 
         if (event.getSource() == newRandomGameButton) {
-            mainApp.newRandomGame();
+            try {
+                mainApp.newRandomGame();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "Exception on new random game", ex);
+                mainApp.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
+            }
         } else if (event.getSource() == newImportGameButton) {
 
-            showImportDialog();
+            try {
+                showImportDialog();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "Exception on import game", ex);
+                mainApp.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
+            }
 
         } else if (event.getSource() == continueGameButton) {
-            mainApp.continueGame();
+            try {
+                mainApp.continueGame();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "Exception on continue game", ex);
+                mainApp.generateAlert("Error", "Continue from saved game failed", ex.getMessage()).showAndWait();
+            }
+
         }
 
     }
@@ -68,7 +89,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
         Scene importScene = new Scene(importDialog);
 
         importScene.getStylesheets().add("style.css");
-        
+
         importPopup.setScene(importScene);
 
         importPopup.showAndWait();
@@ -78,17 +99,16 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initializeMore() {
-        versionText.setText("Version " + mainApp.getVERSION() + "\n" + 
-                "For feedback and support contact " + mainApp.getCONTACT());
+        versionText.setText("Version " + mainApp.getVERSION() + "\n"
+                + "For feedback and support contact " + mainApp.getCONTACT());
     }
-    
-    public void setImage(Image image)
-    {
+
+    public void setImage(Image image) {
         this.imageView.setImage(image);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-       
+
     }
 }

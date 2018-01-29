@@ -35,6 +35,8 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     @FXML
     private ButtonBar buttonBar;
+    
+    private final String SELECTED_BUTTON = "selectedButton";
 
     public double rootLayoutMinWidth() {
         return buttonBar.getButtonMinWidth() * buttonBar.getButtons().size();
@@ -60,16 +62,16 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             mainApp.show(ScreenCode.CALENDAR);
         }
 
-        }
+    }
 
     private void updateSelectedButton(Button button) {
         for (Node b : buttonBar.getButtons()) {
-            if (b.getStyleClass().contains("selectedButton")) {
-                b.getStyleClass().remove("selectedButton");
+            if (b.getStyleClass().contains(SELECTED_BUTTON)) {
+                b.getStyleClass().remove(SELECTED_BUTTON);
             }
         }
 
-        button.getStyleClass().add("selectedButton");
+        button.getStyleClass().add(SELECTED_BUTTON);
 
     }
 
@@ -84,13 +86,13 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     public void initialize(URL url, ResourceBundle rb) {
 
         setButtonsDisable(true);
+        calendarButton.setDisable(true);
     }
 
     @Override
     public void initializeMore() {
         updateCurrentDateLabel();
         updateSelectedButton(browserButton);
-        calendarButton.setDisable(true);
 
     }
 
@@ -108,5 +110,6 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         nextDayButton.setDisable(disable);
         eventButton.setDisable(disable);
         financialButton.setDisable(disable);
+        //calendarButton.setDisable(disable);
     }
 }

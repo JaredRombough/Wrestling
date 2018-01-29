@@ -40,7 +40,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com";
-    private static final String VERSION = "0.0.1";
+    private static final String VERSION = "0.0.2";
 
     public static void main(String[] args) {
 
@@ -82,9 +82,18 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        this.gameController = new GameController(true);
-        initRootLayout();
-        showStartGameScreen();
+        try {
+            gameController = new GameController(true);
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, "Problem creating gameController, setting gameController null", ex);
+            gameController = null;
+            throw ex;
+        }
+        if (gameController != null) {
+            initRootLayout();
+            showStartGameScreen();
+        }
+
     }
 
     //starts a new game from imported data
@@ -104,15 +113,7 @@ public class MainApp extends Application {
 
                 logger.log(Level.ERROR, error);
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Import error");
-                alert.setHeaderText("Resources could not be validated.");
-                alert.setContentText(error);
-
-                DialogPane dialogPane = alert.getDialogPane();
-                dialogPane.getStylesheets().add("style.css");
-
-                alert.showAndWait();
+                generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
 
             } else {
                 this.gameController = importer.getGameController();
@@ -121,23 +122,44 @@ public class MainApp extends Application {
             }
         } catch (Exception ex) {
 
-            logger.log(Level.ERROR, ex);
+            logger.log(Level.ERROR, error, ex);
 
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Import error");
-            alert.setHeaderText("Resources could not be validated.");
-            alert.setContentText(error + "\n" + ex.getMessage());
+            generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
 
             throw ex;
         }
 
     }
 
+    public Alert generateAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add("style.css");
+        return alert;
+    }
+
     //continues the last saved game, jumps to browser
-    public void continueGame() throws ClassNotFoundException, IOException {
+    public void continueGame() throws IOException {
         this.gameController = loadGame();
-        initRootLayout();
-        startGame();
+
+        if (gameController != null) {
+            try {
+                initRootLayout();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "initRootLayout() call failed in continueGame()", ex);
+                throw ex;
+            }
+            try {
+                startGame();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "startGame() call failed in continueGame()", ex);
+                throw ex;
+            }
+        }
     }
 
     //shows initial title screen
@@ -189,13 +211,14 @@ public class MainApp extends Application {
 
         try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
             kryo.writeObject(output, gameController);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
             throw ex;
         }
     }
 
-    private GameController loadGame() throws ClassNotFoundException, IOException {
+    private GameController loadGame() {
 
         Kryo kryo = new Kryo();
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
@@ -204,9 +227,9 @@ public class MainApp extends Application {
 
         try (Input input = new Input(new FileInputStream("saveGame.bin"))) {
             gc = kryo.readObject(input, GameController.class);
-        } catch (Exception ex) {
-            logger.log(Level.ERROR, ex);
-            throw ex;
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, "IOException in loadGame(), returning null gameController", ex);
+            gc = null;
         }
 
         return gc;
@@ -243,11 +266,10 @@ public class MainApp extends Application {
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
             }
-
             getPrimaryStage().setScene(scene);
             getPrimaryStage().show();
         } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
+            logger.log(Level.ERROR, "initRootLayout() failed with IOException", ex);
             throw ex;
         }
     }
@@ -305,7 +327,7 @@ public class MainApp extends Application {
             Screen startGameScreen = loadScreenFromResource(ScreenCode.START);
             ((BorderPane) getByCode(ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
         } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
+            logger.log(Level.ERROR, "Error in showStartGameScreen()", ex);
             throw ex;
         }
     }
@@ -368,7 +390,7 @@ public class MainApp extends Application {
      */
     public File getDataFolder() {
 
-        return (dataFolder == null) ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
+        return dataFolder == null ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
     }
 
     /**
