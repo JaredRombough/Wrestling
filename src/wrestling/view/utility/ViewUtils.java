@@ -62,7 +62,7 @@ public final class ViewUtils {
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         Screen screen = new Screen();
-        loader.setLocation(MainApp.class.getResource(code.resource()));
+        loader.setLocation(MainApp.class.getResource(code.resourcePath()));
         switch (code) {
             case ROOT: {
                 screen.pane = (BorderPane) loader.load();

@@ -3,7 +3,7 @@ package wrestling.view.utility;
 public enum ScreenCode implements ScreenCodeInterface {
     TITLE {
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/TitleScreen.fxml";
         }
 
@@ -14,7 +14,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     },
     START {
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/StartGameScreen.fxml";
         }
 
@@ -25,7 +25,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     },
     ROOT {
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/RootLayout.fxml";
         }
 
@@ -38,7 +38,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     EVENT {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/EventScreen.fxml";
         }
 
@@ -50,7 +50,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     WORKER_OVERVIEW {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/WorkerOverview.fxml";
         }
 
@@ -62,7 +62,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     BROWSER {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/Browser.fxml";
         }
 
@@ -74,7 +74,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     FINANCIAL {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/FinancialScreen.fxml";
         }
 
@@ -86,7 +86,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     CALENDAR {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/Calendar.fxml";
         }
 
@@ -98,7 +98,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     SIMPLE_DISPLAY {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/SimpleDisplay.fxml";
         }
 
@@ -110,8 +110,20 @@ public enum ScreenCode implements ScreenCodeInterface {
     BOOK_FUTURE_SHOW {
 
         @Override
-        public String resource() {
+        public String resourcePath() {
             return "view/BookShow.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
+    IMPORT_DIALOG {
+
+        @Override
+        public String resourcePath() {
+            return "view/ImportDialog.fxml";
         }
 
         @Override

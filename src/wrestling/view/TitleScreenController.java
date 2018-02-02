@@ -5,20 +5,20 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.MainApp;
+import wrestling.view.utility.Screen;
+import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.ViewUtils;
 
 public class TitleScreenController extends ControllerBase implements Initializable {
 
@@ -76,17 +76,12 @@ public class TitleScreenController extends ControllerBase implements Initializab
         importPopup.initModality(Modality.APPLICATION_MODAL);
         importPopup.setTitle("New Import Game");
 
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MainApp.class.getResource("view/ImportDialog.fxml"));
+        Screen importDialog = ViewUtils.loadScreenFromResource(ScreenCode.IMPORT_DIALOG, mainApp, gameController);
 
-        AnchorPane importDialog = (AnchorPane) loader.load();
+        importDialog.controller.updateLabels();
+        ((ImportDialogController) importDialog.controller).setStage(importPopup);
 
-        ImportDialogController controller = loader.getController();
-        controller.setDependencies(mainApp, gameController);
-        controller.updateLabels();
-        controller.setStage(importPopup);
-
-        Scene importScene = new Scene(importDialog);
+        Scene importScene = new Scene(importDialog.pane);
 
         importScene.getStylesheets().add("style.css");
 
