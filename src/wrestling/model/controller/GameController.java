@@ -10,7 +10,7 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
-import wrestling.model.manager.EventWorkerManager;
+import wrestling.model.manager.BookingManager;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
@@ -39,7 +39,7 @@ public final class GameController implements Serializable {
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final EventWorkerManager bookingManager;
+    private final BookingManager bookingManager;
     private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
@@ -53,13 +53,13 @@ public final class GameController implements Serializable {
 
         titleManager = new TitleManager(dateManager);
 
-        bookingManager = new EventWorkerManager();
+        bookingManager = new BookingManager();
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
         matchManager = new MatchManager(dateManager);
 
-        contractManager = new ContractManager(promotionManager);
+        contractManager = new ContractManager(promotionManager, bookingManager);
         eventManager = new EventManager(
                 contractManager,
                 dateManager,
@@ -190,7 +190,7 @@ public final class GameController implements Serializable {
     /**
      * @return the bookingManager
      */
-    public EventWorkerManager getBookingManager() {
+    public BookingManager getBookingManager() {
         return bookingManager;
     }
 

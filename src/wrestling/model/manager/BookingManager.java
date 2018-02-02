@@ -7,11 +7,11 @@ import wrestling.model.EventWorker;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
-public class EventWorkerManager {
+public class BookingManager {
 
     private final List<EventWorker> eventWorkers;
 
-    public EventWorkerManager() {
+    public BookingManager() {
         eventWorkers = new ArrayList();
     }
 

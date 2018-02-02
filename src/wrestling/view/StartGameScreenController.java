@@ -18,7 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.utility.ViewUtilityFunctions;
+import wrestling.view.utility.ViewUtils;
 
 public class StartGameScreenController extends ControllerBase implements Initializable {
 
@@ -76,7 +76,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
 
                 updateWorkersListView(newValue);
-                ViewUtilityFunctions.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+                ViewUtils.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
                         promotionImageBorder,
                         imageView);
 

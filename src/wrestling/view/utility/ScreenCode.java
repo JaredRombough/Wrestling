@@ -94,5 +94,29 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return true;
         }
+    }, 
+    SIMPLE_DISPLAY {
+
+        @Override
+        public String resource() {
+            return "view/SimpleDisplay.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
+    BOOK_FUTURE_SHOW {
+
+        @Override
+        public String resource() {
+            return "view/BookShow.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }

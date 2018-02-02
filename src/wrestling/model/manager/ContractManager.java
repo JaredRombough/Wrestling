@@ -13,12 +13,14 @@ import wrestling.model.utility.ModelUtilityFunctions;
 public class ContractManager implements Serializable {
 
     private final List<Contract> contracts;
-    
-    private final PromotionManager promotionManager;
 
-    public ContractManager(PromotionManager promotionManager) {
+    private final PromotionManager promotionManager;
+    private final BookingManager bookingManager;
+
+    public ContractManager(PromotionManager promotionManager, BookingManager bookingsManager) {
         contracts = new ArrayList<>();
         this.promotionManager = promotionManager;
+        this.bookingManager = bookingsManager;
     }
 
     public void addContract(Contract contract) {
@@ -88,6 +90,34 @@ public class ContractManager implements Serializable {
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getPromotion().equals(promotion)) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (contract.isActive() && contract.getPromotion().equals(promotion)
+                    && bookingManager.isAvailable(contract.getWorker(), date, promotion)) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (contract.isActive() && contract.getPromotion().equals(promotion)
+                    && !bookingManager.isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());
             }
 
@@ -185,8 +215,8 @@ public class ContractManager implements Serializable {
         //this would have to be more robust
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
-        
-        if(getContracts(worker).size() > 5) {
+
+        if (getContracts(worker).size() > 5) {
             canNegotiate = false;
         }
 

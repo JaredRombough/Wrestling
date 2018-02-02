@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.utility.ViewUtilityFunctions;
+import wrestling.view.utility.ViewUtils;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
 
@@ -154,7 +154,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
-            ViewUtilityFunctions.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
+            ViewUtils.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
                     workerImageBorder,
                     imageView);
 

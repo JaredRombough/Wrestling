@@ -14,7 +14,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -22,13 +21,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
@@ -39,7 +36,8 @@ import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
-import wrestling.view.utility.ViewUtilityFunctions;
+import wrestling.view.utility.BrowserMode;
+import wrestling.view.utility.ViewUtils;
 
 /**
  *
@@ -115,7 +113,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         categoryButton.setText(newPromotion.toString());
 
         //make sure the combobox is on the correct promotion
-        //in case we have called this from some
+        //in case we have called this from somewhere programatically
         promotionComboBox.getSelectionModel().select(currentPromotion);
 
         currentPromotionLabel.setText(currentPromotion.getName() + "\n"
@@ -125,7 +123,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         //tell the workeroverviewcontroller which promotion we are looking at
         //other controllers would be notified here too if necessary
-        WorkerOverviewController wo = (WorkerOverviewController) browseWorkers.controller;
+        WorkerOverviewController wo = (WorkerOverviewController) browseWorkers.getController();
         wo.setCurrentPromotion(currentPromotion);
 
         //this is kind of a hack but it gets the main listview
@@ -154,20 +152,18 @@ public class BrowserController extends ControllerBase implements Initializable {
     //update the listview according to whatever browse mode we are in
     private void setListView(BrowserMode browserMode, List list) {
 
-        browserMode.sortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true));
+        browserMode.setSortedList(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true)));
 
-        updateSortBox(browserMode.comparators);
+        updateSortBox(browserMode.getComparators());
 
-        browserMode.sortedList.comparatorProperty().bind(sortBox.valueProperty());
-
-        browserMode.listView.setItems(browserMode.sortedList);
+        browserMode.getSortedList().comparatorProperty().bind(sortBox.valueProperty());
     }
 
     @Override
     public void updateLabels() {
         setCurrentPromotion(currentPromotion);
 
-        browseWorkers.controller.updateLabels();
+        browseWorkers.getController().updateLabels();
     }
 
     @FXML
@@ -229,7 +225,7 @@ public class BrowserController extends ControllerBase implements Initializable {
      */
     public void showLastEvent() {
         setCurrentPromotion(gameController.getPromotionManager().playerPromotion());
-        browseEvents.listView.getSelectionModel().selectFirst();
+        browseEvents.getListView().getSelectionModel().selectFirst();
         eventsButton.fire();
     }
 
@@ -255,23 +251,23 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         placeDispalyPane(browserMode);
 
-        lastListView = browserMode.listView;
-        lastDisplayNode = browserMode.displayPane;
-        lastSortedList = browserMode.sortedList;
+        lastListView = browserMode.getListView();
+        lastDisplayNode = browserMode.getDisplayPane();
+        lastSortedList = browserMode.getSortedList();
 
-        browserMode.listView.getSelectionModel().selectFirst();
+        browserMode.getListView().getSelectionModel().selectFirst();
     }
 
     private void placeListView(BrowserMode browserMode) {
-        gridPane.add(browserMode.listView, 0, 1);
-        GridPane.setRowSpan(browserMode.listView, GridPane.REMAINING);
-        GridPane.setColumnSpan(browserMode.listView, 1);
+        gridPane.add(browserMode.getListView(), 0, 1);
+        GridPane.setRowSpan(browserMode.getListView(), GridPane.REMAINING);
+        GridPane.setColumnSpan(browserMode.getListView(), 1);
     }
 
     private void placeDispalyPane(BrowserMode browserMode) {
-        gridPane.add(browserMode.displayPane, 1, 1);
-        GridPane.setColumnSpan(browserMode.displayPane, GridPane.REMAINING);
-        GridPane.setRowSpan(browserMode.displayPane, GridPane.REMAINING);
+        gridPane.add(browserMode.getDisplayPane(), 1, 1);
+        GridPane.setColumnSpan(browserMode.getDisplayPane(), GridPane.REMAINING);
+        GridPane.setRowSpan(browserMode.getDisplayPane(), GridPane.REMAINING);
     }
 
     @Override
@@ -282,7 +278,7 @@ public class BrowserController extends ControllerBase implements Initializable {
                 stablesButton, staffButton, teamsButton, titlesButton
         ));
 
-        ViewUtilityFunctions.lockGridPane(gridPane);
+        ViewUtils.lockGridPane(gridPane);
 
         categoryButton = new Label();
 
@@ -331,91 +327,50 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             browseWorkers = new BrowserMode<>(
                     gameController.getContractManager().getFullRoster(gameController.getPromotionManager().playerPromotion()),
-                    "view/WorkerOverview.fxml");
-            browseWorkers.comparators = FXCollections.observableArrayList(new WorkerNameComparator(),
-                    new WorkerPopularityComparator()
-            );
+                    "view/WorkerOverview.fxml",
+                    FXCollections.observableArrayList(new WorkerNameComparator(),
+                            new WorkerPopularityComparator()),
+                    mainApp,
+                    gameController);
 
             //right now this acts as the default view for the screen
             //set whatever we want the default view to be to the lastbutton
             //so it will fire later
             lastButton = rosterButton;
-            lastDisplayNode = browseWorkers.displayPane;
+            lastDisplayNode = browseWorkers.getDisplayPane();
 
             browseEvents = new BrowserMode<>(
                     gameController.getEventManager().getEvents(gameController.getPromotionManager().playerPromotion()),
-                    "view/SimpleDisplay.fxml");
-            browseEvents.comparators = FXCollections.observableArrayList(
-                    new EventDateComparator()
+                    "view/SimpleDisplay.fxml",
+                    FXCollections.observableArrayList(
+                            new EventDateComparator()
+                    ),
+                    mainApp,
+                    gameController
             );
 
             browseTitles = new BrowserMode<>(
                     gameController.getTitleManager().getTitles(gameController.getPromotionManager().playerPromotion()),
-                    "view/SimpleDisplay.fxml");
-            browseTitles.comparators = FXCollections.observableArrayList(
-                    new TitleNameComparator()
-            );
+                    "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
+                            new TitleNameComparator()
+                    ),
+                    mainApp,
+                    gameController);
 
             browseTeams = new BrowserMode<>(
                     gameController.getTagTeamManager().getTagTeams(gameController.getPromotionManager().playerPromotion()),
-                    "view/SimpleDisplay.fxml");
-            browseTeams.comparators = FXCollections.observableArrayList(
-                    new TagTeamNameComparator()
-            );
+                    "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
+                            new TagTeamNameComparator()
+                    ),
+                    mainApp,
+                    gameController);
 
             promotionComboBox.setValue(gameController.getPromotionManager().playerPromotion());
 
             lastButton.fire();
         } catch (Exception ex) {
             Logger logger = LogManager.getLogger(this.getClass());
-            logger.log(Level.ERROR, ex);
-        }
-
-    }
-
-    /*
-    internal class used to handle browsing of different object types
-     */
-    private class BrowserMode<T> {
-
-        private SortedList sortedList;
-
-        private final ListView listView = new ListView<>();
-
-        private final AnchorPane displayPane;
-
-        private ControllerBase controller;
-
-        private ObservableList comparators;
-
-        public BrowserMode(List initialItems, String fxmlPath) throws IOException {
-
-            //load the display pane and its controller
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(fxmlPath));
-            displayPane = (AnchorPane) loader.load();
-
-            ViewUtilityFunctions.inititializeRegion(listView);
-            ViewUtilityFunctions.inititializeRegion(displayPane);
-
-            controller = loader.getController();
-
-            controller.setDependencies(mainApp, gameController);
-
-            //get the listview ready
-            listView.setItems(FXCollections.observableArrayList(initialItems));
-
-            //listen for changes in selection on the listview
-            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
-                @Override
-                public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-
-                    //tell the controller what object we're looking at
-                    controller.setCurrent(newValue);
-
-                }
-            });
-
+            logger.log(Level.ERROR, "Error initializing broswerController", ex);
         }
 
     }

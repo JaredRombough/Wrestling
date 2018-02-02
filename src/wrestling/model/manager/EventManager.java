@@ -72,6 +72,16 @@ public class EventManager {
         return null;
     }
 
+    public List<Event> getEventsOnDate(LocalDate date) {
+        List<Event> eventsOnDate = new ArrayList<>();
+        for (Event event : events) {
+            if (event.getDate().equals(date)) {
+                eventsOnDate.add(event);
+            }
+        }
+        return eventsOnDate;
+    }
+
     public int eventsAfterDate(Promotion promotion, LocalDate date) {
         int futureEvents = 0;
         futureEvents = events.stream().filter((Event event) -> {

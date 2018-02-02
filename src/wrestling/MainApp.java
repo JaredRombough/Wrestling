@@ -13,12 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
@@ -33,6 +31,7 @@ import wrestling.view.RootLayoutController;
 import wrestling.view.TitleScreenController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.ViewUtils;
 
 public class MainApp extends Application {
 
@@ -48,7 +47,7 @@ public class MainApp extends Application {
 
     }
 
-    private transient Logger logger;
+    private final transient Logger logger;
 
     private Stage primaryStage;
     private GameController gameController;
@@ -166,7 +165,7 @@ public class MainApp extends Application {
     private void showTitleScreen() throws IOException {
 
         try {
-            Screen titleScreen = loadScreenFromResource(ScreenCode.TITLE);
+            Screen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(titleScreen.pane);
@@ -246,7 +245,7 @@ public class MainApp extends Application {
         ));
 
         for (ScreenCode screen : screensToLoad) {
-            screens.add(loadScreenFromResource(screen));
+            screens.add(ViewUtils.loadScreenFromResource(screen, this, gameController));
         }
     }
 
@@ -258,10 +257,10 @@ public class MainApp extends Application {
     public void initRootLayout() throws IOException {
         try {
 
-            screens.add(loadScreenFromResource(ScreenCode.ROOT));
+            screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
 
             // Show the scene containing the root layout.
-            Scene scene = new Scene(getByCode(ScreenCode.ROOT).pane);
+            Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane);
 
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
@@ -274,40 +273,11 @@ public class MainApp extends Application {
         }
     }
 
-    private Screen loadScreenFromResource(ScreenCode code) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        Screen screen = new Screen();
-        loader.setLocation(MainApp.class.getResource(code.resource()));
-        switch (code) {
-            case ROOT: {
-                screen.pane = (BorderPane) loader.load();
-                break;
-            }
-            default:
-                screen.pane = (AnchorPane) loader.load();
-                break;
-        }
-
-        screen.controller = loader.getController();
-        screen.controller.setDependencies(this, gameController);
-        screen.code = code;
-        return screen;
-    }
-
     public void show(ScreenCode code) {
-        Screen screen = getByCode(code);
-        ((BorderPane) getByCode(ScreenCode.ROOT).pane).setCenter(screen.pane);
+        Screen screen = ViewUtils.getByCode(screens, code);
+        ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
         screen.controller.updateLabels();
 
-    }
-
-    private Screen getByCode(ScreenCode code) {
-        for (Screen screen : screens) {
-            if (screen.code == code) {
-                return screen;
-            }
-        }
-        return null;
     }
 
     /*
@@ -315,7 +285,7 @@ public class MainApp extends Application {
      */
     public void showLastEvent() {
         show(ScreenCode.BROWSER);
-        ((BrowserController) getByCode(ScreenCode.BROWSER).controller).showLastEvent();
+        ((BrowserController) ViewUtils.getByCode(screens, ScreenCode.BROWSER).controller).showLastEvent();
     }
 
     /*
@@ -324,8 +294,8 @@ public class MainApp extends Application {
      */
     public void showStartGameScreen() throws IOException {
         try {
-            Screen startGameScreen = loadScreenFromResource(ScreenCode.START);
-            ((BorderPane) getByCode(ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
+            Screen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
+            ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
         } catch (IOException ex) {
             logger.log(Level.ERROR, "Error in showStartGameScreen()", ex);
             throw ex;
@@ -347,13 +317,14 @@ public class MainApp extends Application {
     }
 
     private void updateLabels(ScreenCode code) {
-        getByCode(code).controller.updateLabels();
+        ViewUtils.getByCode(screens, code).controller.updateLabels();
     }
 
     public void nextDay() throws IOException {
         gameController.nextDay();
         saveGame();
         updateLabels();
+        
     }
 
     /*
@@ -361,7 +332,7 @@ public class MainApp extends Application {
     and don't yet want to allow screen switching freedom
      */
     private void setButtonsDisable(boolean disable) {
-        ((RootLayoutController) getByCode(ScreenCode.ROOT).controller).setButtonsDisable(disable);
+        ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).setButtonsDisable(disable);
     }
 
     /**

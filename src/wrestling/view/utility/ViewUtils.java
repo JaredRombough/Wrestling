@@ -1,16 +1,24 @@
 package wrestling.view.utility;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import wrestling.MainApp;
+import wrestling.model.controller.GameController;
 
-public final class ViewUtilityFunctions {
+public final class ViewUtils {
 
     public static void lockGridPane(GridPane gridPane) {
         for (ColumnConstraints c : gridPane.getColumnConstraints()) {
@@ -49,6 +57,35 @@ public final class ViewUtilityFunctions {
                 imageFrame.setVisible(false);
             }
         }
+    }
+    
+    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        Screen screen = new Screen();
+        loader.setLocation(MainApp.class.getResource(code.resource()));
+        switch (code) {
+            case ROOT: {
+                screen.pane = (BorderPane) loader.load();
+                break;
+            }
+            default:
+                screen.pane = (AnchorPane) loader.load();
+                break;
+        }
+
+        screen.controller = loader.getController();
+        screen.controller.setDependencies(mainApp, gameController);
+        screen.code = code;
+        return screen;
+    }
+    
+    public static Screen getByCode(List<Screen> screens, ScreenCode code) {
+        for (Screen screen : screens) {
+            if (screen.code == code) {
+                return screen;
+            }
+        }
+        return null;
     }
 
 }

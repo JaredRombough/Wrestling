@@ -86,7 +86,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     public void initialize(URL url, ResourceBundle rb) {
 
         setButtonsDisable(true);
-        calendarButton.setDisable(true);
+        //calendarButton.setDisable(true);
     }
 
     @Override
@@ -110,6 +110,6 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         nextDayButton.setDisable(disable);
         eventButton.setDisable(disable);
         financialButton.setDisable(disable);
-        //calendarButton.setDisable(disable);
+        calendarButton.setDisable(disable);
     }
 }

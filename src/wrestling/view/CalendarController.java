@@ -1,16 +1,29 @@
 package wrestling.view;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import wrestling.model.Event;
+import wrestling.view.utility.Screen;
+import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.ViewUtils;
 
 public class CalendarController extends ControllerBase implements Initializable {
 
@@ -19,8 +32,6 @@ public class CalendarController extends ControllerBase implements Initializable 
     @FXML
     private Text calendarTitle;
 
-    private YearMonth currentYearMonth;
-
     @FXML
     private Button nextMonth;
 
@@ -28,18 +39,40 @@ public class CalendarController extends ControllerBase implements Initializable 
     private Button previousMonth;
 
     @FXML
+    private Button bookShowButton;
+
+    @FXML
     private GridPane calendar;
 
+    @FXML
+    private GridPane dayLabels;
+
+    @FXML
+    private ListView listView;
+
+    @FXML
+    private AnchorPane mainDisplayPane;
+
     private CalendarNode selected;
+    private YearMonth currentYearMonth;
+
+    private Screen simpleDisplayScreen;
+    private Screen bookShowScreen;
+
+    private final String SELECTED_CLASS = "selectedCalendarNode";
+    private final String DIFFERENT_MONTH = "differentMonth";
+    private final String DIFFERENT_MONTH_TEXT = "differentMonthText";
+
+    private boolean bookingShow;
 
     private final Text[] dayNames = new Text[]{
-        new Text("Sunday"),
-        new Text("Monday"),
-        new Text("Tuesday"),
-        new Text("Wednesday"),
-        new Text("Thursday"),
-        new Text("Friday"),
-        new Text("Saturday")};
+        new Text("SUN"),
+        new Text("MON"),
+        new Text("TUE"),
+        new Text("WED"),
+        new Text("THU"),
+        new Text("FRI"),
+        new Text("SAT")};
 
     @Override
     public void initializeMore() {
@@ -47,22 +80,18 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         calendar.setGridLinesVisible(true);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
                 CalendarNode caledarNode = new CalendarNode();
                 caledarNode.setOnMouseClicked(e -> clicked(caledarNode));
-                caledarNode.setPrefSize(200, 200);
                 calendar.add(caledarNode, j, i);
                 allCalendarDays.add(caledarNode);
             }
         }
 
-        GridPane dayLabels = new GridPane();
-        dayLabels.setPrefWidth(600);
         Integer col = 0;
         for (Text txt : dayNames) {
             AnchorPane ap = new AnchorPane();
-            ap.setPrefSize(200, 10);
             AnchorPane.setBottomAnchor(txt, 5.0);
             ap.getChildren().add(txt);
             dayLabels.add(ap, col++, 0);
@@ -73,26 +102,64 @@ public class CalendarController extends ControllerBase implements Initializable 
         nextMonth.setOnAction(e -> nextMonth());
 
         populateCalendar(currentYearMonth);
+
+        try {
+            simpleDisplayScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController);
+            bookShowScreen = ViewUtils.loadScreenFromResource(ScreenCode.BOOK_FUTURE_SHOW, mainApp, gameController);
+        } catch (IOException ex) {
+            Logger.getLogger(CalendarController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        mainDisplayPane.getChildren().add(simpleDisplayScreen.pane);
+
+        listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
+            @Override
+            public void changed(ObservableValue<? extends Event> observable, Event oldValue, Event newValue) {
+                simpleDisplayScreen.controller.setCurrent(newValue);
+            }
+        });
     }
 
-    public void populateCalendar(YearMonth yearMonth) {
+    @FXML
+    private void handleButtonAction(ActionEvent event) {
+        if (event.getSource() == bookShowButton) {
+            bookShowClicked();
+        }
+    }
+
+    private void bookShowClicked() {
+        bookingShow = !bookingShow;
+        bookShowButton.setText(bookingShow ? "Cancel" : "Book a show");
+        mainDisplayPane.getChildren().clear();
+        mainDisplayPane.getChildren().add(bookingShow ? bookShowScreen.pane : simpleDisplayScreen.pane);
+    }
+
+    private void populateCalendar(YearMonth yearMonth) {
 
         LocalDate calendarDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
+        calendarTitle.setText(calendarDate.getMonth().toString() + " " + String.valueOf(calendarDate.getYear()));
 
         while (!calendarDate.getDayOfWeek().toString().equals("SUNDAY")) {
             calendarDate = calendarDate.minusDays(1);
         }
 
-        for (CalendarNode ap : allCalendarDays) {
-            if (!ap.getChildren().isEmpty()) {
-                ap.getChildren().remove(0);
+        for (CalendarNode calendarNode : allCalendarDays) {
+            if (!calendarNode.getChildren().isEmpty()) {
+                calendarNode.getChildren().remove(0);
             }
 
-            ap.setPrefSize(200, 10);
+            int eventCount = gameController.getEventManager().getEventsOnDate(calendarDate).size();
+            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()) + (eventCount > 0 ? ("\n" + eventCount + " events") : ""));
+            calendarNode.setDate(calendarDate);
 
-            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()) + "\nhoooo");
-            ap.setDate(calendarDate);
-            ap.getChildren().add(txt);
+            calendarNode.getStyleClass().clear();
+
+            if (calendarNode.getDate().getMonth() != currentYearMonth.getMonth()) {
+                calendarNode.getStyleClass().add(DIFFERENT_MONTH);
+                txt.getStyleClass().add(DIFFERENT_MONTH_TEXT);
+            }
+
+            calendarNode.getChildren().add(txt);
 
             CalendarNode.setBottomAnchor(txt, 5.0);
             CalendarNode.setTopAnchor(txt, 5.0);
@@ -101,19 +168,52 @@ public class CalendarController extends ControllerBase implements Initializable 
             calendarDate = calendarDate.plusDays(1);
         }
 
-        calendarTitle.setText(calendarDate.getMonth().toString() + " " + String.valueOf(calendarDate.getYear()));
     }
 
     private void clicked(CalendarNode calendarNode) {
-        selected = calendarNode;
-        
-        for (CalendarNode node : allCalendarDays) {
-            if (node.getStyle().contains("-fx-background-color: blue;")) {
-                node.setStyle("");
+        selected = checkCurrentMonth(calendarNode.getDate());
+
+        if (!listView.getItems().isEmpty()) {
+            listView.getItems().clear();
+        }
+        listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selected.getDate())));
+
+        ((BookShowController) bookShowScreen.controller).setDate(selected.getDate());
+
+        setSelectedColor(selected);
+
+    }
+
+    private CalendarNode checkCurrentMonth(LocalDate date) {
+        if (date.getMonth() != currentYearMonth.getMonth()) {
+            if (date.getYear() > currentYearMonth.getYear()
+                    || date.getYear() == currentYearMonth.getYear()
+                    && date.getMonthValue() > currentYearMonth.getMonthValue()) {
+                nextMonth();
+            } else {
+                previousMonth();
             }
         }
-        calendarNode.setStyle("-fx-background-color: blue;");
+        return selectNode(date);
+    }
 
+    private CalendarNode selectNode(LocalDate date) {
+        for (CalendarNode node : allCalendarDays) {
+            if (node.getDate().equals(date)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private void setSelectedColor(CalendarNode calendarNode) {
+
+        for (CalendarNode node : allCalendarDays) {
+            if (node.getStyleClass().contains(SELECTED_CLASS)) {
+                node.getStyleClass().clear();
+            }
+        }
+        calendarNode.getStyleClass().add(SELECTED_CLASS);
     }
 
     private void previousMonth() {
@@ -127,8 +227,20 @@ public class CalendarController extends ControllerBase implements Initializable 
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
+    public void updateLabels() {
+        populateCalendar(currentYearMonth);
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        listView.setPlaceholder(new Label("No events on this date"));
+        nextMonth.setText("Next");
+        previousMonth.setText("Previous");
+        bookShowButton.setText("Book a show");
+        bookingShow = false;
+        ViewUtils.inititializeRegion(nextMonth);
+        ViewUtils.inititializeRegion(previousMonth);
+        ViewUtils.inititializeRegion(dayLabels);
+    }
 }

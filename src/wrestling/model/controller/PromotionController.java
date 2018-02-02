@@ -17,7 +17,7 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
-import wrestling.model.manager.EventWorkerManager;
+import wrestling.model.manager.BookingManager;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
@@ -32,7 +32,7 @@ public class PromotionController implements Serializable {
     private final EventFactory eventFactory;
     private final MatchFactory matchFactory;
 
-    private final EventWorkerManager bookingManager;
+    private final BookingManager bookingManager;
     private final ContractManager contractManager;
     private final DateManager dateManager;
     private final EventManager eventManager;
@@ -44,7 +44,7 @@ public class PromotionController implements Serializable {
             ContractFactory contractFactory,
             EventFactory eventFactory,
             MatchFactory matchFactory,
-            EventWorkerManager bookingManager,
+            BookingManager bookingManager,
             ContractManager contractManager,
             DateManager dateManager,
             EventManager eventManager,

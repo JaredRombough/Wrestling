@@ -1,3 +1,18 @@
+/*
+GREY
+500 #9E9E9E
+50 #FAFAFA
+100 #F5F5F5
+200 #EEEEEE
+300 #E0E0E0
+400 #BDBDBD
+500 #9E9E9E
+600 #757575
+700 #616161
+800 #424242
+900 #212121
+*/
+
 .root{
 
     -fx-font: 16px "Trebuchet";
@@ -11,7 +26,7 @@
 }
 
 .titleScreenBackdrop{
- -fx-background-color: black;
+    -fx-background-color: black;
 }
 
 .titleText{
@@ -50,10 +65,7 @@
 
 .list-view {
     -fx-padding: 0px 5px 0px 5px;
-
     -fx-background-color: #9E9E9E;
-
-
 }
 
 
@@ -152,4 +164,27 @@
 .imageBorder {
     -fx-padding: 10;
     -fx-background-color: #424242;
+}
+
+/*CALENDAR*/
+
+.selectedCalendarNode
+{
+
+    -fx-background-color: #F5F5F5;
+    -fx-border-width: 1px 2px 1px 2px;
+    -fx-border-color: #616161;
+}
+
+.differentMonth
+
+{
+    -fx-background-color: #BDBDBD;
+    -fx-border-width: 1px 2px 1px 2px;
+    -fx-border-color: #616161;
+    
+}
+
+.differentMonthText{
+    -fx-fill: #E0E0E0
 }

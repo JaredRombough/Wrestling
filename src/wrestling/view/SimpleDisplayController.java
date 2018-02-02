@@ -27,16 +27,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
     private ScrollPane scrollPane;
 
     @FXML
-    private TextArea textArea;
-
-    @FXML
-    private TextFlow textFlow;
-
-    @FXML
     private Text displayTitle;
-
-    @FXML
-    private StackPane stackPane;
 
     @Override
     public void initializeMore() {
