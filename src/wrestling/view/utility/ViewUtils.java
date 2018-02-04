@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Control;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -40,7 +41,7 @@ public final class ViewUtils {
         region.setMaxHeight(Double.MAX_VALUE);
         region.setMaxWidth(Double.MAX_VALUE);
     }
-    
+
     //shows an image if it exists, handles hide/show of image frame
     public static void showImage(File imageFile, StackPane imageFrame, ImageView imageView) {
 
@@ -52,13 +53,11 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
-    
+
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         Screen screen = new Screen();
@@ -78,7 +77,7 @@ public final class ViewUtils {
         screen.code = code;
         return screen;
     }
-    
+
     public static Screen getByCode(List<Screen> screens, ScreenCode code) {
         for (Screen screen : screens) {
             if (screen.code == code) {
@@ -86,6 +85,17 @@ public final class ViewUtils {
             }
         }
         return null;
+    }
+
+    public static Alert generateAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add("style.css");
+        return alert;
     }
 
 }

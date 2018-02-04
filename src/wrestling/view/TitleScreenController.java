@@ -47,7 +47,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
                 mainApp.newRandomGame();
             } catch (IOException ex) {
                 logger.log(Level.ERROR, "Exception on new random game", ex);
-                mainApp.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
+                ViewUtils.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
             }
         } else if (event.getSource() == newImportGameButton) {
 
@@ -55,7 +55,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
                 showImportDialog();
             } catch (IOException ex) {
                 logger.log(Level.ERROR, "Exception on import game", ex);
-                mainApp.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
+                ViewUtils.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
             }
 
         } else if (event.getSource() == continueGameButton) {
@@ -63,7 +63,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
                 mainApp.continueGame();
             } catch (IOException ex) {
                 logger.log(Level.ERROR, "Exception on continue game", ex);
-                mainApp.generateAlert("Error", "Continue from saved game failed", ex.getMessage()).showAndWait();
+                ViewUtils.generateAlert("Error", "Continue from saved game failed", ex.getMessage()).showAndWait();
             }
 
         }

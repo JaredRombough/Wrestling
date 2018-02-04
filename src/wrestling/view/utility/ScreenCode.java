@@ -130,5 +130,17 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    },
+    NEXT_DAY_SCREEN {
+
+        @Override
+        public String resourcePath() {
+            return "view/NextDayScreen.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return true;
+        }
     }
 }

@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -27,6 +27,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.BrowserController;
+import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.TitleScreenController;
 import wrestling.view.utility.Screen;
@@ -41,12 +42,6 @@ public class MainApp extends Application {
     private static final String CONTACT = "OpenWrestling@gmail.com";
     private static final String VERSION = "0.0.2";
 
-    public static void main(String[] args) {
-
-        launch(args);
-
-    }
-
     private final transient Logger logger;
 
     private Stage primaryStage;
@@ -59,12 +54,18 @@ public class MainApp extends Application {
 
     private final boolean cssEnabled;
 
+    public static void main(String[] args) {
+
+        launch(args);
+
+    }
+
     public MainApp() {
         this.screens = new ArrayList<>();
 
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
-        logger.log(Level.INFO, "Logger online");
+        logger.log(Level.INFO, "Logger online. Running version " + VERSION);
     }
 
     @Override
@@ -112,7 +113,7 @@ public class MainApp extends Application {
 
                 logger.log(Level.ERROR, error);
 
-                generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
+                ViewUtils.generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
 
             } else {
                 this.gameController = importer.getGameController();
@@ -123,22 +124,11 @@ public class MainApp extends Application {
 
             logger.log(Level.ERROR, error, ex);
 
-            generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
+            ViewUtils.generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
 
             throw ex;
         }
 
-    }
-
-    public Alert generateAlert(String title, String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add("style.css");
-        return alert;
     }
 
     //continues the last saved game, jumps to browser
@@ -212,7 +202,7 @@ public class MainApp extends Application {
             kryo.writeObject(output, gameController);
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
-            generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
+            ViewUtils.generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
             throw ex;
         }
     }
@@ -241,7 +231,8 @@ public class MainApp extends Application {
                 ScreenCode.CALENDAR,
                 ScreenCode.BROWSER,
                 ScreenCode.EVENT,
-                ScreenCode.WORKER_OVERVIEW
+                ScreenCode.WORKER_OVERVIEW,
+                ScreenCode.NEXT_DAY_SCREEN
         ));
 
         for (ScreenCode screen : screensToLoad) {
@@ -276,8 +267,8 @@ public class MainApp extends Application {
     public void show(ScreenCode code) {
         Screen screen = ViewUtils.getByCode(screens, code);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
+        ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
         screen.controller.updateLabels();
-
     }
 
     /*
@@ -321,10 +312,64 @@ public class MainApp extends Application {
     }
 
     public void nextDay() throws IOException {
+
+        Runnable task = this::nextDayTask;
+
+        Thread backgroundThread = new Thread(task);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+
+    }
+
+    private void nextDayTask() {
+
+        RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
+        NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
+
+        StringBuilder sb = new StringBuilder("Loading, please wait.");
+        sb.append("\n");
+        sb.append("Processing promotions...");
+        sb.append("\n");
+        Platform.runLater(() -> {
+
+            nextDay.setLoadingMessage(sb.toString());
+            show(ScreenCode.NEXT_DAY_SCREEN);
+            root.setButtonsDisable(true);
+            primaryStage.getScene().setCursor(Cursor.WAIT);
+
+        });
+
         gameController.nextDay();
-        saveGame();
-        updateLabels();
-        
+
+        sb.append("Promotions processed.");
+        sb.append("\n");
+        sb.append("Autosaving...");
+        sb.append("\n");
+        Platform.runLater(() -> {
+
+            nextDay.setLoadingMessage(sb.toString());
+        });
+
+        boolean saved = true;
+
+        try {
+            saveGame();
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, "Problem saving Game", ex);
+            sb.append("ERROR SAVING GAME");
+            saved = false;
+        } finally {
+            if (saved) {
+                sb.append("Game saved.");
+            }
+        }
+
+        Platform.runLater(() -> {
+            nextDay.setLoadingMessage(sb.toString());
+            updateLabels();
+            root.setButtonsDisable(false);
+            primaryStage.getScene().setCursor(Cursor.DEFAULT);
+        });
     }
 
     /*

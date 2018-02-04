@@ -11,6 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.view.utility.ScreenCode;
 
 public class RootLayoutController extends ControllerBase implements Initializable {
@@ -34,9 +37,13 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private Button browserButton;
 
     @FXML
+    private Button newsButton;
+
+    @FXML
     private ButtonBar buttonBar;
-    
+
     private final String SELECTED_BUTTON = "selectedButton";
+    private transient Logger logger;
 
     public double rootLayoutMinWidth() {
         return buttonBar.getButtonMinWidth() * buttonBar.getButtons().size();
@@ -60,8 +67,33 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         } else if (event.getSource() == calendarButton) {
             updateSelectedButton(calendarButton);
             mainApp.show(ScreenCode.CALENDAR);
+        } else if (event.getSource() == newsButton) {
+            updateSelectedButton(newsButton);
+            mainApp.show(ScreenCode.NEXT_DAY_SCREEN);
         }
 
+    }
+
+    public void updateSelectedButton(ScreenCode screenCode) {
+        switch (screenCode) {
+            case EVENT:
+                updateSelectedButton(eventButton);
+                break;
+            case BROWSER:
+                updateSelectedButton(browserButton);
+                break;
+            case FINANCIAL:
+                updateSelectedButton(financialButton);
+                break;
+            case CALENDAR:
+                updateSelectedButton(calendarButton);
+                break;
+            case NEXT_DAY_SCREEN:
+                updateSelectedButton(newsButton);
+                break;
+            default:
+                logger.log(Level.ERROR, "Invalid button to select " + screenCode);
+        }
     }
 
     private void updateSelectedButton(Button button) {
@@ -72,7 +104,6 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         }
 
         button.getStyleClass().add(SELECTED_BUTTON);
-
     }
 
     @Override
@@ -87,6 +118,8 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
         setButtonsDisable(true);
         //calendarButton.setDisable(true);
+
+        logger = LogManager.getLogger(getClass());
     }
 
     @Override
@@ -111,5 +144,6 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         eventButton.setDisable(disable);
         financialButton.setDisable(disable);
         calendarButton.setDisable(disable);
+        newsButton.setDisable(disable);
     }
 }

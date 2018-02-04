@@ -1,6 +1,7 @@
 package wrestling.view;
 
 import javafx.fxml.Initializable;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.controller.GameController;
 
@@ -8,6 +9,7 @@ public abstract class ControllerBase implements Initializable {
 
     public MainApp mainApp;
     public GameController gameController;
+    public transient Logger logger;
 
     public void setDependencies(MainApp mainApp, GameController gameController) {
         this.gameController = gameController;
