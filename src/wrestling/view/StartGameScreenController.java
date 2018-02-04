@@ -107,7 +107,11 @@ public class StartGameScreenController extends ControllerBase implements Initial
 
         if (event.getSource().equals(startGameButton)) {
             gameController.getPromotionManager().setPlayerPromotion(selectedPromotion);
-            gameController.getEventManager().addInitialEvents(gameController.getPromotionManager().getPromotions(), selectedPromotion);
+            for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
+                if (!promotion.equals(selectedPromotion)) {
+                    gameController.getPromotionController().bookNextEvent(promotion);
+                }
+            }
             mainApp.startGame();
 
         }

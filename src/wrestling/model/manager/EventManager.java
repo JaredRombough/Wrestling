@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import wrestling.model.Contract;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Event;
@@ -122,6 +123,16 @@ public class EventManager {
         return allWorkers;
     }
 
+    public List<Worker> allWorkers(Event event) {
+        List allWorkers = new ArrayList<>();
+        for (EventWorker eventWorker : eventWorkers) {
+            if (eventWorker.getEvent().equals(event)) {
+                allWorkers.add(eventWorker.getWorker());
+            }
+        }
+        return allWorkers;
+    }
+
     //dynamic current cost calculation to be called while the player is booking
     public int calculateCost(iEvent event) {
         int currentCost = 0;
@@ -198,45 +209,113 @@ public class EventManager {
     }
 
     public String generateSummaryString(Event event) {
-        StringBuilder bld = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        boolean future = false;
 
         if (event.getDate().isAfter(dateManager.today())) {
-            bld.append("This event is in the future");
+            sb.append("This event is in the future");
+            future = true;
         } else if (event.getDate().equals(dateManager.today())) {
-            bld.append("This event is scheduled for later today");
+            sb.append("This event is scheduled for later today");
+            future = true;
         }
 
         for (Segment segment : getMatches(event)) {
             if (segment instanceof Match) {
                 if (!matchManager.getWorkers((Match) segment).isEmpty()) {
-                    bld.append(matchManager.getMatchString((Match) segment));
-                    bld.append("\n");
-                    bld.append("Rating: ").append(((Match) segment).getRating());
+                    sb.append(matchManager.getMatchString((Match) segment));
+                    sb.append("\n");
+                    sb.append("Rating: ").append(((Match) segment).getRating());
                 } else {
                     logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
                 }
             } else {
                 logger.log(Level.ERROR, "Encountered invalid segment when constructing event summary string");
             }
-            bld.append("\n");
+            sb.append("\n");
         }
 
-        bld.append("\n");
+        sb.append("\n");
 
-        bld.append("Total cost: $").append(event.getCost());
-        bld.append("\n");
-        bld.append("Attendance: ").append(event.getAttendance());
-        bld.append("\n");
-        bld.append("Gross profit: $").append(event.getGate());
+        if (future) {
+            sb.append("Workers booked:");
+            List<Worker> workers = allWorkers(event);
+            for (Worker worker : workers) {
+                sb.append("\n");
+                sb.append(worker.getName());
+            }
+        } else {
+            sb.append("Total cost: $").append(event.getCost());
+            sb.append("\n");
+            sb.append("Attendance: ").append(event.getAttendance());
+            sb.append("\n");
+            sb.append("Gross profit: $").append(event.getGate());
+        }
 
-        return bld.toString();
+        return sb.toString();
     }
 
-    public void addInitialEvents(List<Promotion> promotions, Promotion playerPromotion) {
-        for (Promotion promotion : promotions) {
-            if (!promotion.equals(playerPromotion)) {
-                addEvent(new Event(promotion, (dateManager.today()).plusDays(ModelUtilityFunctions.randRange(2, 7))));
+    //checks if a worker is booked at all on a given date
+    public boolean isBooked(Worker worker, LocalDate date) {
+        boolean isBooked = false;
+
+        for (EventWorker eventWorker : eventWorkers) {
+            if (eventWorker.getEvent().getDate().equals(date)
+                    && eventWorker.getWorker().equals(worker)) {
+                isBooked = true;
+                break;
             }
         }
+
+        return isBooked;
+    }
+
+    private EventWorker getBooking(Worker worker, LocalDate date) {
+        EventWorker workerBooking = null;
+        for (EventWorker eventWorker : eventWorkers) {
+            if (eventWorker.getEvent().getDate().equals(date)
+                    && eventWorker.getWorker().equals(worker)) {
+                workerBooking = eventWorker;
+                break;
+            }
+        }
+        return workerBooking;
+    }
+
+    //checks if a worker is booked on a certain date
+    //returns false if the booking is with the given promotion
+    public boolean isAvailable(Worker worker, LocalDate date, Promotion promotion) {
+        boolean isAvailable = true;
+        EventWorker eventWorker = getBooking(worker, date);
+        if (eventWorker != null && !eventWorker.getEvent().getPromotion().equals(promotion)) {
+            isAvailable = false;
+        }
+        return isAvailable;
+    }
+
+    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contractManager.getContracts(promotion)) {
+            if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
+    }
+
+    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
+
+        List<Worker> roster = new ArrayList<>();
+        for (Contract contract : contractManager.getContracts(promotion)) {
+            if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
+                roster.add(contract.getWorker());
+            }
+
+        }
+
+        return roster;
     }
 }

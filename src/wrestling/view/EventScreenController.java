@@ -357,7 +357,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
             if (!currentSegment().getWorkers().contains(worker)
-                    && !gameController.getBookingManager().isBooked(worker, gameController.getDateManager().today())) {
+                    && !gameController.getEventManager().isBooked(worker, gameController.getDateManager().today())) {
                 workersList.add(worker);
             }
         }

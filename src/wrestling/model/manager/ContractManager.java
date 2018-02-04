@@ -15,12 +15,10 @@ public class ContractManager implements Serializable {
     private final List<Contract> contracts;
 
     private final PromotionManager promotionManager;
-    private final BookingManager bookingManager;
 
-    public ContractManager(PromotionManager promotionManager, BookingManager bookingsManager) {
+    public ContractManager(PromotionManager promotionManager) {
         contracts = new ArrayList<>();
         this.promotionManager = promotionManager;
-        this.bookingManager = bookingsManager;
     }
 
     public void addContract(Contract contract) {
@@ -90,34 +88,6 @@ public class ContractManager implements Serializable {
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getPromotion().equals(promotion)) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
-    }
-
-    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contracts) {
-            if (contract.isActive() && contract.getPromotion().equals(promotion)
-                    && bookingManager.isAvailable(contract.getWorker(), date, promotion)) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
-    }
-
-    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contracts) {
-            if (contract.isActive() && contract.getPromotion().equals(promotion)
-                    && !bookingManager.isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());
             }
 

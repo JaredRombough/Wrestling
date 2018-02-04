@@ -17,7 +17,6 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
-import wrestling.model.manager.BookingManager;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
@@ -32,7 +31,6 @@ public class PromotionController implements Serializable {
     private final EventFactory eventFactory;
     private final MatchFactory matchFactory;
 
-    private final BookingManager bookingManager;
     private final ContractManager contractManager;
     private final DateManager dateManager;
     private final EventManager eventManager;
@@ -44,7 +42,6 @@ public class PromotionController implements Serializable {
             ContractFactory contractFactory,
             EventFactory eventFactory,
             MatchFactory matchFactory,
-            BookingManager bookingManager,
             ContractManager contractManager,
             DateManager dateManager,
             EventManager eventManager,
@@ -54,7 +51,6 @@ public class PromotionController implements Serializable {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
         this.matchFactory = matchFactory;
-        this.bookingManager = bookingManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.eventManager = eventManager;
@@ -198,7 +194,7 @@ public class PromotionController implements Serializable {
 
         for (Worker worker : workerManager.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)
-                    && !bookingManager.isBooked(worker, date)) {
+                    && !eventManager.isBooked(worker, date)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
                 break;
             }
@@ -234,7 +230,7 @@ public class PromotionController implements Serializable {
         return target;
     }
 
-    private void bookNextEvent(Promotion promotion) {
+    public void bookNextEvent(Promotion promotion) {
 
         LocalDate eventDate = LocalDate.ofYearDay(dateManager.today().getYear(), dateManager.today().getDayOfYear());
         eventDate = LocalDate.from(eventDate).plusDays(30);
@@ -255,7 +251,7 @@ public class PromotionController implements Serializable {
                 //count the workers that are availeable on the date
                 double available = 0;
                 for (Worker worker : contractManager.getActiveRoster(promotion)) {
-                    if (bookingManager.isAvailable(worker, eventDate, promotion)) {
+                    if (eventManager.isAvailable(worker, eventDate, promotion)) {
                         available++;
                     }
                 }
@@ -293,7 +289,7 @@ public class PromotionController implements Serializable {
 
         //book the roster for the date
         for (Worker worker : contractManager.getFullRoster(promotion)) {
-            if (!bookingManager.isBooked(worker, eventDate)) {
+            if (!eventManager.isBooked(worker, eventDate)) {
                 eventManager.addEventWorker(new EventWorker(event, worker));
             }
         }
@@ -451,7 +447,7 @@ public class PromotionController implements Serializable {
         for (Worker worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
-            if (!bookingManager.isAvailable(worker, dateManager.today(), promotion)) {
+            if (!eventManager.isAvailable(worker, dateManager.today(), promotion)) {
                 unavailable.add(worker);
             }
         }

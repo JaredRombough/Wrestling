@@ -35,7 +35,7 @@ public class BookShowController extends ControllerBase implements Initializable 
     private void updateText() {
         Text text = new Text();
         StringBuilder sb = new StringBuilder();
-        List<Worker> unavailable = gameController.getContractManager().getUnavailableRoster(
+        List<Worker> unavailable = gameController.getEventManager().getUnavailableRoster(
                 gameController.getPromotionManager().playerPromotion(), currentDate);
         for (Worker worker : unavailable) {
             sb.append(worker.getName());
