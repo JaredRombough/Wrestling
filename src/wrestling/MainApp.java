@@ -39,6 +39,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
+    private boolean preRun = false;
     private static final String CONTACT = "OpenWrestling@gmail.com";
     private static final String VERSION = "0.0.2";
 
@@ -185,11 +186,15 @@ public class MainApp extends Application {
         show(ScreenCode.BROWSER);
         updateLabels();
 
+        preRun = PRE_RUN_DAYS > 0;
+
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
             nextDay();
-            logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
+
         }
+
+        preRun = false;
 
         setButtonsDisable(false);
     }
@@ -313,12 +318,18 @@ public class MainApp extends Application {
 
     public void nextDay() throws IOException {
 
-        Runnable task = this::nextDayTask;
+        if (preRun) {
+            gameController.nextDay();
+            saveGame();
+        } else {
+            Runnable task = this::nextDayTask;
 
-        Thread backgroundThread = new Thread(task);
-        backgroundThread.setDaemon(true);
-        backgroundThread.start();
+            Thread backgroundThread = new Thread(task);
+            backgroundThread.setDaemon(true);
+            backgroundThread.start();
+        }
 
+        logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
     }
 
     private void nextDayTask() {
