@@ -4,7 +4,11 @@ import wrestling.model.factory.MatchFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import wrestling.model.Event;
 import wrestling.model.Promotion;
+import wrestling.model.Television;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.PromotionFactory;
@@ -44,6 +48,8 @@ public final class GameController implements Serializable {
     private final MatchManager matchManager;
 
     private final PromotionController promotionController;
+
+    private final int EVENT_MONTHS = 6;
 
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
@@ -108,9 +114,46 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {
             getPromotionController().dailyUpdate(promotion);
+
+        }
+
+        if (dateManager.today().getDayOfMonth() == 1) {
+            monthlyUpdate();
         }
 
         dateManager.nextDay();
+    }
+
+    public void initializeEvents() {
+        YearMonth yearMonth = YearMonth.from(dateManager.today());
+        for (int i = 0; i < EVENT_MONTHS; i++) {
+            bookEventsForMonth(yearMonth);
+            yearMonth = yearMonth.plusMonths(1);
+        }
+    }
+
+    private void monthlyUpdate() {
+        YearMonth yearMonth = YearMonth.from(dateManager.today());
+        yearMonth = yearMonth.plusMonths(EVENT_MONTHS);
+        bookEventsForMonth(yearMonth);
+    }
+
+    private void bookEventsForMonth(YearMonth yearMonth) {
+        LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
+
+        while (currentDate.getMonth().equals(yearMonth.getMonth())) {
+
+            for (Promotion promotion : promotionManager.getPromotions()) {
+                List<Television> tvOnDate = televisionManager.tvOnDate(promotion, currentDate);
+                for (Television television : tvOnDate) {
+                    Event eventOnDate = eventManager.getEventOnDate(promotion, currentDate);
+                    if (eventOnDate == null || !television.equals(eventOnDate.getTelevision())) {
+                        promotionController.bookNextEvent(promotion, currentDate, television);
+                    }
+                }
+            }
+            currentDate = LocalDate.from(currentDate).plusDays(1);
+        }
     }
 
     /**

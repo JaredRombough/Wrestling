@@ -179,7 +179,7 @@ public class Import {
             if (counter == 51) {
 
                 Television tv = new Television();
-                tv.setName(currentLine.substring(0, 20).trim());
+                tv.setName(currentLine.substring(1, 21).trim());
                 String day = currentLine.substring(22, 32);
 
                 switch (day.trim().toUpperCase()) {

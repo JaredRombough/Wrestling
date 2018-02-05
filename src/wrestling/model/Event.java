@@ -30,7 +30,10 @@ public class Event implements iEvent {
 
     @Override
     public String toString() {
-        return promotion.getShortName() + " event " + date.toString();
+        String eventName = television == null
+                ? promotion.getShortName() + " event"
+                : television.getName();
+        return eventName + " " + date.toString();
     }
 
     public void setDate(LocalDate date) {

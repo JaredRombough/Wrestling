@@ -1,6 +1,7 @@
 package wrestling.model.manager;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Promotion;
@@ -20,7 +21,7 @@ public class TelevisionManager {
         }
     }
 
-    public List<Television> tvOnDay(Promotion promotion, LocalDate date) {
+    public List<Television> tvOnDate(Promotion promotion, LocalDate date) {
         List<Television> tvToday = new ArrayList<>();
         for (Television tv : televisionList) {
             if (tv.getPromotion().equals(promotion)
@@ -32,4 +33,20 @@ public class TelevisionManager {
         return tvToday;
     }
 
+    public List<Television> getTvDates(Promotion promotion, LocalDate localDate, int advanceMonths) {
+
+        YearMonth yearMonth = YearMonth.from(localDate);
+        yearMonth.plusMonths(advanceMonths);
+        LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
+        List<Television> tvDates = new ArrayList<>();
+
+        while (currentDate.getMonth().equals(yearMonth.getMonth())) {
+
+            tvDates.addAll(tvOnDate(promotion, currentDate));
+
+            currentDate = LocalDate.from(currentDate).plusDays(1);
+        }
+        return tvDates;
+
+    }
 }

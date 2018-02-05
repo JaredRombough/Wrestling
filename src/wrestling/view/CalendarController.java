@@ -55,6 +55,7 @@ public class CalendarController extends ControllerBase implements Initializable 
 
     private CalendarNode selected;
     private YearMonth currentYearMonth;
+    private boolean bookingShow;
 
     private Screen simpleDisplayScreen;
     private Screen bookShowScreen;
@@ -63,8 +64,8 @@ public class CalendarController extends ControllerBase implements Initializable 
     private final String CURRENT_DATE = "currentDate";
     private final String DIFFERENT_MONTH = "differentMonth";
     private final String DIFFERENT_MONTH_TEXT = "differentMonthText";
-
-    private boolean bookingShow;
+    private final int WEEK_DAYS = 7;
+    private final int WEEKS = 6;
 
     private final Text[] dayNames = new Text[]{
         new Text("SUN"),
@@ -81,8 +82,8 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         calendar.setGridLinesVisible(true);
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 0; i < WEEKS; i++) {
+            for (int j = 0; j < WEEK_DAYS; j++) {
                 CalendarNode caledarNode = new CalendarNode();
                 caledarNode.setOnMouseClicked(e -> clicked(caledarNode));
                 calendar.add(caledarNode, j, i);
@@ -159,9 +160,9 @@ public class CalendarController extends ControllerBase implements Initializable 
                 calendarNode.getStyleClass().add(DIFFERENT_MONTH);
                 txt.getStyleClass().add(DIFFERENT_MONTH_TEXT);
             }
-            
-            if(calendarNode.getDate().equals(gameController.getDateManager().today()) && 
-                    calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
+
+            if (calendarNode.getDate().equals(gameController.getDateManager().today())
+                    && calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
                 calendarNode.getStyleClass().add(CURRENT_DATE);
             }
 
@@ -200,10 +201,10 @@ public class CalendarController extends ControllerBase implements Initializable 
                 previousMonth();
             }
         }
-        return selectNode(date);
+        return selectNodeForCurrentMonth(date);
     }
 
-    private CalendarNode selectNode(LocalDate date) {
+    private CalendarNode selectNodeForCurrentMonth(LocalDate date) {
         for (CalendarNode node : allCalendarDays) {
             if (node.getDate().equals(date)) {
                 return node;
@@ -235,20 +236,19 @@ public class CalendarController extends ControllerBase implements Initializable 
     public void updateLabels() {
         populateCalendar(currentYearMonth);
     }
-    
+
     public void selectDate(LocalDate date) {
         YearMonth yearMonth = YearMonth.from(date);
-        if(!currentYearMonth.equals(yearMonth)) {
+        if (!currentYearMonth.equals(yearMonth)) {
             currentYearMonth = yearMonth;
             populateCalendar(currentYearMonth);
         }
-        CalendarNode node = selectNode(date);
+        CalendarNode node = selectNodeForCurrentMonth(date);
         clicked(node);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         listView.setPlaceholder(new Label("No events on this date"));
         nextMonth.setText("Next");
         previousMonth.setText("Previous");
