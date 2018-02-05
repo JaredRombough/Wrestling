@@ -44,7 +44,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public boolean alwaysUpdate() {
-            return true;
+            return false;
         }
     },
     WORKER_OVERVIEW {

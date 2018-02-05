@@ -44,7 +44,9 @@ public class EventManager {
     }
 
     public void addEvent(Event event) {
-        events.add(event);
+        if (!events.contains(event)) {
+            events.add(event);
+        }
     }
 
     public void addMatchEvent(MatchEvent matchEvent) {
@@ -61,6 +63,20 @@ public class EventManager {
             promotionEvents.add(event);
         });
         return promotionEvents;
+    }
+
+    public Event getNextEvent(Promotion promotion, LocalDate startDate) {
+        Event event = null;
+        int futureDaysToSearch = 180;
+        LocalDate currentDate = startDate;
+        for (int i = 0; i < futureDaysToSearch; i++) {
+            event = getEventOnDate(promotion, currentDate);
+            if (event != null) {
+                break;
+            }
+            currentDate = LocalDate.from(currentDate).plusDays(1);
+        }
+        return event;
     }
 
     public Event getEventOnDate(Promotion promotion, LocalDate date) {

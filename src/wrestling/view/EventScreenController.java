@@ -29,7 +29,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
+import wrestling.model.Event;
 import wrestling.model.Match;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
@@ -65,15 +66,30 @@ public class EventScreenController extends ControllerBase implements Initializab
     private ListView<Worker> workersListView;
 
     @FXML
-    private GridPane gridPane;
+    private AnchorPane segmentPaneHolder;
+
+    @FXML
+    private Label eventTitleLabel;
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private final List<SegmentView> segments = new ArrayList<>();
 
+    private Event currentEvent;
+
     //this would be for keeping track of the index number of the currently
     //selected segment
     private Number currentSegmentNumber;
+
+    @Override
+    public void setCurrent(Object obj) {
+        if (obj instanceof Event) {
+            currentEvent = (Event) obj;
+            updateLabels();
+        } else {
+            logger.log(Level.ERROR, "Invalid object passed to EventScreen");
+        }
+    }
 
     private SegmentView currentSegment() {
         return segments.get(currentSegmentNumber.intValue());
@@ -86,20 +102,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void setCurrentSegmentNumber(Number number) {
-
-        //remove the previous segment pane from the grid first if it's still there
-        if (gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
-            gridPane.getChildren().remove(segmentPanes.get(currentSegmentNumber.intValue()));
-        }
-
         currentSegmentNumber = number;
 
-        //here we  update the central pane to show the new current segment
-        //but first make sure it isn't there already!
-        if (!gridPane.getChildren().contains(segmentPanes.get(currentSegmentNumber.intValue()))) {
-            gridPane.add(segmentPanes.get(currentSegmentNumber.intValue()), 1, 0);
-            GridPane.setRowSpan(segmentPanes.get(currentSegmentNumber.intValue()), 3);
-        }
+        segmentPaneHolder.getChildren().clear();
+        segmentPaneHolder.getChildren().add(segmentPanes.get(currentSegmentNumber.intValue()));
 
         updateLabels();
 
@@ -126,23 +132,21 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         //have to update the event segments first
         updateSegments();
-        
+
         List<SegmentView> eventSegments = new ArrayList<>();
-        
+
         //eliminate empty segments here
-        for(SegmentView segmentView : segments) {
-            if(!segmentView.getWorkers().isEmpty()) {
+        for (SegmentView segmentView : segments) {
+            if (!segmentView.getWorkers().isEmpty()) {
                 eventSegments.add(segmentView);
             }
         }
 
-
         //create the event with the segments assembled
-        gameController.getEventFactory().createEventFromTemp(
-                eventSegments,
-                gameController.getDateManager().today(),
-                gameController.getPromotionManager().playerPromotion()
-        );
+        gameController.getEventFactory().createEventFromTemp(currentEvent,
+                segments,
+                currentEvent.getDate(),
+                gameController.getPromotionManager().playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -179,6 +183,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     //updates lists and labels
     @Override
     public void updateLabels() {
+
+        if (currentEvent != null) {
+            eventTitleLabel.setText("Now booking: " + currentEvent.toString());
+        }
 
         totalCostLabel.setText("Total Cost: $" + currentCost());
 
@@ -259,21 +267,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             segmentListView.getItems().remove(currentSegment);
 
-            /*
-            if removing the segment from the listview hasn't changed the index selected,
-            we need to to update it ourselves
-             */
-            if (segmentListView.getSelectionModel().getSelectedIndex() == indexToRemove) {
-                gridPane.getChildren().remove(segmentPanes.get(indexToRemove));
-                segmentPanes.remove(indexToRemove);
-                //set the current segment to itself to get the new segment pane
-                //at the index we have just removed
-                setCurrentSegmentNumber(currentSegmentNumber);
+            segmentPanes.remove(indexToRemove);
 
-            } else {
-                //else just remove the segment pane from the segment pane list
-                segmentPanes.remove(indexToRemove);
-            }
+            setCurrentSegmentNumber(currentSegmentNumber);
 
             //remove the controller too
             segmentPaneControllers.remove(indexToRemove);
@@ -357,7 +353,10 @@ public class EventScreenController extends ControllerBase implements Initializab
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
             if (!currentSegment().getWorkers().contains(worker)
-                    && !gameController.getEventManager().isBooked(worker, gameController.getDateManager().today())) {
+                    && gameController.getEventManager().isAvailable(
+                            worker,
+                            gameController.getDateManager().today(),
+                            gameController.getPromotionManager().playerPromotion())) {
                 workersList.add(worker);
             }
         }
@@ -368,6 +367,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        logger = LogManager.getLogger(this.getClass());
 
         totalSegments = 8;
 

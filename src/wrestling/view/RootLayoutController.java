@@ -3,6 +3,7 @@ package wrestling.view;
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import wrestling.model.Event;
 import wrestling.view.utility.ScreenCode;
 
 public class RootLayoutController extends ControllerBase implements Initializable {
@@ -45,6 +47,8 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private final String SELECTED_BUTTON = "selectedButton";
     private transient Logger logger;
 
+    private EventButtonState eventButtonState;
+
     public double rootLayoutMinWidth() {
         return buttonBar.getButtonMinWidth() * buttonBar.getButtons().size();
 
@@ -55,9 +59,9 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
         if (event.getSource() == eventButton) {
             updateSelectedButton(eventButton);
-            mainApp.show(ScreenCode.EVENT);
+            eventButtonClicked();
         } else if (event.getSource() == nextDayButton) {
-            mainApp.nextDay();
+            nextDayButtonClicked();
         } else if (event.getSource() == browserButton) {
             updateSelectedButton(browserButton);
             mainApp.show(ScreenCode.BROWSER);
@@ -111,13 +115,13 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
         updateCurrentDateLabel();
         updateCurrentFundsLabel();
+        updateEventButton();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         setButtonsDisable(true);
-        //calendarButton.setDisable(true);
 
         logger = LogManager.getLogger(getClass());
     }
@@ -129,11 +133,62 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     }
 
-    public void updateCurrentDateLabel() {
+    private void updateEventButton() {
+
+        Event nextEvent = gameController.getEventManager().getNextEvent(
+                gameController.getPromotionManager().playerPromotion(), gameController.getDateManager().today());
+
+        if (nextEvent == null) {
+            eventButton.setText("No event booked!");
+            eventButtonState = EventButtonState.NO_EVENT;
+        } else if (nextEvent.getDate().equals(gameController.getDateManager().today())) {
+            eventButton.setText("Book event");
+            eventButtonState = EventButtonState.EVENT_TODAY;
+        } else {
+            long days = DAYS.between(gameController.getDateManager().today(), nextEvent.getDate());
+            eventButton.setText(days + " days to next event");
+            eventButtonState = EventButtonState.FUTURE_EVENT;
+        }
+
+    }
+
+    private void nextDayButtonClicked() throws IOException {
+        if (eventButtonState.equals(EventButtonState.EVENT_TODAY)) {
+            mainApp.show(ScreenCode.EVENT, nextPlayerEvent());
+        } else {
+            mainApp.nextDay();
+        }
+
+    }
+
+    private void eventButtonClicked() {
+        switch (eventButtonState) {
+            case EVENT_TODAY:
+                mainApp.show(ScreenCode.EVENT,
+                        nextPlayerEvent());
+                break;
+            case NO_EVENT:
+                mainApp.show(ScreenCode.CALENDAR);
+                break;
+            case FUTURE_EVENT:
+                mainApp.show(
+                        ScreenCode.CALENDAR,
+                        nextPlayerEvent());
+                break;
+        }
+    }
+
+    private Event nextPlayerEvent() {
+        return gameController.getEventManager().getNextEvent(
+                gameController.getPromotionManager().playerPromotion(),
+                gameController.getDateManager().today());
+    }
+
+    private void updateCurrentDateLabel() {
         calendarButton.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
     }
 
-    public void updateCurrentFundsLabel() {
+    private void updateCurrentFundsLabel() {
         currentFundsLabel.setText("Funds: $" + gameController.getPromotionManager()
                 .getBankAccount(gameController.getPromotionManager().playerPromotion()).getFunds());
     }
@@ -145,5 +200,11 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         financialButton.setDisable(disable);
         calendarButton.setDisable(disable);
         newsButton.setDisable(disable);
+    }
+
+    private enum EventButtonState {
+        EVENT_TODAY,
+        FUTURE_EVENT,
+        NO_EVENT
     }
 }

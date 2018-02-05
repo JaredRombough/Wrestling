@@ -271,15 +271,21 @@ public class MainApp extends Application {
         }
     }
 
-    public void show(ScreenCode code) {
+    public Screen show(ScreenCode code) {
         Screen screen = ViewUtils.getByCode(screens, code);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
         screen.controller.updateLabels();
         if (code.equals(ScreenCode.CALENDAR)) {
-            ((CalendarController) screen.controller).selectDate(gameController.getDateManager().today());
+            ((CalendarController) screen.controller).setCurrent(gameController.getDateManager().today());
         }
+        return screen;
 
+    }
+    
+    public void show(ScreenCode code, Object obj) {
+        Screen screen = show(code);
+        screen.controller.setCurrent(obj);
     }
 
     /*

@@ -1,7 +1,6 @@
 package wrestling.model;
 
 import wrestling.model.interfaces.Segment;
-import wrestling.model.interfaces.MatchRule;
 
 public class Match implements Segment {
 

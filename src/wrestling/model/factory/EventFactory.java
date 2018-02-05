@@ -91,15 +91,15 @@ public class EventFactory {
         processContracts(event, segments);
     }
 
-    public void createEventFromTemp(final List<SegmentView> segments, LocalDate date, Promotion promotion) {
-        createEvent(converTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
+    public void createEventFromTemp(Event event, final List<SegmentView> segments, LocalDate date, Promotion promotion) {
+        createEvent(event, convertTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
     }
 
     public void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
         createEvent(event, segments, date, promotion, EventType.LIVEEVENT);
     }
 
-    private List<Segment> converTempToSegment(List<SegmentView> tempSegments) {
+    private List<Segment> convertTempToSegment(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
             segments.add(matchFactory.CreateMatch(tempSegment.getTeams(), tempSegment.getRules(), tempSegment.getFinish()));

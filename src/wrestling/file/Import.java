@@ -584,7 +584,7 @@ public class Import {
 
         List<String> advancedImportData = new ArrayList();
         String path = "";
-        
+
         try {
             path = importFolder.getPath() + "\\advancedImport.txt";
             BufferedReader br = new BufferedReader(new FileReader(path));
