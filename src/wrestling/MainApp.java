@@ -27,6 +27,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.BrowserController;
+import wrestling.view.CalendarController;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.TitleScreenController;
@@ -35,50 +36,50 @@ import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
 public class MainApp extends Application {
-
+    
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private boolean preRun = false;
     private static final String CONTACT = "OpenWrestling@gmail.com";
     private static final String VERSION = "0.0.2";
-
+    
     private final transient Logger logger;
-
+    
     private Stage primaryStage;
     private GameController gameController;
     private final List<Screen> screens;
-
+    
     private File picsFolder;
     private File logosFolder;
     private File dataFolder;
-
+    
     private final boolean cssEnabled;
-
+    
     public static void main(String[] args) {
-
+        
         launch(args);
-
+        
     }
-
+    
     public MainApp() {
         this.screens = new ArrayList<>();
-
+        
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
         logger.log(Level.INFO, "Logger online. Running version " + VERSION);
     }
-
+    
     @Override
     public void start(Stage primaryStage) throws IOException {
-
+        
         this.primaryStage = primaryStage;
         this.getPrimaryStage().setTitle("Wrestling");
         this.getPrimaryStage().setMinWidth(WINDOW_MIN_WIDTH);
         this.getPrimaryStage().setMinHeight(WINDOW_MIN_HEIGHT);
         this.getPrimaryStage().centerOnScreen();
         showTitleScreen();
-
+        
     }
 
     //starts a new random game
@@ -94,7 +95,7 @@ public class MainApp extends Application {
             initRootLayout();
             showStartGameScreen();
         }
-
+        
     }
 
     //starts a new game from imported data
@@ -102,40 +103,40 @@ public class MainApp extends Application {
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;
         this.logosFolder = logosFolder;
-
+        
         Import importer = new Import();
-
+        
         String error = "";
         try {
-
+            
             error = importer.tryImport(dataFolder);
-
+            
             if (!error.isEmpty()) {
-
+                
                 logger.log(Level.ERROR, error);
-
+                
                 ViewUtils.generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
-
+                
             } else {
                 this.gameController = importer.getGameController();
                 initRootLayout();
                 showStartGameScreen();
             }
         } catch (Exception ex) {
-
+            
             logger.log(Level.ERROR, error, ex);
-
+            
             ViewUtils.generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
-
+            
             throw ex;
         }
-
+        
     }
 
     //continues the last saved game, jumps to browser
     public void continueGame() throws IOException {
         this.gameController = loadGame();
-
+        
         if (gameController != null) {
             try {
                 initRootLayout();
@@ -154,55 +155,55 @@ public class MainApp extends Application {
 
     //shows initial title screen
     private void showTitleScreen() throws IOException {
-
+        
         try {
             Screen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(titleScreen.pane);
-
+            
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
             }
-
+            
             getPrimaryStage().setScene(scene);
             getPrimaryStage().show();
-
+            
             ((TitleScreenController) titleScreen.controller).setImage(loadTitleScreenImage());
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
             throw ex;
         }
-
+        
     }
-
+    
     private Image loadTitleScreenImage() throws IOException {
         BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("title.jpg"));
         return SwingFXUtils.toFXImage(bufferedImage, null);
     }
-
+    
     public void startGame() throws IOException {
         prepareScreens();
         show(ScreenCode.BROWSER);
         updateLabels();
-
+        
         preRun = PRE_RUN_DAYS > 0;
 
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
             nextDay();
-
+            
         }
-
+        
         preRun = false;
-
+        
         setButtonsDisable(false);
     }
-
+    
     private void saveGame() throws IOException {
-
+        
         Kryo kryo = new Kryo();
-
+        
         try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
             kryo.writeObject(output, gameController);
         } catch (IOException ex) {
@@ -211,24 +212,24 @@ public class MainApp extends Application {
             throw ex;
         }
     }
-
+    
     private GameController loadGame() {
-
+        
         Kryo kryo = new Kryo();
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
-
+        
         GameController gc = null;
-
+        
         try (Input input = new Input(new FileInputStream("saveGame.bin"))) {
             gc = kryo.readObject(input, GameController.class);
         } catch (IOException ex) {
             logger.log(Level.ERROR, "IOException in loadGame(), returning null gameController", ex);
             gc = null;
         }
-
+        
         return gc;
     }
-
+    
     private void prepareScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
@@ -239,7 +240,7 @@ public class MainApp extends Application {
                 ScreenCode.WORKER_OVERVIEW,
                 ScreenCode.NEXT_DAY_SCREEN
         ));
-
+        
         for (ScreenCode screen : screensToLoad) {
             screens.add(ViewUtils.loadScreenFromResource(screen, this, gameController));
         }
@@ -252,12 +253,12 @@ public class MainApp extends Application {
      */
     public void initRootLayout() throws IOException {
         try {
-
+            
             screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane);
-
+            
             if (cssEnabled) {
                 scene.getStylesheets().add("style.css");
             }
@@ -268,12 +269,16 @@ public class MainApp extends Application {
             throw ex;
         }
     }
-
+    
     public void show(ScreenCode code) {
         Screen screen = ViewUtils.getByCode(screens, code);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
         screen.controller.updateLabels();
+        if (code.equals(ScreenCode.CALENDAR)) {
+            ((CalendarController) screen.controller).selectDate(gameController.getDateManager().today());
+        }
+        
     }
 
     /*
@@ -311,58 +316,58 @@ public class MainApp extends Application {
             }
         }
     }
-
+    
     private void updateLabels(ScreenCode code) {
         ViewUtils.getByCode(screens, code).controller.updateLabels();
     }
-
+    
     public void nextDay() throws IOException {
-
+        
         if (preRun) {
             gameController.nextDay();
             saveGame();
         } else {
             Runnable task = this::nextDayTask;
-
+            
             Thread backgroundThread = new Thread(task);
             backgroundThread.setDaemon(true);
             backgroundThread.start();
         }
-
+        
         logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
     }
-
+    
     private void nextDayTask() {
-
+        
         RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
         NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
-
+        
         StringBuilder sb = new StringBuilder("Loading, please wait.");
         sb.append("\n");
         sb.append("Processing promotions...");
         sb.append("\n");
         Platform.runLater(() -> {
-
+            
             nextDay.setLoadingMessage(sb.toString());
             show(ScreenCode.NEXT_DAY_SCREEN);
             root.setButtonsDisable(true);
             primaryStage.getScene().setCursor(Cursor.WAIT);
-
+            
         });
-
+        
         gameController.nextDay();
-
+        
         sb.append("Promotions processed.");
         sb.append("\n");
         sb.append("Autosaving...");
         sb.append("\n");
         Platform.runLater(() -> {
-
+            
             nextDay.setLoadingMessage(sb.toString());
         });
-
+        
         boolean saved = true;
-
+        
         try {
             saveGame();
         } catch (IOException ex) {
@@ -374,7 +379,7 @@ public class MainApp extends Application {
                 sb.append("Game saved.");
             }
         }
-
+        
         Platform.runLater(() -> {
             nextDay.setLoadingMessage(sb.toString());
             updateLabels();
@@ -416,7 +421,7 @@ public class MainApp extends Application {
      * @return the dataFolder
      */
     public File getDataFolder() {
-
+        
         return dataFolder == null ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
     }
 
@@ -433,5 +438,5 @@ public class MainApp extends Application {
     public String getCONTACT() {
         return CONTACT;
     }
-
+    
 }

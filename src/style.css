@@ -168,6 +168,10 @@ GREY
 
 /*CALENDAR*/
 
+.currentDate {
+    -fx-background-color: #757575;
+}
+
 .selectedCalendarNode
 {
 

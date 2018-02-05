@@ -59,7 +59,8 @@ public class CalendarController extends ControllerBase implements Initializable 
     private Screen simpleDisplayScreen;
     private Screen bookShowScreen;
 
-    private final String SELECTED_CLASS = "selectedCalendarNode";
+    private final String SELECTED_CALENDAR_NODE = "selectedCalendarNode";
+    private final String CURRENT_DATE = "currentDate";
     private final String DIFFERENT_MONTH = "differentMonth";
     private final String DIFFERENT_MONTH_TEXT = "differentMonthText";
 
@@ -158,6 +159,11 @@ public class CalendarController extends ControllerBase implements Initializable 
                 calendarNode.getStyleClass().add(DIFFERENT_MONTH);
                 txt.getStyleClass().add(DIFFERENT_MONTH_TEXT);
             }
+            
+            if(calendarNode.getDate().equals(gameController.getDateManager().today()) && 
+                    calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
+                calendarNode.getStyleClass().add(CURRENT_DATE);
+            }
 
             calendarNode.getChildren().add(txt);
 
@@ -207,13 +213,12 @@ public class CalendarController extends ControllerBase implements Initializable 
     }
 
     private void setSelectedColor(CalendarNode calendarNode) {
-
         for (CalendarNode node : allCalendarDays) {
-            if (node.getStyleClass().contains(SELECTED_CLASS)) {
-                node.getStyleClass().clear();
+            if (node.getStyleClass().contains(SELECTED_CALENDAR_NODE)) {
+                node.getStyleClass().remove(SELECTED_CALENDAR_NODE);
             }
         }
-        calendarNode.getStyleClass().add(SELECTED_CLASS);
+        calendarNode.getStyleClass().add(SELECTED_CALENDAR_NODE);
     }
 
     private void previousMonth() {
@@ -229,6 +234,16 @@ public class CalendarController extends ControllerBase implements Initializable 
     @Override
     public void updateLabels() {
         populateCalendar(currentYearMonth);
+    }
+    
+    public void selectDate(LocalDate date) {
+        YearMonth yearMonth = YearMonth.from(date);
+        if(!currentYearMonth.equals(yearMonth)) {
+            currentYearMonth = yearMonth;
+            populateCalendar(currentYearMonth);
+        }
+        CalendarNode node = selectNode(date);
+        clicked(node);
     }
 
     @Override
