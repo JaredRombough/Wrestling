@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
+import wrestling.model.EventName;
 import wrestling.model.Promotion;
 import wrestling.model.Television;
 import wrestling.model.factory.ContractFactory;
@@ -23,6 +25,7 @@ import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  *
@@ -140,6 +143,7 @@ public final class GameController implements Serializable {
 
     private void bookEventsForMonth(YearMonth yearMonth) {
         LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
+        List<LocalDate> weekends = new ArrayList<>();
 
         while (currentDate.getMonth().equals(yearMonth.getMonth())) {
 
@@ -152,7 +156,27 @@ public final class GameController implements Serializable {
                     }
                 }
             }
+            if (currentDate.getDayOfWeek().toString().equals("SUNDAY")
+                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")) {
+                weekends.add(currentDate);
+            }
             currentDate = LocalDate.from(currentDate).plusDays(1);
+        }
+
+        //add monthly events
+        for (Promotion promotion : promotionManager.getPromotions()) {
+            LocalDate eventDate = null;
+            do {
+                eventDate = weekends.get(ModelUtilityFunctions.randRange(0, weekends.size() - 1));
+            } while (eventManager.getEventOnDate(promotion, eventDate) != null);
+
+            EventName eventName = eventManager.getEventName(promotion, yearMonth.getMonth());
+            if (eventName != null) {
+                promotionController.bookNextEvent(promotion, eventDate, eventName);
+            } else {
+                promotionController.bookNextEvent(promotion, eventDate);
+            }
+
         }
     }
 

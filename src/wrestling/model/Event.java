@@ -13,6 +13,7 @@ public class Event implements iEvent {
     private int gate;
     private int attendance;
     private Television television;
+    private EventName eventName;
 
     public Event(Promotion promotion, LocalDate date, EventType eventType, int cost, int gate, int attendance) {
         this.promotion = promotion;
@@ -30,16 +31,23 @@ public class Event implements iEvent {
 
     @Override
     public String toString() {
-        String eventName = television == null
-                ? promotion.getShortName() + " event"
-                : television.getName();
-        return eventName + " " + date.toString();
+        String name = "";
+        if (getEventName() != null) {
+            name = promotion.getShortName() + " " + eventName.getName();
+        } else {
+            name = television == null
+                    ? promotion.getShortName() + " event"
+                    : television.getName();
+        }
+
+        return name + " " + date.toString();
     }
 
     public void setDate(LocalDate date) {
         this.date = date;
     }
 
+    @Override
     public LocalDate getDate() {
         return date;
     }
@@ -116,6 +124,20 @@ public class Event implements iEvent {
      */
     public void setAttendance(int attendance) {
         this.attendance = attendance;
+    }
+
+    /**
+     * @return the eventName
+     */
+    public EventName getEventName() {
+        return eventName;
+    }
+
+    /**
+     * @param eventName the eventName to set
+     */
+    public void setEventName(EventName eventName) {
+        this.eventName = eventName;
     }
 
 }

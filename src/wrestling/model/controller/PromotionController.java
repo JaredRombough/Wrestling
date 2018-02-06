@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import wrestling.model.Event;
 import wrestling.model.Contract;
+import wrestling.model.EventName;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
@@ -222,6 +223,11 @@ public class PromotionController implements Serializable {
     public void bookNextEvent(Promotion promotion, LocalDate eventDate, Television television) {
         Event event = bookNextEvent(promotion, eventDate);
         event.setTelevision(television);
+    }
+
+    public void bookNextEvent(Promotion promotion, LocalDate eventDate, EventName eventName) {
+        Event event = bookNextEvent(promotion, eventDate);
+        event.setEventName(eventName);
     }
 
     public Event bookNextEvent(Promotion promotion, LocalDate eventDate) {

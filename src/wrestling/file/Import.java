@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import wrestling.model.EventName;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
@@ -53,6 +55,8 @@ public class Import {
 
     private final List<Television> allTelevision = new ArrayList<>();
 
+    private final List<EventName> allEventNames = new ArrayList<>();
+
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
             "belt",
@@ -85,6 +89,7 @@ public class Import {
             }
             processOther();
             gameController.getPromotionManager().addPromotions(allPromotions);
+            gameController.getEventManager().addEventNames(allEventNames);
             gameController.getWorkerManager().addWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTelevisionManager().addTelevision(allTelevision);
@@ -98,6 +103,15 @@ public class Import {
 
         return sb.toString();
 
+    }
+
+    private Promotion getPromotionFromKey(int key) {
+        for (int i = 0; i < promotionKeys.size(); i++) {
+            if (promotionKeys.get(i).equals(key)) {
+                return allPromotions.get(i);
+            }
+        }
+        return null;
     }
 
     private int hexStringToInt(String hexValueString) {
@@ -449,12 +463,11 @@ public class Import {
     private void eventDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\event.dat");
         byte[] data = Files.readAllBytes(path);
-        List<String> eventNames = new ArrayList<>();
-        List<Integer> eventPromotionKeys = new ArrayList<>();
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
-
+        Promotion promotion = null;
+        Month month = null;
         int counter = 0;
 
         for (int i = 0; i < fileString.length(); i += 2) {
@@ -464,11 +477,19 @@ public class Import {
             counter++;
 
             if (counter == 34) {
-                eventPromotionKeys.add(hexStringToInt(hexValueString));
+                promotion = getPromotionFromKey(hexStringToInt(hexValueString));
+            }
+
+            if (counter == 36) {
+                month = Month.of(hexStringToInt(hexValueString));
             }
 
             if (counter == 47) {
-                eventNames.add(currentLine.substring(1, 32).trim());
+                allEventNames.add(new EventName(
+                        currentLine.substring(1, 32).trim(),
+                        promotion,
+                        month
+                ));
                 currentLine = "";
                 counter = 0;
 

@@ -1,6 +1,7 @@
 package wrestling.model.manager;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import wrestling.model.Contract;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Event;
+import wrestling.model.EventName;
 import wrestling.model.EventWorker;
 import wrestling.model.MatchEvent;
 import wrestling.model.Worker;
@@ -24,6 +26,7 @@ public class EventManager {
     private final List<Event> events;
     private final List<EventWorker> eventWorkers;
     private final List<MatchEvent> matchEvents;
+    private final List<EventName> eventNames;
 
     private final DateManager dateManager;
     private final MatchManager matchManager;
@@ -38,9 +41,14 @@ public class EventManager {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
+        eventNames = new ArrayList<>();
         this.matchManager = matchManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
+    }
+
+    public void addEventNames(List<EventName> names) {
+        eventNames.addAll(names);
     }
 
     public void addEvent(Event event) {
@@ -55,6 +63,16 @@ public class EventManager {
 
     public void addEventWorker(EventWorker eventWorker) {
         eventWorkers.add(eventWorker);
+    }
+
+    public EventName getEventName(Promotion promotion, Month month) {
+        for (EventName eventName : eventNames) {
+            if (eventName.getPromotion().equals(promotion)
+                    && eventName.getMonth().equals(month)) {
+                return eventName;
+            }
+        }
+        return null;
     }
 
     public List<Event> getEvents(Promotion promotion) {
