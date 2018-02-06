@@ -40,7 +40,7 @@ public class Event implements iEvent {
                     : television.getName();
         }
 
-        return name + " " + date.toString();
+        return name;
     }
 
     public void setDate(LocalDate date) {

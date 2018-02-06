@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Control;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
@@ -53,9 +54,11 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
     }
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
@@ -85,6 +88,12 @@ public final class ViewUtils {
             }
         }
         return null;
+    }
+
+    public static Alert generateAlert(String title, String header, String content, AlertType type) {
+        Alert alert = generateAlert(title, header, content);
+        alert.setAlertType(type);
+        return alert;
     }
 
     public static Alert generateAlert(String title, String header, String content) {

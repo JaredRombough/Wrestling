@@ -134,12 +134,6 @@ GREY
 
 }
 
-.sorterLabel
-{
-    -fx-alignment: center;
-
-}
-
 .selectedButton
 {
 
@@ -147,6 +141,31 @@ GREY
     -fx-text-fill: black;
 }
 
+.bookShowButtonShowToday
+{
+
+    -fx-background-color: #424242;
+    -fx-text-fill: white;
+    -fx-border-color: green;
+    -fx-border-width: 2px;
+}
+
+.bookShowButtonShowTodaySelected
+{
+
+    -fx-background-color: #F5F5F5;
+    -fx-text-fill: black;
+    -fx-border-color: green;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-border-radius: 2px;
+}
+
+.sorterLabel
+{
+    -fx-alignment: center;
+
+}
 
 .highStat
 {
@@ -186,7 +205,7 @@ GREY
     -fx-background-color: #BDBDBD;
     -fx-border-width: 1px 2px 1px 2px;
     -fx-border-color: #616161;
-    
+
 }
 
 .differentMonthText{

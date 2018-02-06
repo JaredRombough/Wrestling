@@ -29,7 +29,7 @@
           <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ListView fx:id="workersListView" GridPane.rowIndex="1" GridPane.rowSpan="4">
+            <ListView fx:id="workersListView" GridPane.rowSpan="2147483647">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin></ListView>

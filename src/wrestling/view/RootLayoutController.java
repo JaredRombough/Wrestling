@@ -4,17 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.DAYS;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.model.Event;
 import wrestling.view.utility.ScreenCode;
 
@@ -33,26 +32,17 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private Button calendarButton;
 
     @FXML
-    private Label currentFundsLabel;
-
-    @FXML
     private Button browserButton;
 
     @FXML
     private Button newsButton;
 
-    @FXML
-    private ButtonBar buttonBar;
-
     private final String SELECTED_BUTTON = "selectedButton";
-    private transient Logger logger;
+    private final String SHOW_TODAY = "bookShowButtonShowToday";
+    private final String SHOW_TODAY_SELECTED = "bookShowButtonShowTodaySelected";
 
     private EventButtonState eventButtonState;
-
-    public double rootLayoutMinWidth() {
-        return buttonBar.getButtonMinWidth() * buttonBar.getButtons().size();
-
-    }
+    private List<Button> buttons;
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
@@ -100,26 +90,42 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         }
     }
 
-    private void updateSelectedButton(Button button) {
-        for (Node b : buttonBar.getButtons()) {
-            if (b.getStyleClass().contains(SELECTED_BUTTON)) {
-                b.getStyleClass().remove(SELECTED_BUTTON);
+    private void updateSelectedButton(Button selectedButton) {
+        for (Button button : buttons) {
+            if (button.getStyleClass().contains(SELECTED_BUTTON)) {
+                button.getStyleClass().remove(SELECTED_BUTTON);
+            }
+            if (button.getStyleClass().contains(SHOW_TODAY_SELECTED)) {
+                button.getStyleClass().remove(SHOW_TODAY_SELECTED);
             }
         }
+        if (selectedButton.equals(eventButton) && eventButtonState.equals(EventButtonState.EVENT_TODAY)) {
+            selectedButton.getStyleClass().add(SHOW_TODAY_SELECTED);
+        } else {
+            selectedButton.getStyleClass().add(SELECTED_BUTTON);
+        }
 
-        button.getStyleClass().add(SELECTED_BUTTON);
     }
 
     @Override
     public void updateLabels() {
 
-        updateCurrentDateLabel();
-        updateCurrentFundsLabel();
+        updateCalendarButton();
+        updateCurrentFundsButton();
         updateEventButton();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        buttons = new ArrayList<>(Arrays.asList(
+                browserButton,
+                calendarButton,
+                eventButton,
+                financialButton,
+                newsButton,
+                nextDayButton
+        ));
 
         setButtonsDisable(true);
 
@@ -128,7 +134,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     @Override
     public void initializeMore() {
-        updateCurrentDateLabel();
+        updateCalendarButton();
         updateSelectedButton(browserButton);
 
     }
@@ -138,15 +144,20 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         Event nextEvent = gameController.getEventManager().getNextEvent(
                 gameController.getPromotionManager().playerPromotion(), gameController.getDateManager().today());
 
+        if (eventButton.getStyleClass().contains(SHOW_TODAY)) {
+            eventButton.getStyleClass().remove(SHOW_TODAY);
+        }
+
         if (nextEvent == null) {
             eventButton.setText("No event booked!");
             eventButtonState = EventButtonState.NO_EVENT;
         } else if (nextEvent.getDate().equals(gameController.getDateManager().today())) {
-            eventButton.setText("Book event");
+            eventButton.setText("Book today's event: \n" + nextEvent.toString());
+            eventButton.getStyleClass().add(SHOW_TODAY);
             eventButtonState = EventButtonState.EVENT_TODAY;
         } else {
             long days = DAYS.between(gameController.getDateManager().today(), nextEvent.getDate());
-            eventButton.setText(days + " days to next event");
+            eventButton.setText(days + " days until:\n" + nextEvent.toString());
             eventButtonState = EventButtonState.FUTURE_EVENT;
         }
 
@@ -184,22 +195,19 @@ public class RootLayoutController extends ControllerBase implements Initializabl
                 gameController.getDateManager().today());
     }
 
-    private void updateCurrentDateLabel() {
+    private void updateCalendarButton() {
         calendarButton.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
     }
 
-    private void updateCurrentFundsLabel() {
-        currentFundsLabel.setText("Funds: $" + gameController.getPromotionManager()
+    private void updateCurrentFundsButton() {
+        financialButton.setText("Funds: $" + gameController.getPromotionManager()
                 .getBankAccount(gameController.getPromotionManager().playerPromotion()).getFunds());
     }
 
     public void setButtonsDisable(boolean disable) {
-        browserButton.setDisable(disable);
-        nextDayButton.setDisable(disable);
-        eventButton.setDisable(disable);
-        financialButton.setDisable(disable);
-        calendarButton.setDisable(disable);
-        newsButton.setDisable(disable);
+        for (Button button : buttons) {
+            button.setDisable(disable);
+        }
     }
 
     private enum EventButtonState {
