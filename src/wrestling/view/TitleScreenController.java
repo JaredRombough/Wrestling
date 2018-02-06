@@ -14,8 +14,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -36,8 +34,6 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
     @FXML
     private Text versionText;
-
-    private transient Logger logger = LogManager.getLogger(getClass());
 
     @FXML
     private void handleButtonAction(ActionEvent event) {

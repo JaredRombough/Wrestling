@@ -106,16 +106,18 @@ public class StartGameScreenController extends ControllerBase implements Initial
     private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
 
         if (event.getSource().equals(startGameButton)) {
+            setControlsDisable(true);
             gameController.getPromotionManager().setPlayerPromotion(selectedPromotion);
-            for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
-                if (!promotion.equals(selectedPromotion)) {
-                    gameController.getPromotionController().bookNextEvent(promotion);
-                }
-            }
             mainApp.startGame();
 
         }
 
+    }
+
+    private void setControlsDisable(boolean disable) {
+        startGameButton.setDisable(disable);
+        promotionListView.setDisable(disable);
+        workersListView.setDisable(disable);
     }
 
 }

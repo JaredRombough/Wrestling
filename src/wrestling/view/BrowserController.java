@@ -25,7 +25,6 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
@@ -273,6 +272,8 @@ public class BrowserController extends ControllerBase implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        logger = LogManager.getLogger(this.getClass());
+
         this.browseButtons = new ArrayList<>(Arrays.asList(
                 eventsButton, freeAgentsButton, myPromotionButton, rosterButton,
                 stablesButton, staffButton, teamsButton, titlesButton
@@ -369,7 +370,6 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             lastButton.fire();
         } catch (Exception ex) {
-            Logger logger = LogManager.getLogger(this.getClass());
             logger.log(Level.ERROR, "Error initializing broswerController", ex);
         }
 

@@ -183,22 +183,51 @@ public class MainApp extends Application {
     }
 
     public void startGame() throws IOException {
-        gameController.initializeEvents();
-        prepareScreens();
-        show(ScreenCode.BROWSER);
-        updateLabels();
+        Runnable task = this::startGameTask;
+        Thread backgroundThread = new Thread(task);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+    }
 
+    private void startGameTask() {
+
+        Platform.runLater(() -> {
+            primaryStage.getScene().setCursor(Cursor.WAIT);
+        });
+
+        gameController.initializeEvents();
+
+        try {
+            prepareScreens();
+        } catch (IOException ex) {
+            logger.log(Level.ERROR, "Error preparing screens", ex);
+        }
+
+        Platform.runLater(() -> {
+            show(ScreenCode.BROWSER);
+            updateLabels();
+        });
+
+        preRun();
+
+        setButtonsDisable(false);
+        primaryStage.getScene().setCursor(Cursor.DEFAULT);
+    }
+
+    private void preRun() {
         preRun = PRE_RUN_DAYS > 0;
 
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
-            nextDay();
+            try {
+                nextDay();
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "Error during pre run days", ex);
+            }
 
         }
 
         preRun = false;
-
-        setButtonsDisable(false);
     }
 
     private void saveGame() throws IOException {
@@ -282,7 +311,7 @@ public class MainApp extends Application {
         return screen;
 
     }
-    
+
     public void show(ScreenCode code, Object obj) {
         Screen screen = show(code);
         screen.controller.setCurrent(obj);

@@ -35,7 +35,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.Match;
@@ -246,7 +245,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             updateSegments();
 
         } catch (IOException ex) {
-            Logger logger = LogManager.getLogger(this.getClass());
             logger.log(Level.ERROR, ex);
         }
     }

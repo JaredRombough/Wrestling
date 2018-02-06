@@ -18,7 +18,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
@@ -94,7 +93,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        logger = LogManager.getLogger(this.getClass());
     }
 
     @Override
@@ -117,7 +116,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             feedAnchor.getChildren().add(feedPane);
 
         } catch (IOException ex) {
-            Logger logger = LogManager.getLogger(this.getClass());
             logger.log(Level.ERROR, ex);
         }
     }
@@ -134,7 +132,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             contractPaneController.setDependencies(mainApp, gameController);
 
         } catch (IOException ex) {
-            Logger logger = LogManager.getLogger(this.getClass());
             logger.log(Level.ERROR, ex);
         }
 

@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
@@ -55,7 +54,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        logger = LogManager.getLogger(this.getClass());
         teamPanes = new ArrayList<>();
         teamPaneControllers = new ArrayList<>();
 
@@ -246,7 +245,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             eventScreenController.updateSegments();
 
         } catch (IOException ex) {
-            Logger logger = LogManager.getLogger(this.getClass());
             logger.log(Level.ERROR, ex);
         }
 
