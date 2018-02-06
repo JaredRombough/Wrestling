@@ -99,6 +99,12 @@ public class EventFactory {
         createEvent(event, segments, date, promotion, EventType.LIVEEVENT);
     }
 
+    public Event createFutureEvent(Promotion promotion, LocalDate date) {
+        Event event = new Event(promotion, date);
+        eventManager.addEvent(event);
+        return event;
+    }
+
     private List<Segment> convertTempToSegment(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {

@@ -42,7 +42,7 @@ public class MainApp extends Application {
     private static final int PRE_RUN_DAYS = 0;
     private boolean preRun = false;
     private static final String CONTACT = "OpenWrestling@gmail.com";
-    private static final String VERSION = "0.0.2";
+    private static final String VERSION = "0.1.0";
 
     private final transient Logger logger;
 
@@ -308,6 +308,7 @@ public class MainApp extends Application {
         if (code.equals(ScreenCode.CALENDAR)) {
             ((CalendarController) screen.controller).setCurrent(gameController.getDateManager().today());
         }
+        updateLabels();
         return screen;
 
     }

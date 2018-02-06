@@ -80,7 +80,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         Worker newWorker = (Worker) obj;
 
-        this.currentWorker = newWorker;
+        currentWorker = newWorker;
         contractPaneController.setWorker(newWorker);
 
         updateLabels();
