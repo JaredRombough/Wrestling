@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
@@ -105,6 +106,16 @@ public final class ViewUtils {
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add("style.css");
         return alert;
+    }
+
+    public static void anchorPaneToParent(AnchorPane parent, Pane child) {
+
+        parent.getChildren().add(child);
+
+        AnchorPane.setTopAnchor(child, 0.0);
+        AnchorPane.setRightAnchor(child, 0.0);
+        AnchorPane.setLeftAnchor(child, 0.0);
+        AnchorPane.setBottomAnchor(child, 0.0);
     }
 
 }

@@ -45,7 +45,7 @@ public class BookShowController extends ControllerBase implements Initializable 
     
     public void setDate(LocalDate date) {
         currentDate = date;
-        dateLabel.setText(currentDate.toString());
+        dateLabel.setText("Book a show for " + currentDate.toString());
         updateLabels();
     }
     

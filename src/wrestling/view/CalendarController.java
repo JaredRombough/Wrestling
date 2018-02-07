@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -17,7 +16,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import wrestling.model.Event;
@@ -39,9 +37,6 @@ public class CalendarController extends ControllerBase implements Initializable 
     private Button previousMonth;
 
     @FXML
-    private Button bookShowButton;
-
-    @FXML
     private GridPane calendar;
 
     @FXML
@@ -54,11 +49,13 @@ public class CalendarController extends ControllerBase implements Initializable 
     private ListView listView;
 
     @FXML
-    private AnchorPane mainDisplayPane;
+    private AnchorPane displayPaneBase;
+
+    @FXML
+    private AnchorPane bookingPaneBase;
 
     private CalendarNode selected;
     private YearMonth currentYearMonth;
-    private boolean bookingShow;
 
     private Screen simpleDisplayScreen;
     private Screen bookShowScreen;
@@ -115,7 +112,9 @@ public class CalendarController extends ControllerBase implements Initializable 
             logger.log(Level.ERROR, "Error initializing calendar controller", ex);
         }
 
-        setMainDisplay(simpleDisplayScreen.pane);
+        ViewUtils.anchorPaneToParent(displayPaneBase, simpleDisplayScreen.pane);
+        ViewUtils.anchorPaneToParent(bookingPaneBase, bookShowScreen.pane);
+        ((SimpleDisplayController) simpleDisplayScreen.controller).setDefaultTitle("No event selected");
 
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
             @Override
@@ -123,30 +122,6 @@ public class CalendarController extends ControllerBase implements Initializable 
                 simpleDisplayScreen.controller.setCurrent(newValue);
             }
         });
-    }
-
-    @FXML
-    private void handleButtonAction(ActionEvent event) {
-        if (event.getSource() == bookShowButton) {
-            bookShowClicked();
-        }
-    }
-
-    private void bookShowClicked() {
-        bookingShow = !bookingShow;
-        bookShowButton.setText(bookingShow ? "Cancel" : "Book a show");
-        setMainDisplay(bookingShow ? bookShowScreen.pane : simpleDisplayScreen.pane);
-    }
-
-    private void setMainDisplay(Pane pane) {
-        mainDisplayPane.getChildren().clear();
-
-        mainDisplayPane.getChildren().add(pane);
-
-        AnchorPane.setTopAnchor(pane, 0.0);
-        AnchorPane.setRightAnchor(pane, 0.0);
-        AnchorPane.setLeftAnchor(pane, 0.0);
-        AnchorPane.setBottomAnchor(pane, 0.0);
     }
 
     private void populateCalendar(YearMonth yearMonth) {
@@ -197,6 +172,10 @@ public class CalendarController extends ControllerBase implements Initializable 
             listView.getItems().clear();
         }
         listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selected.getDate())));
+
+        if (!listView.getItems().isEmpty()) {
+            listView.getSelectionModel().selectFirst();
+        }
 
         ((BookShowController) bookShowScreen.controller).setDate(selected.getDate());
 
@@ -290,12 +269,12 @@ public class CalendarController extends ControllerBase implements Initializable 
         listView.setPlaceholder(new Label("No events on this date"));
         nextMonth.setText("Next");
         previousMonth.setText("Previous");
-        bookShowButton.setText("Book a show");
-        bookingShow = false;
         ViewUtils.lockGridPane(baseGridPane);
         ViewUtils.inititializeRegion(nextMonth);
         ViewUtils.inititializeRegion(previousMonth);
         ViewUtils.inititializeRegion(dayLabels);
+        bookingPaneBase.setStyle("-fx-border-color: black");
+        displayPaneBase.setStyle("-fx-border-color: black");
 
     }
 }

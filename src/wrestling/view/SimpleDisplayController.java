@@ -26,6 +26,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
     @FXML
     private Text displayTitle;
 
+    private String defaultTitle;
+
     @Override
     public void initializeMore() {
         this.eventManager = gameController.getEventManager();
@@ -35,6 +37,10 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
     public void setCurrent(Object obj) {
         this.obj = obj;
         updateLabels();
+    }
+
+    public void setDefaultTitle(String string) {
+        defaultTitle = string;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = gameController.getMatchManager().getMatchStringForMonths((Worker) obj, 3);
         }
 
-        displayTitle.setText(obj != null ? obj.toString() : "");
+        displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
         Text text = new Text();
         text.setText(newText);
@@ -62,6 +68,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        defaultTitle = "";
     }
 
 }
