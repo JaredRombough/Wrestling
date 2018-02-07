@@ -25,8 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.Worker;
+import wrestling.model.modelView.SegmentView;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
 

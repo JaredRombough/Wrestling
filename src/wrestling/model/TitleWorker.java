@@ -1,7 +1,6 @@
 package wrestling.model;
 
 import java.time.LocalDate;
-import wrestling.model.utility.ModelUtilityFunctions;
 
 public class TitleWorker {
     

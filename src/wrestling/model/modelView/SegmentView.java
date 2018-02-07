@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
-import wrestling.model.interfaces.Segment;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.Segment;
 
 public class SegmentView implements Segment {
 

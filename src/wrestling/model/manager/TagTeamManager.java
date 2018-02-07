@@ -2,7 +2,6 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;

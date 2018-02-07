@@ -8,7 +8,6 @@ import wrestling.model.Worker;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.utility.ModelUtilityFunctions;

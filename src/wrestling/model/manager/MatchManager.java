@@ -5,13 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import wrestling.model.Match;
 import wrestling.model.MatchFinishes;
-import wrestling.model.interfaces.MatchRule;
 import wrestling.model.MatchRules;
 import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.MatchRule;
+import wrestling.model.modelView.SegmentView;
 
 public class MatchManager {
 

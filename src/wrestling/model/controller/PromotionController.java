@@ -1,24 +1,24 @@
 package wrestling.model.controller;
 
-import wrestling.model.factory.MatchFactory;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.Event;
 import wrestling.model.Contract;
+import wrestling.model.Event;
 import wrestling.model.EventName;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
 import wrestling.model.Television;
-import wrestling.model.interfaces.Segment;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
+import wrestling.model.factory.MatchFactory;
+import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;

@@ -54,7 +54,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         boolean disable = false;
         String buttonText = "Book show";
         Text text = new Text();
-        Event eventOnDay = gameController.getEventManager().getEventOnDate(gameController.getPromotionManager().playerPromotion(), currentDate);
+        Event eventOnDay = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
         if (currentDate.isBefore(gameController.getDateManager().today())) {
             disable = true;
             buttonText = "Cannot book show past date";
@@ -70,7 +70,7 @@ public class BookShowController extends ControllerBase implements Initializable 
     }
     
     private void bookShowClicked() {
-        Event event = gameController.getEventFactory().createFutureEvent(gameController.getPromotionManager().playerPromotion(), currentDate);
+        Event event = gameController.getEventFactory().createFutureEvent(playerPromotion(), currentDate);
         mainApp.show(ScreenCode.CALENDAR, event);
     }
     

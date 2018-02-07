@@ -40,9 +40,14 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
-    private boolean preRun = false;
     private static final String CONTACT = "OpenWrestling@gmail.com";
     private static final String VERSION = "0.1.0";
+    public static void main(String[] args) {
+        
+        launch(args);
+        
+    }
+    private boolean preRun = false;
 
     private final transient Logger logger;
 
@@ -56,11 +61,6 @@ public class MainApp extends Application {
 
     private final boolean cssEnabled;
 
-    public static void main(String[] args) {
-
-        launch(args);
-
-    }
 
     public MainApp() {
         this.screens = new ArrayList<>();

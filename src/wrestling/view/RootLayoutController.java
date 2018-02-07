@@ -142,7 +142,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private void updateEventButton() {
 
         Event nextEvent = gameController.getEventManager().getNextEvent(
-                gameController.getPromotionManager().playerPromotion(), gameController.getDateManager().today());
+                playerPromotion(), gameController.getDateManager().today());
 
         if (eventButton.getStyleClass().contains(SHOW_TODAY)) {
             eventButton.getStyleClass().remove(SHOW_TODAY);
@@ -191,7 +191,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     private Event nextPlayerEvent() {
         return gameController.getEventManager().getNextEvent(
-                gameController.getPromotionManager().playerPromotion(),
+                playerPromotion(),
                 gameController.getDateManager().today());
     }
 
@@ -201,7 +201,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
 
     private void updateCurrentFundsButton() {
         financialButton.setText("Funds: $" + gameController.getPromotionManager()
-                .getBankAccount(gameController.getPromotionManager().playerPromotion()).getFunds());
+                .getBankAccount(playerPromotion()).getFunds());
     }
 
     public void setButtonsDisable(boolean disable) {

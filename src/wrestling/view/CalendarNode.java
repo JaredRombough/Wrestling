@@ -1,9 +1,8 @@
 package wrestling.view;
 
+import java.time.LocalDate;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-
-import java.time.LocalDate;
 
 class CalendarNode extends AnchorPane {
 

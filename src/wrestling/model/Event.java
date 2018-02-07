@@ -52,6 +52,7 @@ public class Event implements iEvent {
         return date;
     }
 
+    @Override
     public Promotion getPromotion() {
         return promotion;
     }

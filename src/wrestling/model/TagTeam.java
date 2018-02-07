@@ -1,8 +1,5 @@
 package wrestling.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TagTeam {
 
     private String name;

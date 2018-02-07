@@ -1,6 +1,5 @@
 package wrestling.model.controller;
 
-import wrestling.model.factory.MatchFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -13,13 +12,14 @@ import wrestling.model.Promotion;
 import wrestling.model.Television;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
+import wrestling.model.factory.MatchFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
 import wrestling.model.factory.WorkerFactory;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.EventManager;
+import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TelevisionManager;

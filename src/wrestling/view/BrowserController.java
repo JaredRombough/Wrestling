@@ -25,11 +25,11 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.Event;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.Event;
 import wrestling.view.comparators.EventDateComparator;
 import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
@@ -182,13 +182,13 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } else if (event.getSource() == freeAgentsButton) {
 
-            browse(browseWorkers, gameController.getWorkerManager().freeAgents(gameController.getPromotionManager().playerPromotion()));
+            browse(browseWorkers, gameController.getWorkerManager().freeAgents(playerPromotion()));
             updateSelectedButton(freeAgentsButton);
             //this will send the user back to the roster browsing if they switch to another promotion
             lastButton = rosterButton;
         } else if (event.getSource() == myPromotionButton) {
             updateSelectedButton(myPromotionButton);
-            setCurrentPromotion(gameController.getPromotionManager().playerPromotion());
+            setCurrentPromotion(playerPromotion());
 
         } else if (event.getSource() == titlesButton) {
             updateSelectedButton(titlesButton);
@@ -209,7 +209,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             b.getStyleClass().remove(selectedButtonClass);
         });
 
-        if (currentPromotion.equals(gameController.getPromotionManager().playerPromotion()) && !button.equals(freeAgentsButton)) {
+        if (currentPromotion.equals(playerPromotion()) && !button.equals(freeAgentsButton)) {
             myPromotionButton.getStyleClass().add(selectedButtonClass);
         }
 
@@ -223,7 +223,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     on the list
      */
     public void showLastEvent() {
-        setCurrentPromotion(gameController.getPromotionManager().playerPromotion());
+        setCurrentPromotion(playerPromotion());
         browseEvents.getListView().getSelectionModel().selectFirst();
         eventsButton.fire();
     }
@@ -327,7 +327,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             initializePromotionCombobox();
 
             browseWorkers = new BrowserMode<>(
-                    gameController.getContractManager().getFullRoster(gameController.getPromotionManager().playerPromotion()),
+                    gameController.getContractManager().getFullRoster(playerPromotion()),
                     "view/WorkerOverview.fxml",
                     FXCollections.observableArrayList(new WorkerNameComparator(),
                             new WorkerPopularityComparator()),
@@ -341,7 +341,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             lastDisplayNode = browseWorkers.getDisplayPane();
 
             browseEvents = new BrowserMode<>(
-                    gameController.getEventManager().getEvents(gameController.getPromotionManager().playerPromotion()),
+                    gameController.getEventManager().getEvents(playerPromotion()),
                     "view/SimpleDisplay.fxml",
                     FXCollections.observableArrayList(
                             new EventDateComparator()
@@ -351,7 +351,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             );
 
             browseTitles = new BrowserMode<>(
-                    gameController.getTitleManager().getTitles(gameController.getPromotionManager().playerPromotion()),
+                    gameController.getTitleManager().getTitles(playerPromotion()),
                     "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
                             new TitleNameComparator()
                     ),
@@ -359,14 +359,14 @@ public class BrowserController extends ControllerBase implements Initializable {
                     gameController);
 
             browseTeams = new BrowserMode<>(
-                    gameController.getTagTeamManager().getTagTeams(gameController.getPromotionManager().playerPromotion()),
+                    gameController.getTagTeamManager().getTagTeams(playerPromotion()),
                     "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
                             new TagTeamNameComparator()
                     ),
                     mainApp,
                     gameController);
 
-            promotionComboBox.setValue(gameController.getPromotionManager().playerPromotion());
+            promotionComboBox.setValue(playerPromotion());
 
             lastButton.fire();
         } catch (Exception ex) {

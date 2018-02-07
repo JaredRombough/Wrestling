@@ -38,9 +38,9 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.Match;
+import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.Worker;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -145,7 +145,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         gameController.getEventFactory().createEventFromTemp(currentEvent,
                 segments,
                 currentEvent.getDate(),
-                gameController.getPromotionManager().playerPromotion());
+                playerPromotion());
 
         //clear the segments, so when we come back to do a new event
         //it will be empty again
@@ -207,7 +207,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         for (Segment segment : segments) {
             if (segment instanceof Match) {
                 for (Worker worker : gameController.getMatchManager().getWorkers((Match) segment)) {
-                    currentCost += gameController.getContractManager().getContract(worker, gameController.getPromotionManager().playerPromotion()).getAppearanceCost();
+                    currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
                 }
             }
         }
@@ -345,7 +345,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         //get the workers and add them to the listview on the left
         ObservableList<Worker> workersList = FXCollections.observableArrayList();
 
-        List<Worker> roster = gameController.getContractManager().getFullRoster(gameController.getPromotionManager().playerPromotion());
+        List<Worker> roster = gameController.getContractManager().getFullRoster(playerPromotion());
 
         for (Worker worker : roster) {
             //we only want to include workers that aren't already in the segment
@@ -354,7 +354,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                     && gameController.getEventManager().isAvailable(
                             worker,
                             gameController.getDateManager().today(),
-                            gameController.getPromotionManager().playerPromotion())) {
+                            playerPromotion())) {
                 workersList.add(worker);
             }
         }

@@ -68,6 +68,16 @@ GREY
     -fx-background-color: #9E9E9E;
 }
 
+.darkBorder {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+}
+
+.greenBorder {
+    -fx-border-color: green;
+    -fx-border-width: 2px;
+}
+
 
 /*TEAM PANE*/
 

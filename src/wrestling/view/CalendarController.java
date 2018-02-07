@@ -5,6 +5,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -64,6 +65,8 @@ public class CalendarController extends ControllerBase implements Initializable 
     private final String CURRENT_DATE = "currentDate";
     private final String DIFFERENT_MONTH = "differentMonth";
     private final String DIFFERENT_MONTH_TEXT = "differentMonthText";
+    private final String DARK_BORDER = "darkBorder";
+    private final String GREEN_BORDER = "greenBorder";
     private final int WEEK_DAYS = 7;
     private final int WEEKS = 6;
 
@@ -138,8 +141,8 @@ public class CalendarController extends ControllerBase implements Initializable 
                 calendarNode.getChildren().remove(0);
             }
 
-            int eventCount = gameController.getEventManager().getEventsOnDate(calendarDate).size();
-            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()) + (eventCount > 0 ? ("\n" + eventCount + " events") : ""));
+            List<Event> eventsOnDay = gameController.getEventManager().getEventsOnDate(calendarDate);
+            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()) + (eventsOnDay.size() > 0 ? ("\n" + eventsOnDay.size() + " events") : ""));
             calendarNode.setDate(calendarDate);
 
             calendarNode.getStyleClass().clear();
@@ -152,6 +155,13 @@ public class CalendarController extends ControllerBase implements Initializable 
             if (calendarNode.getDate().equals(gameController.getDateManager().today())
                     && calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
                 calendarNode.getStyleClass().add(CURRENT_DATE);
+            }
+
+            for (Event event : eventsOnDay) {
+                if (event.getPromotion().equals(playerPromotion())) {
+                    calendarNode.getStyleClass().add(GREEN_BORDER);
+                    break;
+                }
             }
 
             calendarNode.getChildren().add(txt);
@@ -273,8 +283,8 @@ public class CalendarController extends ControllerBase implements Initializable 
         ViewUtils.inititializeRegion(nextMonth);
         ViewUtils.inititializeRegion(previousMonth);
         ViewUtils.inititializeRegion(dayLabels);
-        bookingPaneBase.setStyle("-fx-border-color: black");
-        displayPaneBase.setStyle("-fx-border-color: black");
+        bookingPaneBase.getStyleClass().add(DARK_BORDER);
+        displayPaneBase.getStyleClass().add(DARK_BORDER);
 
     }
 }
