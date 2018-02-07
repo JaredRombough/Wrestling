@@ -157,7 +157,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             eventButtonState = EventButtonState.EVENT_TODAY;
         } else {
             long days = DAYS.between(gameController.getDateManager().today(), nextEvent.getDate());
-            eventButton.setText(days + " days until:\n" + nextEvent.toString());
+            eventButton.setText(days + " day" + (days > 1 ? "s" : "") + " until:\n" + nextEvent.toString());
             eventButtonState = EventButtonState.FUTURE_EVENT;
         }
 

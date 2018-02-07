@@ -57,7 +57,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         Event eventOnDay = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
         if (currentDate.isBefore(gameController.getDateManager().today())) {
             disable = true;
-            buttonText = "Cannot book show past date";
+            buttonText = "Cannot book show for a past date";
             
         } else if (eventOnDay != null) {
             disable = true;
