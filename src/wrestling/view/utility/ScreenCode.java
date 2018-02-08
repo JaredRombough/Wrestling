@@ -1,5 +1,7 @@
 package wrestling.view.utility;
 
+import wrestling.view.interfaces.ScreenCodeInterface;
+
 public enum ScreenCode implements ScreenCodeInterface {
     TITLE {
         @Override

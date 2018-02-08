@@ -1,5 +1,6 @@
 package wrestling.view;
 
+import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -60,6 +61,7 @@ public class CalendarController extends ControllerBase implements Initializable 
 
     private Screen simpleDisplayScreen;
     private Screen bookShowScreen;
+    private BookShowController bookShowController;
 
     private final String SELECTED_CALENDAR_NODE = "selectedCalendarNode";
     private final String CURRENT_DATE = "currentDate";
@@ -102,10 +104,6 @@ public class CalendarController extends ControllerBase implements Initializable 
             dayLabels.add(ap, col++, 0);
         }
 
-        previousMonth.setOnAction(e -> previousMonth());
-
-        nextMonth.setOnAction(e -> nextMonth());
-
         populateCalendar(currentYearMonth);
 
         try {
@@ -114,10 +112,12 @@ public class CalendarController extends ControllerBase implements Initializable 
         } catch (IOException ex) {
             logger.log(Level.ERROR, "Error initializing calendar controller", ex);
         }
-
+        bookShowController = (BookShowController) bookShowScreen.controller;
         ViewUtils.anchorPaneToParent(displayPaneBase, simpleDisplayScreen.pane);
         ViewUtils.anchorPaneToParent(bookingPaneBase, bookShowScreen.pane);
         ((SimpleDisplayController) simpleDisplayScreen.controller).setDefaultTitle("No event selected");
+
+        initializeButtons();
 
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Event>() {
             @Override
@@ -125,6 +125,18 @@ public class CalendarController extends ControllerBase implements Initializable 
                 simpleDisplayScreen.controller.setCurrent(newValue);
             }
         });
+    }
+
+    private void initializeButtons() {
+        previousMonth.setOnAction(e -> previousMonth());
+
+        nextMonth.setOnAction(e -> nextMonth());
+
+        bookShowController.getRescheduleButton().setOnAction(e -> rescheduleEvent());
+    }
+
+    private void rescheduleEvent() {
+        bookShowController.clickReschedule();
     }
 
     private void populateCalendar(YearMonth yearMonth) {
@@ -142,37 +154,38 @@ public class CalendarController extends ControllerBase implements Initializable 
             }
 
             List<Event> eventsOnDay = gameController.getEventManager().getEventsOnDate(calendarDate);
-            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()) + (eventsOnDay.size() > 0 ? ("\n" + eventsOnDay.size() + " events") : ""));
+            Text text = new Text(String.valueOf(calendarDate.getDayOfMonth()) + (eventsOnDay.size() > 0 ? ("\n" + eventsOnDay.size() + " events") : ""));
             calendarNode.setDate(calendarDate);
 
-            calendarNode.getStyleClass().clear();
+            setCalendarNodeStyle(calendarNode, text);
 
-            if (calendarNode.getDate().getMonth() != currentYearMonth.getMonth()) {
-                calendarNode.getStyleClass().add(DIFFERENT_MONTH);
-                txt.getStyleClass().add(DIFFERENT_MONTH_TEXT);
-            }
+            calendarNode.getChildren().add(text);
 
-            if (calendarNode.getDate().equals(gameController.getDateManager().today())
-                    && calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
-                calendarNode.getStyleClass().add(CURRENT_DATE);
-            }
-
-            for (Event event : eventsOnDay) {
-                if (event.getPromotion().equals(playerPromotion())) {
-                    calendarNode.getStyleClass().add(GREEN_BORDER);
-                    break;
-                }
-            }
-
-            calendarNode.getChildren().add(txt);
-
-            CalendarNode.setBottomAnchor(txt, 5.0);
-            CalendarNode.setTopAnchor(txt, 5.0);
-            CalendarNode.setLeftAnchor(txt, 5.0);
+            CalendarNode.setBottomAnchor(text, 5.0);
+            CalendarNode.setTopAnchor(text, 5.0);
+            CalendarNode.setLeftAnchor(text, 5.0);
 
             calendarDate = calendarDate.plusDays(1);
         }
 
+    }
+
+    private void setCalendarNodeStyle(CalendarNode calendarNode, Text text) {
+        calendarNode.getStyleClass().clear();
+
+        if (calendarNode.getDate().getMonth() != currentYearMonth.getMonth()) {
+            calendarNode.getStyleClass().add(DIFFERENT_MONTH);
+            text.getStyleClass().add(DIFFERENT_MONTH_TEXT);
+        }
+
+        if (calendarNode.getDate().equals(gameController.getDateManager().today())
+                && calendarNode.getDate().getMonth() == currentYearMonth.getMonth()) {
+            calendarNode.getStyleClass().add(CURRENT_DATE);
+        }
+
+        if (gameController.getEventManager().getEventOnDate(playerPromotion(), calendarNode.getDate()) != null) {
+            calendarNode.getStyleClass().add(GREEN_BORDER);
+        }
     }
 
     private void clicked(CalendarNode calendarNode) {

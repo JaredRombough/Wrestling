@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -42,10 +44,11 @@ public class MainApp extends Application {
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com";
     private static final String VERSION = "0.1.0";
+
     public static void main(String[] args) {
-        
+
         launch(args);
-        
+
     }
     private boolean preRun = false;
 
@@ -60,7 +63,8 @@ public class MainApp extends Application {
     private File dataFolder;
 
     private final boolean cssEnabled;
-
+    
+    private final ResourceBundle resx;
 
     public MainApp() {
         this.screens = new ArrayList<>();
@@ -68,6 +72,10 @@ public class MainApp extends Application {
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
         logger.log(Level.INFO, "Logger online. Running version " + VERSION);
+
+        Locale locale = new Locale("en", "US");
+
+        resx = ResourceBundle.getBundle("wrestling.Language", locale);
     }
 
     @Override
@@ -474,6 +482,13 @@ public class MainApp extends Application {
      */
     public String getCONTACT() {
         return CONTACT;
+    }
+
+    /**
+     * @return the resx
+     */
+    public ResourceBundle getResx() {
+        return resx;
     }
 
 }

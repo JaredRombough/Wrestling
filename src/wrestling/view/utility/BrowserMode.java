@@ -12,7 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import wrestling.MainApp;
 import wrestling.model.controller.GameController;
-import wrestling.view.ControllerBase;
+import wrestling.view.interfaces.ControllerBase;
 
 public class BrowserMode<T> {
 

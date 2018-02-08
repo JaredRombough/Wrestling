@@ -1,5 +1,5 @@
 
-package wrestling.view.utility;
+package wrestling.view.interfaces;
 
 public interface ScreenCodeInterface {
 

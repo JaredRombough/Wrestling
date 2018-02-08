@@ -1,5 +1,6 @@
 package wrestling.view;
 
+import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;

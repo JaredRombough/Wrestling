@@ -352,4 +352,10 @@ public class EventManager {
 
         return roster;
     }
+    
+    
+    public boolean canReschedule(Event event) {
+        return event != null && event.getTelevision() == null;
+    }
+   
 }

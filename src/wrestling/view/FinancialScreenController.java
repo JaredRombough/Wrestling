@@ -1,5 +1,6 @@
 package wrestling.view;
 
+import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
