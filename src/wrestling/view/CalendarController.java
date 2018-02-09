@@ -20,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -132,11 +133,6 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         nextMonth.setOnAction(e -> nextMonth());
 
-        bookShowController.getRescheduleButton().setOnAction(e -> rescheduleEvent());
-    }
-
-    private void rescheduleEvent() {
-        bookShowController.clickReschedule();
     }
 
     private void populateCalendar(YearMonth yearMonth) {
@@ -200,7 +196,7 @@ public class CalendarController extends ControllerBase implements Initializable 
             listView.getSelectionModel().selectFirst();
         }
 
-        ((BookShowController) bookShowScreen.controller).setDate(selected.getDate());
+        bookShowScreen.controller.setCurrent(selected.getDate());
 
         setSelectedColor(selected);
 
@@ -289,6 +285,7 @@ public class CalendarController extends ControllerBase implements Initializable 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        logger = LogManager.getLogger(getClass());
         listView.setPlaceholder(new Label("No events on this date"));
         nextMonth.setText("Next");
         previousMonth.setText("Previous");

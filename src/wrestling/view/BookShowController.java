@@ -11,7 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -25,139 +26,138 @@ public class BookShowController extends ControllerBase implements Initializable 
     public ScrollPane scrollPane;
 
     @FXML
-    public Button bookShowButton;
+    private Button confirmButton;
 
     @FXML
-    private Button rescheduleButton;
+    private Button cancelButton;
 
     @FXML
     public AnchorPane anchorPane;
 
     private LocalDate currentDate;
     private boolean rescheduling;
-    private LocalDate rescheduleDate;
+    private Event eventToReschedule;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        logger = LogManager.getLogger(getClass());
         ViewUtils.inititializeRegion(anchorPane);
         rescheduling = false;
     }
 
+    @Override
+    public void initializeMore() {
+        cancelButton.setText(resx.getString("Cancel"));
+    }
+
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        if (event.getSource() == bookShowButton) {
-            bookShowClicked();
+        if (event.getSource() == confirmButton) {
+            if (rescheduling) {
+                confirmReschedule();
+            } else {
+                Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
+                if (eventOnDate == null) {
+                    bookShowOnDate();
+                } else {
+                    startReschedule(eventOnDate);
+                }
+            }
+        } else if (event.getSource() == cancelButton) {
+            if (rescheduling) {
+                cancelReschedule();
+            } else {
+                cancelShow();
+            }
         }
     }
 
-    public void setDate(LocalDate date) {
-        currentDate = date;
-        updateLabels();
-    }
-
-    public void clickReschedule() {
-        rescheduling = !rescheduling;
-        rescheduleDate = currentDate;
+    @Override
+    public void setCurrent(Object obj) {
+        if (obj instanceof LocalDate) {
+            currentDate = (LocalDate) obj;
+        } else {
+            logger.log(Level.INFO, "Invalid object sent to controller", obj);
+        }
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
+        String confirmButtonText;
+        String cancelButtonText = "";
+        boolean confirmButtonDisable;
+        boolean cancelButtonDisable;
+        boolean cancelButtonVisible = true;
+        Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
 
-        Text displayContent = new Text();
-        BookShowState state = rescheduling ? BookShowState.CAN_RESCHEDULE : BookShowState.CAN_BOOK;
-        Event eventOnDay = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
-        String displayText = "";
+        if (rescheduling) {
+            if (eventOnDate == null) {
+                confirmButtonText = "Confirm";
+                cancelButtonText = "Cancel";
+                confirmButtonDisable = false;
+                cancelButtonDisable = false;
+            } else {
+                confirmButtonText = "Confirm";
+                cancelButtonText = "Cancel";
+                confirmButtonDisable = true;
+                cancelButtonDisable = false;
+            }
 
-        dateLabel.setText(rescheduling
-                ? ("Reschedule show from " + rescheduleDate + " to " + currentDate)
-                : ("Book a show for " + currentDate)
-        );
+        } else if (eventOnDate == null) {
+            confirmButtonText = "Book";
+            confirmButtonDisable = false;
+            cancelButtonDisable = true;
+            cancelButtonVisible = false;
+        } else {
+            confirmButtonText = "Reschedule";
+            cancelButtonText = "Cancel Event";
+            if (gameController.getEventManager().canReschedule(eventOnDate)) {
+                confirmButtonDisable = false;
+                cancelButtonDisable = false;
+            } else {
+                confirmButtonDisable = true;
+                cancelButtonDisable = false;
+            }
 
-        if (currentDate.isBefore(gameController.getDateManager().today())) {
-            state = rescheduling ? BookShowState.CANT_RESCHEDULE_PAST : BookShowState.CANT_BOOK_PAST;
-        } else if (eventOnDay != null) {
-            state = rescheduling ? BookShowState.CANT_RESCHEDULE_CONFLICT : BookShowState.CANT_BOOK_CONFILCT;
-            displayText = eventOnDay.toString() + "\n" + gameController.getEventManager().generateSummaryString(eventOnDay);
         }
 
-        String leftButtonText = "";
-        String rightButtonText = "";
-        boolean leftButtonDisabled = false;
-        boolean rightButtonDisabled = false;
-
-        switch (state) {
-            case CAN_BOOK:
-                leftButtonText = "Reschedule Event";
-                leftButtonDisabled = true;
-                rightButtonText = "Book Show";
-                rightButtonDisabled = false;
-                displayText = "Booking a new show on this date.";
-                break;
-            case CAN_RESCHEDULE:
-                leftButtonText = "Reschedule Event";
-                leftButtonDisabled = true;
-                rightButtonText = "Reschedule Show";
-                rightButtonDisabled = false;
-                displayText = "Booking a new show on this date.";
-                break;
-            case CANT_BOOK_PAST:
-                leftButtonText = "Reschedule Event";
-                leftButtonDisabled = true;
-                rightButtonText = "Book Show";
-                rightButtonDisabled = true;
-                displayText = "This date is in the past, can't book a show.";
-                break;
-            case CANT_RESCHEDULE_PAST:
-                leftButtonText = "Cancel";
-                leftButtonDisabled = false;
-                rightButtonText = "Reschedule Show";
-                rightButtonDisabled = true;
-                displayText = "This date is in the past, can't reschedule a show.";
-                break;
-            case CANT_BOOK_CONFILCT:
-                leftButtonText = "Reschedule Event";
-                leftButtonDisabled = !gameController.getEventManager().canReschedule(eventOnDay);
-                rightButtonText = "Book Show";
-                rightButtonDisabled = true;
-                displayText = "There is already an event on this date, can't book a show.";
-                break;
-            case CANT_RESCHEDULE_CONFLICT:
-                leftButtonText = "Cancel";
-                leftButtonDisabled = false;
-                rightButtonText = "Reschedule Show";
-                rightButtonDisabled = true;
-                displayText = "There is already an event on this date, can't reschedule a show.";
-                break;
-        }
-
-        bookShowButton.setDisable(rightButtonDisabled);
-        bookShowButton.setText(rightButtonText);
-        rescheduleButton.setText(leftButtonText);
-        rescheduleButton.setDisable(leftButtonDisabled);
-        displayContent.setText(displayText);
-        scrollPane.setContent(displayContent);
+        cancelButton.setDisable(cancelButtonDisable);
+        cancelButton.setVisible(cancelButtonVisible);
+        cancelButton.setText(cancelButtonText);
+        confirmButton.setText(confirmButtonText);
+        confirmButton.setDisable(confirmButtonDisable);
     }
 
-    private void bookShowClicked() {
+    private void bookShowOnDate() {
         Event event = gameController.getEventFactory().createFutureEvent(playerPromotion(), currentDate);
         mainApp.show(ScreenCode.CALENDAR, event);
     }
 
-    /**
-     * @return the rescheduleButton
-     */
-    public Button getRescheduleButton() {
-        return rescheduleButton;
+    private void startReschedule(Event event) {
+        rescheduling = true;
+        eventToReschedule = event;
     }
 
-    private enum BookShowState {
-        CAN_BOOK,
-        CAN_RESCHEDULE,
-        CANT_BOOK_PAST,
-        CANT_RESCHEDULE_PAST,
-        CANT_BOOK_CONFILCT,
-        CANT_RESCHEDULE_CONFLICT
+    private void confirmReschedule() {
+        eventToReschedule.setDate(currentDate);
+        rescheduling = false;
+        mainApp.show(ScreenCode.CALENDAR, eventToReschedule);
+    }
+
+    private void cancelReschedule() {
+        rescheduling = false;
+    }
+
+    private void cancelShow() {
+        logger.log(Level.INFO, "Canceling shows not yet implemented");
+    }
+
+    /**
+     * @return the confirmButton
+     */
+    public Button getConfirmButton() {
+        return confirmButton;
     }
 
 }
