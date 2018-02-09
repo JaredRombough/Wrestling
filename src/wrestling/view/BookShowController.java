@@ -142,8 +142,10 @@ public class BookShowController extends ControllerBase implements Initializable 
     }
 
     private void bookShowOnDate() {
-        Event event = gameController.getEventFactory().createFutureEvent(playerPromotion(), currentDate);
-        mainApp.show(ScreenCode.CALENDAR, event);
+        if (ViewUtils.generateConfirmationDialogue("Booking a new show on " + currentDate, "Are you sure?")) {
+            Event event = gameController.getEventFactory().createFutureEvent(playerPromotion(), currentDate);
+            mainApp.show(ScreenCode.CALENDAR, event);
+        }
     }
 
     private void startReschedule(Event event) {
@@ -153,9 +155,12 @@ public class BookShowController extends ControllerBase implements Initializable 
     }
 
     private void confirmReschedule() {
-        eventToReschedule.setDate(currentDate);
-        rescheduling = false;
-        mainApp.show(ScreenCode.CALENDAR, eventToReschedule);
+        if (ViewUtils.generateConfirmationDialogue(String.format("Rescheduling %s from %s to %s", eventToReschedule.toString(), eventToReschedule.getDate(), currentDate),
+                "Are you sure?")) {
+            eventToReschedule.setDate(currentDate);
+            rescheduling = false;
+            mainApp.show(ScreenCode.CALENDAR, eventToReschedule);
+        }
     }
 
     public void cancelReschedule() {
@@ -166,8 +171,10 @@ public class BookShowController extends ControllerBase implements Initializable 
 
     private void cancelShow() {
         Event toCancel = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
-        gameController.getEventManager().cancelEvent(toCancel);
-        mainApp.show(ScreenCode.CALENDAR);
+        if (ViewUtils.generateConfirmationDialogue(String.format("Canceling %s on %s", toCancel.toString(), currentDate.toString()), "Are you sure?")) {
+            gameController.getEventManager().cancelEvent(toCancel);
+            mainApp.show(ScreenCode.CALENDAR);
+        }
     }
 
     /**
