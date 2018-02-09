@@ -270,6 +270,13 @@ public class CalendarController extends ControllerBase implements Initializable 
     }
 
     @Override
+    public void focusLost() {
+        if (bookShowController != null && bookShowController.isRescheduling()) {
+            bookShowController.cancelReschedule();
+        }
+    }
+
+    @Override
     public void setCurrent(Object obj) {
         if (obj instanceof LocalDate) {
             LocalDate date = (LocalDate) obj;

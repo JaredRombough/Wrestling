@@ -63,8 +63,10 @@ public class MainApp extends Application {
     private File dataFolder;
 
     private final boolean cssEnabled;
-    
+
     private final ResourceBundle resx;
+
+    private Screen currentScreen;
 
     public MainApp() {
         this.screens = new ArrayList<>();
@@ -309,13 +311,22 @@ public class MainApp extends Application {
     }
 
     public Screen show(ScreenCode code) {
+        if (currentScreen != null) {
+            currentScreen.controller.focusLost();
+        }
+
         Screen screen = ViewUtils.getByCode(screens, code);
+        currentScreen = screen;
+
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
+
         screen.controller.updateLabels();
+
         if (code.equals(ScreenCode.CALENDAR)) {
             ((CalendarController) screen.controller).setCurrent(gameController.getDateManager().today());
         }
+
         updateLabels();
         return screen;
 

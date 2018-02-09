@@ -3,6 +3,7 @@ package wrestling.model.manager;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,27 @@ public class EventManager {
 
     public void addEventWorker(EventWorker eventWorker) {
         eventWorkers.add(eventWorker);
+    }
+
+    public void cancelEvent(Event eventToCancel) {
+        for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext();) {
+            MatchEvent matchEvent = iter.next();
+            if (matchEvent.getEvent().equals(eventToCancel)) {
+                iter.remove();
+            }
+        }
+        for (Iterator<EventWorker> iter = eventWorkers.listIterator(); iter.hasNext();) {
+            EventWorker eventWorker = iter.next();
+            if (eventWorker.getEvent().equals(eventToCancel)) {
+                iter.remove();
+            }
+        }
+        for (Iterator<Event> iter = events.listIterator(); iter.hasNext();) {
+            Event event = iter.next();
+            if (event.equals(eventToCancel)) {
+                iter.remove();
+            }
+        }
     }
 
     public EventName getEventName(Promotion promotion, Month month) {
@@ -352,10 +374,9 @@ public class EventManager {
 
         return roster;
     }
-    
-    
+
     public boolean canReschedule(Event event) {
         return event != null && event.getTelevision() == null;
     }
-   
+
 }

@@ -27,6 +27,8 @@ public abstract class ControllerBase implements Initializable {
 
     public void updateLabels() {};
     
+    public void focusLost() {};
+    
     public Promotion playerPromotion() {
         return gameController.getPromotionManager().playerPromotion();
     }

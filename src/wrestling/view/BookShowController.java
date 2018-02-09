@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
@@ -37,12 +38,15 @@ public class BookShowController extends ControllerBase implements Initializable 
     private LocalDate currentDate;
     private boolean rescheduling;
     private Event eventToReschedule;
+    private Text infoText;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
         ViewUtils.inititializeRegion(anchorPane);
         rescheduling = false;
+        infoText = new Text();
+        scrollPane.setContent(infoText);
     }
 
     @Override
@@ -53,7 +57,7 @@ public class BookShowController extends ControllerBase implements Initializable 
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (event.getSource() == confirmButton) {
-            if (rescheduling) {
+            if (isRescheduling()) {
                 confirmReschedule();
             } else {
                 Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
@@ -64,7 +68,7 @@ public class BookShowController extends ControllerBase implements Initializable 
                 }
             }
         } else if (event.getSource() == cancelButton) {
-            if (rescheduling) {
+            if (isRescheduling()) {
                 cancelReschedule();
             } else {
                 cancelShow();
@@ -91,7 +95,9 @@ public class BookShowController extends ControllerBase implements Initializable 
         boolean cancelButtonVisible = true;
         Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
 
-        if (rescheduling) {
+        if (isRescheduling()) {
+            dateLabel.setText("Select new date for " + eventToReschedule.toString());
+            infoText.setText("Move " + eventToReschedule.toString() + " from " + eventToReschedule.getDate() + " to " + currentDate);
             if (eventOnDate == null) {
                 confirmButtonText = "Confirm";
                 cancelButtonText = "Cancel";
@@ -105,11 +111,17 @@ public class BookShowController extends ControllerBase implements Initializable 
             }
 
         } else if (eventOnDate == null) {
+            dateLabel.setText("Book a new event");
+            infoText.setText("Create a new event on " + currentDate + "?");
+
             confirmButtonText = "Book";
             confirmButtonDisable = false;
             cancelButtonDisable = true;
             cancelButtonVisible = false;
         } else {
+            dateLabel.setText("Modify existing event");
+            infoText.setText("Cancel or reschedule event on " + currentDate + "?");
+
             confirmButtonText = "Reschedule";
             cancelButtonText = "Cancel Event";
             if (gameController.getEventManager().canReschedule(eventOnDate)) {
@@ -137,6 +149,7 @@ public class BookShowController extends ControllerBase implements Initializable 
     private void startReschedule(Event event) {
         rescheduling = true;
         eventToReschedule = event;
+        updateLabels();
     }
 
     private void confirmReschedule() {
@@ -145,12 +158,16 @@ public class BookShowController extends ControllerBase implements Initializable 
         mainApp.show(ScreenCode.CALENDAR, eventToReschedule);
     }
 
-    private void cancelReschedule() {
+    public void cancelReschedule() {
+        eventToReschedule = null;
         rescheduling = false;
+        updateLabels();
     }
 
     private void cancelShow() {
-        logger.log(Level.INFO, "Canceling shows not yet implemented");
+        Event toCancel = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
+        gameController.getEventManager().cancelEvent(toCancel);
+        mainApp.show(ScreenCode.CALENDAR);
     }
 
     /**
@@ -158,6 +175,13 @@ public class BookShowController extends ControllerBase implements Initializable 
      */
     public Button getConfirmButton() {
         return confirmButton;
+    }
+
+    /**
+     * @return the rescheduling
+     */
+    public boolean isRescheduling() {
+        return rescheduling;
     }
 
 }
