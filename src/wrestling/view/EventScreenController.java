@@ -42,6 +42,8 @@ import wrestling.model.Match;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.utility.RefreshSkin;
+import wrestling.view.utility.ViewUtils;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -351,17 +353,31 @@ public class EventScreenController extends ControllerBase implements Initializab
         for (Worker worker : roster) {
             //we only want to include workers that aren't already in the segment
             //as well as workers who aren't already booked on the event date (today)
-            if (!currentSegment().getWorkers().contains(worker)
-                    && gameController.getEventManager().isAvailable(
-                            worker,
-                            gameController.getDateManager().today(),
-                            playerPromotion())) {
+            if (workerIsAvailableForCurrentSegment(worker)) {
                 workersList.add(worker);
             }
         }
 
         workersListView.setItems(workersList);
+        ((RefreshSkin) workersListView.getSkin()).refresh();
 
+    }
+
+    private boolean workerIsAvailableForCurrentSegment(Worker worker) {
+        return !currentSegment().getWorkers().contains(worker)
+                && gameController.getEventManager().isAvailable(
+                        worker,
+                        gameController.getDateManager().today(),
+                        playerPromotion());
+    }
+
+    private boolean workerIsBookedOnShow(Worker worker) {
+        for (SegmentPaneController controller : segmentPaneControllers) {
+            if (controller.getWorkers().contains(worker)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -376,15 +392,28 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         setWorkerCellFactory(workersListView);
 
+        RefreshSkin skin = new RefreshSkin(workersListView);
+
+        workersListView.setSkin(skin);
+
     }
 
     private void setWorkerCellFactory(ListView listView) {
-        listView.setCellFactory(new Callback<ListView<Worker>, ListCell<Worker>>() {
+
+        listView.setCellFactory(lv -> new ListCell<Worker>() {
 
             @Override
-            public ListCell<Worker> call(ListView<Worker> listView) {
-                return new WorkerCell(listView.getItems());
+            public void updateItem(final Worker worker, boolean empty) {
+                super.updateItem(worker, empty);
+                if (workerIsBookedOnShow(worker)) {
+                    getStyleClass().add("highStat");
+                } else {
+                    getStyleClass().remove("highStat");
+                }
+                ViewUtils.initListCellForWorkerDragAndDrop(this, worker, empty);
+
             }
+
         });
 
     }

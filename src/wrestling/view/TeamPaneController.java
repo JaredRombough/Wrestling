@@ -23,8 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import wrestling.model.Worker;
+import wrestling.view.utility.ViewUtils;
 
 public class TeamPaneController extends ControllerBase implements Initializable {
 
@@ -95,59 +95,50 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     private void preparePaneForSorting() {
         draggingTab = new SimpleObjectProperty<>();
-        mainPane.setOnDragDetected(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                Dragboard dragboard = mainPane.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent clipboardContent = new ClipboardContent();
-                clipboardContent.putString(TAB_DRAG_KEY);
-                dragboard.setContent(clipboardContent);
-                draggingTab.set(mainPane);
+        mainPane.setOnDragDetected((MouseEvent event) -> {
+            Dragboard dragboard = mainPane.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(TAB_DRAG_KEY);
+            dragboard.setContent(clipboardContent);
+            draggingTab.set(mainPane);
+            event.consume();
+        });
+        mainPane.setOnDragOver((DragEvent event) -> {
+            final Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()
+                    && TAB_DRAG_KEY.equals(dragboard.getString())
+                    && draggingTab.get() != null) {
+                event.acceptTransferModes(TransferMode.MOVE);
                 event.consume();
             }
         });
-        mainPane.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                final Dragboard dragboard = event.getDragboard();
-                if (dragboard.hasString()
-                        && TAB_DRAG_KEY.equals(dragboard.getString())
-                        && draggingTab.get() != null) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                    event.consume();
+        mainPane.setOnDragDropped((final DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                Pane parent = (Pane) mainPane.getParent();
+                Object source = event.getGestureSource();
+                int sourceIndex = parent.getChildren().indexOf(source);
+
+                int targetIndex = parent.getChildren().indexOf(mainPane);
+
+                List<Node> nodes = new ArrayList<>(parent.getChildren());
+                if (sourceIndex < targetIndex) {
+                    Collections.rotate(
+                            nodes.subList(sourceIndex, targetIndex + 1), -1);
+                } else {
+                    Collections.rotate(
+                            nodes.subList(targetIndex, sourceIndex + 1), 1);
                 }
+                parent.getChildren().clear();
+                parent.getChildren().addAll(nodes);
+                //tell the segmentPaneControlller that the team priority has changed
+                segmentPaneController.swapTeamIndices(sourceIndex, targetIndex);
+
+                success = true;
             }
-        });
-        mainPane.setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(final DragEvent event) {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasString()) {
-                    Pane parent = (Pane) mainPane.getParent();
-                    Object source = event.getGestureSource();
-                    int sourceIndex = parent.getChildren().indexOf(source);
-
-                    int targetIndex = parent.getChildren().indexOf(mainPane);
-
-                    List<Node> nodes = new ArrayList<>(parent.getChildren());
-                    if (sourceIndex < targetIndex) {
-                        Collections.rotate(
-                                nodes.subList(sourceIndex, targetIndex + 1), -1);
-                    } else {
-                        Collections.rotate(
-                                nodes.subList(targetIndex, sourceIndex + 1), 1);
-                    }
-                    parent.getChildren().clear();
-                    parent.getChildren().addAll(nodes);
-                    //tell the segmentPaneControlller that the team priority has changed
-                    segmentPaneController.swapTeamIndices(sourceIndex, targetIndex);
-
-                    success = true;
-                }
-                event.setDropCompleted(success);
-                event.consume();
-            }
+            event.setDropCompleted(success);
+            event.consume();
         });
     }
 
@@ -178,14 +169,15 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     }
 
     private void setWorkerCellFactory(ListView listView) {
-        listView.setCellFactory(new Callback<ListView<Worker>, ListCell<Worker>>() {
+        listView.setCellFactory(lv -> new ListCell<Worker>() {
 
             @Override
-            public ListCell<Worker> call(ListView<Worker> listView) {
-                return new WorkerCell(listView.getItems());
+            public void updateItem(final Worker worker, boolean empty) {
+                super.updateItem(worker, empty);
+                ViewUtils.initListCellForWorkerDragAndDrop(this, worker, empty);
             }
-        });
 
+        });
     }
 
     public List<Worker> getWorkers() {

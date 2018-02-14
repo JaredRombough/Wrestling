@@ -221,6 +221,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
+    public List<Worker> getWorkers() {
+        List<Worker> workers = new ArrayList<>();
+        for (TeamPaneController controller : teamPaneControllers) {
+            workers.addAll(controller.getWorkers());
+        }
+        return workers;
+    }
+
     private void addTeam() {
 
         try {

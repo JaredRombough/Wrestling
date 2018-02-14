@@ -11,6 +11,7 @@ import wrestling.model.MatchWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.MatchRule;
+import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 
 public class MatchManager {
@@ -66,10 +67,10 @@ public class MatchManager {
         return winners;
     }
 
-    public List<Worker> getWorkers(Match match) {
+    public List<Worker> getWorkers(Segment segment) {
         List<Worker> workers = new ArrayList<>();
         for (MatchWorker matchWorker : matchWorkers) {
-            if (matchWorker.getMatch().equals(match)) {
+            if (matchWorker.getMatch().equals(segment)) {
                 workers.add(matchWorker.getWorker());
             }
         }

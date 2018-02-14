@@ -10,8 +10,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -21,7 +25,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import wrestling.MainApp;
+import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.view.LocalDragboard;
 
 public final class ViewUtils {
 
@@ -57,9 +63,11 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
     }
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
@@ -132,6 +140,24 @@ public final class ViewUtils {
         AnchorPane.setRightAnchor(child, 0.0);
         AnchorPane.setLeftAnchor(child, 0.0);
         AnchorPane.setBottomAnchor(child, 0.0);
+    }
+
+    public static void initListCellForWorkerDragAndDrop(ListCell listCell, Worker worker, boolean empty) {
+        if (empty) {
+            listCell.setText(null);
+            listCell.setGraphic(null);
+            listCell.setOnDragDetected(null);
+        } else {
+            listCell.setText(worker.toString());
+
+            listCell.setOnDragDetected((MouseEvent event) -> {
+                ClipboardContent cc = new ClipboardContent();
+                cc.putString(listCell.getItem().toString());
+                listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
+                LocalDragboard.getINSTANCE().putValue(Worker.class, worker);
+                event.consume();
+            });
+        }
     }
 
 }

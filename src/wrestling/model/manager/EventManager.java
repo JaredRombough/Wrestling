@@ -166,7 +166,7 @@ public class EventManager {
         List allWorkers = new ArrayList<>();
         for (Segment currentSegment : segments) {
             if (currentSegment instanceof Match) {
-                allWorkers.addAll(matchManager.getWorkers((Match) currentSegment));
+                allWorkers.addAll(matchManager.getWorkers(currentSegment));
             }
         }
 
