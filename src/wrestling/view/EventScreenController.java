@@ -200,6 +200,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         updateWorkerListView();
 
+        ((RefreshSkin) segmentListView.getSkin()).refresh();
+
     }
 
     //dynamic current cost calculation
@@ -286,6 +288,9 @@ public class EventScreenController extends ControllerBase implements Initializab
     this may need modification if we allow adding/removing segments
      */
     private void initializeSegmentListView() {
+
+        RefreshSkin skin = new RefreshSkin(segmentListView);
+        segmentListView.setSkin(skin);
 
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 

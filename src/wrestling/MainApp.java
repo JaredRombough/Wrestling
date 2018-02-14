@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -81,13 +82,23 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage stage) throws IOException {
 
-        this.primaryStage = primaryStage;
-        this.getPrimaryStage().setTitle("Wrestling");
-        this.getPrimaryStage().setMinWidth(WINDOW_MIN_WIDTH);
-        this.getPrimaryStage().setMinHeight(WINDOW_MIN_HEIGHT);
-        this.getPrimaryStage().centerOnScreen();
+        primaryStage = stage;
+        primaryStage.setTitle("Wrestling");
+        primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
+        primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
+        primaryStage.centerOnScreen();
+        
+        ChangeListener<Number> stageSizeListener = ((observable, oldValue, newValue) -> {
+            if (currentScreen != null) {
+                updateLabels(currentScreen.code);
+            }
+
+        });
+        primaryStage.widthProperty().addListener(stageSizeListener);
+        primaryStage.heightProperty().addListener(stageSizeListener);
+        
         showTitleScreen();
 
     }
