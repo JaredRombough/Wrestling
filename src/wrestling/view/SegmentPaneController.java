@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.interfaces.ControllerBase;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
 

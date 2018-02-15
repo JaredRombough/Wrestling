@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import wrestling.view.comparators.TagTeamNameComparator;
 import wrestling.view.comparators.TitleNameComparator;
 import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
+import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.BrowserMode;
 import wrestling.view.utility.ViewUtils;
 

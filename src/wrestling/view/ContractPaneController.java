@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.model.Worker;
+import wrestling.view.interfaces.ControllerBase;
 
 public class ContractPaneController extends ControllerBase implements Initializable {
 

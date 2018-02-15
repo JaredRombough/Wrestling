@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +23,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import wrestling.model.Worker;
+import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
 
 public class TeamPaneController extends ControllerBase implements Initializable {

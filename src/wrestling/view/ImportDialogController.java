@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -15,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import wrestling.view.interfaces.ControllerBase;
 
 /*
 popup dialog window for setting import paths and starting import game

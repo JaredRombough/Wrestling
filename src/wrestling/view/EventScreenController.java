@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import wrestling.model.Match;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ViewUtils;
 

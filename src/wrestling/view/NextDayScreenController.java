@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -8,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
+import wrestling.view.interfaces.ControllerBase;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
 

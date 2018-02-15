@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -11,6 +10,7 @@ import wrestling.model.Event;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.EventManager;
+import wrestling.view.interfaces.ControllerBase;
 
 
 /*

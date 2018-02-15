@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
@@ -15,6 +14,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
+import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
@@ -98,17 +98,11 @@ public class BookShowController extends ControllerBase implements Initializable 
         if (isRescheduling()) {
             dateLabel.setText("Select new date for " + eventToReschedule.toString());
             infoText.setText("Move " + eventToReschedule.toString() + " from " + eventToReschedule.getDate() + " to " + currentDate);
-            if (eventOnDate == null) {
-                confirmButtonText = "Confirm";
-                cancelButtonText = "Cancel";
-                confirmButtonDisable = false;
-                cancelButtonDisable = false;
-            } else {
-                confirmButtonText = "Confirm";
-                cancelButtonText = "Cancel";
-                confirmButtonDisable = true;
-                cancelButtonDisable = false;
-            }
+            
+            confirmButtonText = "Confirm";
+            cancelButtonDisable = false;
+            cancelButtonText = "Cancel";
+            confirmButtonDisable = eventOnDate != null;
 
         } else if (eventOnDate == null) {
             dateLabel.setText("Book a new event");
@@ -118,19 +112,15 @@ public class BookShowController extends ControllerBase implements Initializable 
             confirmButtonDisable = false;
             cancelButtonDisable = true;
             cancelButtonVisible = false;
+            
         } else {
             dateLabel.setText("Modify existing event");
             infoText.setText("Cancel or reschedule event on " + currentDate + "?");
 
             confirmButtonText = "Reschedule";
             cancelButtonText = "Cancel Event";
-            if (gameController.getEventManager().canReschedule(eventOnDate)) {
-                confirmButtonDisable = false;
-                cancelButtonDisable = false;
-            } else {
-                confirmButtonDisable = true;
-                cancelButtonDisable = false;
-            }
+            cancelButtonDisable = false;
+            confirmButtonDisable = !gameController.getEventManager().canReschedule(eventOnDate);
 
         }
 

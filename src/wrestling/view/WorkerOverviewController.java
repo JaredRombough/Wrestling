@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {

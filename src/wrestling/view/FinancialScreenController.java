@@ -1,6 +1,5 @@
 package wrestling.view;
 
-import wrestling.view.interfaces.ControllerBase;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import wrestling.view.interfaces.ControllerBase;
 
 public class FinancialScreenController extends ControllerBase implements Initializable {
 
