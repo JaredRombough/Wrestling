@@ -16,6 +16,8 @@ import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -89,7 +91,7 @@ public class MainApp extends Application {
         primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
         primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
         primaryStage.centerOnScreen();
-        
+
         ChangeListener<Number> stageSizeListener = ((observable, oldValue, newValue) -> {
             if (currentScreen != null) {
                 updateLabels(currentScreen.code);
@@ -98,7 +100,7 @@ public class MainApp extends Application {
         });
         primaryStage.widthProperty().addListener(stageSizeListener);
         primaryStage.heightProperty().addListener(stageSizeListener);
-        
+
         showTitleScreen();
 
     }
@@ -394,65 +396,50 @@ public class MainApp extends Application {
             gameController.nextDay();
             saveGame();
         } else {
-            Runnable task = this::nextDayTask;
+            NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
+            RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
+            nextDay.setLoadingMessage("Loading...");
+            show(ScreenCode.NEXT_DAY_SCREEN);
+            root.setButtonsDisable(true);
+            primaryStage.getScene().setCursor(Cursor.WAIT);
 
-            Thread backgroundThread = new Thread(task);
-            backgroundThread.setDaemon(true);
-            backgroundThread.start();
+            Thread thread = new Thread(nextDayTask(nextDay, root));
+            thread.setDaemon(true);
+            thread.start();
+
         }
 
         logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
     }
 
-    private void nextDayTask() {
+    private Task<Void> nextDayTask(NextDayScreenController nextDay, RootLayoutController root) {
 
-        RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
-        NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
+        Task<Void> task = new Task<Void>() {
 
-        StringBuilder sb = new StringBuilder("Loading, please wait.");
-        sb.append("\n");
-        sb.append("Processing promotions...");
-        sb.append("\n");
-        Platform.runLater(() -> {
+            @Override
+            public Void call() throws InterruptedException {
 
-            nextDay.setLoadingMessage(sb.toString());
-            show(ScreenCode.NEXT_DAY_SCREEN);
-            root.setButtonsDisable(true);
-            primaryStage.getScene().setCursor(Cursor.WAIT);
+                gameController.nextDay();
 
-        });
+                try {
+                    saveGame();
+                } catch (IOException ex) {
+                    logger.log(Level.ERROR, "Problem saving Game", ex);
 
-        gameController.nextDay();
-
-        sb.append("Promotions processed.");
-        sb.append("\n");
-        sb.append("Autosaving...");
-        sb.append("\n");
-        Platform.runLater(() -> {
-
-            nextDay.setLoadingMessage(sb.toString());
-        });
-
-        boolean saved = true;
-
-        try {
-            saveGame();
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "Problem saving Game", ex);
-            sb.append("ERROR SAVING GAME");
-            saved = false;
-        } finally {
-            if (saved) {
-                sb.append("Game saved.");
+                }
+                return null;
             }
-        }
+        };
 
-        Platform.runLater(() -> {
-            nextDay.setLoadingMessage(sb.toString());
+        task.setOnSucceeded((WorkerStateEvent t) -> {
+
+            nextDay.setLoadingMessage("Loading...\nComplete!");
             updateLabels();
             root.setButtonsDisable(false);
             primaryStage.getScene().setCursor(Cursor.DEFAULT);
         });
+
+        return task;
     }
 
     /*

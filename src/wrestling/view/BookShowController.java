@@ -173,7 +173,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         Event toCancel = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
         if (ViewUtils.generateConfirmationDialogue(String.format("Canceling %s on %s", toCancel.toString(), currentDate.toString()), "Are you sure?")) {
             gameController.getEventManager().cancelEvent(toCancel);
-            mainApp.show(ScreenCode.CALENDAR);
+            mainApp.show(ScreenCode.CALENDAR, currentDate);
         }
     }
 
