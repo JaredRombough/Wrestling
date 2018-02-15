@@ -46,7 +46,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com";
-    private static final String VERSION = "0.1.0";
+    private static final String VERSION = "0.1.1";
 
     public static void main(String[] args) {
 
