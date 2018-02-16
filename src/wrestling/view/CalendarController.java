@@ -182,6 +182,10 @@ public class CalendarController extends ControllerBase implements Initializable 
         if (gameController.getEventManager().getEventOnDate(playerPromotion(), calendarNode.getDate()) != null) {
             calendarNode.getStyleClass().add(GREEN_BORDER);
         }
+
+        if (calendarNode.equals(selected)) {
+            selected.getStyleClass().add(SELECTED_CALENDAR_NODE);
+        }
     }
 
     private void clicked(CalendarNode calendarNode) {
@@ -198,8 +202,7 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         bookShowScreen.controller.setCurrent(selected.getDate());
 
-        setSelectedColor(selected);
-
+        updateLabels();
     }
 
     private CalendarNode checkCurrentMonth(LocalDate date) {
@@ -243,15 +246,6 @@ public class CalendarController extends ControllerBase implements Initializable 
             }
         }
         return null;
-    }
-
-    private void setSelectedColor(CalendarNode calendarNode) {
-        for (CalendarNode node : allCalendarDays) {
-            if (node.getStyleClass().contains(SELECTED_CALENDAR_NODE)) {
-                node.getStyleClass().remove(SELECTED_CALENDAR_NODE);
-            }
-        }
-        calendarNode.getStyleClass().add(SELECTED_CALENDAR_NODE);
     }
 
     private void previousMonth() {
