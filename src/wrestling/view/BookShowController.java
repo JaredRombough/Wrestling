@@ -88,34 +88,43 @@ public class BookShowController extends ControllerBase implements Initializable 
 
     @Override
     public void updateLabels() {
-        String confirmButtonText;
+        String confirmButtonText = "";
         String cancelButtonText = "";
+        String dateLabelContent = "";
+        String infoTextContent = "";
         boolean confirmButtonDisable;
         boolean cancelButtonDisable;
         boolean cancelButtonVisible = true;
+        boolean confirmButtonVisible = true;
         Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
 
-        if (isRescheduling()) {
-            dateLabel.setText("Select new date for " + eventToReschedule.toString());
-            infoText.setText("Move " + eventToReschedule.toString() + " from " + eventToReschedule.getDate() + " to " + currentDate);
-            
+        if (currentDate.isBefore(gameController.getDateManager().today())) {
+            cancelButtonVisible = false;
+            cancelButtonDisable = true;
+            confirmButtonVisible = false;
+            confirmButtonDisable = true;
+
+        } else if (isRescheduling()) {
+            dateLabelContent = String.format("Select new date for %s", eventToReschedule.toString());
+            infoTextContent = String.format("Move %s from %s to %s", eventToReschedule.toString(), eventToReschedule.getDate(), currentDate);
+
             confirmButtonText = "Confirm";
             cancelButtonDisable = false;
             cancelButtonText = "Cancel";
             confirmButtonDisable = eventOnDate != null;
 
         } else if (eventOnDate == null) {
-            dateLabel.setText("Book a new event");
-            infoText.setText("Create a new event on " + currentDate + "?");
+            dateLabelContent = "Book a new event";
+            infoTextContent = String.format("Create a new event on %s?", currentDate);
 
             confirmButtonText = "Book";
             confirmButtonDisable = false;
             cancelButtonDisable = true;
             cancelButtonVisible = false;
-            
+
         } else {
-            dateLabel.setText("Modify existing event");
-            infoText.setText("Cancel or reschedule event on " + currentDate + "?");
+            dateLabelContent = "Modify existing event";
+            infoTextContent = String.format("Cancel or reschedule event on %s?", currentDate);
 
             confirmButtonText = "Reschedule";
             cancelButtonText = "Cancel Event";
@@ -124,11 +133,14 @@ public class BookShowController extends ControllerBase implements Initializable 
 
         }
 
+        dateLabel.setText(dateLabelContent);
+        infoText.setText(infoTextContent);
         cancelButton.setDisable(cancelButtonDisable);
         cancelButton.setVisible(cancelButtonVisible);
         cancelButton.setText(cancelButtonText);
         confirmButton.setText(confirmButtonText);
         confirmButton.setDisable(confirmButtonDisable);
+        confirmButton.setVisible(confirmButtonVisible);
     }
 
     private void bookShowOnDate() {
