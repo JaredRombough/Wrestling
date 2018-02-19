@@ -221,7 +221,7 @@ public class MainApp extends Application {
         gameController.initializeEvents();
 
         try {
-            prepareScreens();
+            loadScreens();
         } catch (IOException ex) {
             logger.log(Level.ERROR, "Error preparing screens", ex);
         }
@@ -283,7 +283,7 @@ public class MainApp extends Application {
         return gc;
     }
 
-    private void prepareScreens() throws IOException {
+    private void loadScreens() throws IOException {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
         List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(ScreenCode.FINANCIAL,
@@ -291,7 +291,8 @@ public class MainApp extends Application {
                 ScreenCode.BROWSER,
                 ScreenCode.EVENT,
                 ScreenCode.WORKER_OVERVIEW,
-                ScreenCode.NEXT_DAY_SCREEN
+                ScreenCode.NEXT_DAY_SCREEN,
+                ScreenCode.RESULTS
         ));
 
         for (ScreenCode screen : screensToLoad) {

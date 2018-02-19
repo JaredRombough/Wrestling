@@ -43,6 +43,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.RefreshSkin;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
 public class EventScreenController extends ControllerBase implements Initializable {
@@ -117,12 +118,17 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-            runEvent();
+            //runEvent();
+            showResults();
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
         } else if (event.getSource() == removeSegmentButton) {
             removeSegment();
         }
+    }
+    
+    private void showResults(){
+        mainApp.show(ScreenCode.RESULTS);
     }
 
     private void runEvent() throws IOException {

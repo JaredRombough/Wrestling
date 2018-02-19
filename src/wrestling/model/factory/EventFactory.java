@@ -19,6 +19,7 @@ import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -56,7 +57,7 @@ public class EventFactory {
 
     private void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
-        TempEvent tempEvent = new TempEvent(segments, date, promotion);
+        EventView tempEvent = new EventView(segments, date, promotion);
 
         Event event = new Event(
                 promotion,
@@ -71,7 +72,7 @@ public class EventFactory {
 
     private void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
-        TempEvent tempEvent = new TempEvent(segments, date, promotion);
+        EventView tempEvent = new EventView(segments, date, promotion);
 
         event.setCost(eventManager.calculateCost(tempEvent));
         event.setGate(eventManager.gate(tempEvent));
@@ -222,40 +223,4 @@ public class EventFactory {
         return sb.toString().isEmpty() ? match.toString().replace("\n", " ") : sb.toString();
     }
 
-    //class to temporarily hold event info to make things cleaner
-    private class TempEvent implements iEvent {
-
-        private final List<Segment> segments;
-        private final LocalDate date;
-        private final Promotion promotion;
-
-        public TempEvent(List<Segment> segments, LocalDate date, Promotion promotion) {
-            this.segments = new ArrayList<>(segments);
-            this.date = date;
-            this.promotion = promotion;
-        }
-
-        /**
-         * @return the segments
-         */
-        public List<Segment> getSegments() {
-            return segments;
-        }
-
-        /**
-         * @return the date
-         */
-        @Override
-        public LocalDate getDate() {
-            return date;
-        }
-
-        /**
-         * @return the promotion
-         */
-        @Override
-        public Promotion getPromotion() {
-            return promotion;
-        }
-    }
 }

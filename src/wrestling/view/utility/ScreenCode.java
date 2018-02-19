@@ -144,5 +144,16 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return true;
         }
+    },
+    RESULTS {
+        @Override
+        public String resourcePath() {
+            return "view/results/ResultsScreen.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }
