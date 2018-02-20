@@ -199,6 +199,16 @@ public class EventManager {
         return currentCost;
     }
 
+    //dynamic current cost calculation to be called while the player is booking
+    public int calculateCost(List<Segment> segments, Promotion promotion) {
+        int currentCost = 0;
+
+        for (Worker worker : allWorkers(segments)) {
+            currentCost += contractManager.getContract(worker, promotion).getAppearanceCost();
+        }
+        return currentCost;
+    }
+
     //gross profit for the event
     public int gate(iEvent event) {
 
@@ -225,6 +235,34 @@ public class EventManager {
         }
 
         return attendance(event) * ticketPrice;
+    }
+
+    //gross profit for the event
+    public int gate(Promotion promotion, List<Segment> segments) {
+
+        int ticketPrice = 0;
+
+        switch (promotion.getLevel()) {
+            case 1:
+                ticketPrice += 5;
+                break;
+            case 2:
+                ticketPrice += 10;
+                break;
+            case 3:
+                ticketPrice += 15;
+                break;
+            case 4:
+                ticketPrice += 20;
+                break;
+            case 5:
+                ticketPrice += 35;
+                break;
+            default:
+                break;
+        }
+
+        return attendance(promotion, segments) * ticketPrice;
     }
 
     public int attendance(iEvent event) {
@@ -260,6 +298,43 @@ public class EventManager {
         }
 
         attendance += ModelUtilityFunctions.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
+
+        return attendance;
+    }
+
+    public int attendance(Promotion promotion, List<Segment> segments) {
+        int attendance = 0;
+
+        switch (promotion.getLevel()) {
+            case 1:
+                attendance += 20;
+                break;
+            case 2:
+                attendance += 50;
+                break;
+            case 3:
+                attendance += 100;
+                break;
+            case 4:
+                attendance += 250;
+                break;
+            case 5:
+                attendance += 4000;
+                break;
+            default:
+                break;
+        }
+
+        //how many workers are draws?
+        int draws = 0;
+        for (Worker worker : allWorkers(segments)) {
+
+            if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion) - 10) {
+                draws++;
+            }
+        }
+
+        attendance += ModelUtilityFunctions.randRange(promotion.getLevel(), promotion.getLevel() * 15) * draws;
 
         return attendance;
     }
