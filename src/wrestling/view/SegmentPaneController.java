@@ -312,7 +312,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
-    public SegmentView getTempMatch() {
+    public SegmentView getSegmentView() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
         SegmentView match = new SegmentView();

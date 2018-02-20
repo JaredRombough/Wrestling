@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
-import wrestling.model.Match;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
@@ -126,8 +125,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             removeSegment();
         }
     }
-    
-    private void showResults(){
+
+    private void showResults() {
         mainApp.show(ScreenCode.RESULTS);
     }
 
@@ -182,7 +181,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segments.clear();
         for (SegmentPaneController currentController : segmentPaneControllers) {
-            segments.add(currentController.getTempMatch());
+            segments.add(currentController.getSegmentView());
         }
 
         updateLabels();
@@ -210,19 +209,29 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    //dynamic current cost calculation
     private int currentCost() {
 
         int currentCost = 0;
 
-        for (Segment segment : segments) {
-            if (segment instanceof Match) {
-                for (Worker worker : gameController.getMatchManager().getWorkers((Match) segment)) {
-                    currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
-                }
-            }
+        for (Worker worker : allWorkers()) {
+            currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
+
         }
         return currentCost;
+    }
+
+    private List<Worker> allWorkers() {
+        List<Worker> allWorkers = new ArrayList<>();
+        for (SegmentPaneController segmentPaneController : segmentPaneControllers) {
+
+            for (Worker worker : segmentPaneController.getWorkers()) {
+                if (!allWorkers.contains(worker)) {
+                    allWorkers.add(worker);
+                }
+            }
+
+        }
+        return allWorkers;
     }
 
     /*
@@ -250,7 +259,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             //update the segment listview
             SegmentNameItem item = new SegmentNameItem();
             segmentListView.getItems().add(item);
-            item.segment.set(controller.getTempMatch());
+            item.segment.set(controller.getSegmentView());
             item.name.set("Segment " + segments.size());
 
             updateSegments();
