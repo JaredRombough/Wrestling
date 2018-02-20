@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.interfaces.ControllerBase;
@@ -20,7 +21,11 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     @FXML
     private FlowPane flowPane;
     
+    @FXML
+    private Text segmentTitle;
+    
     private SegmentView segment;
+    
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -37,20 +42,18 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     
     @Override
     public void updateLabels() {
-        populateView();
+        
+        
+        if(segment != null) {
+            segmentTitle.setText(segment.toString());
+            populateView();
+        }
+        
+        
+        
     }
     
     private void populateView() {
-        GridPane gridPane = new GridPane();
-        
-        int teamsCount = segment.getTeams().size();
-        
-        int columns = teamsCount >=4 ? 4 : teamsCount;
-        int rows = teamsCount / columns;
-        
-        for(List<Worker> team : segment.getTeams()) {
-            
-        }
         
     }
 
