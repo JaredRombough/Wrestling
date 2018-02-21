@@ -1,15 +1,12 @@
 package wrestling.view.results;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -45,7 +42,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         
         
         if(segmentView != null) {
-            segmentTitle.setText(segmentView.toString());
+            segmentTitle.setText(gameController.getMatchManager().getMatchString(segmentView));
             populateView();
         }
         

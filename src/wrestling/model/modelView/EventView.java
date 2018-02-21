@@ -20,4 +20,11 @@ public class EventView {
     public List<SegmentView> getSegments() {
         return segments;
     }
+
+    /**
+     * @return the event
+     */
+    public Event getEvent() {
+        return event;
+    }
 }

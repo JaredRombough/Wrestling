@@ -306,22 +306,13 @@ public class MainApp extends Application {
      * @throws java.io.IOException
      */
     public void initRootLayout() throws IOException {
-        try {
-
-            screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
-
-            // Show the scene containing the root layout.
-            Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane);
-
-            if (cssEnabled) {
-                scene.getStylesheets().add("style.css");
-            }
-            getPrimaryStage().setScene(scene);
-            getPrimaryStage().show();
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "initRootLayout() failed with IOException", ex);
-            throw ex;
+        screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
+        Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane);
+        if (cssEnabled) {
+            scene.getStylesheets().add("style.css");
         }
+        getPrimaryStage().setScene(scene);
+        getPrimaryStage().show();
     }
 
     public Screen show(ScreenCode code) {
@@ -364,13 +355,8 @@ public class MainApp extends Application {
     currently these methods are combined because we only do it once
      */
     public void showStartGameScreen() throws IOException {
-        try {
-            Screen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
-            ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "Error in showStartGameScreen()", ex);
-            throw ex;
-        }
+        Screen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
+        ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
     }
 
     /*

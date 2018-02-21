@@ -37,7 +37,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </AnchorPane>
-            <Button fx:id="nextButton" mnemonicParsing="false" text="next" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleButtonAction" text="next" GridPane.columnIndex="3" GridPane.rowIndex="6" />
             <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
          </children>
       </GridPane>

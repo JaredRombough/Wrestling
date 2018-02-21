@@ -24,6 +24,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
@@ -69,18 +72,23 @@ public final class ViewUtils {
         }
     }
 
-    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) throws IOException {
+    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {
+        Logger logger = LogManager.getLogger("ViewUtils loadScreenFromResource()");
         FXMLLoader loader = new FXMLLoader();
         Screen screen = new Screen();
         loader.setLocation(MainApp.class.getResource(code.resourcePath()));
-        switch (code) {
-            case ROOT: {
-                screen.pane = (BorderPane) loader.load();
-                break;
+        try {
+            switch (code) {
+                case ROOT: {
+                    screen.pane = (BorderPane) loader.load();
+                    break;
+                }
+                default:
+                    screen.pane = (AnchorPane) loader.load();
+                    break;
             }
-            default:
-                screen.pane = (AnchorPane) loader.load();
-                break;
+        } catch (IOException ex) {
+            logger.log(Level.FATAL, String.format("Error loading Screen from %s", code.resourcePath()), ex);
         }
 
         screen.controller = loader.getController();

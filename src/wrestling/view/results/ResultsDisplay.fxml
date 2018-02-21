@@ -19,7 +19,7 @@
          </rowConstraints>
          <children>
             <FlowPane prefHeight="400.0" prefWidth="600.0" GridPane.rowIndex="1" />
-            <Text fx:id="segmentTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" />
+            <Text fx:id="segmentTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" GridPane.halignment="CENTER" />
          </children>
       </GridPane>
    </children>
