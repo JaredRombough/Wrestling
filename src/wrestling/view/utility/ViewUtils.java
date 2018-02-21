@@ -27,7 +27,6 @@ import javafx.scene.layout.StackPane;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
-import wrestling.view.LocalDragboard;
 
 public final class ViewUtils {
 

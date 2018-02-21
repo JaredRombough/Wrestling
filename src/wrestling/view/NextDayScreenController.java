@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
 

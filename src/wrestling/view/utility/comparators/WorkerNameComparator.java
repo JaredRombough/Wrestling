@@ -1,5 +1,5 @@
 
-package wrestling.view.comparators;
+package wrestling.view.utility.comparators;
 
 
 import java.util.Comparator;

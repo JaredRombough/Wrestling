@@ -1,7 +1,7 @@
 package wrestling.view.utility;
 
 import javafx.scene.layout.Pane;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class Screen {
     public ControllerBase controller;

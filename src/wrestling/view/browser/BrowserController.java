@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.browser;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,12 +30,12 @@ import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.view.comparators.EventDateComparator;
-import wrestling.view.comparators.TagTeamNameComparator;
-import wrestling.view.comparators.TitleNameComparator;
-import wrestling.view.comparators.WorkerNameComparator;
-import wrestling.view.comparators.WorkerPopularityComparator;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.comparators.EventDateComparator;
+import wrestling.view.utility.comparators.TagTeamNameComparator;
+import wrestling.view.utility.comparators.TitleNameComparator;
+import wrestling.view.utility.comparators.WorkerNameComparator;
+import wrestling.view.utility.comparators.WorkerPopularityComparator;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.BrowserMode;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;

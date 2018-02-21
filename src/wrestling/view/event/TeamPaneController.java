@@ -23,8 +23,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import wrestling.model.Worker;
-import wrestling.view.LocalDragboard;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.LocalDragboard;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
 
 public class TeamPaneController extends ControllerBase implements Initializable {

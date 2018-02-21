@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.start;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Level;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;

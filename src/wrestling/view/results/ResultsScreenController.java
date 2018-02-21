@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import wrestling.model.modelView.EventView;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ResultsScreenController extends ControllerBase implements Initializable {
 

@@ -10,7 +10,7 @@ import wrestling.model.Event;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.EventManager;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 
 /*

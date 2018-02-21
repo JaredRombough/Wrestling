@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ResultsDisplayController extends ControllerBase implements Initializable {
     

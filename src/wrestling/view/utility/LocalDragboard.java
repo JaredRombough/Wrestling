@@ -1,5 +1,5 @@
 
-package wrestling.view;
+package wrestling.view.utility;
 
 import java.util.HashMap;
 import java.util.Map;

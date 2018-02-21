@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.start;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
 
 public class StartGameScreenController extends ControllerBase implements Initializable {

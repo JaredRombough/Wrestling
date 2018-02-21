@@ -1,12 +1,12 @@
 package wrestling.view.utility;
 
-import wrestling.view.interfaces.ScreenCodeInterface;
+import wrestling.view.utility.interfaces.ScreenCodeInterface;
 
 public enum ScreenCode implements ScreenCodeInterface {
     TITLE {
         @Override
         public String resourcePath() {
-            return "view/TitleScreen.fxml";
+            return "view/start/TitleScreen.fxml";
         }
 
         @Override
@@ -17,7 +17,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     START {
         @Override
         public String resourcePath() {
-            return "view/StartGameScreen.fxml";
+            return "view/start/StartGameScreen.fxml";
         }
 
         @Override
@@ -53,7 +53,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/WorkerOverview.fxml";
+            return "view/browser/WorkerOverview.fxml";
         }
 
         @Override
@@ -65,7 +65,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/Browser.fxml";
+            return "view/browser/Browser.fxml";
         }
 
         @Override
@@ -125,7 +125,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/ImportDialog.fxml";
+            return "view/start/ImportDialog.fxml";
         }
 
         @Override
@@ -181,7 +181,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     CONTRACT_PANE {
         @Override
         public String resourcePath() {
-            return "view/ContractPane.fxml";
+            return "view/browser/ContractPane.fxml";
         }
 
         @Override

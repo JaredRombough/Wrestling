@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.browser;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,8 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.SimpleDisplayController;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 

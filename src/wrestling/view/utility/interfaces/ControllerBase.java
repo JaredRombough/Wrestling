@@ -1,4 +1,4 @@
-package wrestling.view.interfaces;
+package wrestling.view.utility.interfaces;
 
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;

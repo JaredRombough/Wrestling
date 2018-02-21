@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
-import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
