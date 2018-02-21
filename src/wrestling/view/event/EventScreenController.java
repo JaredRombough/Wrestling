@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.event;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,7 +39,9 @@ import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.LocalDragboard;
 import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
@@ -127,7 +129,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void showResults() {
-        mainApp.show(ScreenCode.RESULTS);
+        mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, segments));
     }
 
     private void runEvent() throws IOException {
@@ -243,7 +245,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/SegmentPane.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/event/SegmentPane.fxml"));
             Pane segmentPane = (Pane) loader.load();
 
             //keep a reference to the segment pane

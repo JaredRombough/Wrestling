@@ -24,7 +24,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     @FXML
     private Text segmentTitle;
     
-    private SegmentView segment;
+    private SegmentView segmentView;
     
 
     @Override
@@ -35,7 +35,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     @Override
     public void setCurrent(Object obj) {
         if(obj instanceof SegmentView) {
-            this.segment = (SegmentView)obj;
+            this.segmentView = (SegmentView)obj;
             updateLabels();
         }
     }
@@ -44,8 +44,8 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     public void updateLabels() {
         
         
-        if(segment != null) {
-            segmentTitle.setText(segment.toString());
+        if(segmentView != null) {
+            segmentTitle.setText(segmentView.toString());
             populateView();
         }
         

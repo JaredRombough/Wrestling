@@ -210,7 +210,7 @@ public class EventManager {
     }
 
     //gross profit for the event
-    public int gate(iEvent event) {
+    public int calculateGate(iEvent event) {
 
         int ticketPrice = 0;
 
@@ -234,11 +234,11 @@ public class EventManager {
                 break;
         }
 
-        return attendance(event) * ticketPrice;
+        return calculateAttendance(event) * ticketPrice;
     }
 
     //gross profit for the event
-    public int gate(Promotion promotion, List<Segment> segments) {
+    public int calculateGate(List<Segment> segments, Promotion promotion) {
 
         int ticketPrice = 0;
 
@@ -262,10 +262,10 @@ public class EventManager {
                 break;
         }
 
-        return attendance(promotion, segments) * ticketPrice;
+        return calculateAttendance(segments, promotion) * ticketPrice;
     }
 
-    public int attendance(iEvent event) {
+    public int calculateAttendance(iEvent event) {
         int attendance = 0;
 
         switch (event.getPromotion().getLevel()) {
@@ -302,7 +302,7 @@ public class EventManager {
         return attendance;
     }
 
-    public int attendance(Promotion promotion, List<Segment> segments) {
+    public int calculateAttendance (List<Segment> segments, Promotion promotion) {
         int attendance = 0;
 
         switch (promotion.getLevel()) {

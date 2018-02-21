@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.calendar;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
+import wrestling.view.SimpleDisplayController;
 import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;

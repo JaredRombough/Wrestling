@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.view.interfaces.ControllerBase;
 
@@ -25,7 +24,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private EventView currentEvent;
 
-    private Segment currentSegment;
+    private int currentSegmentViewIndex;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,6 +42,8 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     public void setCurrent(Object object) {
         if (object instanceof EventView) {
             currentEvent = (EventView) object;
+            currentSegmentViewIndex = 0;
+            nextSegment();
             updateLabels();
         }
     }
@@ -52,6 +53,12 @@ public class ResultsScreenController extends ControllerBase implements Initializ
         if(currentEvent != null) {
             titleText.setText(currentEvent.toString());
         }
+    }
+    
+    private void nextSegment() {
+        
+        
+        
     }
 
 }

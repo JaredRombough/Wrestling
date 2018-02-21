@@ -41,7 +41,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/EventScreen.fxml";
+            return "view/event/EventScreen.fxml";
         }
 
         @Override
@@ -89,7 +89,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/Calendar.fxml";
+            return "view/calendar/Calendar.fxml";
         }
 
         @Override
@@ -113,7 +113,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/BookShow.fxml";
+            return "view/calendar/BookShow.fxml";
         }
 
         @Override
@@ -160,6 +160,17 @@ public enum ScreenCode implements ScreenCodeInterface {
         @Override
         public String resourcePath() {
             return "view/results/ResultsDisplay.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
+    TEAM_PANE {
+        @Override
+        public String resourcePath() {
+            return "view/event/TeamPane.fxml";
         }
 
         @Override

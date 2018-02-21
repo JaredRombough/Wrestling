@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.calendar;
 
 import java.net.URL;
 import java.time.LocalDate;

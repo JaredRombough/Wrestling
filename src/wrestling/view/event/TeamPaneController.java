@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.event;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import wrestling.model.Worker;
+import wrestling.view.LocalDragboard;
 import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
 

@@ -19,7 +19,6 @@ import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -55,35 +54,18 @@ public class EventFactory {
         this.workerManager = workerManager;
     }
 
-    private void createEvent(final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+    private void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
 
-        EventView tempEvent = new EventView(segments, date, promotion);
-
-        Event event = new Event(
-                promotion,
-                date,
-                eventType,
-                eventManager.calculateCost(tempEvent),
-                eventManager.gate(tempEvent),
-                eventManager.attendance(tempEvent));
-
-        processEvent(event, segments, date, promotion);
-    }
-
-    private void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
-
-        EventView tempEvent = new EventView(segments, date, promotion);
-
-        event.setCost(eventManager.calculateCost(tempEvent));
-        event.setGate(eventManager.gate(tempEvent));
-        event.setAttendance(eventManager.attendance(tempEvent));
+        event.setCost(eventManager.calculateCost(segments, promotion));
+        event.setGate(eventManager.calculateGate(segments, promotion));
+        event.setAttendance(eventManager.calculateAttendance(segments, promotion));
 
         processEvent(event, segments, date, promotion);
     }
 
     private void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
         processSegments(event, segments);
-        promotionManager.getBankAccount(promotion).addFunds(eventManager.gate(event), 'e', date);
+        promotionManager.getBankAccount(promotion).addFunds(eventManager.calculateGate(event), 'e', date);
         eventManager.addEvent(event);
         for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
@@ -93,11 +75,11 @@ public class EventFactory {
     }
 
     public void createEventFromTemp(Event event, final List<SegmentView> segments, LocalDate date, Promotion promotion) {
-        createEvent(event, convertTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
+        processEvent(event, convertTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
     }
 
     public void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
-        createEvent(event, segments, date, promotion, EventType.LIVEEVENT);
+        processEvent(event, segments, date, promotion, EventType.LIVEEVENT);
     }
 
     public Event createFutureEvent(Promotion promotion, LocalDate date) {

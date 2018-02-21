@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.calendar;
 
 import java.time.LocalDate;
 import javafx.scene.Node;

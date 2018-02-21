@@ -32,7 +32,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.BrowserController;
-import wrestling.view.CalendarController;
+import wrestling.view.calendar.CalendarController;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.TitleScreenController;

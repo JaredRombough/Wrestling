@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.event;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +28,7 @@ import wrestling.model.MatchRules;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.ScreenCode;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
 
@@ -234,7 +235,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/TeamPane.fxml"));
+            loader.setLocation(MainApp.class.getResource(ScreenCode.TEAM_PANE.resourcePath()));
             AnchorPane teamPane = (AnchorPane) loader.load();
             teamPanes.add(teamPane);
 
