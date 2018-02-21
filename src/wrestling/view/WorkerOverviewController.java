@@ -22,6 +22,7 @@ import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.interfaces.ControllerBase;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
@@ -107,7 +108,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         //load the contract pane
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/SimpleDisplay.fxml"));
+            loader.setLocation(MainApp.class.getResource(ScreenCode.SIMPLE_DISPLAY.resourcePath()));
             feedPane = (AnchorPane) loader.load();
 
             feedPaneController = (SimpleDisplayController) loader.getController();
@@ -125,7 +126,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         //load the contract pane
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/ContractPane.fxml"));
+            loader.setLocation(MainApp.class.getResource(ScreenCode.CONTRACT_PANE.resourcePath()));
             contractPane = (AnchorPane) loader.load();
 
             contractPaneController = (ContractPaneController) loader.getController();

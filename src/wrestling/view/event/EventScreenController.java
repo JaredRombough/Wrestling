@@ -245,7 +245,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/event/SegmentPane.fxml"));
+            loader.setLocation(MainApp.class.getResource(ScreenCode.SEGMENT_PANE.resourcePath()));
             Pane segmentPane = (Pane) loader.load();
 
             //keep a reference to the segment pane

@@ -37,6 +37,7 @@ import wrestling.view.comparators.WorkerNameComparator;
 import wrestling.view.comparators.WorkerPopularityComparator;
 import wrestling.view.interfaces.ControllerBase;
 import wrestling.view.utility.BrowserMode;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
 /**
@@ -329,7 +330,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             browseWorkers = new BrowserMode<>(
                     gameController.getContractManager().getFullRoster(playerPromotion()),
-                    "view/WorkerOverview.fxml",
+                    ScreenCode.WORKER_OVERVIEW.resourcePath(),
                     FXCollections.observableArrayList(new WorkerNameComparator(),
                             new WorkerPopularityComparator()),
                     mainApp,
@@ -343,7 +344,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             browseEvents = new BrowserMode<>(
                     gameController.getEventManager().getEvents(playerPromotion()),
-                    "view/SimpleDisplay.fxml",
+                    ScreenCode.SIMPLE_DISPLAY.resourcePath(),
                     FXCollections.observableArrayList(
                             new EventDateComparator()
                     ),
@@ -353,7 +354,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             browseTitles = new BrowserMode<>(
                     gameController.getTitleManager().getTitles(playerPromotion()),
-                    "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
+                    ScreenCode.SIMPLE_DISPLAY.resourcePath(), FXCollections.observableArrayList(
                             new TitleNameComparator()
                     ),
                     mainApp,
@@ -361,7 +362,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             browseTeams = new BrowserMode<>(
                     gameController.getTagTeamManager().getTagTeams(playerPromotion()),
-                    "view/SimpleDisplay.fxml", FXCollections.observableArrayList(
+                    ScreenCode.SIMPLE_DISPLAY.resourcePath(), FXCollections.observableArrayList(
                             new TagTeamNameComparator()
                     ),
                     mainApp,

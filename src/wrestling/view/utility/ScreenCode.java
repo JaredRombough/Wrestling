@@ -177,5 +177,27 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    },
+    CONTRACT_PANE {
+        @Override
+        public String resourcePath() {
+            return "view/ContractPane.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
+    SEGMENT_PANE {
+        @Override
+        public String resourcePath() {
+            return "view/event/SegmentPane.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }
