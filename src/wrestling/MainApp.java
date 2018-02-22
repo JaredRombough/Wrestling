@@ -385,6 +385,7 @@ public class MainApp extends Application {
         } else {
             NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
             RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
+            
             nextDay.setLoadingMessage("Loading...");
             show(ScreenCode.NEXT_DAY_SCREEN);
             root.setButtonsDisable(true);

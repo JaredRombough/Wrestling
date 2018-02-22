@@ -6,7 +6,7 @@ import wrestling.model.Event;
 
 public class EventView {
 
-    private final List<SegmentView> segments;
+    private List<SegmentView> segments;
     private final Event event;
 
     public EventView(Event event, List<SegmentView> segments) {
@@ -26,5 +26,12 @@ public class EventView {
      */
     public Event getEvent() {
         return event;
+    }
+
+    /**
+     * @param segments the segments to set
+     */
+    public void setSegments(List<SegmentView> segments) {
+        this.segments = segments;
     }
 }

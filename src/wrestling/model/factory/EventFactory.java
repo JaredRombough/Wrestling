@@ -19,6 +19,7 @@ import wrestling.model.manager.MatchManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -54,18 +55,18 @@ public class EventFactory {
         this.workerManager = workerManager;
     }
 
-    private void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion, EventType eventType) {
+    private void processEvent(Event event, final List<Segment> segments, LocalDate date, EventType eventType) {
 
-        event.setCost(eventManager.calculateCost(segments, promotion));
-        event.setGate(eventManager.calculateGate(segments, promotion));
-        event.setAttendance(eventManager.calculateAttendance(segments, promotion));
+        event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
+        event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
+        event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
 
-        processEvent(event, segments, date, promotion);
+        EventFactory.this.processEvent(event, segments, date);
     }
 
-    private void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
+    private void processEvent(Event event, final List<Segment> segments, LocalDate date) {
         processSegments(event, segments);
-        promotionManager.getBankAccount(promotion).addFunds(eventManager.calculateGate(event), 'e', date);
+        promotionManager.getBankAccount(event.getPromotion()).addFunds(eventManager.calculateGate(event), 'e', date);
         eventManager.addEvent(event);
         for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
@@ -74,12 +75,12 @@ public class EventFactory {
         processContracts(event, segments);
     }
 
-    public void createEventFromTemp(Event event, final List<SegmentView> segments, LocalDate date, Promotion promotion) {
-        processEvent(event, convertTempToSegment(segments), date, promotion, EventType.LIVEEVENT);
+    public void processEvent(EventView eventView, LocalDate date) {
+        EventFactory.this.processEvent(eventView.getEvent(), convertTempToSegment(eventView.getSegments()), date, EventType.LIVEEVENT);
     }
 
-    public void createEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
-        processEvent(event, segments, date, promotion, EventType.LIVEEVENT);
+    public void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
+        EventFactory.this.processEvent(event, segments, date, EventType.LIVEEVENT);
     }
 
     public Event createFutureEvent(Promotion promotion, LocalDate date) {
@@ -96,11 +97,7 @@ public class EventFactory {
         return segments;
     }
 
-    /*
-    runs through all contracts associated with the event
-    and takes money from the promotion accordingly
-    also notifies contracts of appearances
-     */
+    
     private void processContracts(iEvent event, List<Segment> segments) {
         eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
             contractManager.appearance(event.getDate(), contract);

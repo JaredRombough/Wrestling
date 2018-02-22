@@ -401,7 +401,7 @@ public class PromotionController implements Serializable {
 
     //book an event
     private void bookEvent(Event event, Promotion promotion) {
-        eventFactory.createEvent(event, bookSegments(promotion), dateManager.today(), promotion);
+        eventFactory.processEvent(event, bookSegments(promotion), dateManager.today(), promotion);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {

@@ -81,14 +81,17 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private Event currentEvent;
 
-    //this would be for keeping track of the index number of the currently
-    //selected segment
     private Number currentSegmentNumber;
 
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
+
+            if (currentEvent != null && !currentEvent.equals(obj)) {
+                clearSegments();
+            }
             currentEvent = (Event) obj;
+
             updateLabels();
         } else {
             logger.log(Level.ERROR, "Invalid object passed to EventScreen");
@@ -119,7 +122,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-            //runEvent();
             showResults();
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
@@ -129,56 +131,30 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void showResults() {
-        mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, segments));
+        mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(segments)));
     }
 
-    private void runEvent() throws IOException {
-        //select the first segment so when we come back to do a new event
-        //it will be highlighted already
-        //maybe we should have an onEnter and onExit function instead...
-        //although this is basically onExit already (minus the actual exit)
-        segmentListView.getSelectionModel().selectFirst();
-
-        //have to update the event segments first
-        updateSegments();
-
-        List<SegmentView> eventSegments = new ArrayList<>();
-
-        //eliminate empty segments here
-        for (SegmentView segmentView : segments) {
+    private List<SegmentView> removeEmpty(List<SegmentView> list) {
+        List<SegmentView> returnList = new ArrayList<>();
+        for (SegmentView segmentView : list) {
             if (!segmentView.getWorkers().isEmpty()) {
-                eventSegments.add(segmentView);
+                returnList.add(segmentView);
             }
+
         }
-
-        //create the event with the segments assembled
-        gameController.getEventFactory().createEventFromTemp(currentEvent,
-                segments,
-                currentEvent.getDate(),
-                playerPromotion());
-
-        //clear the segments, so when we come back to do a new event
-        //it will be empty again
+        return returnList;
+    }
+    
+    private void clearSegments() {
         segments.clear();
-
         //go through the segmentPaneControllers and clear all the teams
         for (SegmentPaneController current : segmentPaneControllers) {
             current.clear();
         }
 
-        //tell the main app to show the browser and pass the event
-        //so it can be selected by the corresponding controller
-        mainApp.showLastEvent();
-        //advance the day
-        mainApp.nextDay();
-
-        updateLabels();
+        segmentListView.getSelectionModel().selectFirst();
     }
 
-    //this updates the segment list associated with the controller
-    //and calls to update everything on the screen to reflect this
-    //this should perhaps be more primary/streamlined, update this and get everything else
-    //like labels and listview content from the item
     public void updateSegments() {
 
         segments.clear();

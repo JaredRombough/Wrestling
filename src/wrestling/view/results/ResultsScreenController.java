@@ -2,6 +2,7 @@ package wrestling.view.results;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,6 +46,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
             if (currentSegmentViewIndex < currentEvent.getSegments().size()) {
                 nextSegment();
             } else {
+                gameController.getEventFactory().processEvent(currentEvent, gameController.getDateManager().today());
                 try {
                     mainApp.nextDay();
                 } catch (IOException ex) {
