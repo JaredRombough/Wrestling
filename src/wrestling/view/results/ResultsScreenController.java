@@ -33,6 +33,8 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private int currentSegmentViewIndex;
 
+    private Screen currentResultsDisplay;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
@@ -70,18 +72,20 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     public void updateLabels() {
         if (currentEvent != null) {
             titleText.setText(currentEvent.getEvent().toString());
+            if (currentResultsDisplay != null) {
+                currentResultsDisplay.controller.updateLabels();
+            }
         }
     }
 
     private void nextSegment() {
 
-        Screen resultsDisplay = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_DISPLAY, mainApp, gameController);
+        currentResultsDisplay = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_DISPLAY, mainApp, gameController);
 
-        
-        resultsDisplay.controller.setCurrent(currentEvent.getSegments().get(currentSegmentViewIndex));
+        currentResultsDisplay.controller.setCurrent(currentEvent.getSegments().get(currentSegmentViewIndex));
 
         resultsDisplayPane.getChildren().clear();
-        ViewUtils.anchorPaneToParent(resultsDisplayPane, resultsDisplay.pane);
+        ViewUtils.anchorPaneToParent(resultsDisplayPane, currentResultsDisplay.pane);
 
         currentSegmentViewIndex++;
     }

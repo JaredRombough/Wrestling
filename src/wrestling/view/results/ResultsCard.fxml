@@ -3,8 +3,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 
-
-<StackPane fx:id="promotionImageBorder" styleClass="imageBorder" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="border" styleClass="imageBorder" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.results.ResultsCardController">
    <children>
       <ImageView fx:id="imageView" fitHeight="105.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" />
    </children>

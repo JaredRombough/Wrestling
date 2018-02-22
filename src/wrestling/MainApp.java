@@ -71,6 +71,8 @@ public class MainApp extends Application {
 
     private Screen currentScreen;
 
+    private double currentStageWidth;
+
     public MainApp() {
         this.screens = new ArrayList<>();
 
@@ -81,6 +83,8 @@ public class MainApp extends Application {
         Locale locale = new Locale("en", "US");
 
         resx = ResourceBundle.getBundle("wrestling.Language", locale);
+
+        currentStageWidth = WINDOW_MIN_WIDTH;
     }
 
     @Override
@@ -92,14 +96,22 @@ public class MainApp extends Application {
         primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
         primaryStage.centerOnScreen();
 
-        ChangeListener<Number> stageSizeListener = ((observable, oldValue, newValue) -> {
+        ChangeListener<Number> stageHeightListener = ((observable, oldValue, newValue) -> {
             if (currentScreen != null) {
                 updateLabels(currentScreen.code);
             }
 
         });
-        primaryStage.widthProperty().addListener(stageSizeListener);
-        primaryStage.heightProperty().addListener(stageSizeListener);
+        ChangeListener<Number> stageWidthListener = ((observable, oldValue, newValue) -> {
+            if (currentScreen != null) {
+                currentStageWidth = newValue.doubleValue();
+                updateLabels(currentScreen.code);
+            }
+
+        });
+
+        primaryStage.widthProperty().addListener(stageWidthListener);
+        primaryStage.heightProperty().addListener(stageHeightListener);
 
         showTitleScreen();
 
@@ -385,7 +397,7 @@ public class MainApp extends Application {
         } else {
             NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
             RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
-            
+
             nextDay.setLoadingMessage("Loading...");
             show(ScreenCode.NEXT_DAY_SCREEN);
             root.setButtonsDisable(true);
@@ -486,6 +498,13 @@ public class MainApp extends Application {
      */
     public ResourceBundle getResx() {
         return resx;
+    }
+
+    /**
+     * @return the currentStageSize
+     */
+    public double getCurrentStageWidth() {
+        return currentStageWidth;
     }
 
 }

@@ -153,6 +153,17 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public boolean alwaysUpdate() {
+            return true;
+        }
+    },
+    RESULTS_CARD {
+        @Override
+        public String resourcePath() {
+            return "view/results/ResultsCard.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
             return false;
         }
     },

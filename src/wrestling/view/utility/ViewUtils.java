@@ -53,6 +53,26 @@ public final class ViewUtils {
         region.setMaxHeight(Double.MAX_VALUE);
         region.setMaxWidth(Double.MAX_VALUE);
     }
+    
+    //shows an image if it exists, handles hide/show of image frame
+    public static void showImage(String fileString, StackPane imageFrame, ImageView imageView) {
+
+        File imageFile = new File(fileString);
+        
+        if (imageFile.exists() && !imageFile.isDirectory()) {
+            //show the border if it is not visible
+            if (!imageFrame.visibleProperty().get()) {
+                imageFrame.setVisible(true);
+            }
+            Image image = new Image("File:" + imageFile);
+            imageView.setImage(image);
+        } else //hide the border if it is visible
+        {
+            if (imageFrame.visibleProperty().get()) {
+                imageFrame.setVisible(false);
+            }
+        }
+    }
 
     //shows an image if it exists, handles hide/show of image frame
     public static void showImage(File imageFile, StackPane imageFrame, ImageView imageView) {
@@ -81,6 +101,10 @@ public final class ViewUtils {
             switch (code) {
                 case ROOT: {
                     screen.pane = (BorderPane) loader.load();
+                    break;
+                }
+                case RESULTS_CARD: {
+                    screen.pane = (StackPane) loader.load();
                     break;
                 }
                 default:

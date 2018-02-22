@@ -154,7 +154,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
             popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
 
-            ViewUtils.showImage(new File(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
+            ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
                     workerImageBorder,
                     imageView);
 
