@@ -32,7 +32,7 @@ public final class ModelUtilityFunctions {
         ca1.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth());
         return ca1.get(Calendar.WEEK_OF_MONTH);
     }
-    
+
     //the maximum popularity worker the promotion can hire
     public static int maxPopularity(Promotion promotion) {
         return promotion.getLevel() * 20;
