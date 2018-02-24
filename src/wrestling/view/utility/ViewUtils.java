@@ -53,12 +53,12 @@ public final class ViewUtils {
         region.setMaxHeight(Double.MAX_VALUE);
         region.setMaxWidth(Double.MAX_VALUE);
     }
-    
+
     //shows an image if it exists, handles hide/show of image frame
     public static void showImage(String fileString, StackPane imageFrame, ImageView imageView) {
 
         File imageFile = new File(fileString);
-        
+
         if (imageFile.exists() && !imageFile.isDirectory()) {
             //show the border if it is not visible
             if (!imageFrame.visibleProperty().get()) {
@@ -67,11 +67,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     //shows an image if it exists, handles hide/show of image frame
@@ -85,11 +83,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {

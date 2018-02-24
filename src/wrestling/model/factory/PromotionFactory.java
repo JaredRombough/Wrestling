@@ -55,7 +55,7 @@ public class PromotionFactory {
             double currentPromotions = 0;
 
             //levels are 1 to 5
-            int currentLevel = i + 1;
+            int currentLevel = 5 - i;
 
             List<Promotion> currentLevelPromotions = new ArrayList<>();
 

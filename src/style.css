@@ -25,6 +25,14 @@ GREY
 
 }
 
+.resultsCardText {
+    -fx-background-color: #757575;
+    -fx-text-fill: black;
+    -fx-border-style: solid;
+    -fx-border-color: #757575;
+    -fx-border-width: 2px;
+}
+
 .titleScreenBackdrop{
     -fx-background-color: black;
 }
