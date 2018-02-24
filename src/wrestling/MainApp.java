@@ -72,6 +72,7 @@ public class MainApp extends Application {
     private Screen currentScreen;
 
     private double currentStageWidth;
+    private double currentStageHeight;
 
     public MainApp() {
         this.screens = new ArrayList<>();
@@ -97,14 +98,16 @@ public class MainApp extends Application {
         primaryStage.centerOnScreen();
 
         ChangeListener<Number> stageHeightListener = ((observable, oldValue, newValue) -> {
+            currentStageHeight = newValue.doubleValue();
             if (currentScreen != null) {
                 updateLabels(currentScreen.code);
             }
 
         });
         ChangeListener<Number> stageWidthListener = ((observable, oldValue, newValue) -> {
+            currentStageWidth = newValue.doubleValue();
             if (currentScreen != null) {
-                currentStageWidth = newValue.doubleValue();
+
                 updateLabels(currentScreen.code);
             }
 
@@ -319,7 +322,7 @@ public class MainApp extends Application {
      */
     public void initRootLayout() throws IOException {
         screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
-        Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane);
+        Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane, currentStageWidth, currentStageHeight);
         if (cssEnabled) {
             scene.getStylesheets().add("style.css");
         }
@@ -367,6 +370,7 @@ public class MainApp extends Application {
     currently these methods are combined because we only do it once
      */
     public void showStartGameScreen() throws IOException {
+
         Screen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
     }
@@ -505,6 +509,13 @@ public class MainApp extends Application {
      */
     public double getCurrentStageWidth() {
         return currentStageWidth;
+    }
+
+    /**
+     * @return the currentStageHeight
+     */
+    public double getCurrentStageHeight() {
+        return currentStageHeight;
     }
 
 }

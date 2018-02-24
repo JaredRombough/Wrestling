@@ -99,10 +99,6 @@ public final class ViewUtils {
                     screen.pane = (BorderPane) loader.load();
                     break;
                 }
-                case RESULTS_CARD: {
-                    screen.pane = (StackPane) loader.load();
-                    break;
-                }
                 default:
                     screen.pane = (AnchorPane) loader.load();
                     break;

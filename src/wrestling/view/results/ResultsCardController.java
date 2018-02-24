@@ -4,8 +4,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import wrestling.model.Worker;
@@ -19,6 +22,9 @@ public class ResultsCardController extends ControllerBase implements Initializab
 
     @FXML
     private ImageView imageView;
+
+    @FXML
+    private AnchorPane anchorPane;
 
     private int width;
     private int height;
@@ -48,14 +54,20 @@ public class ResultsCardController extends ControllerBase implements Initializab
 
         } else if (obj instanceof String) {
             Text text = new Text((String) obj);
-            border.getChildren().clear();
-            border.getChildren().add(text);
-            border.getStyleClass().clear();
-            border.getStyleClass().add("resultsCardText");
+            anchorPane.getChildren().clear();
+            VBox vbox = new VBox();
+            vbox.setAlignment(Pos.CENTER);
+            vbox.getChildren().add(text);
+            ViewUtils.anchorPaneToParent(anchorPane, vbox);
+            anchorPane.getStyleClass().clear();
+            anchorPane.getStyleClass().add("resultsCardText");
             if (worker == null) {
-                border.setMaxWidth(text.getBoundsInParent().getWidth());
+                anchorPane.setMaxWidth(text.getBoundsInParent().getWidth());
+                anchorPane.setMaxHeight(text.getBoundsInParent().getHeight());
             } else {
-                border.setMinWidth(text.getBoundsInParent().getWidth() + 20);
+                anchorPane.setMinWidth(text.getBoundsInParent().getWidth() + 20);
+                anchorPane.setMinHeight(text.getBoundsInParent().getHeight() * 2);
+                anchorPane.getStyleClass().add("darkBorder");
             }
 
         }

@@ -48,7 +48,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
     }
 
     @Override
