@@ -4,54 +4,67 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import wrestling.model.Worker;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ResultsCardController extends ControllerBase implements Initializable {
-
+    
     @FXML
     private StackPane border;
-
+    
     @FXML
     private ImageView imageView;
-
+    
     @FXML
     private AnchorPane anchorPane;
-
+    
+    @FXML
+    private Label nameLabel;
+    
     private int width;
     private int height;
+    private int padding;
     private Worker worker;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        width = 150;
-        height = 210;
+        width = 200;
+        height = 200;
+        padding = 20;
+        imageView.setPreserveRatio(true);
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
+        
     }
-
+    
     @Override
     public void setCurrent(Object obj) {
-
+        
         if (obj instanceof Worker) {
             worker = (Worker) obj;
             String imgString = worker.getImageString();
+            nameLabel.setText(worker.getName());
             if (imgString != null && !imgString.isEmpty()) {
+                
+                border.setMinSize(width + padding, height + padding);
+                border.setPrefSize(width + padding, height + padding);
+                
                 ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
                         border,
                         imageView);
             } else {
                 setCurrent(worker.getName());
             }
-
+            
         } else if (obj instanceof String) {
             Text text = new Text((String) obj);
             anchorPane.getChildren().clear();
@@ -69,8 +82,8 @@ public class ResultsCardController extends ControllerBase implements Initializab
                 anchorPane.setMinHeight(text.getBoundsInParent().getHeight() * 2);
                 anchorPane.getStyleClass().add("darkBorder");
             }
-
+            
         }
     }
-
+    
 }

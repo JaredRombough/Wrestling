@@ -53,7 +53,6 @@ public class MainApp extends Application {
         launch(args);
 
     }
-    private boolean preRun = false;
 
     private final transient Logger logger;
 
@@ -65,6 +64,8 @@ public class MainApp extends Application {
     private File logosFolder;
     private File dataFolder;
 
+    private boolean preRun = false;
+    private boolean randomGame;
     private final boolean cssEnabled;
 
     private final ResourceBundle resx;
@@ -122,6 +123,7 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
+        randomGame = true;
         try {
             gameController = new GameController(true);
         } catch (IOException ex) {
@@ -138,6 +140,7 @@ public class MainApp extends Application {
 
     //starts a new game from imported data
     public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
+        randomGame = false;
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;
         this.logosFolder = logosFolder;
@@ -194,30 +197,26 @@ public class MainApp extends Application {
     //shows initial title screen
     private void showTitleScreen() throws IOException {
 
-        try {
-            Screen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
+        Screen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
 
-            // Show the scene containing the root layout.
-            Scene scene = new Scene(titleScreen.pane);
+        // Show the scene containing the root layout.
+        Scene scene = new Scene(titleScreen.pane);
 
-            if (cssEnabled) {
-                scene.getStylesheets().add("style.css");
-            }
-
-            getPrimaryStage().setScene(scene);
-            getPrimaryStage().show();
-
-            ((TitleScreenController) titleScreen.controller).setImage(loadTitleScreenImage());
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-            throw ex;
+        if (cssEnabled) {
+            scene.getStylesheets().add("style.css");
         }
+
+        getPrimaryStage().setScene(scene);
+        getPrimaryStage().show();
+
+        ((TitleScreenController) titleScreen.controller).setImage(loadImageFromPath("images/title.jpg"));
 
     }
 
-    private Image loadTitleScreenImage() throws IOException {
-        BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("title.jpg"));
-        return SwingFXUtils.toFXImage(bufferedImage, null);
+    public Image loadImageFromPath(String imagePath) {
+//        BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("images/title.jpg"));
+//        return SwingFXUtils.toFXImage(bufferedImage, null);
+        return ViewUtils.loadImage(getClass().getResourceAsStream(imagePath));
     }
 
     public void startGame() throws IOException {
@@ -516,6 +515,13 @@ public class MainApp extends Application {
      */
     public double getCurrentStageHeight() {
         return currentStageHeight;
+    }
+
+    /**
+     * @return the randomGame
+     */
+    public boolean isRandomGame() {
+        return randomGame;
     }
 
 }

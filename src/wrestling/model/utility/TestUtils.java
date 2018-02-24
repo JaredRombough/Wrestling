@@ -1,7 +1,15 @@
 package wrestling.model.utility;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wrestling.model.Event;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
@@ -10,9 +18,17 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 
 public final class TestUtils {
-    
-    
-    public static EventView testEventView(Event event, List<Worker> roster) {
+
+    public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
+
+        if (addImages) {
+            String imagePath = "worker%03d.jpg";
+            int imagesAvailable = 8;
+            for (int i = 1; i <= imagesAvailable; i++) {
+                roster.get(i - 1).setImageString(String.format(imagePath, i));
+            }
+        }
+
         List<SegmentView> testSegments = new ArrayList<>();
         for (int teamSize = 1; teamSize < 10; teamSize++) {
             testSegments.add(testSegment(2, teamSize, roster));

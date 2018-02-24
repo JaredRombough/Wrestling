@@ -1,9 +1,12 @@
 package wrestling.view.utility;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -24,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javax.imageio.ImageIO;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +62,7 @@ public final class ViewUtils {
     public static void showImage(String fileString, StackPane imageFrame, ImageView imageView) {
 
         File imageFile = new File(fileString);
+        
 
         if (imageFile.exists() && !imageFile.isDirectory()) {
             //show the border if it is not visible
@@ -67,9 +72,13 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            
+            
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
     }
 
     //shows an image if it exists, handles hide/show of image frame
@@ -83,9 +92,23 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
+    }
+
+    public static Image loadImage(InputStream inputStream) {
+        Logger logger = LogManager.getLogger("ViewUtils loadScreenFromResource()");
+        BufferedImage bufferedImage = null;
+        Image image = null;
+        try {
+            bufferedImage = ImageIO.read(inputStream);
+        } catch (IOException ex) {
+            logger.log(Level.FATAL, "Error loading iamge", ex);
+        }
+        return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {
