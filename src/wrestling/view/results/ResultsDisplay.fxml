@@ -39,6 +39,7 @@
                   </ScrollPane>
                </children>
             </AnchorPane>
+            <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
          </children>
       </GridPane>
    </children>
