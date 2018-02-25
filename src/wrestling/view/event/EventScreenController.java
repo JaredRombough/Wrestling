@@ -37,18 +37,16 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
-import wrestling.model.MatchFinishes;
-import wrestling.model.MatchRules;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -134,8 +132,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void showResults() {
+        mainApp.setRootLayoutButtonDisable(true);
         boolean testing = true;
         if (testing) {
+
             mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, gameController.getContractManager().getActiveRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
             mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(segments)));

@@ -54,7 +54,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     public void updateLabels() {
 
         if (segmentView != null) {
-            segmentTitle.setText(gameController.getMatchManager().getMatchString(segmentView));
+            segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
             populateView();
         }
 

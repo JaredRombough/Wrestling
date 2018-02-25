@@ -1,6 +1,5 @@
 package wrestling.view.browser;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -22,9 +21,9 @@ import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.view.SimpleDisplayController;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
 

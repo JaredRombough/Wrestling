@@ -62,7 +62,6 @@ public final class ViewUtils {
     public static void showImage(String fileString, StackPane imageFrame, ImageView imageView) {
 
         File imageFile = new File(fileString);
-        
 
         if (imageFile.exists() && !imageFile.isDirectory()) {
             //show the border if it is not visible
@@ -73,8 +72,6 @@ public final class ViewUtils {
             imageView.setImage(image);
         } else //hide the border if it is visible
         {
-            
-            
             if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
@@ -100,7 +97,7 @@ public final class ViewUtils {
     }
 
     public static Image loadImage(InputStream inputStream) {
-        Logger logger = LogManager.getLogger("ViewUtils loadScreenFromResource()");
+        Logger logger = LogManager.getLogger("ViewUtils loadImage()");
         BufferedImage bufferedImage = null;
         Image image = null;
         try {
@@ -163,19 +160,13 @@ public final class ViewUtils {
     }
 
     public static boolean generateConfirmationDialogue(String header, String content) {
-        boolean response = true;
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm");
         alert.setHeaderText(header);
         alert.setContentText(content);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            response = true;
-        } else {
-            response = false;
-        }
-        return response;
+        return result.get() == ButtonType.OK;
     }
 
     public static void anchorPaneToParent(AnchorPane parent, Pane child) {

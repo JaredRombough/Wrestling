@@ -132,45 +132,57 @@ public class MatchManager {
         return getMatchString(segment.getTeams(), segment.getRules(), segment.getFinish());
     }
 
+    public String getMatchTitle(SegmentView segment) {
+        return getMatchTitle(segment.getTeams(), segment.getRules(), segment.getFinish());
+    }
+
+    public String getMatchTitle(List<List<Worker>> teams, MatchRule rules, MatchFinishes finish) {
+        String string = "";
+
+        if (isHandicapMatch(teams)) {
+            string += "Handicap Match\n";
+
+        } else if (rules.equals(MatchRules.DEFAULT)) {
+
+            if (teams.size() == 2) {
+
+                switch (teams.get(0).size()) {
+                    case 1:
+                        string += "Singles Match\n";
+                        break;
+                    case 2:
+                        string += "Tag Team Match\n";
+                        break;
+                    case 3:
+                        string += "Six Man Tag Team Match\n";
+                        break;
+                    case 4:
+                        string += "Eight Man Tag Team Match\n";
+                        break;
+                    case 5:
+                        string += "Ten Man Tag Team Match\n";
+                        break;
+                    default:
+                        break;
+                }
+
+            } else {
+                string += teams.size() + "-Way Match\n";
+            }
+        } else {
+            string += rules.description() + " Match\n";
+        }
+
+        return string;
+    }
+
     private String getMatchString(List<List<Worker>> teams, MatchRule rules, MatchFinishes finish) {
 
         String string = new String();
 
         if (teams.size() > 1) {
 
-            if (isHandicapMatch(teams)) {
-                string += "Handicap Match\n";
-
-            } else if (rules.equals(MatchRules.DEFAULT)) {
-
-                if (teams.size() == 2) {
-
-                    switch (teams.get(0).size()) {
-                        case 1:
-                            string += "Singles Match\n";
-                            break;
-                        case 2:
-                            string += "Tag Team Match\n";
-                            break;
-                        case 3:
-                            string += "Six Man Tag Team Match\n";
-                            break;
-                        case 4:
-                            string += "Eight Man Tag Team Match\n";
-                            break;
-                        case 5:
-                            string += "Ten Man Tag Team Match\n";
-                            break;
-                        default:
-                            break;
-                    }
-
-                } else {
-                    string += teams.size() + "-Way Match\n";
-                }
-            } else {
-                string += rules.description() + " Match\n";
-            }
+            string += getMatchTitle(teams, rules, finish);
 
             for (int t = 0; t < teams.size(); t++) {
                 List<Worker> team = teams.get(t);

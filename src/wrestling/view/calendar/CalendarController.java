@@ -1,6 +1,5 @@
 package wrestling.view.calendar;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -22,10 +21,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
 import wrestling.view.SimpleDisplayController;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class CalendarController extends ControllerBase implements Initializable {
 

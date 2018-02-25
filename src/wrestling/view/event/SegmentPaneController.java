@@ -27,8 +27,8 @@ import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentView;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
 

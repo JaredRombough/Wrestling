@@ -3,7 +3,6 @@ package wrestling;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,23 +17,21 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javax.imageio.ImageIO;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.controller.GameController;
-import wrestling.view.browser.BrowserController;
-import wrestling.view.calendar.CalendarController;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
+import wrestling.view.browser.BrowserController;
+import wrestling.view.calendar.CalendarController;
 import wrestling.view.start.TitleScreenController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -247,7 +244,7 @@ public class MainApp extends Application {
 
         preRun();
 
-        setButtonsDisable(false);
+        setRootLayoutButtonDisable(false);
         primaryStage.getScene().setCursor(Cursor.DEFAULT);
     }
 
@@ -449,7 +446,7 @@ public class MainApp extends Application {
     disable buttons, for when we're starting up the game
     and don't yet want to allow screen switching freedom
      */
-    private void setButtonsDisable(boolean disable) {
+    public void setRootLayoutButtonDisable(boolean disable) {
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).setButtonsDisable(disable);
     }
 

@@ -24,8 +24,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import wrestling.model.Worker;
 import wrestling.view.utility.LocalDragboard;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TeamPaneController extends ControllerBase implements Initializable {
 

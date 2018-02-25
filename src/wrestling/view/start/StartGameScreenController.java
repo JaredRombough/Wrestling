@@ -18,8 +18,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.utility.interfaces.ControllerBase;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.interfaces.ControllerBase;
 
 public class StartGameScreenController extends ControllerBase implements Initializable {
 
