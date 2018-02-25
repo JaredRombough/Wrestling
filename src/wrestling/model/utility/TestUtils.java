@@ -10,9 +10,9 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 
 public final class TestUtils {
-
+    
     public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
-
+        
         if (addImages) {
             String imagePath = "worker%03d.jpg";
             int imagesAvailable = 8;
@@ -20,44 +20,44 @@ public final class TestUtils {
                 roster.get(i - 1).setImageString(String.format(imagePath, i));
             }
         }
-
+        
         List<SegmentView> testSegments = new ArrayList<>();
         for (int teamSize = 1; teamSize < 10; teamSize++) {
             testSegments.add(testSegment(2, teamSize, roster));
             testSegments.add(testSegment(4, teamSize, roster));
         }
-
+        
         int[] numbers = new int[]{3, 4, 5, 6, 10, 20, 30, 40};
         for (int n = 0; n < numbers.length; n++) {
-
+            
             testSegments.add(testSegment(numbers[n], 1, roster));
         }
-
+        
         return new EventView(event, testSegments);
-
+        
     }
-
+    
     private static SegmentView testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
         SegmentView segmentView = new SegmentView();
         List<List<Worker>> teams = new ArrayList<>();
-
+        
         int currentWorkerIndex = 0;
-
+        
         for (int i = 0; i < numberOfTeams; i++) {
             List<Worker> team = new ArrayList<>();
-
+            
             for (int x = 0; x < teamSize; x++) {
                 team.add(roster.get(currentWorkerIndex));
                 currentWorkerIndex++;
             }
-
+            
             teams.add(team);
         }
         segmentView.setTeams(teams);
         segmentView.setRules(MatchRules.DEFAULT);
         segmentView.setFinish(MatchFinishes.CLEAN);
         return segmentView;
-
+        
     }
-
+    
 }

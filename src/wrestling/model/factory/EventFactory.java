@@ -76,11 +76,11 @@ public class EventFactory {
     }
 
     public void processEvent(EventView eventView, LocalDate date) {
-        EventFactory.this.processEvent(eventView.getEvent(), convertTempToSegment(eventView.getSegments()), date, EventType.LIVEEVENT);
+        processEvent(eventView.getEvent(), processSegmentView(eventView.getSegments()), date, EventType.LIVEEVENT);
     }
 
     public void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
-        EventFactory.this.processEvent(event, segments, date, EventType.LIVEEVENT);
+        processEvent(event, segments, date, EventType.LIVEEVENT);
     }
 
     public Event createFutureEvent(Promotion promotion, LocalDate date) {
@@ -89,15 +89,19 @@ public class EventFactory {
         return event;
     }
 
-    private List<Segment> convertTempToSegment(List<SegmentView> tempSegments) {
+    private List<Segment> processSegmentView(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
-            segments.add(matchFactory.CreateMatch(tempSegment.getTeams(), tempSegment.getRules(), tempSegment.getFinish()));
+            segments.add(processSegmentView(tempSegment));
         }
         return segments;
     }
 
-    
+    private Segment processSegmentView(SegmentView segmentView) {
+        return matchFactory.processMatch(segmentView.getTeams(), segmentView.getRules(), segmentView.getFinish());
+
+    }
+
     private void processContracts(iEvent event, List<Segment> segments) {
         eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
             contractManager.appearance(event.getDate(), contract);
@@ -111,6 +115,17 @@ public class EventFactory {
                 workerManager.gainPopularity(w);
             });
         }));
+    }
+
+    private Segment processSegment(Event event, SegmentView segmentView) {
+        Segment segment = processSegmentView(segmentView);
+        if (segment instanceof Match) {
+            eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
+            matchManager.getWinners((Match) segment).stream().forEach((w) -> {
+                workerManager.gainPopularity(w);
+            });
+        }
+        return segment;
     }
 
     private String processSegment(Segment segment) {

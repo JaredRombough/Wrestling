@@ -369,7 +369,7 @@ public class PromotionController implements Serializable {
                     Collections.swap(matchTeams, 0, 1);
                 }
 
-                Match match = matchFactory.CreateMatch(matchTeams, title);
+                Match match = matchFactory.processMatch(matchTeams, title);
                 segments.add(match);
             }
         }
@@ -384,7 +384,7 @@ public class PromotionController implements Serializable {
                     List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
                     List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
                     List<List<Worker>> teams = new ArrayList<>(Arrays.asList(teamA, teamB));
-                    Match match = matchFactory.CreateMatch(teams);
+                    Match match = matchFactory.processMatch(teams);
 
                     segments.add(match);
                 }

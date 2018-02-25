@@ -431,7 +431,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
         }
         StringProperty name = new SimpleStringProperty();
-        ObjectProperty<Segment> segment = new SimpleObjectProperty();
+        ObjectProperty<SegmentView> segment = new SimpleObjectProperty();
 
         @Override
         public String toString() {

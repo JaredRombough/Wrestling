@@ -26,19 +26,19 @@ public class MatchFactory implements Serializable {
     /*
     this constructor takes an arbitrary number of teams
      */
-    public Match CreateMatch(final List<List<Worker>> teams) {
+    public Match processMatch(final List<List<Worker>> teams) {
         Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
-    public Match CreateMatch(final List<List<Worker>> teams, final MatchRules rules, final MatchFinishes finish) {
+    public Match processMatch(final List<List<Worker>> teams, final MatchRules rules, final MatchFinishes finish) {
         Match match = new Match(rules, finish, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
-    public Match CreateMatch(final List<List<Worker>> teams, Title title) {
+    public Match processMatch(final List<List<Worker>> teams, Title title) {
         Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams, title);
         return match;
@@ -58,13 +58,13 @@ public class MatchFactory implements Serializable {
         segmentView.setRating(match.getRating());
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
-        
+
         for (List<Worker> team : teams) {
             for (Worker worker : team) {
                 matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
             }
         }
-        
+
         matchManager.addMatch(match);
     }
 

@@ -8,13 +8,14 @@ import wrestling.model.MatchRules;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 
-public class SegmentView implements Segment {
+public class SegmentView {
 
     private List<List<Worker>> teams;
     private MatchRules rules;
     private MatchFinishes finish;
     private int rating;
     private LocalDate date;
+    private Segment segment;
 
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
@@ -92,6 +93,20 @@ public class SegmentView implements Segment {
      */
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    /**
+     * @return the segment
+     */
+    public Segment getSegment() {
+        return segment;
+    }
+
+    /**
+     * @param segment the segment to set
+     */
+    public void setSegment(Segment segment) {
+        this.segment = segment;
     }
 
 }

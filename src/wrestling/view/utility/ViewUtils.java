@@ -71,11 +71,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     //shows an image if it exists, handles hide/show of image frame
@@ -89,11 +87,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     public static Image loadImage(InputStream inputStream) {
