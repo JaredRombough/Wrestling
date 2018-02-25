@@ -27,7 +27,7 @@
          </rowConstraints>
          <children>
             <Text fx:id="segmentTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" GridPane.halignment="CENTER" />
-            <AnchorPane GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+            <AnchorPane GridPane.rowIndex="1" GridPane.rowSpan="6">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>

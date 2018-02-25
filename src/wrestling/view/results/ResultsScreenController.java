@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -28,7 +29,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @FXML
     private Button nextButton;
 
-    private EventView currentEvent;
+    private EventView eventView;
 
     private int currentSegmentViewIndex;
 
@@ -44,10 +45,11 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (event.getSource() == nextButton) {
-            if (currentSegmentViewIndex < currentEvent.getSegments().size()) {
+            if (currentSegmentViewIndex < eventView.getSegments().size()) {
                 nextSegment();
+            } else if (eventView.getEvent().getAttendance() == 0) {
+                showSummary();
             } else {
-                gameController.getEventFactory().processEvent(currentEvent, gameController.getDateManager().today());
                 try {
                     mainApp.nextDay();
                 } catch (IOException ex) {
@@ -60,7 +62,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @Override
     public void setCurrent(Object object) {
         if (object instanceof EventView) {
-            currentEvent = (EventView) object;
+            eventView = (EventView) object;
             currentSegmentViewIndex = 0;
             nextSegment();
             updateLabels();
@@ -69,24 +71,31 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     @Override
     public void updateLabels() {
-        if (currentEvent != null) {
-            titleText.setText(currentEvent.getEvent().toString());
+        if (eventView != null) {
+            titleText.setText(eventView.getEvent().toString());
             if (currentResultsDisplay != null) {
                 currentResultsDisplay.controller.updateLabels();
             }
         }
     }
 
+    private void showSummary() {
+        gameController.getEventFactory().processEvent(eventView, gameController.getDateManager().today());
+        showNextDisplay(eventView);
+    }
+
     private void nextSegment() {
+        SegmentView current = eventView.getSegments().get(currentSegmentViewIndex);
+        current.setSegment(gameController.getEventFactory().processSegment(eventView.getEvent(), current));
+        currentSegmentViewIndex++;
+        showNextDisplay(current);
+    }
 
+    private void showNextDisplay(Object obj) {
         currentResultsDisplay = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_DISPLAY, mainApp, gameController);
-
-        currentResultsDisplay.controller.setCurrent(currentEvent.getSegments().get(currentSegmentViewIndex));
-
+        currentResultsDisplay.controller.setCurrent(obj);
         resultsDisplayPane.getChildren().clear();
         ViewUtils.anchorPaneToParent(resultsDisplayPane, currentResultsDisplay.pane);
-
-        currentSegmentViewIndex++;
     }
 
 }

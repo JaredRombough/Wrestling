@@ -13,7 +13,6 @@ public class SegmentView {
     private List<List<Worker>> teams;
     private MatchRules rules;
     private MatchFinishes finish;
-    private int rating;
     private LocalDate date;
     private Segment segment;
 
@@ -65,20 +64,6 @@ public class SegmentView {
      */
     public void setFinish(MatchFinishes finish) {
         this.finish = finish;
-    }
-
-    /**
-     * @return the rating
-     */
-    public int getRating() {
-        return rating;
-    }
-
-    /**
-     * @param rating the rating to set
-     */
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     /**

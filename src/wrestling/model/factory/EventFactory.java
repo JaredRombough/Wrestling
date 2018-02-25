@@ -61,7 +61,7 @@ public class EventFactory {
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
 
-        EventFactory.this.processEvent(event, segments, date);
+        processEvent(event, segments, date);
     }
 
     private void processEvent(Event event, final List<Segment> segments, LocalDate date) {
@@ -117,7 +117,7 @@ public class EventFactory {
         }));
     }
 
-    private Segment processSegment(Event event, SegmentView segmentView) {
+    public Segment processSegment(Event event, SegmentView segmentView) {
         Segment segment = processSegmentView(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, event));

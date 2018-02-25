@@ -31,6 +31,7 @@ public class Match implements Segment {
     /**
      * @return the rating
      */
+    @Override
     public int getRating() {
         return rating;
     }

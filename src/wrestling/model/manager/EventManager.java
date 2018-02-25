@@ -66,6 +66,10 @@ public class EventManager {
         eventWorkers.add(eventWorker);
     }
 
+    public boolean hasEvent(Event event) {
+        return events.contains(event);
+    }
+
     public void cancelEvent(Event eventToCancel) {
         for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext();) {
             MatchEvent matchEvent = iter.next();
@@ -302,7 +306,7 @@ public class EventManager {
         return attendance;
     }
 
-    public int calculateAttendance (List<Segment> segments, Promotion promotion) {
+    public int calculateAttendance(List<Segment> segments, Promotion promotion) {
         int attendance = 0;
 
         switch (promotion.getLevel()) {

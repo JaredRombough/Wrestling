@@ -55,7 +55,6 @@ public class MatchFactory implements Serializable {
         segmentView.setFinish(match.getFinish());
         segmentView.setRules(match.getRules());
         segmentView.setTeams(teams);
-        segmentView.setRating(match.getRating());
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
 

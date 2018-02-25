@@ -12,7 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import wrestling.model.Event;
+import wrestling.model.Match;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.Segment;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -31,6 +35,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private Text segmentTitle;
 
     @FXML
+    private Text summaryText;
+
+    @FXML
     private ScrollPane scrollPane;
 
     private SegmentView segmentView;
@@ -40,6 +47,8 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         flowPane.setAlignment(Pos.TOP_CENTER);
         flowPane.setHgap(10);
         flowPane.setVgap(10);
+        summaryText.setText("");
+        segmentTitle.setText("");
     }
 
     @Override
@@ -47,7 +56,10 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         if (obj instanceof SegmentView) {
             this.segmentView = (SegmentView) obj;
             updateLabels();
-        }
+        } else if (obj instanceof EventView) {
+            showEventSummary(((EventView) obj).getEvent());
+        };
+
     }
 
     @Override
@@ -55,8 +67,23 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
         if (segmentView != null) {
             segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
+            Segment segment = segmentView.getSegment();
+            summaryText.setText((segment instanceof Match ? "Match" : "Segment")
+                    + String.format(" rating: %d", segment.getRating()));
             populateView();
         }
+
+    }
+
+    private void showEventSummary(Event event) {
+        segmentTitle.setText("Event Summary");
+        Text text = new Text();
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Attendance: %d\n", event.getAttendance()));
+        sb.append(String.format("Gate: %d\n", event.getGate()));
+        sb.append(String.format("Costs: %d\n", event.getCost()));
+        text.setText(sb.toString());
+        flowPane.getChildren().add(text);
 
     }
 

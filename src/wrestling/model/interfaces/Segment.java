@@ -5,4 +5,5 @@ generic segment class to be extended by more specific segments like matches
  */
 public interface Segment {
 
+    public int getRating();
 }
