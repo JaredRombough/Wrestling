@@ -3,7 +3,6 @@ package wrestling.view.event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
@@ -20,31 +19,24 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.Worker;
-import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.TestUtils;
-import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -102,10 +94,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private SegmentView currentSegment() {
-        return segments.get(currentSegmentNumber.intValue());
+        return segments.get(getCurrentSegmentNumber().intValue());
     }
 
-    private void setCurrentSegmentNumber(int number) {
+    public void setCurrentSegmentNumber(int number) {
 
         Number newNumber = number;
         setCurrentSegmentNumber(newNumber);
@@ -115,7 +107,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         currentSegmentNumber = number;
 
         segmentPaneHolder.getChildren().clear();
-        segmentPaneHolder.getChildren().add(segmentPanes.get(currentSegmentNumber.intValue()));
+        segmentPaneHolder.getChildren().add(segmentPanes.get(getCurrentSegmentNumber().intValue()));
 
         updateLabels();
 
@@ -285,7 +277,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             segmentPanes.remove(indexToRemove);
 
-            setCurrentSegmentNumber(currentSegmentNumber);
+            setCurrentSegmentNumber(getCurrentSegmentNumber());
 
             //remove the controller too
             segmentPaneControllers.remove(indexToRemove);
@@ -307,7 +299,13 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
-        segmentListView.setCellFactory(param -> new SorterCell());
+        segmentListView.setCellFactory(param -> new SorterCell(
+                segmentPanes,
+                segmentPaneControllers,
+                segments,
+                segmentListView,
+                this
+        ));
 
         segmentListView.setItems(items);
 
@@ -357,7 +355,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateWorkerListView();
 
         //add the special DragDropHandlder
-        workersListView.setOnDragDropped(new WorkersListViewDragDropHandler());
+        workersListView.setOnDragDropped(new WorkersListViewDragDropHandler(workersListView, segmentPaneControllers, this));
 
     }
 
@@ -436,7 +434,23 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    private static class SegmentNameItem {
+    /**
+     * @return the currentSegmentNumber
+     */
+    public Number getCurrentSegmentNumber() {
+        return currentSegmentNumber;
+    }
+
+    //update the listview according to whatever browse mode we are in
+//    private void setListView(BrowserMode browserMode, List list) {
+//
+//        browserMode.setSortedList(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true)));
+//
+//        ViewUtils.updateComboBoxComparators(sortComboBox, browserMode.getComparators());
+//
+//        browserMode.getSortedList().comparatorProperty().bind(sortComboBox.valueProperty());
+//    }
+    public static class SegmentNameItem {
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {
             return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
@@ -448,145 +462,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         public String toString() {
             return name.get();
         }
-    }
-
-    private class SorterCell extends ListCell<SegmentNameItem> {
-
-        private Label myLabel;
-
-        public SorterCell() {
-            ListCell thisCell = this;
-
-            setOnDragDetected((MouseEvent event) -> {
-                if (getItem() == null) {
-
-                    return;
-                }
-
-                Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-
-                content.putString(getText());
-                LocalDragboard.getINSTANCE().putValue(SegmentNameItem.class, getItem());
-                content.putString(getItem().name.get());
-
-                dragboard.setContent(content);
-
-                event.consume();
-            });
-
-            setOnDragOver(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-
-                event.consume();
-            });
-
-            setOnDragEntered(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(0.3);
-                }
-            });
-
-            setOnDragExited(event -> {
-                if (event.getGestureSource() != thisCell
-                        && event.getDragboard().hasString()) {
-                    setOpacity(1);
-                }
-            });
-
-            setOnDragDropped((DragEvent event) -> {
-
-                if (getGraphic() == null) {
-                    return;
-
-                }
-
-                boolean success = false;
-
-                LocalDragboard ldb = LocalDragboard.getINSTANCE();
-                if (ldb.hasType(SegmentNameItem.class)) {
-                    SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
-                    ObservableList<SegmentNameItem> items = getListView().getItems();
-                    int draggedIdx = items.indexOf(segmentNameItem);
-                    int thisIdx = items.indexOf(getItem());
-
-                    //swap all parallel arrays associated with the segment
-                    Collections.swap(items, thisIdx, draggedIdx);
-                    Collections.swap(segmentPanes, thisIdx, draggedIdx);
-                    Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
-                    Collections.swap(segments, thisIdx, draggedIdx);
-
-                    setCurrentSegmentNumber(thisIdx);
-
-                    segmentListView.getSelectionModel().select(segmentNameItem);
-                    success = true;
-                }
-
-                event.setDropCompleted(success);
-
-                event.consume();
-            });
-
-            setOnDragDone(DragEvent::consume);
-        }
-
-        @Override
-        protected void updateItem(SegmentNameItem item, boolean empty) {
-
-            super.updateItem(item, empty);
-
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-
-                myLabel = new Label(item.name.getValue());
-                myLabel.setTextAlignment(TextAlignment.CENTER);
-
-                myLabel.setWrapText(true);
-                myLabel.setMaxWidth(segmentListView.getWidth() - 40);
-
-                myLabel.getStyleClass().add("sorterLabel");
-                setGraphic(myLabel);
-
-            }
-
-        }
-    }
-
-    /*
-    to be used by the workersListView on the left of the screen
-    should only be needed for when the user is dropping a worker
-    on the listView that has been dragged from one of the teams
-     */
-    private class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
-
-        @Override
-        public void handle(DragEvent event) {
-
-            LocalDragboard ldb = LocalDragboard.getINSTANCE();
-            if (ldb.hasType(Worker.class)) {
-                Worker worker = ldb.getValue(Worker.class);
-
-                if (!workersListView.getItems().contains(worker)) {
-                    segmentPaneControllers.get(currentSegmentNumber.intValue()).removeWorker(worker);
-                    workersListView.getItems().add(worker);
-                }
-
-                updateLabels();
-                segmentPaneControllers.get(currentSegmentNumber.intValue()).updateLabels();
-                updateSegments();
-
-                //Clear, otherwise we end up with the worker stuck on the dragboard?
-                ldb.clearAll();
-
-            }
-        }
-
     }
 
 }

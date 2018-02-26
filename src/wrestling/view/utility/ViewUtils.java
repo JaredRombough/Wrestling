@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ListCell;
@@ -71,10 +73,12 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
 
             }
+        }
 
     }
 
@@ -89,11 +93,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     public static Image loadImage(InputStream inputStream) {
@@ -194,6 +196,21 @@ public final class ViewUtils {
                 LocalDragboard.getINSTANCE().putValue(Worker.class, worker);
                 event.consume();
             });
+        }
+    }
+
+    //update the sortbox to match the browse mode we are in
+    public static void updateComboBoxComparators(ComboBox comboBox, ObservableList comparators) {
+        //definitely update the box if the box is empty
+        if (comboBox.getItems().isEmpty()) {
+            comboBox.setItems(comparators);
+            comboBox.getSelectionModel().selectFirst();
+        }
+
+        //if the box is not empty check if it has the same stuff we're trying to put in it
+        if (!comboBox.getItems().get(0).getClass().equals(comparators.get(0).getClass())) {
+            comboBox.setItems(comparators);
+            comboBox.getSelectionModel().selectFirst();
         }
     }
 

@@ -82,7 +82,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private Label currentPromotionLabel;
 
     @FXML
-    private ComboBox sortBox;
+    private ComboBox sortComboBox;
 
     private Button lastButton;
 
@@ -135,29 +135,14 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     }
 
-    //update the sortbox to match the browse mode we are in
-    private void updateSortBox(ObservableList comparators) {
-        //definitely update the box if the box is empty
-        if (sortBox.getItems().isEmpty()) {
-            sortBox.setItems(comparators);
-            sortBox.getSelectionModel().selectFirst();
-        }
-
-        //if the box is not empty check if it has the same stuff we're trying to put in it
-        if (!sortBox.getItems().get(0).getClass().equals(comparators.get(0).getClass())) {
-            sortBox.setItems(comparators);
-            sortBox.getSelectionModel().selectFirst();
-        }
-    }
-
     //update the listview according to whatever browse mode we are in
     private void setListView(BrowserMode browserMode, List list) {
 
         browserMode.setSortedList(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true)));
 
-        updateSortBox(browserMode.getComparators());
+        ViewUtils.updateComboBoxComparators(sortComboBox, browserMode.getComparators());
 
-        browserMode.getSortedList().comparatorProperty().bind(sortBox.valueProperty());
+        browserMode.getSortedList().comparatorProperty().bind(sortComboBox.valueProperty());
     }
 
     @Override
