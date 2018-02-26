@@ -3,6 +3,7 @@ package wrestling.view.event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
@@ -14,6 +15,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,6 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -40,6 +44,8 @@ import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.comparators.WorkerNameComparator;
+import wrestling.view.utility.comparators.WorkerPopularityComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventScreenController extends ControllerBase implements Initializable {
@@ -70,9 +76,18 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private Label eventTitleLabel;
 
+    @FXML
+    private ComboBox comboBox;
+
+    @FXML
+    private Button reverseSortButton;
+
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private final List<SegmentView> segments = new ArrayList<>();
+
+    private SortedList workerSortedList;
+    private Comparator currentComparator;
 
     private Event currentEvent;
 
@@ -131,6 +146,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             addSegment();
         } else if (event.getSource() == removeSegmentButton) {
             removeSegment();
+        } else if (event.getSource() == reverseSortButton) {
+            sortWorkers(true);
         }
     }
 
@@ -357,25 +374,44 @@ public class EventScreenController extends ControllerBase implements Initializab
         //add the special DragDropHandlder
         workersListView.setOnDragDropped(new WorkersListViewDragDropHandler(workersListView, segmentPaneControllers, this));
 
+        comboBox.setItems(FXCollections.observableArrayList(
+                new WorkerNameComparator(),
+                new WorkerPopularityComparator()
+        ));
+
+        comboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                currentComparator = (Comparator) newItem;
+                sortWorkers(false);
+            }
+        });
+
+        comboBox.getSelectionModel().selectFirst();
+
+    }
+
+    private void sortWorkers(boolean reverse) {
+        if (reverse) {
+            currentComparator = currentComparator.reversed();
+            reverseSortButton.setText(
+                    reverseSortButton.getText().equals("▲")
+                    ? "▼" : "▲");
+        }
+        workerSortedList.setComparator(currentComparator);
     }
 
     private void updateWorkerListView() {
+        List<Worker> workers = new ArrayList<>();
 
-        //get the workers and add them to the listview on the left
-        ObservableList<Worker> workersList = FXCollections.observableArrayList();
-
-        List<Worker> roster = gameController.getContractManager().getFullRoster(playerPromotion());
-
-        for (Worker worker : roster) {
-            //we only want to include workers that aren't already in the segment
-            //as well as workers who aren't already booked on the event date (today)
+        for (Worker worker : gameController.getContractManager().getFullRoster(playerPromotion())) {
             if (workerIsAvailableForCurrentSegment(worker)) {
-                workersList.add(worker);
+                workers.add(worker);
             }
         }
 
-        workersListView.setItems(workersList);
-        ((RefreshSkin) workersListView.getSkin()).refresh();
+        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true));
+
+        workersListView.setItems(workerSortedList);
 
     }
 
@@ -400,6 +436,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
 
         logger = LogManager.getLogger(this.getClass());
+
+        reverseSortButton.setText("▼");
 
         totalSegments = 8;
 
@@ -441,15 +479,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         return currentSegmentNumber;
     }
 
-    //update the listview according to whatever browse mode we are in
-//    private void setListView(BrowserMode browserMode, List list) {
-//
-//        browserMode.setSortedList(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(list), p -> true)));
-//
-//        ViewUtils.updateComboBoxComparators(sortComboBox, browserMode.getComparators());
-//
-//        browserMode.getSortedList().comparatorProperty().bind(sortComboBox.valueProperty());
-//    }
+    // update the listview according to whatever browse mode we are in
     public static class SegmentNameItem {
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {
