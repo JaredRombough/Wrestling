@@ -20,6 +20,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -123,7 +125,16 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-            showResults();
+            if (removeEmpty(segments).isEmpty()) {
+                ViewUtils.generateAlert(
+                        "Error",
+                        "Event is not valid.",
+                        "An event must have at least one segment.",
+                        AlertType.ERROR)
+                        .showAndWait();
+            } else {
+                showResults();
+            }
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
         } else if (event.getSource() == removeSegmentButton) {
@@ -133,10 +144,10 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private void showResults() {
         mainApp.setRootLayoutButtonDisable(true);
-        boolean testing = true;
+        boolean testing = false;
         if (testing) {
 
-            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, gameController.getContractManager().getActiveRoster(playerPromotion()), mainApp.isRandomGame()));
+            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, gameController.getContractManager().getFullRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
             mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(segments)));
         }

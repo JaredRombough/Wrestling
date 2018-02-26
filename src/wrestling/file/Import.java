@@ -481,7 +481,14 @@ public class Import {
             }
 
             if (counter == 36) {
-                month = Month.of(hexStringToInt(hexValueString));
+                int monthInt = hexStringToInt(hexValueString);
+                if (monthInt < 1 || monthInt > 12) {
+                    logger.log(Level.WARN, String.format("Invalid month of %d for %s", monthInt, currentLine.substring(1, 32).trim()));
+                    month = Month.of(1);
+                } else {
+                    month = Month.of(monthInt);
+                }
+
             }
 
             if (counter == 47) {

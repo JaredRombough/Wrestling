@@ -32,14 +32,14 @@ import wrestling.model.utility.ModelUtilityFunctions;
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
-
+    
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
     private final MatchFactory matchFactory;
-
+    
     private final DateManager dateManager;
     private final ContractManager contractManager;
     private final EventManager eventManager;
@@ -49,34 +49,34 @@ public final class GameController implements Serializable {
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final MatchManager matchManager;
-
+    
     private final PromotionController promotionController;
-
+    
     private final int EVENT_MONTHS = 6;
-
+    
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 1));
-
+        
         titleManager = new TitleManager(dateManager);
-
+        
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
         matchManager = new MatchManager(dateManager);
-
+        
         contractManager = new ContractManager(promotionManager);
         eventManager = new EventManager(
                 contractManager,
                 dateManager,
                 matchManager);
-
+        
         titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(matchManager, dateManager);
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
-
+        
         eventFactory = new EventFactory(
                 contractManager,
                 eventManager,
@@ -85,7 +85,7 @@ public final class GameController implements Serializable {
                 promotionManager,
                 titleManager,
                 workerManager);
-
+        
         promotionFactory = new PromotionFactory(
                 contractFactory,
                 workerFactory,
@@ -93,7 +93,7 @@ public final class GameController implements Serializable {
                 dateManager,
                 promotionManager,
                 workerManager);
-
+        
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
@@ -104,11 +104,11 @@ public final class GameController implements Serializable {
                 televisionManager,
                 titleManager,
                 workerManager);
-
+        
         if (randomGame) {
             promotionFactory.preparePromotions();
         }
-
+        
     }
 
     //only called by MainApp
@@ -117,16 +117,16 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {
             getPromotionController().dailyUpdate(promotion);
-
+            
         }
-
+        
         if (dateManager.today().getDayOfMonth() == 1) {
             monthlyUpdate();
         }
-
+        
         dateManager.nextDay();
     }
-
+    
     public void initializeEvents() {
         YearMonth yearMonth = YearMonth.from(dateManager.today());
         for (int i = 0; i < EVENT_MONTHS; i++) {
@@ -134,19 +134,19 @@ public final class GameController implements Serializable {
             yearMonth = yearMonth.plusMonths(1);
         }
     }
-
+    
     private void monthlyUpdate() {
         YearMonth yearMonth = YearMonth.from(dateManager.today());
         yearMonth = yearMonth.plusMonths(EVENT_MONTHS);
         bookEventsForMonth(yearMonth);
     }
-
+    
     private void bookEventsForMonth(YearMonth yearMonth) {
         LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
         List<LocalDate> weekends = new ArrayList<>();
-
+        
         while (currentDate.getMonth().equals(yearMonth.getMonth())) {
-
+            
             for (Promotion promotion : promotionManager.getPromotions()) {
                 List<Television> tvOnDate = televisionManager.tvOnDate(promotion, currentDate);
                 for (Television television : tvOnDate) {
@@ -157,7 +157,8 @@ public final class GameController implements Serializable {
                 }
             }
             if (currentDate.getDayOfWeek().toString().equals("SUNDAY")
-                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")) {
+                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")
+                    || currentDate.getDayOfWeek().toString().equals("FRIDAY")) {
                 weekends.add(currentDate);
             }
             currentDate = LocalDate.from(currentDate).plusDays(1);
@@ -169,14 +170,14 @@ public final class GameController implements Serializable {
             do {
                 eventDate = weekends.get(ModelUtilityFunctions.randRange(0, weekends.size() - 1));
             } while (eventManager.getEventOnDate(promotion, eventDate) != null);
-
+            
             EventName eventName = eventManager.getEventName(promotion, yearMonth.getMonth());
             if (eventName != null) {
                 promotionController.bookNextEvent(promotion, eventDate, eventName);
             } else {
                 promotionController.bookNextEvent(promotion, eventDate);
             }
-
+            
         }
     }
 
@@ -291,5 +292,5 @@ public final class GameController implements Serializable {
     public MatchManager getMatchManager() {
         return matchManager;
     }
-
+    
 }

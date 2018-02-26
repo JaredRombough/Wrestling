@@ -16,73 +16,70 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ResultsCardController extends ControllerBase implements Initializable {
-    
+
     @FXML
     private StackPane border;
-    
+
     @FXML
     private ImageView imageView;
-    
+
     @FXML
     private AnchorPane anchorPane;
-    
+
     @FXML
     private Label nameLabel;
-    
+
     private int width;
     private int height;
     private int padding;
     private Worker worker;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        width = 200;
-        height = 200;
+        width = 180;
+        height = 180;
         padding = 20;
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
-        
+
     }
-    
+
     @Override
     public void setCurrent(Object obj) {
-        
+
         if (obj instanceof Worker) {
-            worker = (Worker) obj;
-            String imgString = worker.getImageString();
-            nameLabel.setText(worker.getName());
-            if (imgString != null && !imgString.isEmpty()) {
-                
-                border.setMinSize(width + padding, height + padding);
-                border.setPrefSize(width + padding, height + padding);
-                
-                ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
-                        border,
-                        imageView);
-            } else {
-                setCurrent(worker.getName());
-            }
-            
+            setCurrentWorker((Worker) obj);
         } else if (obj instanceof String) {
-            Text text = new Text((String) obj);
-            anchorPane.getChildren().clear();
-            VBox vbox = new VBox();
-            vbox.setAlignment(Pos.CENTER);
-            vbox.getChildren().add(text);
-            ViewUtils.anchorPaneToParent(anchorPane, vbox);
-            anchorPane.getStyleClass().clear();
-            anchorPane.getStyleClass().add("resultsCardText");
-            if (worker == null) {
-                anchorPane.setMaxWidth(text.getBoundsInParent().getWidth());
-                anchorPane.setMaxHeight(text.getBoundsInParent().getHeight());
-            } else {
-                anchorPane.setMinWidth(text.getBoundsInParent().getWidth() + 20);
-                anchorPane.setMinHeight(text.getBoundsInParent().getHeight() * 2);
-                anchorPane.getStyleClass().add("darkBorder");
-            }
-            
+            setCurrentString((String) obj);
         }
     }
-    
+
+    private void setCurrentWorker(Worker w) {
+        worker = w;
+        String imgString = worker.getImageString();
+        nameLabel.setText(worker.getName());
+        border.setMinSize(width + padding, height + padding);
+        border.setPrefSize(width + padding, height + padding);
+        ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
+                border,
+                imageView);
+        if (!border.isVisible()) {
+            border.setVisible(true);
+        }
+    }
+
+    private void setCurrentString(String string) {
+        Text text = new Text((String) string);
+        anchorPane.getChildren().clear();
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().add(text);
+        ViewUtils.anchorPaneToParent(anchorPane, vbox);
+        anchorPane.getStyleClass().clear();
+        anchorPane.getStyleClass().add("resultsCardText");
+        anchorPane.setMaxWidth(text.getBoundsInParent().getWidth());
+        anchorPane.setMaxHeight(text.getBoundsInParent().getHeight());
+    }
+
 }
