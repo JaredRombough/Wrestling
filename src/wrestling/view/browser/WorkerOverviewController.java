@@ -1,12 +1,10 @@
 package wrestling.view.browser;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -15,20 +13,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import wrestling.MainApp;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.view.SimpleDisplayController;
+import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
-
-    private AnchorPane contractPane;
-    private ContractPaneController contractPaneController;
 
     @FXML
     private GridPane gridPane;
@@ -71,8 +64,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private AnchorPane feedAnchor;
-    private AnchorPane feedPane;
-    private SimpleDisplayController feedPaneController;
+    private Screen feedPaneScreen;
+
+    @FXML
+    private AnchorPane contractPaneAnchor;
+    private Screen contractPaneScreen;
 
     private Worker currentWorker;
     private Promotion currentPromotion;
@@ -83,7 +79,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         Worker newWorker = (Worker) obj;
 
         currentWorker = newWorker;
-        contractPaneController.setWorker(newWorker);
+        contractPaneScreen.controller.setCurrent(newWorker);
 
         updateLabels();
     }
@@ -100,44 +96,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void initializeMore() {
-        loadContractPane();
-        loadFeed();
-    }
-
-    private void loadFeed() {
-        //load the contract pane
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(ScreenCode.SIMPLE_DISPLAY.resourcePath()));
-            feedPane = (AnchorPane) loader.load();
-
-            feedPaneController = (SimpleDisplayController) loader.getController();
-
-            feedPaneController.setDependencies(mainApp, gameController);
-
-            feedAnchor.getChildren().add(feedPane);
-
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-        }
-    }
-
-    private void loadContractPane() {
-        //load the contract pane
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(ScreenCode.CONTRACT_PANE.resourcePath()));
-            contractPane = (AnchorPane) loader.load();
-
-            contractPaneController = (ContractPaneController) loader.getController();
-
-            contractPaneController.setDependencies(mainApp, gameController);
-
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-        }
-
-        gridPane.add(contractPane, 0, 9, 4, 1);
+        contractPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT_PANE, mainApp, gameController);
+        ViewUtils.anchorPaneToParent(contractPaneAnchor, contractPaneScreen.pane);
+        feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController);
+        ViewUtils.anchorPaneToParent(feedAnchor, feedPaneScreen.pane);
     }
 
     @Override
@@ -209,15 +171,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
 
             //only show the contract pane if the worker can negotiate with the player
-            if (gameController.getContractManager().canNegotiate(currentWorker, currentPromotion)) {
-                if (!gridPane.getChildren().contains(contractPane)) {
-                    gridPane.add(contractPane, 0, 9, 4, 1);
-                }
-                contractPaneController.updateLabels();
-
-            } else if (gridPane.getChildren().contains(contractPane)) {
-                gridPane.getChildren().remove(contractPane);
-            }
+            contractPaneScreen.pane.setVisible(gameController.getContractManager().canNegotiate(currentWorker, currentPromotion));
 
         } else if (!gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)) {
             //probably our roster is empty for some reason, should be a rare situation
@@ -231,10 +185,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             behaviourLabel.setText("");
             popularityLabel.setText("");
 
-            contractPaneController.updateLabels();
+            contractPaneScreen.controller.updateLabels();
         }
 
-        feedPaneController.setCurrent(currentWorker);
+        feedPaneScreen.controller.setCurrent(currentWorker);
 
     }
 

@@ -354,14 +354,6 @@ public class MainApp extends Application {
     }
 
     /*
-    shows the browser and selects the most recent event
-     */
-    public void showLastEvent() {
-        show(ScreenCode.BROWSER);
-        ((BrowserController) ViewUtils.getByCode(screens, ScreenCode.BROWSER).controller).showLastEvent();
-    }
-
-    /*
     loads and shows a start game screen
     currently these methods are combined because we only do it once
      */

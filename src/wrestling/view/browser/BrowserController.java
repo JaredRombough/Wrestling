@@ -26,11 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.Event;
 import wrestling.model.Promotion;
-import wrestling.model.TagTeam;
-import wrestling.model.Title;
-import wrestling.model.Worker;
 import wrestling.view.event.SortControlController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -107,7 +103,15 @@ public class BrowserController extends ControllerBase implements Initializable {
     //keeps track of the last sortedlist so we can clear it when needed
     private SortedList lastSortedList;
 
-    private List currentListToBrowse;
+    private BrowseMode currentBrowseMode;
+
+    private enum BrowseMode {
+        FREE_AGENTS,
+        WORKERS,
+        TITLES,
+        TAG_TEAMS,
+        EVENTS
+    }
 
     /*
     sets the current promotion
@@ -134,20 +138,26 @@ public class BrowserController extends ControllerBase implements Initializable {
             if (displaySubScreen != null && displaySubScreen.controller instanceof WorkerOverviewController) {
                 ((WorkerOverviewController) displaySubScreen.controller).setCurrentPromotion(currentPromotion);
             }
+
+            updateLabels();
         }
 
     }
 
     @Override
     public void updateLabels() {
-        if (currentPromotion != null) {
-            setCurrentPromotion(currentPromotion);
-        }
+//        if (currentPromotion != null) {
+//            setCurrentPromotion(currentPromotion);
+//        }
 
-        if (currentListToBrowse != null) {
-            mainListView.setItems(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse), p -> true),
+        if (currentListToBrowse() != null) {
+            mainListView.setItems(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> true),
                     sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null));
+            if (mainListView.getSelectionModel().getSelectedItem() == null && !mainListView.getItems().isEmpty()) {
+                mainListView.getSelectionModel().selectFirst();
+            }
         }
+        //     browse();
 
     }
 
@@ -155,31 +165,32 @@ public class BrowserController extends ControllerBase implements Initializable {
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == rosterButton) {
-
-            browse(gameController.getContractManager().getFullRoster(currentPromotion));
+            currentBrowseMode = BrowseMode.WORKERS;
             updateSelectedButton(rosterButton);
 
         } else if (event.getSource() == eventsButton) {
-
-            browse(gameController.getEventManager().getEvents(currentPromotion));
+            currentBrowseMode = BrowseMode.EVENTS;
             updateSelectedButton(eventsButton);
 
         } else if (event.getSource() == freeAgentsButton) {
-
-            browse(gameController.getWorkerManager().freeAgents(playerPromotion()));
+            currentBrowseMode = BrowseMode.FREE_AGENTS;
             updateSelectedButton(freeAgentsButton);
+
         } else if (event.getSource() == myPromotionButton) {
+
             updateSelectedButton(myPromotionButton);
             setCurrentPromotion(playerPromotion());
 
         } else if (event.getSource() == titlesButton) {
+            currentBrowseMode = BrowseMode.TITLES;
             updateSelectedButton(titlesButton);
-            browse(gameController.getTitleManager().getTitles(currentPromotion));
 
         } else if (event.getSource() == teamsButton) {
+            currentBrowseMode = BrowseMode.TAG_TEAMS;
             updateSelectedButton(teamsButton);
-            browse(gameController.getTagTeamManager().getTagTeams(currentPromotion));
+
         }
+        browse();
     }
 
     private void updateSelectedButton(Button button) {
@@ -199,17 +210,6 @@ public class BrowserController extends ControllerBase implements Initializable {
     }
 
     /*
-    meant to be called from the event booking screen (or perhaps elsewhere)
-    and shows the most recent event. right now it just selects the first one
-    on the list
-     */
-    public void showLastEvent() {
-        setCurrentPromotion(playerPromotion());
-        browse(gameController.getEventManager().getEvents(playerPromotion()));
-        eventsButton.fire();
-    }
-
-    /*
     clear the last listview and display node
      */
     private void clearLast() {
@@ -222,48 +222,81 @@ public class BrowserController extends ControllerBase implements Initializable {
         gridPane.getChildren().remove(lastDisplayNode);
     }
 
+    private void browse() {
 
-    private void browse(List listToBrowse) {
+        ScreenCode subScreenCode = ScreenCode.SIMPLE_DISPLAY;
 
-        if (!listToBrowse.isEmpty()) {
+        ObservableList comparators = null;
+        List listToBrowse = null;
+        switch (currentBrowseMode) {
 
-            currentListToBrowse = listToBrowse;
-
-            ScreenCode subScreenCode = ScreenCode.SIMPLE_DISPLAY;
-
-            ObservableList comparators = null;
-            Object firstObject = listToBrowse.get(0);
-            if (firstObject instanceof Worker) {
+            case WORKERS:
                 comparators = FXCollections.observableArrayList(
                         new WorkerNameComparator(),
                         new WorkerPopularityComparator());
                 subScreenCode = ScreenCode.WORKER_OVERVIEW;
-            } else if (firstObject instanceof Event) {
+                break;
+            case FREE_AGENTS:
+                comparators = FXCollections.observableArrayList(
+                        new WorkerNameComparator(),
+                        new WorkerPopularityComparator());
+                subScreenCode = ScreenCode.WORKER_OVERVIEW;
+                break;
+            case EVENTS:
                 comparators = FXCollections.observableArrayList(
                         new EventDateComparator());
-            } else if (firstObject instanceof Title) {
+                break;
+            case TITLES:
                 comparators = FXCollections.observableArrayList(
                         new TitleNameComparator());
-            } else if (firstObject instanceof TagTeam) {
+                break;
+            case TAG_TEAMS:
                 comparators = FXCollections.observableArrayList(
-                        new TagTeamNameComparator()
-                );
-            }
-
-            displaySubScreen = ViewUtils.loadScreenFromResource(subScreenCode, mainApp, gameController);
-            mainDisplayPane.getChildren().clear();
-            ViewUtils.anchorPaneToParent(mainDisplayPane, displaySubScreen.pane);
-
-            sortControl.controller.setCurrent(comparators);
-
-            SortedList sortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(listToBrowse), p -> true),
-                    sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
-
-            mainListView.setItems(sortedList);
-            mainListView.getSelectionModel().selectFirst();
-
+                        new TagTeamNameComparator());
+                break;
         }
 
+        //    currentListToBrowse = currentListToBrowse();
+        displaySubScreen = ViewUtils.loadScreenFromResource(subScreenCode, mainApp, gameController);
+
+        mainDisplayPane.getChildren()
+                .clear();
+        ViewUtils.anchorPaneToParent(mainDisplayPane, displaySubScreen.pane);
+
+        sortControl.controller.setCurrent(comparators);
+
+        SortedList sortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> true),
+                sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
+
+        mainListView.setItems(sortedList);
+
+        mainListView.getSelectionModel()
+                .selectFirst();
+
+    }
+
+    private List currentListToBrowse() {
+        List listToBrowse = null;
+        switch (currentBrowseMode) {
+
+            case WORKERS:
+                listToBrowse = gameController.getContractManager().getFullRoster(currentPromotion);
+                break;
+            case FREE_AGENTS:
+                gameController.getWorkerManager().freeAgents(playerPromotion());
+                break;
+            case EVENTS:
+                listToBrowse = gameController.getEventManager().getEvents(currentPromotion);
+                break;
+            case TITLES:
+                listToBrowse = gameController.getTitleManager().getTitles(currentPromotion);
+                break;
+            case TAG_TEAMS:
+                listToBrowse = gameController.getTagTeamManager().getTagTeams(currentPromotion);
+                break;
+        }
+
+        return listToBrowse;
     }
 
     @Override
@@ -282,6 +315,8 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         stablesButton.setDisable(true);
         staffButton.setDisable(true);
+
+        currentBrowseMode = BrowseMode.WORKERS;
 
     }
 
@@ -339,11 +374,10 @@ public class BrowserController extends ControllerBase implements Initializable {
                 }
             });
 
-
             promotionComboBox.setValue(playerPromotion());
 
             rosterButton.fire();
-            
+
         } catch (Exception ex) {
             logger.log(Level.ERROR, "Error initializing broswerController", ex);
         }
