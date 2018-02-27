@@ -57,7 +57,7 @@ public class CalendarController extends ControllerBase implements Initializable 
     @FXML
     private AnchorPane bookingPaneBase;
 
-    private CalendarNode selected;
+    private LocalDate selectedDate;
     private YearMonth currentYearMonth;
 
     private Screen simpleDisplayScreen;
@@ -177,24 +177,24 @@ public class CalendarController extends ControllerBase implements Initializable 
             calendarNode.getStyleClass().add(GREEN_BORDER);
         }
 
-        if (calendarNode.equals(selected)) {
-            selected.getStyleClass().add(SELECTED_CALENDAR_NODE);
+        if (calendarNode.getDate().equals(selectedDate)) {
+            calendarNode.getStyleClass().add(SELECTED_CALENDAR_NODE);
         }
     }
 
     private void clicked(CalendarNode calendarNode) {
-        selected = checkCurrentMonth(calendarNode.getDate());
+        selectedDate = checkCurrentMonth(calendarNode.getDate()).getDate();
 
         if (!listView.getItems().isEmpty()) {
             listView.getItems().clear();
         }
-        listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selected.getDate())));
+        listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selectedDate)));
 
         if (!listView.getItems().isEmpty()) {
             listView.getSelectionModel().selectFirst();
         }
 
-        bookShowScreen.controller.setCurrent(selected.getDate());
+        bookShowScreen.controller.setCurrent(selectedDate);
 
         updateLabels();
     }

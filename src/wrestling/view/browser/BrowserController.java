@@ -91,17 +91,9 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private Screen sortControl;
 
-    //for keeping track of the last nodes displayed 
-    //so we can find it and remove it from the gridpane before replacing it
-    private Node lastDisplayNode;
-    private ListView lastListView;
-
     private Label categoryButton;
 
     private Promotion currentPromotion;
-
-    //keeps track of the last sortedlist so we can clear it when needed
-    private SortedList lastSortedList;
 
     private BrowseMode currentBrowseMode;
 
@@ -159,32 +151,26 @@ public class BrowserController extends ControllerBase implements Initializable {
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
 
-        if (event.getSource() == rosterButton) {
+        Button button = (Button) event.getSource();
+
+        if (button == rosterButton) {
             currentBrowseMode = BrowseMode.WORKERS;
-            updateSelectedButton(rosterButton);
-
-        } else if (event.getSource() == eventsButton) {
+        } else if (button == eventsButton) {
             currentBrowseMode = BrowseMode.EVENTS;
-            updateSelectedButton(eventsButton);
-
-        } else if (event.getSource() == freeAgentsButton) {
+        } else if (button == freeAgentsButton) {
             currentBrowseMode = BrowseMode.FREE_AGENTS;
-            updateSelectedButton(freeAgentsButton);
-
-        } else if (event.getSource() == myPromotionButton) {
-
-            updateSelectedButton(myPromotionButton);
+        } else if (button == myPromotionButton) {
             setCurrentPromotion(playerPromotion());
-
-        } else if (event.getSource() == titlesButton) {
+        } else if (button == titlesButton) {
             currentBrowseMode = BrowseMode.TITLES;
-            updateSelectedButton(titlesButton);
-
-        } else if (event.getSource() == teamsButton) {
+        } else if (button == teamsButton) {
             currentBrowseMode = BrowseMode.TAG_TEAMS;
-            updateSelectedButton(teamsButton);
-
         }
+
+        if (!button.equals(myPromotionButton)) {
+            updateSelectedButton(button);
+        }
+
         browse();
     }
 
@@ -195,10 +181,6 @@ public class BrowserController extends ControllerBase implements Initializable {
         browseButtons.stream().filter((b) -> (b.getStyleClass().contains(selectedButtonClass))).forEach((b) -> {
             b.getStyleClass().remove(selectedButtonClass);
         });
-
-        if (currentPromotion.equals(playerPromotion()) && !button.equals(freeAgentsButton)) {
-            myPromotionButton.getStyleClass().add(selectedButtonClass);
-        }
 
         button.getStyleClass().add(selectedButtonClass);
 
