@@ -385,8 +385,12 @@ public class MainApp extends Application {
         }
     }
 
-    private void updateLabels(ScreenCode code) {
-        ViewUtils.getByCode(screens, code).controller.updateLabels();
+    public void updateLabels(ScreenCode code) {
+        Screen screen = ViewUtils.getByCode(screens, code);
+        if (screen != null) {
+            screen.controller.updateLabels();
+        }
+
     }
 
     public void nextDay() throws IOException {

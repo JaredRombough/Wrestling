@@ -42,6 +42,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.RefreshSkin;
+import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.WorkerNameComparator;
@@ -77,17 +78,14 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Label eventTitleLabel;
 
     @FXML
-    private ComboBox comboBox;
-
-    @FXML
-    private Button reverseSortButton;
+    private AnchorPane sortControlPane;
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private final List<SegmentView> segments = new ArrayList<>();
 
     private SortedList workerSortedList;
-    private Comparator currentComparator;
+    private Screen sortControl;
 
     private Event currentEvent;
 
@@ -146,8 +144,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             addSegment();
         } else if (event.getSource() == removeSegmentButton) {
             removeSegment();
-        } else if (event.getSource() == reverseSortButton) {
-            sortWorkers(true);
         }
     }
 
@@ -373,30 +369,15 @@ public class EventScreenController extends ControllerBase implements Initializab
         //add the special DragDropHandlder
         getWorkersListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
-        comboBox.setItems(FXCollections.observableArrayList(
+        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController);
+
+        sortControl.controller.setCurrent(FXCollections.observableArrayList(
                 new WorkerNameComparator(),
                 new WorkerPopularityComparator()
         ));
 
-        comboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
-            if (newItem != null) {
-                currentComparator = (Comparator) newItem;
-                sortWorkers(false);
-            }
-        });
+        ViewUtils.anchorPaneToParent(sortControlPane, sortControl.pane);
 
-        comboBox.getSelectionModel().selectFirst();
-
-    }
-
-    private void sortWorkers(boolean reverse) {
-        if (reverse) {
-            currentComparator = currentComparator.reversed();
-            reverseSortButton.setText(
-                    reverseSortButton.getText().equals("▲")
-                    ? "▼" : "▲");
-        }
-        workerSortedList.setComparator(currentComparator);
     }
 
     private void updateWorkerListView() {
@@ -408,7 +389,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
 
-        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true), currentComparator);
+        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true),
+                sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
 
         getWorkersListView().setItems(workerSortedList);
 
@@ -435,8 +417,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
 
         logger = LogManager.getLogger(this.getClass());
-
-        reverseSortButton.setText("▼");
 
         totalSegments = 8;
 

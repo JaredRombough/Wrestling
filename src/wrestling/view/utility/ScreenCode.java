@@ -35,7 +35,7 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return true;
         }
-        
+
     },
     EVENT {
 
@@ -96,7 +96,7 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return true;
         }
-    }, 
+    },
     SIMPLE_DISPLAY {
 
         @Override
@@ -204,6 +204,17 @@ public enum ScreenCode implements ScreenCodeInterface {
         @Override
         public String resourcePath() {
             return "view/event/SegmentPane.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
+    SORT_CONTROL {
+        @Override
+        public String resourcePath() {
+            return "view/event/SortControl.fxml";
         }
 
         @Override
