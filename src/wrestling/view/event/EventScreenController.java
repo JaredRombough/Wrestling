@@ -376,6 +376,8 @@ public class EventScreenController extends ControllerBase implements Initializab
                 new WorkerPopularityComparator()
         ));
 
+        ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
+
         ViewUtils.anchorPaneToParent(sortControlPane, sortControl.pane);
 
     }

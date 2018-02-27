@@ -23,6 +23,8 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private Comparator currentComparator;
 
+    private ScreenCode parentScreenCode;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         reverseButton.setText("▼");
@@ -49,7 +51,10 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private void setCurrentComparator(Comparator comparator) {
         currentComparator = comparator;
-        mainApp.updateLabels(ScreenCode.EVENT);
+        if (parentScreenCode != null) {
+            mainApp.updateLabels(parentScreenCode);
+        }
+
     }
 
     private void setComparators(ObservableList<Comparator> comparators) {
@@ -69,6 +74,13 @@ public class SortControlController extends ControllerBase implements Initializab
      */
     public Comparator getCurrentComparator() {
         return currentComparator;
+    }
+
+    /**
+     * @param parentScreenCode the parentScreenCode to set
+     */
+    public void setParentScreenCode(ScreenCode parentScreenCode) {
+        this.parentScreenCode = parentScreenCode;
     }
 
 }
