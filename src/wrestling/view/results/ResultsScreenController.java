@@ -92,10 +92,9 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     }
 
     private void showNextDisplay(Object obj) {
-        currentResultsDisplay = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_DISPLAY, mainApp, gameController);
-        currentResultsDisplay.controller.setCurrent(obj);
         resultsDisplayPane.getChildren().clear();
-        ViewUtils.anchorPaneToParent(resultsDisplayPane, currentResultsDisplay.pane);
+        currentResultsDisplay = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_DISPLAY, mainApp, gameController, resultsDisplayPane);
+        currentResultsDisplay.controller.setCurrent(obj);
     }
 
 }

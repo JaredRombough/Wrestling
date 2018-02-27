@@ -107,11 +107,9 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         populateCalendar(currentYearMonth);
 
-        simpleDisplayScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController);
-        bookShowScreen = ViewUtils.loadScreenFromResource(ScreenCode.BOOK_FUTURE_SHOW, mainApp, gameController);
+        simpleDisplayScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, displayPaneBase);
+        bookShowScreen = ViewUtils.loadScreenFromResource(ScreenCode.BOOK_FUTURE_SHOW, mainApp, gameController, bookingPaneBase);
         bookShowController = (BookShowController) bookShowScreen.controller;
-        ViewUtils.anchorPaneToParent(displayPaneBase, simpleDisplayScreen.pane);
-        ViewUtils.anchorPaneToParent(bookingPaneBase, bookShowScreen.pane);
         ((SimpleDisplayController) simpleDisplayScreen.controller).setDefaultTitle("No event selected");
 
         initializeButtons();

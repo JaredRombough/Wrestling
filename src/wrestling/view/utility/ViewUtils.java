@@ -73,12 +73,10 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
 
             }
-        }
 
     }
 
@@ -93,9 +91,11 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
+        }
     }
 
     public static Image loadImage(InputStream inputStream) {
@@ -108,6 +108,12 @@ public final class ViewUtils {
             logger.log(Level.FATAL, "Error loading iamge", ex);
         }
         return SwingFXUtils.toFXImage(bufferedImage, null);
+    }
+
+    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController, AnchorPane parent) {
+        Screen screen = loadScreenFromResource(code, mainApp, gameController);
+        anchorPaneToParent(parent, screen.pane);
+        return screen;
     }
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {

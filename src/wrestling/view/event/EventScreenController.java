@@ -369,7 +369,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         //add the special DragDropHandlder
         getWorkersListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
-        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController);
+        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
         sortControl.controller.setCurrent(FXCollections.observableArrayList(
                 new WorkerNameComparator(),
@@ -377,8 +377,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         ));
 
         ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
-
-        ViewUtils.anchorPaneToParent(sortControlPane, sortControl.pane);
 
     }
 

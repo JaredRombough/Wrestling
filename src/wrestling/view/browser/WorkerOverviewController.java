@@ -96,10 +96,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void initializeMore() {
-        contractPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT_PANE, mainApp, gameController);
-        ViewUtils.anchorPaneToParent(contractPaneAnchor, contractPaneScreen.pane);
-        feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController);
-        ViewUtils.anchorPaneToParent(feedAnchor, feedPaneScreen.pane);
+        contractPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT_PANE, mainApp, gameController, contractPaneAnchor);
+        feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
     }
 
     @Override

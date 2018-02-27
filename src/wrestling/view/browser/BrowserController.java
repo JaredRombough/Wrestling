@@ -256,12 +256,8 @@ public class BrowserController extends ControllerBase implements Initializable {
                 break;
         }
 
-        //    currentListToBrowse = currentListToBrowse();
-        displaySubScreen = ViewUtils.loadScreenFromResource(subScreenCode, mainApp, gameController);
-
-        mainDisplayPane.getChildren()
-                .clear();
-        ViewUtils.anchorPaneToParent(mainDisplayPane, displaySubScreen.pane);
+        mainDisplayPane.getChildren().clear();
+        displaySubScreen = ViewUtils.loadScreenFromResource(subScreenCode, mainApp, gameController, mainDisplayPane);
 
         sortControl.controller.setCurrent(comparators);
 
@@ -283,7 +279,7 @@ public class BrowserController extends ControllerBase implements Initializable {
                 listToBrowse = gameController.getContractManager().getFullRoster(currentPromotion);
                 break;
             case FREE_AGENTS:
-                gameController.getWorkerManager().freeAgents(playerPromotion());
+                listToBrowse = gameController.getWorkerManager().freeAgents(playerPromotion());
                 break;
             case EVENTS:
                 listToBrowse = gameController.getEventManager().getEvents(currentPromotion);
@@ -358,9 +354,8 @@ public class BrowserController extends ControllerBase implements Initializable {
         try {
             initializePromotionCombobox();
 
-            sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController);
+            sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
             ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.BROWSER);
-            ViewUtils.anchorPaneToParent(sortControlPane, sortControl.pane);
 
             mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
                 @Override
