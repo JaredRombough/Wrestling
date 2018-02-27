@@ -177,7 +177,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void clearSegments() {
         segments.clear();
         //go through the segmentPaneControllers and clear all the teams
-        for (SegmentPaneController current : segmentPaneControllers) {
+        for (SegmentPaneController current : getSegmentPaneControllers()) {
             current.clear();
         }
 
@@ -187,7 +187,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void updateSegments() {
 
         segments.clear();
-        for (SegmentPaneController currentController : segmentPaneControllers) {
+        for (SegmentPaneController currentController : getSegmentPaneControllers()) {
             segments.add(currentController.getSegmentView());
         }
 
@@ -229,7 +229,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private List<Worker> allWorkers() {
         List<Worker> allWorkers = new ArrayList<>();
-        for (SegmentPaneController segmentPaneController : segmentPaneControllers) {
+        for (SegmentPaneController segmentPaneController : getSegmentPaneControllers()) {
 
             for (Worker worker : segmentPaneController.getWorkers()) {
                 if (!allWorkers.contains(worker)) {
@@ -258,7 +258,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             //keep a reference to the controller
             SegmentPaneController controller = loader.getController();
-            segmentPaneControllers.add(controller);
+            getSegmentPaneControllers().add(controller);
 
             controller.setEventScreenController(this);
             controller.setDependencies(mainApp, gameController);
@@ -297,7 +297,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             setCurrentSegmentNumber(getCurrentSegmentNumber());
 
             //remove the controller too
-            segmentPaneControllers.remove(indexToRemove);
+            getSegmentPaneControllers().remove(indexToRemove);
 
             //update the event since we have changed the number of segments
             updateSegments();
@@ -317,8 +317,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
         segmentListView.setCellFactory(param -> new SorterCell(
-                segmentPanes,
-                segmentPaneControllers,
+                segmentPanes, getSegmentPaneControllers(),
                 segments,
                 segmentListView,
                 this
@@ -366,13 +365,13 @@ public class EventScreenController extends ControllerBase implements Initializab
             dragEvent.acceptTransferModes(TransferMode.MOVE);
         };
 
-        workersListView.setOnDragOver(dragOverHandler);
+        getWorkersListView().setOnDragOver(dragOverHandler);
 
         //do this last as it is dependent on currentSegment
         updateWorkerListView();
 
         //add the special DragDropHandlder
-        workersListView.setOnDragDropped(new WorkersListViewDragDropHandler(workersListView, segmentPaneControllers, this));
+        getWorkersListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
         comboBox.setItems(FXCollections.observableArrayList(
                 new WorkerNameComparator(),
@@ -409,9 +408,9 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
 
-        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true));
+        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true), currentComparator);
 
-        workersListView.setItems(workerSortedList);
+        getWorkersListView().setItems(workerSortedList);
 
     }
 
@@ -424,7 +423,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private boolean workerIsBookedOnShow(Worker worker) {
-        for (SegmentPaneController controller : segmentPaneControllers) {
+        for (SegmentPaneController controller : getSegmentPaneControllers()) {
             if (controller.getWorkers().contains(worker)) {
                 return true;
             }
@@ -444,11 +443,11 @@ public class EventScreenController extends ControllerBase implements Initializab
         currentSegmentNumber = 0;
         initializeSegmentListView();
 
-        setWorkerCellFactory(workersListView);
+        setWorkerCellFactory(getWorkersListView());
 
-        RefreshSkin skin = new RefreshSkin(workersListView);
+        RefreshSkin skin = new RefreshSkin(getWorkersListView());
 
-        workersListView.setSkin(skin);
+        getWorkersListView().setSkin(skin);
 
     }
 
@@ -477,6 +476,20 @@ public class EventScreenController extends ControllerBase implements Initializab
      */
     public Number getCurrentSegmentNumber() {
         return currentSegmentNumber;
+    }
+
+    /**
+     * @return the workersListView
+     */
+    public ListView<Worker> getWorkersListView() {
+        return workersListView;
+    }
+
+    /**
+     * @return the segmentPaneControllers
+     */
+    public List<SegmentPaneController> getSegmentPaneControllers() {
+        return segmentPaneControllers;
     }
 
     // update the listview according to whatever browse mode we are in

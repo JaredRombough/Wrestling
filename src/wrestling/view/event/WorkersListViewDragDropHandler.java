@@ -14,13 +14,9 @@ import wrestling.view.utility.LocalDragboard;
  */
 public class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
 
-    private final ListView workersListView;
-    private final List<SegmentPaneController> segmentPaneControllers;
     private final EventScreenController eventScreenController;
 
-    public WorkersListViewDragDropHandler(ListView workersListView, List<SegmentPaneController> segmentPaneControllers, EventScreenController eventScreenController) {
-        this.workersListView = workersListView;
-        this.segmentPaneControllers = segmentPaneControllers;
+    public WorkersListViewDragDropHandler(EventScreenController eventScreenController) {
         this.eventScreenController = eventScreenController;
     }
 
@@ -31,13 +27,12 @@ public class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
         if (ldb.hasType(Worker.class)) {
             Worker worker = ldb.getValue(Worker.class);
 
-            if (!workersListView.getItems().contains(worker)) {
-                segmentPaneControllers.get(eventScreenController.getCurrentSegmentNumber().intValue()).removeWorker(worker);
-                workersListView.getItems().add(worker);
+            if (!eventScreenController.getWorkersListView().getItems().contains(worker)) {
+                eventScreenController.getSegmentPaneControllers().get(eventScreenController.getCurrentSegmentNumber().intValue()).removeWorker(worker);
             }
 
             eventScreenController.updateLabels();
-            segmentPaneControllers.get(eventScreenController.getCurrentSegmentNumber().intValue()).updateLabels();
+            eventScreenController.getSegmentPaneControllers().get(eventScreenController.getCurrentSegmentNumber().intValue()).updateLabels();
             eventScreenController.updateSegments();
 
             //Clear, otherwise we end up with the worker stuck on the dragboard?
