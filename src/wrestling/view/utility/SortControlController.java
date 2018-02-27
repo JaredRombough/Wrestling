@@ -1,4 +1,4 @@
-package wrestling.view.event;
+package wrestling.view.utility;
 
 import java.io.IOException;
 import java.net.URL;
@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SortControlController extends ControllerBase implements Initializable {

@@ -214,7 +214,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     SORT_CONTROL {
         @Override
         public String resourcePath() {
-            return "view/event/SortControl.fxml";
+            return "view/utility/SortControl.fxml";
         }
 
         @Override
