@@ -146,10 +146,6 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     @Override
     public void updateLabels() {
-//        if (currentPromotion != null) {
-//            setCurrentPromotion(currentPromotion);
-//        }
-
         if (currentListToBrowse() != null) {
             mainListView.setItems(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> true),
                     sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null));
@@ -157,7 +153,6 @@ public class BrowserController extends ControllerBase implements Initializable {
                 mainListView.getSelectionModel().selectFirst();
             }
         }
-        //     browse();
 
     }
 
@@ -209,25 +204,11 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     }
 
-    /*
-    clear the last listview and display node
-     */
-    private void clearLast() {
-
-        if (lastSortedList != null) {
-            lastSortedList.comparatorProperty().unbind();
-        }
-
-        gridPane.getChildren().remove(lastListView);
-        gridPane.getChildren().remove(lastDisplayNode);
-    }
-
     private void browse() {
 
         ScreenCode subScreenCode = ScreenCode.SIMPLE_DISPLAY;
-
         ObservableList comparators = null;
-        List listToBrowse = null;
+
         switch (currentBrowseMode) {
 
             case WORKERS:

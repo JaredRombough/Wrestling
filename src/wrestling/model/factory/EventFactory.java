@@ -56,18 +56,16 @@ public class EventFactory {
     }
 
     private void processEvent(Event event, final List<Segment> segments, LocalDate date, EventType eventType) {
-
-        event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
-        event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
-        event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
+        processSegments(event, segments);
 
         processEvent(event, segments, date);
     }
 
-    private void processEvent(Event event, final List<Segment> segments, LocalDate date) {
-        processSegments(event, segments);
+    public void processEvent(Event event, List<Segment> segments, LocalDate date) {
+        setEventStats(event, segments);
+
         promotionManager.getBankAccount(event.getPromotion()).addFunds(eventManager.calculateGate(event), 'e', date);
-        eventManager.addEvent(event);
+
         for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
@@ -76,7 +74,7 @@ public class EventFactory {
     }
 
     public void processEvent(EventView eventView, LocalDate date) {
-        processEvent(eventView.getEvent(), processSegmentView(eventView.getSegments()), date, EventType.LIVEEVENT);
+        processEvent(eventView.getEvent(), segmentViewsToSegments(eventView.getSegments()), date);
     }
 
     public void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
@@ -89,7 +87,13 @@ public class EventFactory {
         return event;
     }
 
-    private List<Segment> processSegmentView(List<SegmentView> tempSegments) {
+    private void setEventStats(Event event, List<Segment> segments) {
+        event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
+        event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
+        event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
+    }
+
+    private List<Segment> segmentViewsToSegments(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
             segments.add(processSegmentView(tempSegment));
