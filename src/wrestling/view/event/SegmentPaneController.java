@@ -10,19 +10,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import wrestling.MainApp;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
 import wrestling.model.Worker;
@@ -51,8 +46,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @FXML
     private ComboBox matchFinishes;
 
-    //private List<Pane> teamPanes;
-    //private List<AnglePaneController> teamPaneControllers;
     private List<Screen> anglePanes;
 
     private EventScreenController eventScreenController;
@@ -60,8 +53,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
-        //     teamPanes = new ArrayList<>();
-        //  teamPaneControllers = new ArrayList<>();
         anglePanes = new ArrayList<>();
 
     }
@@ -221,20 +212,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     //called from a teamPaneController when adding a worker
     //from another team to avoid duplicates
     public void removeWorker(Worker worker) {
-//        for (AnglePaneController controller : teamPaneControllers) {
-//            controller.removeWorker(worker);
-//        }
         for (Screen screen : anglePanes) {
             ((AnglePaneController) screen.controller).removeWorker(worker);
         }
     }
 
     public List<Worker> getWorkers() {
-//        List<Worker> workers = new ArrayList<>();
-//        for (AnglePaneController controller : teamPaneControllers) {
-//            workers.addAll(controller.getWorkers());
-//        }
-//        return workers;
         List<Worker> workers = new ArrayList<>();
         for (Screen screen : anglePanes) {
             workers.addAll(((AnglePaneController) screen.controller).getWorkers());
@@ -243,35 +226,20 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void addTeam() {
-//
-//        try {
 
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(MainApp.class.getResource(ScreenCode.ANGLE_PANE.resourcePath()));
-//            AnchorPane teamPane = (AnchorPane) loader.load();
         Screen anglePane = ViewUtils.loadScreenFromResource(ScreenCode.ANGLE_PANE, mainApp, gameController);
 
         anglePanes.add(anglePane);
 
-        //  teamPanes.add(teamPane);
-        //keep a list of the controllers too
-        //    AnglePaneController controller = loader.getController();
-        //  teamPaneControllers.add(controller);
-        //    controller.initializeMore();
         ((AnglePaneController) anglePane.controller).setEventScreenController(eventScreenController);
         ((AnglePaneController) anglePane.controller).setSegmentPaneController(this);
         ((AnglePaneController) anglePane.controller).setTeamNumber(anglePanes.size() - 1);
-        // calling initialize more here doesn't follow the controllerBase pattern
 
-//            teamsPane.getChildren().add(teamPane);
         teamsPane.getChildren().add(anglePane.pane);
         updateTeamNames();
 
         eventScreenController.updateSegments();
 
-//        } catch (IOException ex) {
-//            logger.log(Level.ERROR, ex);
-//        }
     }
 
     @Override
@@ -285,18 +253,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void removeTeam() {
 
-//        //we may want an alternate method where a minimum of one team is kept
-//        if (!teamPanes.isEmpty() && !teamPaneControllers.isEmpty()) {
-//
-//            teamPanes.remove(teamPanes.size() - 1);
-//            teamPaneControllers.remove(teamPaneControllers.size() - 1);
-//            teamsPane.getChildren().remove(teamsPane.getChildren().size() - 1);
-//
-//            //tell the event screen to update particularly the segment listView
-//            //because we have changed the segment name
-//            eventScreenController.updateSegments();
-//
-//        }
         //we may want an alternate method where a minimum of one team is kept
         if (!anglePanes.isEmpty()) {
 
@@ -314,8 +270,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     //called by a team pane from drag dropped to update the team priority
     public void swapTeamIndices(int indexA, int indexB) {
-//        Collections.swap(teamPanes, indexA, indexB);
-//        Collections.swap(teamPaneControllers, indexA, indexB);
         Collections.swap(anglePanes, indexA, indexB);
         //tell the event screen to update the event to reflect the new team priorirty
         eventScreenController.updateSegments();
@@ -325,19 +279,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     //this will need to be more complex when more types of segments are added
     private void updateTeamNames() {
-//        for (AnglePaneController tpc : teamPaneControllers) {
-//            String teamName = "";
-//            switch (teamPaneControllers.indexOf(tpc)) {
-//                case 0:
-//                    teamName = "Winner";
-//                    break;
-//                default:
-//                    teamName = "Loser";
-//                    break;
-//            }
-//            tpc.setTeamNameLabel(teamName);
-//
-//        }
         for (Screen screen : anglePanes) {
             String teamName = "";
             switch (anglePanes.indexOf(screen)) {
@@ -367,10 +308,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     just remove all the teams and add new ones to get back up to the default size
      */
     public void clear() {
-
-//        while (!teamPanes.isEmpty() && !teamPaneControllers.isEmpty()) {
-//            removeTeam();
-//        }
         while (!anglePanes.isEmpty()) {
             removeTeam();
         }
@@ -385,9 +322,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         List<List<Worker>> teams = new ArrayList<>();
 
-//        for (AnglePaneController teamPaneController : teamPaneControllers) {
-//            teams.add(teamPaneController.getWorkers());
-//        }
         for (Screen screen : anglePanes) {
             teams.add(((AnglePaneController) screen.controller).getWorkers());
         }

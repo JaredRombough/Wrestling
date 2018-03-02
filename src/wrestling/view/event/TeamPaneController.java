@@ -2,26 +2,18 @@ package wrestling.view.event;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import wrestling.model.Worker;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;
@@ -30,7 +22,6 @@ import wrestling.view.utility.interfaces.ControllerBase;
 public class TeamPaneController extends ControllerBase implements Initializable {
 
     private static final double CELL_HEIGHT = 33;
-    private static final String TAB_DRAG_KEY = "anchorpane";
 
     @FXML
     private ListView teamListView;
@@ -46,7 +37,6 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     private EventScreenController eventScreenController;
     private SegmentPaneController segmentPaneController;
     private int teamNumber;
-    private ObjectProperty<AnchorPane> draggingTab;
 
     public void setEventScreenController(EventScreenController eventScreenController) {
         this.eventScreenController = eventScreenController;
@@ -94,59 +84,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         teamListView.setMinHeight(height);
     }
 
-    private void preparePaneForSorting() {
-        draggingTab = new SimpleObjectProperty<>();
-        mainPane.setOnDragDetected((MouseEvent event) -> {
-            Dragboard dragboard = mainPane.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent clipboardContent = new ClipboardContent();
-            clipboardContent.putString(TAB_DRAG_KEY);
-            dragboard.setContent(clipboardContent);
-            draggingTab.set(mainPane);
-            event.consume();
-        });
-        mainPane.setOnDragOver((DragEvent event) -> {
-            final Dragboard dragboard = event.getDragboard();
-            if (dragboard.hasString()
-                    && TAB_DRAG_KEY.equals(dragboard.getString())
-                    && draggingTab.get() != null) {
-                event.acceptTransferModes(TransferMode.MOVE);
-                event.consume();
-            }
-        });
-        mainPane.setOnDragDropped((final DragEvent event) -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasString()) {
-                Pane parent = (Pane) mainPane.getParent();
-                Object source = event.getGestureSource();
-                int sourceIndex = parent.getChildren().indexOf(source);
-
-                int targetIndex = parent.getChildren().indexOf(mainPane);
-
-                List<Node> nodes = new ArrayList<>(parent.getChildren());
-                if (sourceIndex < targetIndex) {
-                    Collections.rotate(
-                            nodes.subList(sourceIndex, targetIndex + 1), -1);
-                } else {
-                    Collections.rotate(
-                            nodes.subList(targetIndex, sourceIndex + 1), 1);
-                }
-                parent.getChildren().clear();
-                parent.getChildren().addAll(nodes);
-                //tell the segmentPaneControlller that the team priority has changed
-                segmentPaneController.swapTeamIndices(sourceIndex, targetIndex);
-
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
-    }
-
     @Override
     public void initializeMore() {
-
-        preparePaneForSorting();
 
         final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
             @Override
