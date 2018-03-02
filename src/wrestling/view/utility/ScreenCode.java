@@ -189,6 +189,17 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    ANGLE_PANE {
+        @Override
+        public String resourcePath() {
+            return "view/event/AnglePane.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     CONTRACT_PANE {
         @Override
         public String resourcePath() {
