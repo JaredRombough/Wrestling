@@ -17,7 +17,6 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
         </columnConstraints>
@@ -29,14 +28,14 @@
           <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ListView fx:id="segmentListView" styleClass="centredList" GridPane.columnIndex="4" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-            <VBox GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
+            <ListView fx:id="segmentListView" styleClass="centredList" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+            <VBox GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                <children>
                   <Label fx:id="totalCostLabel" text="Total Cost" />
                   <Button fx:id="runEventButton" mnemonicParsing="false" onAction="#handleButtonAction" text="Run the event" />
                </children>
             </VBox>
-            <GridPane GridPane.columnIndex="4" GridPane.columnSpan="2">
+            <GridPane GridPane.columnIndex="3" GridPane.columnSpan="2">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
@@ -59,7 +58,7 @@
                   </Button>
                </children>
             </GridPane>
-            <AnchorPane fx:id="segmentPaneHolder" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+            <AnchorPane fx:id="segmentPaneHolder" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
             <Label fx:id="eventTitleLabel" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="3" />
             <GridPane>
                <columnConstraints>
