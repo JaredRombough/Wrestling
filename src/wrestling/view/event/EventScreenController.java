@@ -119,7 +119,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         currentSegmentNumber = number;
 
         segmentPaneHolder.getChildren().clear();
-        segmentPaneHolder.getChildren().add(segmentPanes.get(getCurrentSegmentNumber().intValue()));
+        ViewUtils.anchorPaneToParent(segmentPaneHolder, segmentPanes.get(getCurrentSegmentNumber().intValue()));
 
         updateLabels();
 
