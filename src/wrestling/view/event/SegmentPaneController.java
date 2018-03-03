@@ -46,14 +46,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @FXML
     private ComboBox matchFinishes;
 
-    private List<Screen> anglePanes;
+    private List<Screen> teamPaneWrappers;
 
     private EventScreenController eventScreenController;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
-        anglePanes = new ArrayList<>();
+        teamPaneWrappers = new ArrayList<>();
 
     }
 
@@ -212,30 +212,30 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     //called from a teamPaneController when adding a worker
     //from another team to avoid duplicates
     public void removeWorker(Worker worker) {
-        for (Screen screen : anglePanes) {
-            ((AnglePaneController) screen.controller).removeWorker(worker);
+        for (Screen screen : teamPaneWrappers) {
+            ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeWorker(worker);
         }
     }
 
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
-        for (Screen screen : anglePanes) {
-            workers.addAll(((AnglePaneController) screen.controller).getWorkers());
+        for (Screen screen : teamPaneWrappers) {
+            workers.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getWorkers());
         }
         return workers;
     }
 
     private void addTeam() {
 
-        Screen anglePane = ViewUtils.loadScreenFromResource(ScreenCode.ANGLE_PANE, mainApp, gameController);
+        Screen teamPaneWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
 
-        anglePanes.add(anglePane);
+        teamPaneWrappers.add(teamPaneWrapper);
 
-        ((AnglePaneController) anglePane.controller).setEventScreenController(eventScreenController);
-        ((AnglePaneController) anglePane.controller).setSegmentPaneController(this);
-        ((AnglePaneController) anglePane.controller).setTeamNumber(anglePanes.size() - 1);
+        TeamPaneController controller = ((TeamPaneWrapper) teamPaneWrapper.controller).getTeamPaneController();
+        controller.setDragDropHandler(this, eventScreenController);
+        controller.setTeamNumber(teamPaneWrappers.size() - 1);
 
-        teamsPane.getChildren().add(anglePane.pane);
+        teamsPane.getChildren().add(teamPaneWrapper.pane);
         updateTeamNames();
 
         eventScreenController.updateSegments();
@@ -244,7 +244,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     @Override
     public void updateLabels() {
-        for (Screen screen : anglePanes) {
+        for (Screen screen : teamPaneWrappers) {
             screen.controller.updateLabels();
 
         }
@@ -254,9 +254,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void removeTeam() {
 
         //we may want an alternate method where a minimum of one team is kept
-        if (!anglePanes.isEmpty()) {
+        if (!teamPaneWrappers.isEmpty()) {
 
-            anglePanes.remove(anglePanes.size() - 1);
+            teamPaneWrappers.remove(teamPaneWrappers.size() - 1);
 
             teamsPane.getChildren().remove(teamsPane.getChildren().size() - 1);
 
@@ -270,7 +270,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     //called by a team pane from drag dropped to update the team priority
     public void swapTeamIndices(int indexA, int indexB) {
-        Collections.swap(anglePanes, indexA, indexB);
+        Collections.swap(teamPaneWrappers, indexA, indexB);
         //tell the event screen to update the event to reflect the new team priorirty
         eventScreenController.updateSegments();
         updateTeamNames();
@@ -279,9 +279,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     //this will need to be more complex when more types of segments are added
     private void updateTeamNames() {
-        for (Screen screen : anglePanes) {
+        for (Screen screen : teamPaneWrappers) {
             String teamName = "";
-            switch (anglePanes.indexOf(screen)) {
+            switch (teamPaneWrappers.indexOf(screen)) {
                 case 0:
                     teamName = "Winner";
                     break;
@@ -289,7 +289,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                     teamName = "Loser";
                     break;
             }
-            ((AnglePaneController) screen.controller).setTeamNameLabel(teamName);
+            ((TeamPaneWrapper) screen.controller).getTeamPaneController().setTeamNameLabel(teamName);
 
         }
     }
@@ -308,7 +308,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     just remove all the teams and add new ones to get back up to the default size
      */
     public void clear() {
-        while (!anglePanes.isEmpty()) {
+        while (!teamPaneWrappers.isEmpty()) {
             removeTeam();
         }
 
@@ -322,8 +322,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         List<List<Worker>> teams = new ArrayList<>();
 
-        for (Screen screen : anglePanes) {
-            teams.add(((AnglePaneController) screen.controller).getWorkers());
+        for (Screen screen : teamPaneWrappers) {
+            teams.add(((TeamPaneWrapper) screen.controller).getTeamPaneController().getWorkers());
         }
 
         return teams;

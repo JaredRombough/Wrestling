@@ -15,7 +15,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import wrestling.model.Worker;
-import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -34,17 +33,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     private double defaultMainPaneHeight;
 
-    private EventScreenController eventScreenController;
-    private SegmentPaneController segmentPaneController;
     private int teamNumber;
-
-    public void setEventScreenController(EventScreenController eventScreenController) {
-        this.eventScreenController = eventScreenController;
-    }
-
-    public void setSegmentPaneController(SegmentPaneController segmentPaneController) {
-        this.segmentPaneController = segmentPaneController;
-    }
 
     public int getTeamNumber() {
         return this.teamNumber;
@@ -100,12 +89,18 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
         teamListView.setOnDragOver(dragOverHandler);
 
-        teamListView.setOnDragDropped(new DragDropHandler(teamListView.getItems()));
-
         double height = CELL_HEIGHT;
         teamListView.setPrefHeight(height);
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
 
+    }
+    
+    public ObservableList<Worker> getItems() {
+        return teamListView.getItems();
+    }
+    
+    public void setDragDropHandler(SegmentPaneController segmentPaneController, EventScreenController eventScreenController) {
+        teamListView.setOnDragDropped(new WorkerDragDropHandler(segmentPaneController, eventScreenController, this));
     }
 
     private void setWorkerCellFactory(ListView listView) {
@@ -145,36 +140,6 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return string;
     }
 
-    private class DragDropHandler implements EventHandler<DragEvent> {
-
-        private final ObservableList<Worker> itemList;
-
-        DragDropHandler(ObservableList<Worker> itemList) {
-
-            this.itemList = itemList;
-
-        }
-
-        @Override
-        public void handle(DragEvent event) {
-
-            LocalDragboard ldb = LocalDragboard.getINSTANCE();
-            if (ldb.hasType(Worker.class)) {
-                Worker worker = ldb.getValue(Worker.class);
-
-                segmentPaneController.removeWorker(worker);
-                itemList.add(worker);
-
-                updateLabels();
-                segmentPaneController.updateLabels();
-                eventScreenController.updateSegments();
-
-                //Clear, otherwise we end up with the worker stuck on the dragboard?
-                ldb.clearAll();
-
-            }
-        }
-
-    }
+    
 
 }

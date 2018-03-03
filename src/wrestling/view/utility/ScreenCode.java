@@ -189,10 +189,10 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
-    ANGLE_PANE {
+    TEAM_PANE_WRAPPER {
         @Override
         public String resourcePath() {
-            return "view/event/AnglePane.fxml";
+            return "view/event/TeamPaneWrapper.fxml";
         }
 
         @Override
