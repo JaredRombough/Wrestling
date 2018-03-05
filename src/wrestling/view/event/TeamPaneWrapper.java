@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -44,6 +45,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     @FXML
     private Button xButton;
+    
+    @FXML
+    private Label teamTypeLabel;
 
     private Screen teamPane;
     private SegmentPaneController segmentPaneController;
@@ -94,8 +98,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void setInterference() {
         vBox.getChildren().retainAll(teamPane.pane, header);
+        addTargetComboBox();
+        addSuccessComboBox();
+        addTimingComboBox();
 
     }
+    
 
     private void addAngleComboBox() {
         angleComboBox = new ComboBox();
@@ -171,7 +179,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         comboBox.getSelectionModel().selectFirst();
     }
 
-    private void successComboBox() {
+    private void addSuccessComboBox() {
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().addAll(
                 "Win", "Lose", "Draw");
@@ -179,13 +187,26 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         comboBox.getSelectionModel().selectFirst();
     }
 
-    private void targetComboBox() {
+    private void addTargetComboBox() {
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().addAll(
                 "Target A", "Target B", "Target C");
         vBox.getChildren().add(comboBox);
         comboBox.getSelectionModel().selectFirst();
     }
+    
+     private void addTimingComboBox() {
+        ComboBox comboBox = new ComboBox();
+        comboBox.getItems().addAll(
+                "Before", "During", "After");
+        vBox.getChildren().add(comboBox);
+        comboBox.getSelectionModel().selectFirst();
+    }
+     
+    public void setTeamTypeLabel(String string) {
+        teamTypeLabel.setText(string);
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

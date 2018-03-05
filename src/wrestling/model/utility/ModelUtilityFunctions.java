@@ -20,7 +20,19 @@ public final class ModelUtilityFunctions {
         for (int i = 0; i < workers.size(); i++) {
             sb.append(workers.get(i).getName());
             if (workers.size() - i > 1) {
-                sb.append("\\");
+                sb.append("/");
+            }
+        }
+
+        return sb.toString();
+    }
+    
+    public static String slashShortNames(List<Worker> workers) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < workers.size(); i++) {
+            sb.append(workers.get(i).getShortName());
+            if (workers.size() - i > 1) {
+                sb.append("/");
             }
         }
 

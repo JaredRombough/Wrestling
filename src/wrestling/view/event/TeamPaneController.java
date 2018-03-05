@@ -15,6 +15,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import wrestling.model.Worker;
+import wrestling.model.utility.ModelUtilityFunctions;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -46,12 +47,14 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
+        updateTeamNameLabel();
     }
 
     public void removeWorker(Worker worker) {
 
         if (teamListView.getItems().contains(worker)) {
             teamListView.getItems().remove(worker);
+            updateLabels();
         }
     }
 
@@ -59,10 +62,16 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     public void updateLabels() {
 
         updateTeamListViewHeight();
+
+        updateTeamNameLabel();
     }
 
-    public void setTeamNameLabel(String string) {
-        teamNameLabel.setText(string);
+    private void updateTeamNameLabel() {
+        if (!getWorkers().isEmpty()) {
+            teamNameLabel.setText(ModelUtilityFunctions.slashShortNames(getWorkers()));
+        } else {
+            teamNameLabel.setText("(Empty Team)");
+        }
     }
 
     private void updateTeamListViewHeight() {
@@ -81,7 +90,6 @@ public class TeamPaneController extends ControllerBase implements Initializable 
             public void handle(DragEvent dragEvent) {
 
                 dragEvent.acceptTransferModes(TransferMode.MOVE);
-
             }
         };
 
@@ -94,11 +102,11 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
 
     }
-    
+
     public ObservableList<Worker> getItems() {
         return teamListView.getItems();
     }
-    
+
     public void setDragDropHandler(SegmentPaneController segmentPaneController, EventScreenController eventScreenController) {
         teamListView.setOnDragDropped(new WorkerDragDropHandler(segmentPaneController, eventScreenController, this));
     }
@@ -139,7 +147,5 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
         return string;
     }
-
-    
 
 }

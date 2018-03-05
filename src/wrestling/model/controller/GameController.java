@@ -56,7 +56,7 @@ public final class GameController implements Serializable {
     
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
-        dateManager = new DateManager(LocalDate.of(2015, 1, 1));
+        dateManager = new DateManager(LocalDate.of(2015, 1, 5));
         
         titleManager = new TitleManager(dateManager);
         

@@ -30,7 +30,6 @@ import wrestling.file.Import;
 import wrestling.model.controller.GameController;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
-import wrestling.view.browser.BrowserController;
 import wrestling.view.calendar.CalendarController;
 import wrestling.view.start.TitleScreenController;
 import wrestling.view.utility.Screen;
