@@ -55,7 +55,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     private TeamPaneState currentState;
 
-    private void setCurrentState(TeamPaneState state) {
+    public void setCurrentState(TeamPaneState state) {
         currentState = state;
         switch (currentState) {
             case CHALLENGER:
@@ -63,6 +63,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             case CHALLENGED:
                 break;
             case INTERFERENCE:
+                setInterference();
                 break;
             case INTERVIEWER:
                 break;

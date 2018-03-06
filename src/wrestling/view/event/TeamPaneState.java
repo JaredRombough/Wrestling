@@ -4,5 +4,6 @@ public enum TeamPaneState {
     CHALLENGER,
     CHALLENGED,
     INTERFERENCE,
-    INTERVIEWER
+    INTERVIEWER,
+    DEFAULT
 }

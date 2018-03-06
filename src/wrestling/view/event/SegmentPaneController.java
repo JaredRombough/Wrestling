@@ -72,7 +72,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
 
-            addTeam();
+            addTeam(TeamPaneState.DEFAULT);
 
         }
 
@@ -208,7 +208,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == addTeamButton) {
-            addTeam();
+            addTeam(TeamPaneState.DEFAULT);
         } else if (event.getSource() == matchButton) {
             for (Screen screen : teamPaneWrappers) {
                 ((TeamPaneWrapper) screen.controller).setMatch();
@@ -239,11 +239,28 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return workers;
     }
 
-    private Screen addTeam() {
+    private Screen addTeam(TeamPaneState state) {
 
         Screen teamPaneWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
 
-        teamPaneWrappers.add(teamPaneWrapper);
+        if (state.equals(TeamPaneState.INTERFERENCE)) {
+            teamPaneWrappers.add(teamPaneWrapper);
+            teamsPane.getChildren().add(teamPaneWrapper.pane);
+        } else {
+            int indexToInsert = teamPaneWrappers.isEmpty() ? 0 : teamPaneWrappers.size();
+
+            for (int i = 0; i < teamPaneWrappers.size(); i++) {
+                if (isInterference(teamPaneWrappers.get(i)) && i > 0) {
+                    indexToInsert = i;
+                    break;
+                }
+            }
+
+            teamPaneWrappers.add(indexToInsert, teamPaneWrapper);
+            teamsPane.getChildren().add(indexToInsert, teamPaneWrapper.pane);
+        }
+
+        ((TeamPaneWrapper) teamPaneWrapper.controller).setCurrentState(state);
 
         teamPaneWrapper.pane.setOnDragDropped((final DragEvent event) -> {
             Dragboard db = event.getDragboard();
@@ -265,8 +282,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         controller.setTeamNumber(teamPaneWrappers.size() - 1);
         ((TeamPaneWrapper) teamPaneWrapper.controller).getXButton().setOnAction(e -> removeTeam(teamPaneWrapper));
 
-        teamsPane.getChildren().add(teamPaneWrapper.pane);
-
         eventScreenController.updateSegments();
 
         updateLabels();
@@ -275,21 +290,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
-    private void removeTeam() {
-
-        //we may want an alternate method where a minimum of one team is kept
-        if (!teamPaneWrappers.isEmpty()) {
-
-            teamPaneWrappers.remove(teamPaneWrappers.size() - 1);
-
-            teamsPane.getChildren().remove(teamsPane.getChildren().size() - 1);
-
-            //tell the event screen to update particularly the segment listView
-            //because we have changed the segment name
-            eventScreenController.updateSegments();
-
-        }
-
+    private boolean isInterference(Screen screen) {
+        return screen.controller instanceof TeamPaneWrapper
+                && ((TeamPaneWrapper) screen.controller).getCurrentState() != null
+                && ((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE);
     }
 
     private void removeTeam(Screen teamPaneWrapper) {
@@ -304,8 +308,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void addInterference() {
-        Screen newTeam = addTeam();
-        ((TeamPaneWrapper) newTeam.controller).setInterference();
+        Screen newTeam = addTeam(TeamPaneState.INTERFERENCE);
+        // ((TeamPaneWrapper) newTeam.controller).setInterference();
         updateLabels();
     }
 
@@ -314,8 +318,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         updateTeamNames();
 
         for (Screen screen : teamPaneWrappers) {
-            if (((TeamPaneWrapper) screen.controller).getCurrentState() != null
-                    && ((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE)) {
+            if (isInterference(screen)) {
                 ((TeamPaneWrapper) screen.controller).setTargets(getTeamNames(teamPaneWrappers.indexOf(screen)));
             }
             screen.controller.updateLabels();
@@ -350,8 +353,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             String teamType = "";
             if (matchFinish() != null && matchFinish().equals(MatchFinishes.DRAW)) {
                 teamType = "Draw";
-            } else if (((TeamPaneWrapper) screen.controller).getCurrentState() != null
-                    && (((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE))) {
+            } else if (isInterference(screen)) {
                 teamType = "Interference";
             } else {
                 switch (teamPaneWrappers.indexOf(screen)) {
@@ -399,7 +401,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
-            addTeam();
+            addTeam(TeamPaneState.DEFAULT);
         }
 
     }

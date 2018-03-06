@@ -382,6 +382,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void updateWorkerListView() {
         List<Worker> workers = new ArrayList<>();
 
+        int previousIndex = workersListView.getSelectionModel().getSelectedIndex();
+
         for (Worker worker : gameController.getContractManager().getFullRoster(playerPromotion())) {
             if (workerIsAvailableForCurrentSegment(worker)) {
                 workers.add(worker);
@@ -392,6 +394,14 @@ public class EventScreenController extends ControllerBase implements Initializab
                 sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
 
         getWorkersListView().setItems(workerSortedList);
+
+        if (previousIndex > 0) {
+            workersListView.getSelectionModel().select(previousIndex);
+        } else {
+            workersListView.getSelectionModel().selectFirst();
+        }
+
+        ((RefreshSkin) getWorkersListView().getSkin()).refresh();
 
     }
 
