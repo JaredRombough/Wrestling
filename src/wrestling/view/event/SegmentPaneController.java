@@ -310,7 +310,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         for (Screen screen : teamPaneWrappers) {
             if (((TeamPaneWrapper) screen.controller).getCurrentState() != null
                     && ((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE)) {
-                ((TeamPaneWrapper) screen.controller).setTargets(getTeamNames());
+                ((TeamPaneWrapper) screen.controller).setTargets(getTeamNames(teamPaneWrappers.indexOf(screen)));
             }
             screen.controller.updateLabels();
 
@@ -319,13 +319,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
-    private List<String> getTeamNames() {
+    private List<String> getTeamNames(int forIndex) {
         List<String> names = new ArrayList<>();
-        for (Screen screen : teamPaneWrappers) {
-            if (((TeamPaneWrapper) screen.controller).getCurrentState() == null
-                    || !((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE)) {
-                names.add(((TeamPaneWrapper) screen.controller).getTeamPaneController().getTeamName());
-            }
+        for (int i = 0; i < forIndex; i++) {
+            names.add(((TeamPaneWrapper) teamPaneWrappers.get(i).controller).getTeamPaneController().getTeamName());
         }
         return names;
     }

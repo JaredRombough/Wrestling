@@ -77,7 +77,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     private void updateTeamListViewHeight() {
 
-        double height = CELL_HEIGHT * teamListView.getItems().size() + 5;
+        int multiplier = teamListView.getItems().isEmpty() ? 1 : teamListView.getItems().size();
+
+        double height = CELL_HEIGHT * multiplier + 5;
 
         mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
         teamListView.setMinHeight(height);
