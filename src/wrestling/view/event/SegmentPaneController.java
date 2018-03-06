@@ -16,6 +16,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
@@ -135,7 +138,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         matchRules.setOnAction(event -> {
             updateMatchRulesCombobox();
             updateLabels();
-
         });
 
         //set the items, here we could filter out rules that the promotion can't use
@@ -248,20 +250,34 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         teamPaneWrappers.add(teamPaneWrapper);
 
+        teamPaneWrapper.pane.setOnDragDropped((final DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                Pane parent = (Pane) teamPaneWrapper.pane.getParent();
+                Object source = event.getGestureSource();
+                int sourceIndex = parent.getChildren().indexOf(source);
+                int targetIndex = parent.getChildren().indexOf(teamPaneWrapper.pane);
+                this.swapTeams(sourceIndex, targetIndex);
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
         TeamPaneController controller = ((TeamPaneWrapper) teamPaneWrapper.controller).getTeamPaneController();
         controller.setDragDropHandler(this, eventScreenController);
         controller.setTeamNumber(teamPaneWrappers.size() - 1);
         ((TeamPaneWrapper) teamPaneWrapper.controller).getXButton().setOnAction(e -> removeTeam(teamPaneWrapper));
 
         teamsPane.getChildren().add(teamPaneWrapper.pane);
-        updateTeamNames();
 
         eventScreenController.updateSegments();
-        
+
         return teamPaneWrapper;
 
     }
-    
+
     private void removeTeam() {
 
         //we may want an alternate method where a minimum of one team is kept
@@ -278,19 +294,22 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
     }
-    
+
     private void addInterference() {
         Screen newTeam = addTeam();
-        ((TeamPaneWrapper)newTeam.controller).setInterference();
+        ((TeamPaneWrapper) newTeam.controller).setInterference();
     }
 
     @Override
     public void updateLabels() {
+        updateTeamNames();
+
         for (Screen screen : teamPaneWrappers) {
             screen.controller.updateLabels();
 
         }
         eventScreenController.updateSegments();
+
     }
 
     private void removeTeam(Screen teamPaneWrapper) {
@@ -303,26 +322,32 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         eventScreenController.updateSegments();
     }
 
-    //called by a team pane from drag dropped to update the team priority
-    public void swapTeamIndices(int indexA, int indexB) {
-        Collections.swap(teamPaneWrappers, indexA, indexB);
-        //tell the event screen to update the event to reflect the new team priorirty
-        eventScreenController.updateSegments();
-        updateTeamNames();
+    public void swapTeams(int indexA, int indexB) {
+        List<Worker> teamA = getTeamPaneController(indexA).getWorkers();
+        List<Worker> teamB = getTeamPaneController(indexB).getWorkers();
+        getTeamPaneController(indexA).setWorkers(teamB);
+        getTeamPaneController(indexB).setWorkers(teamA);
 
+        eventScreenController.updateSegments();
+
+        updateLabels();
     }
 
     //this will need to be more complex when more types of segments are added
     private void updateTeamNames() {
         for (Screen screen : teamPaneWrappers) {
             String teamName = "";
-            switch (teamPaneWrappers.indexOf(screen)) {
-                case 0:
-                    teamName = "Winner";
-                    break;
-                default:
-                    teamName = "Loser";
-                    break;
+            if (matchFinish() != null && matchFinish().equals(MatchFinishes.DRAW)) {
+                teamName = "Draw";
+            } else {
+                switch (teamPaneWrappers.indexOf(screen)) {
+                    case 0:
+                        teamName = "Winner" + teamPaneWrappers.indexOf(screen);
+                        break;
+                    default:
+                        teamName = "Loser" + teamPaneWrappers.indexOf(screen);
+                        break;
+                }
             }
             ((TeamPaneWrapper) screen.controller).setTeamTypeLabel(teamName);
 
@@ -333,10 +358,22 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
         SegmentView match = new SegmentView();
-        match.setFinish((MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem());
-        match.setRules((MatchRules) matchRules.getSelectionModel().getSelectedItem());
+        match.setFinish(matchFinish());
+        match.setRules(matchRule());
         match.setTeams(getTeams());
         return match;
+    }
+
+    private MatchRules matchRule() {
+        return (MatchRules) matchRules.getSelectionModel().getSelectedItem();
+    }
+
+    private MatchFinishes matchFinish() {
+        return (MatchFinishes) matchFinishes.getSelectionModel().getSelectedItem();
+    }
+
+    private TeamPaneController getTeamPaneController(int index) {
+        return ((TeamPaneWrapper) teamPaneWrappers.get(index).controller).getTeamPaneController();
     }
 
     /*

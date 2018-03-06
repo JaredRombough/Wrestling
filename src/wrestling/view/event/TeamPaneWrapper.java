@@ -45,12 +45,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     @FXML
     private Button xButton;
-    
+
     @FXML
     private Label teamTypeLabel;
 
     private Screen teamPane;
-    private SegmentPaneController segmentPaneController;
     private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
 
@@ -80,7 +79,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 break;
         }
     }
-    
+
     public Button getXButton() {
         return xButton;
     }
@@ -103,7 +102,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         addTimingComboBox();
 
     }
-    
 
     private void addAngleComboBox() {
         angleComboBox = new ComboBox();
@@ -126,8 +124,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                     } else if (t1.equals("Challenge")) {
                         addShowComboBox();
                     }
-                    if(violenceComboBox != null && vBox.getChildren().contains(violenceComboBox))
-                    violenceComboBox.toFront();
+                    if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox)) {
+                        violenceComboBox.toFront();
+                    }
                 }
             }
         });
@@ -194,19 +193,18 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         vBox.getChildren().add(comboBox);
         comboBox.getSelectionModel().selectFirst();
     }
-    
-     private void addTimingComboBox() {
+
+    private void addTimingComboBox() {
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().addAll(
                 "Before", "During", "After");
         vBox.getChildren().add(comboBox);
         comboBox.getSelectionModel().selectFirst();
     }
-     
+
     public void setTeamTypeLabel(String string) {
         teamTypeLabel.setText(string);
     }
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -237,34 +235,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 event.acceptTransferModes(TransferMode.MOVE);
                 event.consume();
             }
-        });
-        anchorPane.setOnDragDropped((final DragEvent event) -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasString()) {
-                Pane parent = (Pane) anchorPane.getParent();
-                Object source = event.getGestureSource();
-                int sourceIndex = parent.getChildren().indexOf(source);
-
-                int targetIndex = parent.getChildren().indexOf(anchorPane);
-
-                List<Node> nodes = new ArrayList<>(parent.getChildren());
-                if (sourceIndex < targetIndex) {
-                    Collections.rotate(
-                            nodes.subList(sourceIndex, targetIndex + 1), -1);
-                } else {
-                    Collections.rotate(
-                            nodes.subList(targetIndex, sourceIndex + 1), 1);
-                }
-                parent.getChildren().clear();
-                parent.getChildren().addAll(nodes);
-                //tell the segmentPaneControlller that the team priority has changed
-                segmentPaneController.swapTeamIndices(sourceIndex, targetIndex);
-
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
         });
     }
 

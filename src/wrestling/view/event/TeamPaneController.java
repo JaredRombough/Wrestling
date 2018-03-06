@@ -128,6 +128,12 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return new ArrayList<>(teamListView.getItems());
 
     }
+    
+    public void setWorkers(List<Worker> workers) {
+        teamListView.getItems().clear();
+        teamListView.getItems().addAll(workers);
+        updateTeamNameLabel();
+    }
 
     public String getTeamName() {
         String string = "";
