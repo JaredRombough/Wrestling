@@ -53,11 +53,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBox violenceComboBox;
     private ComboBox targetComboBox;
 
-    private TeamPaneState currentState;
+    private TeamType teamType;
 
-    public void setCurrentState(TeamPaneState state) {
-        currentState = state;
-        switch (currentState) {
+    public void setTeamType(TeamType state) {
+        teamType = state;
+        switch (teamType) {
             case CHALLENGER:
                 break;
             case CHALLENGED:
@@ -115,7 +115,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public void setInterference() {
-        currentState = TeamPaneState.INTERFERENCE;
+        teamType = TeamType.INTERFERENCE;
         vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();
         addSuccessComboBox();
@@ -236,8 +236,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     /**
      * @return the currentState
      */
-    public TeamPaneState getCurrentState() {
-        return currentState;
+    public TeamType getTeamType() {
+        return teamType == null ? TeamType.DEFAULT : teamType;
     }
 
 }

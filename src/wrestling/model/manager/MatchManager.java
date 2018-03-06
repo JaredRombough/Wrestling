@@ -13,6 +13,8 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.MatchRule;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.SegmentTeam;
+import wrestling.view.event.TeamType;
 
 public class MatchManager {
 
@@ -85,9 +87,9 @@ public class MatchManager {
         return getMatchWorkers;
     }
 
-    public List<List<Worker>> getTeams(Match match) {
-        List<List<Worker>> teams = new ArrayList<>();
-        List<Worker> team = new ArrayList<>();
+    public List<SegmentTeam> getTeams(Match match) {
+        List<SegmentTeam> teams = new ArrayList<>();
+        SegmentTeam team = new SegmentTeam(new ArrayList<>(), TeamType.DEFAULT);
         teams.add(team);
 
         List<MatchWorker> allMatchWorkers = getMatchWorkers(match);
@@ -96,13 +98,13 @@ public class MatchManager {
 
         int lastTeam = !allMatchWorkers.isEmpty() ? allMatchWorkers.get(0).getTeam() : 0;
         for (MatchWorker matchWorker : allMatchWorkers) {
-            if (team.isEmpty() || lastTeam == matchWorker.getTeam()) {
-                team.add(matchWorker.getWorker());
+            if (team.getWorkers().isEmpty() || lastTeam == matchWorker.getTeam()) {
+                team.getWorkers().add(matchWorker.getWorker());
                 lastTeam = matchWorker.getTeam();
             } else {
-                team = new ArrayList<>();
+                team = new SegmentTeam(new ArrayList<>(), TeamType.DEFAULT);
                 teams.add(team);
-                team.add(matchWorker.getWorker());
+                team.getWorkers().add(matchWorker.getWorker());
             }
         }
         return teams;
@@ -136,7 +138,7 @@ public class MatchManager {
         return getMatchTitle(segment.getTeams(), segment.getRules(), segment.getFinish());
     }
 
-    public String getMatchTitle(List<List<Worker>> teams, MatchRule rules, MatchFinishes finish) {
+    public String getMatchTitle(List<SegmentTeam> teams, MatchRule rules, MatchFinishes finish) {
         String string = "";
 
         if (isHandicapMatch(teams)) {
@@ -146,7 +148,7 @@ public class MatchManager {
 
             if (teams.size() == 2) {
 
-                switch (teams.get(0).size()) {
+                switch (teams.get(0).getWorkers().size()) {
                     case 1:
                         string += "Singles Match\n";
                         break;
@@ -176,7 +178,7 @@ public class MatchManager {
         return string;
     }
 
-    private String getMatchString(List<List<Worker>> teams, MatchRule rules, MatchFinishes finish) {
+    private String getMatchString(List<SegmentTeam> teams, MatchRule rules, MatchFinishes finish) {
 
         String string = new String();
 
@@ -185,7 +187,7 @@ public class MatchManager {
             string += getMatchTitle(teams, rules, finish);
 
             for (int t = 0; t < teams.size(); t++) {
-                List<Worker> team = teams.get(t);
+                List<Worker> team = teams.get(t).getWorkers();
 
                 for (int i = 0; i < team.size(); i++) {
                     string += team.get(i).getShortName();
@@ -231,12 +233,12 @@ public class MatchManager {
 
     }
 
-    private boolean isHandicapMatch(List<List<Worker>> teams) {
+    private boolean isHandicapMatch(List<SegmentTeam> teams) {
         boolean handicap = false;
 
-        int size = teams.get(0).size();
-        for (List<Worker> team : teams) {
-            if (team.size() != size && !team.isEmpty()) {
+        int size = teams.get(0).getWorkers().size();
+        for (SegmentTeam team : teams) {
+            if (team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
                 handicap = true;
                 break;
 

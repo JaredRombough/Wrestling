@@ -11,6 +11,7 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 
 public class MatchFactory implements Serializable {
@@ -26,31 +27,31 @@ public class MatchFactory implements Serializable {
     /*
     this constructor takes an arbitrary number of teams
      */
-    public Match processMatch(final List<List<Worker>> teams) {
+    public Match processMatch(final List<SegmentTeam> teams) {
         Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
-    public Match processMatch(final List<List<Worker>> teams, final MatchRules rules, final MatchFinishes finish) {
+    public Match processMatch(final List<SegmentTeam> teams, final MatchRules rules, final MatchFinishes finish) {
         Match match = new Match(rules, finish, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
-    public Match processMatch(final List<List<Worker>> teams, Title title) {
+    public Match processMatch(final List<SegmentTeam> teams, Title title) {
         Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams, title);
         return match;
 
     }
 
-    private void saveMatch(Match match, List<List<Worker>> teams, Title title) {
+    private void saveMatch(Match match, List<SegmentTeam> teams, Title title) {
         matchManager.addMatchTitle(new MatchTitle(match, title));
         saveMatch(match, teams);
     }
 
-    private void saveMatch(Match match, List<List<Worker>> teams) {
+    private void saveMatch(Match match, List<SegmentTeam> teams) {
         SegmentView segmentView = new SegmentView();
         segmentView.setFinish(match.getFinish());
         segmentView.setRules(match.getRules());
@@ -58,8 +59,8 @@ public class MatchFactory implements Serializable {
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
 
-        for (List<Worker> team : teams) {
-            for (Worker worker : team) {
+        for (SegmentTeam team : teams) {
+            for (Worker worker : team.getWorkers()) {
                 matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
             }
         }
@@ -67,7 +68,7 @@ public class MatchFactory implements Serializable {
         matchManager.addMatch(match);
     }
 
-    private int calculateMatchRating(List<List<Worker>> teams) {
+    private int calculateMatchRating(List<SegmentTeam> teams) {
 
         if (teams.size() < 1) {
             return 0;
@@ -75,9 +76,9 @@ public class MatchFactory implements Serializable {
 
         float ratingsTotal = 0;
 
-        for (List<Worker> team : teams) {
+        for (SegmentTeam team : teams) {
             float rating = 0;
-            for (Worker worker : team) {
+            for (Worker worker : team.getWorkers()) {
 
                 rating += (worker.getFlying() + worker.getStriking() + worker.getFlying()) / 3;
 

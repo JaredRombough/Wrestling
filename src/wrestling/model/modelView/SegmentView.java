@@ -10,7 +10,7 @@ import wrestling.model.interfaces.Segment;
 
 public class SegmentView {
 
-    private List<List<Worker>> teams;
+    private List<SegmentTeam> teams;
     private MatchRules rules;
     private MatchFinishes finish;
     private LocalDate date;
@@ -18,8 +18,8 @@ public class SegmentView {
 
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
-        for (List<Worker> team : teams) {
-            workers.addAll(team);
+        for (SegmentTeam team : teams) {
+            workers.addAll(team.getWorkers());
         }
         return workers;
     }
@@ -27,14 +27,14 @@ public class SegmentView {
     /**
      * @return the teams
      */
-    public List<List<Worker>> getTeams() {
+    public List<SegmentTeam> getTeams() {
         return teams;
     }
 
     /**
      * @param teams the teams to set
      */
-    public void setTeams(List<List<Worker>> teams) {
+    public void setTeams(List<SegmentTeam> teams) {
         this.teams = teams;
     }
 

@@ -25,7 +25,9 @@ import wrestling.model.manager.EventManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.view.event.TeamType;
 
 public class PromotionController implements Serializable {
 
@@ -313,12 +315,12 @@ public class PromotionController implements Serializable {
                 teamsNeeded += 10 - random;
             }
 
-            List<List<Worker>> matchTeams = new ArrayList<>();
+            List<SegmentTeam> matchTeams = new ArrayList<>();
             List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
 
             //if the title is not vacant, make the title holders team 1
             if (!champs.isEmpty()) {
-                matchTeams.add(champs);
+                matchTeams.add(new SegmentTeam(champs, TeamType.DEFAULT));
                 matchBooked.addAll(champs);
             }
 
@@ -349,7 +351,7 @@ public class PromotionController implements Serializable {
 
                         //if the team is big enough, break out of the loop
                         if (team.size() >= teamSize) {
-                            matchTeams.add(team);
+                            matchTeams.add(new SegmentTeam(team, TeamType.DEFAULT));
                             matchBooked.addAll(team);
                             teamMade = true;
                             break;
@@ -383,7 +385,9 @@ public class PromotionController implements Serializable {
                     //move this somewhere else, like a matchFactory
                     List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
                     List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
-                    List<List<Worker>> teams = new ArrayList<>(Arrays.asList(teamA, teamB));
+                    List<SegmentTeam> teams = new ArrayList<>();
+                    teams.add(new SegmentTeam(teamA, TeamType.DEFAULT));
+                    teams.add(new SegmentTeam(teamB, TeamType.DEFAULT));
                     Match match = matchFactory.processMatch(teams);
 
                     segments.add(match);

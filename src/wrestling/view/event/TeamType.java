@@ -1,6 +1,6 @@
 package wrestling.view.event;
 
-public enum TeamPaneState {
+public enum TeamType {
     CHALLENGER,
     CHALLENGED,
     INTERFERENCE,

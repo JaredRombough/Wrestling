@@ -18,6 +18,7 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -90,9 +91,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateView() {
 
         flowPane.getChildren().clear();
-        for (List<Worker> team : segmentView.getTeams()) {
+        for (SegmentTeam team : segmentView.getTeams()) {
             List<Screen> workerCards = new ArrayList<>();
-            for (Worker worker : team) {
+            for (Worker worker : team.getWorkers()) {
                 Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
@@ -103,7 +104,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             if (segmentView.getTeams().indexOf(team) < segmentView.getTeams().size() - 1) {
                 Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 intersertial.controller.setCurrent("versus");
-                if (team.size() > maxColumns / 2) {
+                if (team.getWorkers().size() > maxColumns / 2) {
                     intersertial.pane.setPrefSize(teamCard.getBoundsInParent().getWidth(), 0.0);
                 }
                 flowPane.getChildren().add(intersertial.pane);

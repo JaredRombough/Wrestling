@@ -20,6 +20,7 @@ import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
@@ -185,12 +186,12 @@ public class EventFactory {
 
         winnerPop /= winner.size();
 
-        for (List<Worker> team : matchManager.getTeams(match)) {
+        for (SegmentTeam team : matchManager.getTeams(match)) {
 
             if (!team.equals(winner)) {
                 int teamPop = 0;
 
-                for (Worker worker : team) {
+                for (Worker worker : team.getWorkers()) {
                     teamPop += worker.getPopularity();
                 }
 
@@ -201,7 +202,7 @@ public class EventFactory {
                         workerManager.gainPopularity(worker);
                     }
 
-                    for (Worker worker : team) {
+                    for (Worker worker : team.getWorkers()) {
                         if (ModelUtilityFunctions.randRange(1, 3) == 1) {
                             workerManager.losePopularity(worker);
                         }
