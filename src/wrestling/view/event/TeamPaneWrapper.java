@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -69,6 +70,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public void setTargets(List<String> targetNames) {
+        if (targetNames.size() > 1) {
+            targetNames.add("Everybody");
+        }
         int previousIndex = -1;
         String previousName = "";
         if (!targetComboBox.getItems().isEmpty()) {
@@ -119,14 +123,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addAngleComboBox() {
-        angleComboBox = new ComboBox();
-        angleComboBox.getItems().addAll(
-                "Promo",
-                "Offer",
-                "Challenge",
-                "Announcement");
-
-        vBox.getChildren().add(angleComboBox);
+        angleComboBox = addComboBox(Arrays.asList("Promo", "Offer", "Challenge", "Announcement"));
         angleComboBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String t, String t1) {
@@ -145,7 +142,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 }
             }
         });
-        angleComboBox.getSelectionModel().selectFirst();
 
     }
 
@@ -154,67 +150,46 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addPromoComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                "Self Hype", "Target");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        addComboBox(Arrays.asList("Self Hype", "Target"));
     }
 
     private void addJoinTeamComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                "New Tag Team", "New Stable", "Existing Stable");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        addComboBox(Arrays.asList("New Tag Team", "New Stable", "Existing Stable"));
     }
 
     private void addShowComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                "Tonight", "Next Show", "Next Big Show", "Show x");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        addComboBox(Arrays.asList("Tonight", "Next Show", "Next Big Show", "Show x"));
     }
 
     private void addViolenceComboBox() {
-        violenceComboBox = new ComboBox();
-        violenceComboBox.getItems().addAll(
-                "No Bump", "Attack", "Defend");
-        vBox.getChildren().add(violenceComboBox);
-        violenceComboBox.getSelectionModel().selectFirst();
+        violenceComboBox = addComboBox(Arrays.asList("No Bump", "Attack", "Defend"));
     }
 
     private void addPresentComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                "Present", "Not Present");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        addComboBox(Arrays.asList("Present", "Not Present"));
     }
 
     private void addSuccessComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                "Win", "Lose", "Draw");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        addComboBox(Arrays.asList("Win", "Lose", "Draw"));
     }
 
     private void addTargetComboBox() {
-        targetComboBox = new ComboBox();
-        targetComboBox.getItems().addAll(
-                "Target A", "Target B", "Target C");
-        vBox.getChildren().add(targetComboBox);
-        targetComboBox.getSelectionModel().selectFirst();
+        targetComboBox = addComboBox(Arrays.asList("Target A", "Target B", "Target C"));
     }
 
     private void addTimingComboBox() {
+        addComboBox(Arrays.asList("Before", "During", "After"));
+    }
+
+    private ComboBox addComboBox(List<String> items) {
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().addAll(
-                "Before", "During", "After");
+                items);
         vBox.getChildren().add(comboBox);
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(comboBox, new Insets(5));
         comboBox.getSelectionModel().selectFirst();
+        return comboBox;
     }
 
     public void setTeamTypeLabel(String string) {

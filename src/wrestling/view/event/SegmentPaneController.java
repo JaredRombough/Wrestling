@@ -42,9 +42,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private Button addTeamButton;
 
     @FXML
-    private Button removeTeamButton;
-
-    @FXML
     private ComboBox matchRules;
 
     @FXML
@@ -212,8 +209,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         if (event.getSource() == addTeamButton) {
             addTeam();
-        } else if (event.getSource() == removeTeamButton) {
-            removeTeam();
         } else if (event.getSource() == matchButton) {
             for (Screen screen : teamPaneWrappers) {
                 ((TeamPaneWrapper) screen.controller).setMatch();
@@ -297,6 +292,17 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
+    private void removeTeam(Screen teamPaneWrapper) {
+        if (teamsPane.getChildren().contains(teamPaneWrapper.pane)) {
+            teamsPane.getChildren().remove(teamPaneWrapper.pane);
+        }
+        if (teamPaneWrappers.contains(teamPaneWrapper)) {
+            teamPaneWrappers.remove(teamPaneWrapper);
+        }
+        eventScreenController.updateSegments();
+        updateLabels();
+    }
+
     private void addInterference() {
         Screen newTeam = addTeam();
         ((TeamPaneWrapper) newTeam.controller).setInterference();
@@ -325,16 +331,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             names.add(((TeamPaneWrapper) teamPaneWrappers.get(i).controller).getTeamPaneController().getTeamName());
         }
         return names;
-    }
-
-    private void removeTeam(Screen teamPaneWrapper) {
-        if (teamsPane.getChildren().contains(teamPaneWrapper.pane)) {
-            teamsPane.getChildren().remove(teamPaneWrapper.pane);
-        }
-        if (teamPaneWrappers.contains(teamPaneWrapper)) {
-            teamPaneWrappers.remove(teamPaneWrapper);
-        }
-        eventScreenController.updateSegments();
     }
 
     public void swapTeams(int indexA, int indexB) {
@@ -399,7 +395,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public void clear() {
         while (!teamPaneWrappers.isEmpty()) {
-            removeTeam();
+            removeTeam(teamPaneWrappers.get(0));
         }
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
