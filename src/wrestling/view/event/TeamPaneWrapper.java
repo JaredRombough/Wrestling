@@ -56,15 +56,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBox angleComboBox;
     private ComboBox promoComboBox;
     private ComboBox violenceComboBox;
+    private ComboBox targetComboBox;
 
     private TeamPaneState currentState;
-
-    private enum TeamPaneState {
-        CHALLENGER,
-        CHALLENGED,
-        INTERFERENCE,
-        INTERVIEWER
-    }
 
     private void setCurrentState(TeamPaneState state) {
         currentState = state;
@@ -78,6 +72,32 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             case INTERVIEWER:
                 break;
         }
+    }
+
+    public void setTargets(List<String> targetNames) {
+        int previousIndex = -1;
+        String previousName = "";
+        if (!targetComboBox.getItems().isEmpty()) {
+            previousIndex = targetComboBox.getSelectionModel().getSelectedIndex();
+            previousName = targetComboBox.getSelectionModel().getSelectedItem().toString();
+        }
+        targetComboBox.getItems().clear();
+        targetComboBox.getItems().addAll(targetNames);
+        boolean nameMatch = false;
+        for (int i = 0; i < targetComboBox.getItems().size(); i++) {
+            if (targetComboBox.getItems().get(i).toString().equals(previousName)) {
+                targetComboBox.getSelectionModel().select(i);
+                nameMatch = true;
+                break;
+            }
+        }
+        if (!nameMatch && previousIndex != -1
+                && targetComboBox.getItems().size() > previousIndex) {
+            targetComboBox.getSelectionModel().select(previousIndex);
+        } else if (!nameMatch) {
+            targetComboBox.getSelectionModel().selectFirst();
+        }
+
     }
 
     public Button getXButton() {
@@ -96,6 +116,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public void setInterference() {
+        currentState = TeamPaneState.INTERFERENCE;
         vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();
         addSuccessComboBox();
@@ -187,11 +208,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addTargetComboBox() {
-        ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
+        targetComboBox = new ComboBox();
+        targetComboBox.getItems().addAll(
                 "Target A", "Target B", "Target C");
-        vBox.getChildren().add(comboBox);
-        comboBox.getSelectionModel().selectFirst();
+        vBox.getChildren().add(targetComboBox);
+        targetComboBox.getSelectionModel().selectFirst();
     }
 
     private void addTimingComboBox() {
@@ -240,6 +261,13 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public TeamPaneController getTeamPaneController() {
         return (TeamPaneController) teamPane.controller;
+    }
+
+    /**
+     * @return the currentState
+     */
+    public TeamPaneState getCurrentState() {
+        return currentState;
     }
 
 }

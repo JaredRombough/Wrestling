@@ -47,7 +47,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
-        updateTeamNameLabel();
+        //updateTeamNameLabel();
+        updateLabels();
     }
 
     public void removeWorker(Worker worker) {
@@ -66,7 +67,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         updateTeamNameLabel();
     }
 
-    private void updateTeamNameLabel() {
+    public void updateTeamNameLabel() {
         if (!getWorkers().isEmpty()) {
             teamNameLabel.setText(ModelUtilityFunctions.slashShortNames(getWorkers()));
         } else {
@@ -128,30 +129,16 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return new ArrayList<>(teamListView.getItems());
 
     }
-    
+
     public void setWorkers(List<Worker> workers) {
         teamListView.getItems().clear();
         teamListView.getItems().addAll(workers);
-        updateTeamNameLabel();
+        //updateTeamNameLabel();
+        updateLabels();
     }
 
     public String getTeamName() {
-        String string = "";
-
-        if (!getWorkers().isEmpty()) {
-
-            for (int i = 0; i < getWorkers().size(); i++) {
-                Worker worker = getWorkers().get(i);
-                string += worker.getName();
-                if (i < getWorkers().size() - 1) {
-                    string += "/";
-                }
-            }
-        } else {
-            string += "Team #" + teamNumber;
-        }
-
-        return string;
+        return teamNameLabel.getText();
     }
 
 }

@@ -274,6 +274,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         eventScreenController.updateSegments();
 
+        updateLabels();
+
         return teamPaneWrapper;
 
     }
@@ -298,6 +300,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void addInterference() {
         Screen newTeam = addTeam();
         ((TeamPaneWrapper) newTeam.controller).setInterference();
+        updateLabels();
     }
 
     @Override
@@ -305,11 +308,26 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         updateTeamNames();
 
         for (Screen screen : teamPaneWrappers) {
+            if (((TeamPaneWrapper) screen.controller).getCurrentState() != null
+                    && ((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE)) {
+                ((TeamPaneWrapper) screen.controller).setTargets(getTeamNames());
+            }
             screen.controller.updateLabels();
 
         }
         eventScreenController.updateSegments();
 
+    }
+
+    private List<String> getTeamNames() {
+        List<String> names = new ArrayList<>();
+        for (Screen screen : teamPaneWrappers) {
+            if (((TeamPaneWrapper) screen.controller).getCurrentState() == null
+                    || !((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE)) {
+                names.add(((TeamPaneWrapper) screen.controller).getTeamPaneController().getTeamName());
+            }
+        }
+        return names;
     }
 
     private void removeTeam(Screen teamPaneWrapper) {
@@ -336,20 +354,23 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     //this will need to be more complex when more types of segments are added
     private void updateTeamNames() {
         for (Screen screen : teamPaneWrappers) {
-            String teamName = "";
+            String teamType = "";
             if (matchFinish() != null && matchFinish().equals(MatchFinishes.DRAW)) {
-                teamName = "Draw";
+                teamType = "Draw";
+            } else if (((TeamPaneWrapper) screen.controller).getCurrentState() != null
+                    && (((TeamPaneWrapper) screen.controller).getCurrentState().equals(TeamPaneState.INTERFERENCE))) {
+                teamType = "Interference";
             } else {
                 switch (teamPaneWrappers.indexOf(screen)) {
                     case 0:
-                        teamName = "Winner" + teamPaneWrappers.indexOf(screen);
+                        teamType = "Winner";
                         break;
                     default:
-                        teamName = "Loser" + teamPaneWrappers.indexOf(screen);
+                        teamType = "Loser";
                         break;
                 }
             }
-            ((TeamPaneWrapper) screen.controller).setTeamTypeLabel(teamName);
+            ((TeamPaneWrapper) screen.controller).setTeamTypeLabel(teamType);
 
         }
     }
