@@ -20,6 +20,8 @@ import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
+import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 
 public class EventManager {
@@ -28,6 +30,7 @@ public class EventManager {
     private final List<EventWorker> eventWorkers;
     private final List<MatchEvent> matchEvents;
     private final List<EventName> eventNames;
+    private final List<EventView> eventViews;
 
     private final DateManager dateManager;
     private final MatchManager matchManager;
@@ -43,6 +46,7 @@ public class EventManager {
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
         eventNames = new ArrayList<>();
+        eventViews = new ArrayList<>();
         this.matchManager = matchManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
@@ -56,6 +60,10 @@ public class EventManager {
         if (!events.contains(event)) {
             events.add(event);
         }
+    }
+
+    public void addEventView(EventView eventView) {
+        eventViews.add(eventView);
     }
 
     public void addMatchEvent(MatchEvent matchEvent) {
@@ -128,6 +136,15 @@ public class EventManager {
             if (event.getDate().equals(date)
                     && event.getPromotion().equals(promotion)) {
                 return event;
+            }
+        }
+        return null;
+    }
+
+    public EventView getEventView(Event event) {
+        for (EventView eventView : eventViews) {
+            if (event.equals(eventView.getEvent())) {
+                return eventView;
             }
         }
         return null;
@@ -343,24 +360,37 @@ public class EventManager {
         return attendance;
     }
 
-    public String generateSummaryString(Event event) {
+    private String futureEventString(Event event) {
         StringBuilder sb = new StringBuilder();
-        boolean future = false;
+        sb.append("Workers booked:");
+        List<Worker> workers = allWorkers(event);
+        for (Worker worker : workers) {
+            sb.append("\n");
+            sb.append(worker.getName());
+        }
+        return sb.toString();
+    }
+
+    public String generateSummaryString(Event event) {
+        EventView eventView = getEventView(event);
+
+        StringBuilder sb = new StringBuilder();
 
         if (event.getDate().isAfter(dateManager.today())) {
-            sb.append("This event is in the future");
-            future = true;
-        } else if (event.getDate().equals(dateManager.today())) {
-            sb.append("This event is scheduled for later today");
-            future = true;
+            return sb.append("This event is in the future\n").append(futureEventString(event)).toString();
         }
 
-        for (Segment segment : getMatches(event)) {
-            if (segment instanceof Match) {
-                if (!matchManager.getWorkers((Match) segment).isEmpty()) {
-                    sb.append(matchManager.getMatchString((Match) segment));
+        if (event.getDate().equals(dateManager.today())) {
+            return sb.append("This event is scheduled for later today\n").append(futureEventString(event)).toString();
+        }
+
+        for (SegmentView segmentView : eventView.getSegments()) {
+            if (segmentView.getSegment() instanceof Match) {
+                Match match = (Match) segmentView.getSegment();
+                if (!segmentView.getWorkers().isEmpty()) {
+                    sb.append(matchManager.getMatchString(segmentView));
                     sb.append("\n");
-                    sb.append("Rating: ").append(((Match) segment).getRating());
+                    sb.append("Rating: ").append((match).getRating());
                 } else {
                     logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
                 }
@@ -372,20 +402,11 @@ public class EventManager {
 
         sb.append("\n");
 
-        if (future) {
-            sb.append("Workers booked:");
-            List<Worker> workers = allWorkers(event);
-            for (Worker worker : workers) {
-                sb.append("\n");
-                sb.append(worker.getName());
-            }
-        } else {
-            sb.append("Total cost: $").append(event.getCost());
-            sb.append("\n");
-            sb.append("Attendance: ").append(event.getAttendance());
-            sb.append("\n");
-            sb.append("Gross profit: $").append(event.getGate());
-        }
+        sb.append("Total cost: $").append(event.getCost());
+        sb.append("\n");
+        sb.append("Attendance: ").append(event.getAttendance());
+        sb.append("\n");
+        sb.append("Gross profit: $").append(event.getGate());
 
         return sb.toString();
     }

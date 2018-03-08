@@ -3,6 +3,7 @@ package wrestling.model.modelView;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
+import wrestling.model.Worker;
 
 public class EventView {
 
@@ -33,5 +34,18 @@ public class EventView {
      */
     public void setSegments(List<SegmentView> segments) {
         this.segments = segments;
+    }
+
+    public List<Worker> allWorkers() {
+        List<Worker> allWorkers = new ArrayList<>();
+        for (SegmentView segment : segments) {
+            for (Worker worker : segment.getWorkers()) {
+                if (!allWorkers.contains(worker)) {
+                    allWorkers.add(worker);
+                }
+            }
+        }
+
+        return allWorkers;
     }
 }
