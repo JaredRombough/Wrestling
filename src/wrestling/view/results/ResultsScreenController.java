@@ -80,13 +80,13 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     }
 
     private void showSummary() {
-        gameController.getEventFactory().processEvent(eventView, gameController.getDateManager().today());
+        gameController.getEventFactory().processEventView(eventView, gameController.getDateManager().today(), false);
         showNextDisplay(eventView);
     }
 
     private void nextSegment() {
         SegmentView current = eventView.getSegments().get(currentSegmentViewIndex);
-        current.setSegment(gameController.getEventFactory().processSegment(eventView.getEvent(), current));
+        current.setSegment(gameController.getEventFactory().processSegmentView(eventView.getEvent(), current));
         currentSegmentViewIndex++;
         showNextDisplay(current);
     }

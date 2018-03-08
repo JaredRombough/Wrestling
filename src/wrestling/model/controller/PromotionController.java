@@ -25,7 +25,9 @@ import wrestling.model.manager.EventManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtilityFunctions;
 import wrestling.view.event.TeamType;
 
@@ -264,7 +266,7 @@ public class PromotionController implements Serializable {
 
     }
 
-    private List<Segment> bookSegments(Promotion promotion) {
+    private List<SegmentView> bookSegments(Promotion promotion) {
         //maximum segments for the event
         int maxSegments = 8;
 
@@ -294,7 +296,7 @@ public class PromotionController implements Serializable {
         sortByPopularity(eventRoster);
 
         //list to hold event segments
-        List<Segment> segments = new ArrayList<>();
+        List<SegmentView> segments = new ArrayList<>();
 
         //list to hold workers who have been booked for this event
         List<Worker> matchBooked = new ArrayList<>();
@@ -371,8 +373,10 @@ public class PromotionController implements Serializable {
                     Collections.swap(matchTeams, 0, 1);
                 }
 
-                Match match = matchFactory.processMatch(matchTeams, title);
-                segments.add(match);
+                SegmentView segmentView = new SegmentView();
+                segmentView.setTeams(matchTeams);
+                segmentView.setTitle(title);
+                segments.add(segmentView);
             }
         }
 
@@ -388,9 +392,11 @@ public class PromotionController implements Serializable {
                     List<SegmentTeam> teams = new ArrayList<>();
                     teams.add(new SegmentTeam(teamA, TeamType.DEFAULT));
                     teams.add(new SegmentTeam(teamB, TeamType.DEFAULT));
-                    Match match = matchFactory.processMatch(teams);
 
-                    segments.add(match);
+                    SegmentView segmentView = new SegmentView();
+                    segmentView.setTeams(teams);
+
+                    segments.add(segmentView);
                 }
 
                 if (segments.size() > maxSegments) {
@@ -405,7 +411,7 @@ public class PromotionController implements Serializable {
 
     //book an event
     private void bookEvent(Event event, Promotion promotion) {
-        eventFactory.processEvent(event, bookSegments(promotion), dateManager.today(), promotion);
+        eventFactory.processEventView(new EventView(event, bookSegments(promotion)), dateManager.today(), true);
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {

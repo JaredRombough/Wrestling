@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.MatchFinishes;
 import wrestling.model.MatchRules;
+import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 
@@ -15,6 +16,12 @@ public class SegmentView {
     private MatchFinishes finish;
     private LocalDate date;
     private Segment segment;
+    private Title title;
+    
+    public SegmentView() {
+        rules = MatchRules.DEFAULT;
+        finish = MatchFinishes.CLEAN;
+    }
 
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
@@ -92,6 +99,20 @@ public class SegmentView {
      */
     public void setSegment(Segment segment) {
         this.segment = segment;
+    }
+
+    /**
+     * @return the title
+     */
+    public Title getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(Title title) {
+        this.title = title;
     }
 
 }

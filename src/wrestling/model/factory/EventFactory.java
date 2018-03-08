@@ -4,12 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
-import wrestling.model.EventType;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
-import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -20,9 +18,7 @@ import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
-import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.utility.ModelUtilityFunctions;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -56,13 +52,17 @@ public class EventFactory {
         this.workerManager = workerManager;
     }
 
-    private void processEvent(Event event, final List<Segment> segments, LocalDate date, EventType eventType) {
-        processSegments(event, segments);
+    public void processEventView(EventView eventView, LocalDate date, boolean processSegments) {
 
-        processEvent(event, segments, date);
-    }
+        if (processSegments) {
+            for (SegmentView segmentView : eventView.getSegments()) {
+                segmentView.setSegment(processSegmentView(eventView.getEvent(), segmentView));
+            }
+        }
 
-    public void processEvent(Event event, List<Segment> segments, LocalDate date) {
+        Event event = eventView.getEvent();
+        List<Segment> segments = segmentViewsToSegments(eventView.getSegments());
+
         setEventStats(event, segments);
 
         promotionManager.getBankAccount(event.getPromotion()).addFunds(eventManager.calculateGate(event), 'e', date);
@@ -72,14 +72,6 @@ public class EventFactory {
             eventManager.addEventWorker(eventWorker);
         }
         processContracts(event, segments);
-    }
-
-    public void processEvent(EventView eventView, LocalDate date) {
-        processEvent(eventView.getEvent(), segmentViewsToSegments(eventView.getSegments()), date);
-    }
-
-    public void processEvent(Event event, final List<Segment> segments, LocalDate date, Promotion promotion) {
-        processEvent(event, segments, date, EventType.LIVEEVENT);
     }
 
     public Event createFutureEvent(Promotion promotion, LocalDate date) {
@@ -97,7 +89,7 @@ public class EventFactory {
     private List<Segment> segmentViewsToSegments(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
-            segments.add(processSegmentView(tempSegment));
+            segments.add(EventFactory.this.processSegmentView(tempSegment));
         }
         return segments;
     }
@@ -113,17 +105,8 @@ public class EventFactory {
         });
     }
 
-    private void processSegments(Event event, List<Segment> segments) {
-        segments.stream().filter((segment) -> (segment instanceof Match)).forEach(((segment) -> {
-            eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
-            matchManager.getWinners((Match) segment).stream().forEach((w) -> {
-                workerManager.gainPopularity(w);
-            });
-        }));
-    }
-
-    public Segment processSegment(Event event, SegmentView segmentView) {
-        Segment segment = processSegmentView(segmentView);
+    public Segment processSegmentView(Event event, SegmentView segmentView) {
+        Segment segment = EventFactory.this.processSegmentView(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
             matchManager.getWinners((Match) segment).stream().forEach((w) -> {
@@ -131,95 +114,6 @@ public class EventFactory {
             });
         }
         return segment;
-    }
-
-    private String processSegment(Segment segment) {
-
-        String string = "";
-
-        if (segment instanceof Match) {
-            string = processMatch((Match) segment);
-        }
-
-        return string;
-
-    }
-
-    private String processMatch(Match match) {
-
-        StringBuilder sb = new StringBuilder();
-        Title title = matchManager.getTitle(match);
-        List<Worker> winner = matchManager.getWinners(match);
-        List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
-
-        if (title != null) {
-
-            if (champs.isEmpty()) {
-
-                titleManager.awardTitle(title, winner);
-                sb.append(ModelUtilityFunctions.slashNames(winner))
-                        .append(winner.size() > 1 ? " win the vacant  " : " wins the vacant  ")
-                        .append(title.getName()).append(" title");
-            } else {
-                for (Worker worker : champs) {
-                    if (!winner.contains(worker)) {
-                        sb.append(ModelUtilityFunctions.slashNames(winner))
-                                .append(winner.size() > 1 ? " defeat " : " defeats ")
-                                .append(ModelUtilityFunctions.slashNames(champs)).append(" for the ")
-                                .append(title.getName()).append(" title");
-                        titleManager.titleChange(title, winner);
-
-                        break;
-                    }
-
-                    sb.append(ModelUtilityFunctions.slashNames(winner)).append(" defends the  ").append(title.getName()).append(" title");
-                }
-            }
-        }
-        int winnerPop = 0;
-
-        //calculate the average popularity of the winning team
-        //but should it be max popularity?
-        for (Worker worker : winner) {
-            winnerPop += worker.getPopularity();
-        }
-
-        winnerPop /= winner.size();
-
-        for (SegmentTeam team : matchManager.getTeams(match)) {
-
-            if (!team.equals(winner)) {
-                int teamPop = 0;
-
-                for (Worker worker : team.getWorkers()) {
-                    teamPop += worker.getPopularity();
-                }
-
-                teamPop /= winner.size();
-
-                if (teamPop > winnerPop) {
-                    for (Worker worker : winner) {
-                        workerManager.gainPopularity(worker);
-                    }
-
-                    for (Worker worker : team.getWorkers()) {
-                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            workerManager.losePopularity(worker);
-                        }
-
-                    }
-                } else {
-                    for (Worker worker : winner) {
-                        if (ModelUtilityFunctions.randRange(1, 3) == 1) {
-                            workerManager.gainPopularity(worker);
-                        }
-                    }
-                }
-
-            }
-        }
-
-        return sb.toString().isEmpty() ? match.toString().replace("\n", " ") : sb.toString();
     }
 
 }
