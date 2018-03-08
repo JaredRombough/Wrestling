@@ -24,10 +24,11 @@
             <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Text fx:id="segmentTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" GridPane.halignment="CENTER" />
-            <AnchorPane GridPane.rowIndex="1" GridPane.rowSpan="6">
+            <AnchorPane GridPane.rowIndex="1" GridPane.rowSpan="5">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
@@ -39,7 +40,12 @@
                   </ScrollPane>
                </children>
             </AnchorPane>
-            <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <AnchorPane fx:id="additionalInfo" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="6" GridPane.rowSpan="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </AnchorPane>
          </children>
       </GridPane>
    </children>

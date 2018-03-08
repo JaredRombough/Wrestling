@@ -19,6 +19,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.view.event.TeamType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -28,6 +29,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
     @FXML
     private AnchorPane anchorPane;
+
+    @FXML
+    private AnchorPane additionalInfo;
 
     @FXML
     private FlowPane flowPane;
@@ -91,7 +95,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateView() {
 
         flowPane.getChildren().clear();
-        for (SegmentTeam team : segmentView.getTeams()) {
+        List<SegmentTeam> defaultTeams = segmentView.getTeams(TeamType.INTERFERENCE);
+
+        for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
                 Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
@@ -101,7 +107,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             int maxColumns = getMaxColumns(workerCards.get(0).pane.getBoundsInParent().getWidth());
             GridPane teamCard = teamCard(workerCards, maxColumns);
             flowPane.getChildren().add(teamCard);
-            if (segmentView.getTeams().indexOf(team) < segmentView.getTeams().size() - 1) {
+            if (defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
                 Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 intersertial.controller.setCurrent("versus");
                 if (team.getWorkers().size() > maxColumns / 2) {
@@ -110,6 +116,15 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 flowPane.getChildren().add(intersertial.pane);
             }
 
+        }
+
+        List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
+        if (!interferenceTeams.isEmpty()) {
+            Screen screen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, additionalInfo);
+            StringBuilder sb = new StringBuilder();
+            for (SegmentTeam team : interferenceTeams) {
+                sb.append(String.format("%s interfered %s the match, attacking %s. %s"));
+            }
         }
 
     }

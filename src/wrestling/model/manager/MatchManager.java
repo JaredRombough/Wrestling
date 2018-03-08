@@ -10,7 +10,6 @@ import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
-import wrestling.model.interfaces.MatchRule;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
@@ -133,17 +132,18 @@ public class MatchManager {
 
         String string = "";
 
+        if (segmentView.getWorkers().isEmpty()) {
+            return "Empty Segment";
+        }
+
         if (isHandicapMatch(teams)) {
             string += "Handicap Match\n";
 
         } else if (rules.equals(MatchRules.DEFAULT)) {
 
-            int teamsSize = teamsSizeNoInterference(segmentView);
+            int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
 
             switch (teamsSize) {
-                case 0:
-                    string += "Empty Segment";
-                    break;
                 case 2:
                     int teamSize = teams.get(0).getWorkers().size();
                     switch (teamSize) {
@@ -181,35 +181,36 @@ public class MatchManager {
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinishes finish = segmentView.getFinish();
-        int teamsSize = teamsSizeNoInterference(segmentView);
+        int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
+        String matchString = getMatchTitle(segmentView);
 
-        String string = new String();
+        if (segmentView.getWorkers().isEmpty()) {
+            return matchString;
+        }
 
         if (teamsSize > 1) {
-
-            string += getMatchTitle(segmentView);
 
             for (int t = 0; t < teamsSize; t++) {
                 List<Worker> team = teams.get(t).getWorkers();
 
-                string += ModelUtilityFunctions.slashShortNames(team);
+                matchString += ModelUtilityFunctions.slashShortNames(team);
 
-                if (t == 0 && !string.isEmpty()) {
-                    string += " def. ";
+                if (t == 0 && !matchString.isEmpty()) {
+                    matchString += " def. ";
 
-                } else if (t < teamsSize - 1 && !string.isEmpty()) {
-                    string += ", ";
+                } else if (t < teamsSize - 1 && !matchString.isEmpty()) {
+                    matchString += ", ";
                 }
 
             }
 
             switch (finish) {
                 case COUNTOUT:
-                    string += " by Countout";
+                    matchString += " by Countout";
                     break;
                 case DQINTERFERENCE:
                 case DQ:
-                    string += " by DQ";
+                    matchString += " by DQ";
                     break;
                 default:
                     break;
@@ -218,14 +219,14 @@ public class MatchManager {
 
         } else {
             //probable placeholder
-            string += !teams.isEmpty() ? teams.get(0) : "";
+            matchString += !teams.isEmpty() ? teams.get(0) : "";
         }
-        if (string.isEmpty()) {
+        if (matchString.isEmpty()) {
 
-            string += "Empty Segment";
+            matchString += "Empty Segment";
         }
 
-        return string;
+        return matchString;
 
     }
 
@@ -242,16 +243,6 @@ public class MatchManager {
             }
         }
         return handicap;
-    }
-
-    private int teamsSizeNoInterference(SegmentView segmentView) {
-        int teamsSize = 0;
-        for (SegmentTeam team : segmentView.getTeams()) {
-            if (team.getType().equals(TeamType.DEFAULT)) {
-                teamsSize++;
-            }
-        }
-        return teamsSize;
     }
 
 }

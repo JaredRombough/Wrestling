@@ -163,7 +163,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addViolenceComboBox() {
-        violenceComboBox = addComboBox(Arrays.asList("No Bump", "Attack", "Defend"));
+        violenceComboBox = addComboBox(Arrays.asList(
+                ViolenceType.NO_BUMP.description(),
+                ViolenceType.ATTACK.description(),
+                ViolenceType.DEFEND.description()));
     }
 
     private void addPresentComboBox() {
@@ -171,7 +174,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addSuccessComboBox() {
-        addComboBox(Arrays.asList("Win", "Lose", "Draw"));
+        addComboBox(Arrays.asList(
+                SuccessType.WIN.description(),
+                SuccessType.LOSE.description(),
+                SuccessType.DRAW.description()
+        ));
     }
 
     private void addTargetComboBox() {

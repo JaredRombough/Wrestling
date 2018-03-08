@@ -8,6 +8,7 @@ import wrestling.model.MatchRules;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
+import wrestling.view.event.TeamType;
 
 public class SegmentView {
 
@@ -17,7 +18,7 @@ public class SegmentView {
     private LocalDate date;
     private Segment segment;
     private Title title;
-    
+
     public SegmentView() {
         rules = MatchRules.DEFAULT;
         finish = MatchFinishes.CLEAN;
@@ -36,6 +37,16 @@ public class SegmentView {
      */
     public List<SegmentTeam> getTeams() {
         return teams;
+    }
+
+    public List<SegmentTeam> getTeams(TeamType type) {
+        List<SegmentTeam> defaultTeams = new ArrayList<>();
+        for (SegmentTeam team : teams) {
+            if (team.getType().equals(type)) {
+                defaultTeams.add(team);
+            }
+        }
+        return defaultTeams;
     }
 
     /**

@@ -7,8 +7,5 @@ public interface MatchRule {
     boolean nodq();
 
     String description();
-    //int enhanceSpeed();
-    //int enhanceBrawls();
-    //int enhanceWrestle();
 
 }
