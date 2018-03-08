@@ -6,8 +6,8 @@ import wrestling.model.Worker;
 
 public class TitleReign {
 
-    private List<Worker> workers;
-    private LocalDate dayWon;
+    private final List<Worker> workers;
+    private final LocalDate dayWon;
     private LocalDate dayLost;
 
     public TitleReign(List<Worker> workers, LocalDate dayWon) {
