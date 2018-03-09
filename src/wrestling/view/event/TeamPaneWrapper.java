@@ -23,6 +23,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
@@ -58,6 +60,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBox violenceComboBox;
     private ComboBox targetComboBox;
     private ComboBox successComboBox;
+    private ComboBox timingComboBox;
+    private ComboBox joinTeamComboBox;
+    private ComboBox showComboBox;
+    private ComboBox presentComboBox;
+
     private List<SegmentTeam> targets;
 
     private TeamType teamType;
@@ -129,28 +136,33 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     }
 
-    public void setInterference() {
+    private void setInterference() {
         teamType = TeamType.INTERFERENCE;
         vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();
-        addSuccessComboBox();
         addTimingComboBox();
-
+        addSuccessComboBox();
     }
 
     private void addAngleComboBox() {
-        angleComboBox = addComboBox(Arrays.asList("Promo", "Offer", "Challenge", "Announcement"));
-        angleComboBox.valueProperty().addListener(new ChangeListener<String>() {
+        angleComboBox = addComboBox(FXCollections.observableArrayList(AngleType.values()), AngleType.label());
+        angleComboBox.valueProperty().addListener(new ChangeListener<AngleType>() {
             @Override
-            public void changed(ObservableValue ov, String t, String t1) {
+            public void changed(ObservableValue ov, AngleType t, AngleType t1) {
                 if (t1 != null) {
                     clearControls();
-                    if (t1.equals("Promo")) {
-                        addPromoComboBox();
-                    } else if (t1.equals("Offer")) {
-                        addJoinTeamComboBox();
-                    } else if (t1.equals("Challenge")) {
-                        addShowComboBox();
+                    switch (t1) {
+                        case PROMO:
+                            addPromoComboBox();
+                            break;
+                        case OFFER:
+                            addJoinTeamComboBox();
+                            break;
+                        case CHALLENGE:
+                            addShowComboBox();
+                            break;
+                        default:
+                            break;
                     }
                     if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox)) {
                         violenceComboBox.toFront();
@@ -166,56 +178,60 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addPromoComboBox() {
-        addComboBox(Arrays.asList("Self Hype", "Target"));
+        promoComboBox = addComboBox(FXCollections.observableArrayList(PromoType.values()), PromoType.label());
     }
 
     private void addJoinTeamComboBox() {
-        addComboBox(Arrays.asList("New Tag Team", "New Stable", "Existing Stable"));
+        joinTeamComboBox = addComboBox(FXCollections.observableArrayList(JoinTeamType.values()), JoinTeamType.label());
     }
 
     private void addShowComboBox() {
-        addComboBox(Arrays.asList("Tonight", "Next Show", "Next Big Show", "Show x"));
+        showComboBox = addComboBox(FXCollections.observableArrayList(ShowType.values()), ShowType.label());
     }
 
     private void addViolenceComboBox() {
-        violenceComboBox = addComboBox(FXCollections.observableArrayList(ViolenceType.values()));
+        violenceComboBox = addComboBox(FXCollections.observableArrayList(ViolenceType.values()), ViolenceType.label());
     }
 
     private void addPresentComboBox() {
-        addComboBox(Arrays.asList("Present", "Not Present"));
+        presentComboBox = addComboBox(FXCollections.observableArrayList(PresenceType.values()), PresenceType.label());
     }
 
     private void addSuccessComboBox() {
-        successComboBox = addComboBox(FXCollections.observableArrayList(SuccessType.values()));
+        successComboBox = addComboBox(FXCollections.observableArrayList(SuccessType.values()), SuccessType.label());
     }
 
     private void addTargetComboBox() {
-        targetComboBox = addComboBox(FXCollections.observableArrayList(targets));
+        targetComboBox = addComboBox(FXCollections.observableArrayList(targets), "Target: ");
     }
 
     private void addTimingComboBox() {
-        addComboBox(Arrays.asList("Before", "During", "After"));
+        timingComboBox = addComboBox(FXCollections.observableArrayList(TimingType.values()), TimingType.label());
     }
 
-    private ComboBox addComboBox(ObservableList items) {
-        ComboBox comboBox = new ComboBox();
-        comboBox.setItems(
-                items);
-        vBox.getChildren().add(comboBox);
-        comboBox.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(comboBox, new Insets(5));
-        comboBox.getSelectionModel().selectFirst();
-        return comboBox;
-    }
+    private ComboBox addComboBox(ObservableList items, String text) {
 
-    private ComboBox addComboBox(List<String> items) {
+        Label label = new Label(text);
+        label.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setConstraints(label, 0, 0);
+        GridPane.setMargin(label, new Insets(5));
+
         ComboBox comboBox = new ComboBox();
-        comboBox.getItems().addAll(
-                items);
-        vBox.getChildren().add(comboBox);
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(comboBox, new Insets(5));
+        GridPane.setConstraints(comboBox, 1, 0);
+        GridPane.setColumnSpan(comboBox, 2);
+        GridPane.setMargin(comboBox, new Insets(5));
+        comboBox.setItems(items);
+
+        GridPane gridPane = ViewUtils.gridPaneWithColumns(3);
+        gridPane.getChildren().addAll(label, comboBox);
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+
+        vBox.getChildren().add(gridPane);
+        VBox.setMargin(gridPane, new Insets(5));
+
         comboBox.getSelectionModel().selectFirst();
+
         return comboBox;
     }
 
@@ -278,6 +294,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         segmentTeam.setSuccess(successComboBox != null
                 ? (SuccessType) successComboBox.getSelectionModel().getSelectedItem()
                 : SuccessType.DRAW);
+
+        segmentTeam.setTiming(timingComboBox != null
+                ? (TimingType) timingComboBox.getSelectionModel().getSelectedItem()
+                : TimingType.DURING);
 
         return segmentTeam;
     }

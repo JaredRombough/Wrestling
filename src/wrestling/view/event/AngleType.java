@@ -1,40 +1,52 @@
 package wrestling.view.event;
 
-public enum SuccessType implements Description {
+public enum AngleType implements Description {
 
-    WIN {
+    PROMO {
         @Override
         public String description() {
-            return "Win";
+            return "Promo";
         }
 
         @Override
         public String result() {
-            return "and getting the better of the exchange.";
+            return "";
         }
 
     },
-    LOSE {
+    OFFER {
         @Override
         public String description() {
-            return "Lose";
+            return "Offer";
         }
 
         @Override
         public String result() {
-            return "but got run off to the back.";
+            return "";
         }
 
     },
-    DRAW {
+    CHALLENGE {
         @Override
         public String description() {
-            return "Draw";
+            return "Challenge";
         }
 
         @Override
         public String result() {
-            return "and proceeding to brawl.";
+            return "";
+        }
+
+    },
+    ANNOUNCEMENT {
+        @Override
+        public String description() {
+            return "Announcement";
+        }
+
+        @Override
+        public String result() {
+            return "";
         }
 
     };
@@ -45,7 +57,7 @@ public enum SuccessType implements Description {
     }
 
     public static String label() {
-        return "Result: ";
+        return "Type: ";
     }
 
 }

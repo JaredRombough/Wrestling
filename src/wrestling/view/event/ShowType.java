@@ -1,51 +1,63 @@
 package wrestling.view.event;
 
-public enum SuccessType implements Description {
+public enum ShowType implements Description {
 
-    WIN {
+    TONIGHT {
         @Override
         public String description() {
-            return "Win";
+            return "Tonight";
         }
 
         @Override
         public String result() {
-            return "and getting the better of the exchange.";
+            return "";
         }
 
     },
-    LOSE {
+    NEXT_SHOW {
         @Override
         public String description() {
-            return "Lose";
+            return "Next Show";
         }
 
         @Override
         public String result() {
-            return "but got run off to the back.";
+            return "";
         }
 
     },
-    DRAW {
+    NEXT_BIG_SHOW {
         @Override
         public String description() {
-            return "Draw";
+            return "Next Big Show";
         }
 
         @Override
         public String result() {
-            return "and proceeding to brawl.";
+            return "";
+        }
+
+    },
+    ANNOUNCEMENT {
+        @Override
+        public String description() {
+            return "Announcement";
+        }
+
+        @Override
+        public String result() {
+            return "";
         }
 
     };
-
+    
     @Override
     public String toString() {
         return description();
     }
-
+    
     public static String label() {
-        return "Result: ";
+        return "Show: ";
     }
 
 }

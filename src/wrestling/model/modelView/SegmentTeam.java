@@ -5,6 +5,7 @@ import wrestling.model.Worker;
 import wrestling.model.utility.ModelUtilityFunctions;
 import wrestling.view.event.SuccessType;
 import wrestling.view.event.TeamType;
+import wrestling.view.event.TimingType;
 
 public class SegmentTeam {
 
@@ -12,6 +13,7 @@ public class SegmentTeam {
     private TeamType type;
     private SegmentTeam target;
     private SuccessType success;
+    private TimingType timing;
 
     public SegmentTeam(List<Worker> workers, TeamType type) {
         this.workers = workers;
@@ -81,12 +83,26 @@ public class SegmentTeam {
         if (type.equals(TeamType.EVERYONE)) {
             string = "Everyone";
         } else if (!type.equals(TeamType.EVERYONE) && workers.isEmpty()) {
-            string = "(Empty Team)";
+            string = "(Empty)";
         } else {
             string = ModelUtilityFunctions.slashShortNames(workers);
         }
 
         return string;
+    }
+
+    /**
+     * @return the timing
+     */
+    public TimingType getTiming() {
+        return timing;
+    }
+
+    /**
+     * @param timing the timing to set
+     */
+    public void setTiming(TimingType timing) {
+        this.timing = timing;
     }
 
 }

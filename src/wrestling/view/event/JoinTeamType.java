@@ -1,51 +1,63 @@
 package wrestling.view.event;
 
-public enum SuccessType implements Description {
+public enum JoinTeamType implements Description {
 
-    WIN {
+    TAG_TEAM {
         @Override
         public String description() {
-            return "Win";
+            return "New Tag Team";
         }
 
         @Override
         public String result() {
-            return "and getting the better of the exchange.";
+            return "";
         }
 
     },
-    LOSE {
+    NEW_STABLE {
         @Override
         public String description() {
-            return "Lose";
+            return "New Stable";
         }
 
         @Override
         public String result() {
-            return "but got run off to the back.";
+            return "";
         }
 
     },
-    DRAW {
+    STABLE {
         @Override
         public String description() {
-            return "Draw";
+            return "Existing Stable";
         }
 
         @Override
         public String result() {
-            return "and proceeding to brawl.";
+            return "";
+        }
+
+    },
+    ANNOUNCEMENT {
+        @Override
+        public String description() {
+            return "Announcement";
+        }
+
+        @Override
+        public String result() {
+            return "";
         }
 
     };
-
+    
     @Override
     public String toString() {
         return description();
     }
-
+    
     public static String label() {
-        return "Result: ";
+        return "Join: ";
     }
 
 }

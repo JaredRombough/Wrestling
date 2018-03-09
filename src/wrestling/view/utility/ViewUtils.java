@@ -51,6 +51,16 @@ public final class ViewUtils {
         }
     }
 
+    public static GridPane gridPaneWithColumns(int columns) {
+        GridPane gridPane = new GridPane();
+        for (int i = 0; i < columns; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100);
+            gridPane.getColumnConstraints().add(colConst);
+        }
+        return gridPane;
+    }
+
     public static void inititializeRegion(Region region) {
         region.setMinWidth(Control.USE_COMPUTED_SIZE);
         region.setMinHeight(Control.USE_COMPUTED_SIZE);

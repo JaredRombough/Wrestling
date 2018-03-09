@@ -1,11 +1,11 @@
 package wrestling.view.event;
 
-public enum ViolenceType implements Description {
+public enum PresenceType implements Description {
 
-    NO_BUMP {
+    PRESENT {
         @Override
         public String description() {
-            return "No Bump";
+            return "Present";
         }
 
         @Override
@@ -14,22 +14,10 @@ public enum ViolenceType implements Description {
         }
 
     },
-    ATTACK {
+    NOT_PRESENT {
         @Override
         public String description() {
-            return "Attack";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
-    },
-    DEFEND {
-        @Override
-        public String description() {
-            return "Defend";
+            return "Not Present";
         }
 
         @Override
@@ -45,7 +33,7 @@ public enum ViolenceType implements Description {
     }
     
     public static String label() {
-        return "Violence: ";
+        return "Presence: ";
     }
 
 }
