@@ -150,9 +150,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         mainApp.setRootLayoutButtonDisable(true);
         boolean testing = false;
         if (testing) {
-
             mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, gameController.getContractManager().getFullRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
+            updateSegments();
             mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(segments)));
         }
 

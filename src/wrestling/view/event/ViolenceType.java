@@ -8,6 +8,11 @@ public enum ViolenceType implements Description {
             return "No Bump";
         }
 
+        @Override
+        public String result() {
+            return "";
+        }
+
     },
     ATTACK {
         @Override
@@ -15,11 +20,21 @@ public enum ViolenceType implements Description {
             return "Attack";
         }
 
+        @Override
+        public String result() {
+            return "";
+        }
+
     },
     DEFEND {
         @Override
         public String description() {
             return "Defend";
+        }
+
+        @Override
+        public String result() {
+            return "";
         }
 
     }

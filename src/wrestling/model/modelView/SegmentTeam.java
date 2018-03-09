@@ -2,12 +2,16 @@ package wrestling.model.modelView;
 
 import java.util.List;
 import wrestling.model.Worker;
+import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.view.event.SuccessType;
 import wrestling.view.event.TeamType;
 
 public class SegmentTeam {
 
     private List<Worker> workers;
     private TeamType type;
+    private SegmentTeam target;
+    private SuccessType success;
 
     public SegmentTeam(List<Worker> workers, TeamType type) {
         this.workers = workers;
@@ -40,6 +44,49 @@ public class SegmentTeam {
      */
     public void setType(TeamType type) {
         this.type = type;
+    }
+
+    /**
+     * @return the target
+     */
+    public SegmentTeam getTarget() {
+        return target;
+    }
+
+    /**
+     * @param target the target to set
+     */
+    public void setTarget(SegmentTeam target) {
+        this.target = target;
+    }
+
+    /**
+     * @return the success
+     */
+    public SuccessType getSuccess() {
+        return success;
+    }
+
+    /**
+     * @param success the success to set
+     */
+    public void setSuccess(SuccessType success) {
+        this.success = success;
+    }
+
+    @Override
+    public String toString() {
+        String string;
+
+        if (type.equals(TeamType.EVERYONE)) {
+            string = "Everyone";
+        } else if (!type.equals(TeamType.EVERYONE) && workers.isEmpty()) {
+            string = "(Empty Team)";
+        } else {
+            string = ModelUtilityFunctions.slashShortNames(workers);
+        }
+
+        return string;
     }
 
 }

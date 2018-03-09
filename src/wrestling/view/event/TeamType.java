@@ -5,5 +5,6 @@ public enum TeamType {
     CHALLENGED,
     INTERFERENCE,
     INTERVIEWER,
-    DEFAULT
+    DEFAULT,
+    EVERYONE
 }

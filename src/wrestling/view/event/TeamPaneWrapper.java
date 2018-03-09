@@ -1,6 +1,7 @@
 package wrestling.view.event;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -8,6 +9,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -22,6 +25,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import wrestling.model.Worker;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -52,6 +57,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBox promoComboBox;
     private ComboBox violenceComboBox;
     private ComboBox targetComboBox;
+    private ComboBox successComboBox;
+    private List<SegmentTeam> targets;
 
     private TeamType teamType;
 
@@ -70,10 +77,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
     }
 
-    public void setTargets(List<String> targetNames) {
-        if (targetNames.size() > 1) {
-            targetNames.add("Everybody");
-        }
+    public void setTargets(List<SegmentTeam> teams) {
+        targets = teams;
+
         int previousIndex = -1;
         String previousName = "";
         if (!targetComboBox.getItems().isEmpty()) {
@@ -81,7 +87,16 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             previousName = targetComboBox.getSelectionModel().getSelectedItem().toString();
         }
         targetComboBox.getItems().clear();
-        targetComboBox.getItems().addAll(targetNames);
+
+        if (teams.size() > 1) {
+            List<Worker> emptyList = new ArrayList<>();
+            teams.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
+        }
+
+        ObservableList list = FXCollections.observableArrayList(teams);
+
+        targetComboBox.setItems(list);
+
         boolean nameMatch = false;
         for (int i = 0; i < targetComboBox.getItems().size(); i++) {
             if (targetComboBox.getItems().get(i).toString().equals(previousName)) {
@@ -163,10 +178,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addViolenceComboBox() {
-        violenceComboBox = addComboBox(Arrays.asList(
-                ViolenceType.NO_BUMP.description(),
-                ViolenceType.ATTACK.description(),
-                ViolenceType.DEFEND.description()));
+        violenceComboBox = addComboBox(FXCollections.observableArrayList(ViolenceType.values()));
     }
 
     private void addPresentComboBox() {
@@ -174,19 +186,26 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void addSuccessComboBox() {
-        addComboBox(Arrays.asList(
-                SuccessType.WIN.description(),
-                SuccessType.LOSE.description(),
-                SuccessType.DRAW.description()
-        ));
+        successComboBox = addComboBox(FXCollections.observableArrayList(SuccessType.values()));
     }
 
     private void addTargetComboBox() {
-        targetComboBox = addComboBox(Arrays.asList("Target A", "Target B", "Target C"));
+        targetComboBox = addComboBox(FXCollections.observableArrayList(targets));
     }
 
     private void addTimingComboBox() {
         addComboBox(Arrays.asList("Before", "During", "After"));
+    }
+
+    private ComboBox addComboBox(ObservableList items) {
+        ComboBox comboBox = new ComboBox();
+        comboBox.setItems(
+                items);
+        vBox.getChildren().add(comboBox);
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(comboBox, new Insets(5));
+        comboBox.getSelectionModel().selectFirst();
+        return comboBox;
     }
 
     private ComboBox addComboBox(List<String> items) {
@@ -206,6 +225,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        targets = new ArrayList<>();
     }
 
     @Override
@@ -245,6 +265,21 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
      */
     public TeamType getTeamType() {
         return teamType == null ? TeamType.DEFAULT : teamType;
+    }
+
+    public SegmentTeam getTeam() {
+        SegmentTeam segmentTeam = new SegmentTeam(getTeamPaneController().getWorkers(), teamType);
+
+        segmentTeam.setTarget(targetComboBox != null
+                ? (SegmentTeam) targetComboBox.getSelectionModel().getSelectedItem()
+                : segmentTeam
+        );
+
+        segmentTeam.setSuccess(successComboBox != null
+                ? (SuccessType) successComboBox.getSelectionModel().getSelectedItem()
+                : SuccessType.DRAW);
+
+        return segmentTeam;
     }
 
 }

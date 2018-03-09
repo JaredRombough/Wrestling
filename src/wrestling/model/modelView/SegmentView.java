@@ -22,6 +22,7 @@ public class SegmentView {
     public SegmentView() {
         rules = MatchRules.DEFAULT;
         finish = MatchFinishes.CLEAN;
+        teams = new ArrayList<>();
     }
 
     public List<Worker> getWorkers() {

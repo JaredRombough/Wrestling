@@ -19,6 +19,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.utility.ModelUtilityFunctions;
 import wrestling.view.event.TeamType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -26,27 +27,27 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ResultsDisplayController extends ControllerBase implements Initializable {
-
+    
     @FXML
     private AnchorPane anchorPane;
-
+    
     @FXML
     private AnchorPane additionalInfo;
-
+    
     @FXML
     private FlowPane flowPane;
-
+    
     @FXML
     private Text segmentTitle;
-
+    
     @FXML
     private Text summaryText;
-
+    
     @FXML
     private ScrollPane scrollPane;
-
+    
     private SegmentView segmentView;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         flowPane.setAlignment(Pos.TOP_CENTER);
@@ -55,7 +56,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         summaryText.setText("");
         segmentTitle.setText("");
     }
-
+    
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof SegmentView) {
@@ -64,12 +65,12 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         } else if (obj instanceof EventView) {
             showEventSummary(((EventView) obj).getEvent());
         };
-
+        
     }
-
+    
     @Override
     public void updateLabels() {
-
+        
         if (segmentView != null) {
             segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
             Segment segment = segmentView.getSegment();
@@ -77,9 +78,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     + String.format(" rating: %d", segment.getRating()));
             populateView();
         }
-
+        
     }
-
+    
     private void showEventSummary(Event event) {
         segmentTitle.setText("Event Summary");
         Text text = new Text();
@@ -89,14 +90,14 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         sb.append(String.format("Costs: %d\n", event.getCost()));
         text.setText(sb.toString());
         flowPane.getChildren().add(text);
-
+        
     }
-
+    
     private void populateView() {
-
+        
         flowPane.getChildren().clear();
         List<SegmentTeam> defaultTeams = segmentView.getTeams(TeamType.INTERFERENCE);
-
+        
         for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
@@ -115,31 +116,36 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 }
                 flowPane.getChildren().add(intersertial.pane);
             }
-
+            
         }
-
+        
         List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
         if (!interferenceTeams.isEmpty()) {
             Screen screen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, additionalInfo);
             StringBuilder sb = new StringBuilder();
             for (SegmentTeam team : interferenceTeams) {
-                sb.append(String.format("%s interfered %s the match, attacking %s. %s"));
+                sb.append(String.format("%s interfered %s the match, attacking %s %s",
+                        ModelUtilityFunctions.slashNames(team.getWorkers()),
+                        "[time]",
+                        ModelUtilityFunctions.slashNames(team.getTarget().getWorkers()),
+                        team.getSuccess().result()));
             }
+            screen.controller.setCurrent(sb.toString());
         }
-
+        
     }
-
+    
     private int getMaxColumns(double cardWidth) {
         int emptyColumnsPadding = 3;
         return (int) Math.round(mainApp.getCurrentStageWidth() / cardWidth) - emptyColumnsPadding;
     }
-
+    
     private GridPane teamCard(List<Screen> workerCards, int maxColumns) {
-
+        
         if (workerCards.isEmpty()) {
             return null;
         }
-
+        
         GridPane gridPane = new GridPane();
         int row = 0;
         int column = 0;
@@ -151,9 +157,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 row++;
             }
         }
-
+        
         return gridPane;
-
+        
     }
-
+    
 }
