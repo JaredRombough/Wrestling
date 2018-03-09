@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 
 public class WorkerManager implements Serializable {
 
@@ -43,13 +43,13 @@ public class WorkerManager implements Serializable {
         int maxPopularity = 0;
 
         for (Contract contract : contractManager.getContracts(worker)) {
-            if (ModelUtilityFunctions.maxPopularity(contract.getPromotion()) > maxPopularity) {
-                maxPopularity = ModelUtilityFunctions.maxPopularity(contract.getPromotion());
+            if (ModelUtils.maxPopularity(contract.getPromotion()) > maxPopularity) {
+                maxPopularity = ModelUtils.maxPopularity(contract.getPromotion());
             }
         }
 
         if (worker.getPopularity() < maxPopularity
-                || ModelUtilityFunctions.randRange(1, 10) == 1
+                || ModelUtils.randRange(1, 10) == 1
                 && worker.getPopularity() > 100) {
 
             int range = 0;
@@ -64,7 +64,7 @@ public class WorkerManager implements Serializable {
                 range = 5;
             }
 
-            if (ModelUtilityFunctions.randRange(1, range) == 1) {
+            if (ModelUtils.randRange(1, range) == 1) {
 
                 addPopularity(worker, 1);
             }
@@ -77,7 +77,7 @@ public class WorkerManager implements Serializable {
 
     public void losePopularity(Worker worker) {
 
-        if (ModelUtilityFunctions.randRange(1, 10) == 10
+        if (ModelUtils.randRange(1, 10) == 10
                 && worker.getPopularity() > 0
                 && worker.getPopularity() > worker.getMinimumPopularity()) {
             addPopularity(worker, -1);

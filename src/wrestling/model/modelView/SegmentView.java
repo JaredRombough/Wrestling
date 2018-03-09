@@ -8,7 +8,7 @@ import wrestling.model.MatchRules;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
-import wrestling.view.event.TeamType;
+import wrestling.model.segmentEnum.TeamType;
 
 public class SegmentView {
 

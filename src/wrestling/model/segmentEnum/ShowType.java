@@ -1,11 +1,11 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum PromoType implements Description {
+public enum ShowType implements Description {
 
-    PROMO {
+    TONIGHT {
         @Override
         public String description() {
-            return "Promo";
+            return "Tonight";
         }
 
         @Override
@@ -14,10 +14,10 @@ public enum PromoType implements Description {
         }
 
     },
-    OFFER {
+    NEXT_SHOW {
         @Override
         public String description() {
-            return "Offer";
+            return "Next Show";
         }
 
         @Override
@@ -26,10 +26,10 @@ public enum PromoType implements Description {
         }
 
     },
-    CHALLENGE {
+    NEXT_BIG_SHOW {
         @Override
         public String description() {
-            return "Challenge";
+            return "Next Big Show";
         }
 
         @Override
@@ -57,7 +57,7 @@ public enum PromoType implements Description {
     }
     
     public static String label() {
-        return "Promo: ";
+        return "Show: ";
     }
 
 }

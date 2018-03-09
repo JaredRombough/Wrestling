@@ -28,8 +28,8 @@ import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.utility.ModelUtilityFunctions;
-import wrestling.view.event.TeamType;
+import wrestling.model.utility.ModelUtils;
+import wrestling.model.segmentEnum.TeamType;
 
 public class PromotionController implements Serializable {
 
@@ -176,7 +176,7 @@ public class PromotionController implements Serializable {
     private void signContract(Promotion promotion) {
 
         for (Worker worker : workerManager.freeAgents(promotion)) {
-            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)) {
+            if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
                 break;
             }
@@ -187,7 +187,7 @@ public class PromotionController implements Serializable {
     private void signContract(Promotion promotion, LocalDate date) {
 
         for (Worker worker : workerManager.freeAgents(promotion)) {
-            if (worker.getPopularity() <= ModelUtilityFunctions.maxPopularity(promotion)
+            if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)
                     && !eventManager.isBooked(worker, date)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
                 break;
@@ -261,7 +261,7 @@ public class PromotionController implements Serializable {
     public void bookNextEvent(Promotion promotion) {
 
         LocalDate eventDate = LocalDate.ofYearDay(dateManager.today().getYear(), dateManager.today().getDayOfYear());
-        eventDate = LocalDate.from(eventDate).plusDays(ModelUtilityFunctions.randRange(25, 35));
+        eventDate = LocalDate.from(eventDate).plusDays(ModelUtils.randRange(25, 35));
         bookNextEvent(promotion, eventDate);
 
     }
@@ -312,7 +312,7 @@ public class PromotionController implements Serializable {
 
             //determine the number of teams (usually 2)
             int teamsNeeded = 2;
-            int random = ModelUtilityFunctions.randRange(1, 10);
+            int random = ModelUtils.randRange(1, 10);
             if (random > 8) {
                 teamsNeeded += 10 - random;
             }
@@ -369,7 +369,7 @@ public class PromotionController implements Serializable {
             //make sure we have enough workers for a match
             if (matchTeams.size() > 1) {
                 //roll for title change
-                if (ModelUtilityFunctions.randRange(1, 10) > 5) {
+                if (ModelUtils.randRange(1, 10) > 5) {
                     Collections.swap(matchTeams, 0, 1);
                 }
 

@@ -2,10 +2,10 @@ package wrestling.model.modelView;
 
 import java.util.List;
 import wrestling.model.Worker;
-import wrestling.model.utility.ModelUtilityFunctions;
-import wrestling.view.event.SuccessType;
-import wrestling.view.event.TeamType;
-import wrestling.view.event.TimingType;
+import wrestling.model.utility.ModelUtils;
+import wrestling.model.segmentEnum.SuccessType;
+import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.segmentEnum.TimingType;
 
 public class SegmentTeam {
 
@@ -85,7 +85,7 @@ public class SegmentTeam {
         } else if (!type.equals(TeamType.EVERYONE) && workers.isEmpty()) {
             string = "(Empty)";
         } else {
-            string = ModelUtilityFunctions.slashShortNames(workers);
+            string = ModelUtils.slashShortNames(workers);
         }
 
         return string;

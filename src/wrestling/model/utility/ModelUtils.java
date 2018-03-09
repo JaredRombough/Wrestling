@@ -7,7 +7,7 @@ import java.util.Random;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 
-public final class ModelUtilityFunctions {
+public final class ModelUtils {
 
     //returns a random int between the two passed ints
     public static int randRange(int low, int high) {
@@ -26,7 +26,7 @@ public final class ModelUtilityFunctions {
 
         return sb.toString();
     }
-    
+
     public static String slashShortNames(List<Worker> workers) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < workers.size(); i++) {

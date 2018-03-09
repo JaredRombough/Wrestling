@@ -15,7 +15,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import wrestling.model.Worker;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -69,7 +69,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     public void updateTeamNameLabel() {
         if (!getWorkers().isEmpty()) {
-            teamNameLabel.setText(ModelUtilityFunctions.slashShortNames(getWorkers()));
+            teamNameLabel.setText(ModelUtils.slashShortNames(getWorkers()));
         } else {
             teamNameLabel.setText("(Empty Team)");
         }

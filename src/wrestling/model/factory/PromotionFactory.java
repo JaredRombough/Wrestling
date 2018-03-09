@@ -10,7 +10,7 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 
 /*
 for generating promotions in a random game
@@ -80,7 +80,7 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = workerFactory.randomWorker(ModelUtilityFunctions.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = workerFactory.randomWorker(ModelUtils.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
                     contractFactory.createContract(worker, promotion, dateManager.today());
 

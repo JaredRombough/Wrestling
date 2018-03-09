@@ -1,11 +1,11 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum ViolenceType implements Description {
+public enum JoinTeamType implements Description {
 
-    NO_BUMP {
+    TAG_TEAM {
         @Override
         public String description() {
-            return "No Bump";
+            return "New Tag Team";
         }
 
         @Override
@@ -14,10 +14,10 @@ public enum ViolenceType implements Description {
         }
 
     },
-    ATTACK {
+    NEW_STABLE {
         @Override
         public String description() {
-            return "Attack";
+            return "New Stable";
         }
 
         @Override
@@ -26,10 +26,22 @@ public enum ViolenceType implements Description {
         }
 
     },
-    DEFEND {
+    STABLE {
         @Override
         public String description() {
-            return "Defend";
+            return "Existing Stable";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+    },
+    ANNOUNCEMENT {
+        @Override
+        public String description() {
+            return "Announcement";
         }
 
         @Override
@@ -38,14 +50,14 @@ public enum ViolenceType implements Description {
         }
 
     };
-
+    
     @Override
     public String toString() {
         return description();
     }
     
     public static String label() {
-        return "Violence: ";
+        return "Join: ";
     }
 
 }

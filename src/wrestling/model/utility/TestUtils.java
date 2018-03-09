@@ -9,7 +9,7 @@ import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
-import wrestling.view.event.TeamType;
+import wrestling.model.segmentEnum.TeamType;
 
 public final class TestUtils {
 

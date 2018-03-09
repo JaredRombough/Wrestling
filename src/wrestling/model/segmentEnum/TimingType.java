@@ -1,52 +1,40 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum AngleType implements Description {
+public enum TimingType implements Description {
 
-    PROMO {
+    BEFORE {
         @Override
         public String description() {
-            return "Promo";
+            return "Before";
         }
 
         @Override
         public String result() {
-            return "";
+            return "before";
         }
 
     },
-    OFFER {
+    DURING {
         @Override
         public String description() {
-            return "Offer";
+            return "During";
         }
 
         @Override
         public String result() {
-            return "";
+            return "during";
         }
 
     },
-    CHALLENGE {
+    AFTER {
         @Override
         public String description() {
-            return "Challenge";
+            return "After";
         }
 
         @Override
         public String result() {
-            return "";
-        }
-
-    },
-    ANNOUNCEMENT {
-        @Override
-        public String description() {
-            return "Announcement";
-        }
-
-        @Override
-        public String result() {
-            return "";
+            return "after";
         }
 
     };
@@ -55,9 +43,9 @@ public enum AngleType implements Description {
     public String toString() {
         return description();
     }
-
+    
     public static String label() {
-        return "Type: ";
+        return "Timing: ";
     }
 
 }

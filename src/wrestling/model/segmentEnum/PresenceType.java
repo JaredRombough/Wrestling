@@ -1,4 +1,4 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
 public enum PresenceType implements Description {
 

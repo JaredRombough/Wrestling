@@ -1,11 +1,11 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum JoinTeamType implements Description {
+public enum PromoType implements Description {
 
-    TAG_TEAM {
+    PROMO {
         @Override
         public String description() {
-            return "New Tag Team";
+            return "Promo";
         }
 
         @Override
@@ -14,10 +14,10 @@ public enum JoinTeamType implements Description {
         }
 
     },
-    NEW_STABLE {
+    OFFER {
         @Override
         public String description() {
-            return "New Stable";
+            return "Offer";
         }
 
         @Override
@@ -26,10 +26,10 @@ public enum JoinTeamType implements Description {
         }
 
     },
-    STABLE {
+    CHALLENGE {
         @Override
         public String description() {
-            return "Existing Stable";
+            return "Challenge";
         }
 
         @Override
@@ -57,7 +57,7 @@ public enum JoinTeamType implements Description {
     }
     
     public static String label() {
-        return "Join: ";
+        return "Promo: ";
     }
 
 }

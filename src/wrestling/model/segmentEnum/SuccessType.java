@@ -1,40 +1,40 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum TimingType implements Description {
+public enum SuccessType implements Description {
 
-    BEFORE {
+    WIN {
         @Override
         public String description() {
-            return "Before";
+            return "Win";
         }
 
         @Override
         public String result() {
-            return "before";
+            return "and getting the better of the exchange.";
         }
 
     },
-    DURING {
+    LOSE {
         @Override
         public String description() {
-            return "During";
+            return "Lose";
         }
 
         @Override
         public String result() {
-            return "during";
+            return "but got run off to the back.";
         }
 
     },
-    AFTER {
+    DRAW {
         @Override
         public String description() {
-            return "After";
+            return "Draw";
         }
 
         @Override
         public String result() {
-            return "after";
+            return "and proceeding to brawl.";
         }
 
     };
@@ -43,9 +43,9 @@ public enum TimingType implements Description {
     public String toString() {
         return description();
     }
-    
+
     public static String label() {
-        return "Timing: ";
+        return "Result: ";
     }
 
 }

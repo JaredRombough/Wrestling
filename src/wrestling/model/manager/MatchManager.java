@@ -13,8 +13,8 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
-import wrestling.model.utility.ModelUtilityFunctions;
-import wrestling.view.event.TeamType;
+import wrestling.model.utility.ModelUtils;
+import wrestling.model.segmentEnum.TeamType;
 
 public class MatchManager {
 
@@ -193,7 +193,7 @@ public class MatchManager {
             for (int t = 0; t < teamsSize; t++) {
                 List<Worker> team = teams.get(t).getWorkers();
 
-                matchString += ModelUtilityFunctions.slashShortNames(team);
+                matchString += ModelUtils.slashShortNames(team);
 
                 if (t == 0 && !matchString.isEmpty()) {
                     matchString += " def. ";

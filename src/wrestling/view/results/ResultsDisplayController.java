@@ -19,7 +19,8 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
-import wrestling.view.event.TeamType;
+import wrestling.model.utility.ModelUtils;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -95,7 +96,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateView() {
 
         flowPane.getChildren().clear();
-        List<SegmentTeam> defaultTeams = segmentView.getTeams(TeamType.INTERFERENCE);
+        List<SegmentTeam> defaultTeams = segmentView.getTeams(TeamType.DEFAULT);
 
         for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();
@@ -124,7 +125,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             StringBuilder sb = new StringBuilder();
             for (SegmentTeam team : interferenceTeams) {
                 sb.append(String.format("%s interfered %s the match, attacking %s %s\n",
-                        team.toString(),
+                        ModelUtils.slashNames(team.getWorkers()),
                         team.getTiming().result(),
                         team.getTarget().toString(),
                         team.getSuccess().result()));

@@ -9,7 +9,7 @@ import wrestling.model.TitleWorker;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 
 public class TitleManager {
 
@@ -162,7 +162,7 @@ public class TitleManager {
         StringBuilder sb = new StringBuilder();
         List<Worker> champWorkers = titleReign.getWorkers();
 
-        sb.append(ModelUtilityFunctions.slashNames(champWorkers));
+        sb.append(ModelUtils.slashNames(champWorkers));
         sb.append("\t\t\t");
         sb.append(titleReign.getDayWon() == null ? "????" : titleReign.getDayWon());
         sb.append("\tto\t");

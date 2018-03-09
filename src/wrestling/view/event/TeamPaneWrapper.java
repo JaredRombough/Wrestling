@@ -1,5 +1,14 @@
 package wrestling.view.event;
 
+import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.segmentEnum.TimingType;
+import wrestling.model.segmentEnum.PromoType;
+import wrestling.model.segmentEnum.JoinTeamType;
+import wrestling.model.segmentEnum.AngleType;
+import wrestling.model.segmentEnum.ShowType;
+import wrestling.model.segmentEnum.PresenceType;
+import wrestling.model.segmentEnum.SuccessType;
+import wrestling.model.segmentEnum.ViolenceType;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;

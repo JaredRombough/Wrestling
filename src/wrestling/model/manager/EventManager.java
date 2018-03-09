@@ -22,7 +22,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 
 public class EventManager {
 
@@ -313,12 +313,12 @@ public class EventManager {
         int draws = 0;
         for (Worker worker : allWorkers(getMatches(event))) {
 
-            if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(event.getPromotion()) - 10) {
+            if (worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10) {
                 draws++;
             }
         }
 
-        attendance += ModelUtilityFunctions.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
+        attendance += ModelUtils.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
 
         return attendance;
     }
@@ -350,12 +350,12 @@ public class EventManager {
         int draws = 0;
         for (Worker worker : allWorkers(segments)) {
 
-            if (worker.getPopularity() > ModelUtilityFunctions.maxPopularity(promotion) - 10) {
+            if (worker.getPopularity() > ModelUtils.maxPopularity(promotion) - 10) {
                 draws++;
             }
         }
 
-        attendance += ModelUtilityFunctions.randRange(promotion.getLevel(), promotion.getLevel() * 15) * draws;
+        attendance += ModelUtils.randRange(promotion.getLevel(), promotion.getLevel() * 15) * draws;
 
         return attendance;
     }

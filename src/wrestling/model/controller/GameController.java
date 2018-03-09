@@ -25,7 +25,7 @@ import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.utility.ModelUtilityFunctions;
+import wrestling.model.utility.ModelUtils;
 
 /**
  *
@@ -168,7 +168,7 @@ public final class GameController implements Serializable {
         for (Promotion promotion : promotionManager.getPromotions()) {
             LocalDate eventDate = null;
             do {
-                eventDate = weekends.get(ModelUtilityFunctions.randRange(0, weekends.size() - 1));
+                eventDate = weekends.get(ModelUtils.randRange(0, weekends.size() - 1));
             } while (eventManager.getEventOnDate(promotion, eventDate) != null);
             
             EventName eventName = eventManager.getEventName(promotion, yearMonth.getMonth());

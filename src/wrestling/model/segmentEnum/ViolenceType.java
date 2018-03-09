@@ -1,11 +1,11 @@
-package wrestling.view.event;
+package wrestling.model.segmentEnum;
 
-public enum ShowType implements Description {
+public enum ViolenceType implements Description {
 
-    TONIGHT {
+    NO_BUMP {
         @Override
         public String description() {
-            return "Tonight";
+            return "No Bump";
         }
 
         @Override
@@ -14,10 +14,10 @@ public enum ShowType implements Description {
         }
 
     },
-    NEXT_SHOW {
+    ATTACK {
         @Override
         public String description() {
-            return "Next Show";
+            return "Attack";
         }
 
         @Override
@@ -26,22 +26,10 @@ public enum ShowType implements Description {
         }
 
     },
-    NEXT_BIG_SHOW {
+    DEFEND {
         @Override
         public String description() {
-            return "Next Big Show";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
-    },
-    ANNOUNCEMENT {
-        @Override
-        public String description() {
-            return "Announcement";
+            return "Defend";
         }
 
         @Override
@@ -50,14 +38,14 @@ public enum ShowType implements Description {
         }
 
     };
-    
+
     @Override
     public String toString() {
         return description();
     }
     
     public static String label() {
-        return "Show: ";
+        return "Violence: ";
     }
 
 }
