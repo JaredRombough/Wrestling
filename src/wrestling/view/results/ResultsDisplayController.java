@@ -105,23 +105,24 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
             }
-            int maxColumns = getMaxColumns(workerCards.get(0).pane.getBoundsInParent().getWidth());
-            GridPane teamCard = teamCard(workerCards, maxColumns);
-            flowPane.getChildren().add(teamCard);
-            if (defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
-                Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
-                intersertial.controller.setCurrent("versus");
-                if (team.getWorkers().size() > maxColumns / 2) {
-                    intersertial.pane.setPrefSize(teamCard.getBoundsInParent().getWidth(), 0.0);
+            if (!workerCards.isEmpty()) {
+                int maxColumns = getMaxColumns(workerCards.get(0).pane.getBoundsInParent().getWidth());
+                GridPane teamCard = teamCard(workerCards, maxColumns);
+                flowPane.getChildren().add(teamCard);
+                if (defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
+                    Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                    intersertial.controller.setCurrent("versus");
+                    if (team.getWorkers().size() > maxColumns / 2) {
+                        intersertial.pane.setPrefSize(teamCard.getBoundsInParent().getWidth(), 0.0);
+                    }
+                    flowPane.getChildren().add(intersertial.pane);
                 }
-                flowPane.getChildren().add(intersertial.pane);
             }
 
         }
 
         List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
         if (!interferenceTeams.isEmpty()) {
-            Screen screen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, additionalInfo);
             StringBuilder sb = new StringBuilder();
             for (SegmentTeam team : interferenceTeams) {
                 sb.append(String.format("%s interfered %s the match, attacking %s %s\n",
@@ -130,7 +131,8 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                         team.getTarget().toString(),
                         team.getSuccess().result()));
             }
-            screen.controller.setCurrent(sb.toString());
+            Text text = new Text(sb.toString());
+            additionalInfo.getChildren().add(text);
         }
 
     }

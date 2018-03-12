@@ -41,7 +41,7 @@
                </children>
             </AnchorPane>
             <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <AnchorPane fx:id="additionalInfo" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="6" GridPane.rowSpan="2">
+            <AnchorPane fx:id="additionalInfo" GridPane.rowIndex="6" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
