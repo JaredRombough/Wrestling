@@ -38,6 +38,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -77,6 +78,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private List<SegmentTeam> targets;
 
     private TeamType teamType;
+    private OutcomeType outcomeType;
 
     public void setTeamType(TeamType state) {
         teamType = state;
@@ -96,6 +98,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     public void setTargets(List<SegmentTeam> teams) {
         targets = teams;
 
+        if (targetComboBox != null) {
+            updateTargetComboBox();
+        }
+    }
+
+    private void updateTargetComboBox() {
         int previousIndex = -1;
         String previousName = "";
         if (!targetComboBox.getItems().isEmpty()) {
@@ -104,12 +112,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
         targetComboBox.getItems().clear();
 
-        if (teams.size() > 1) {
+        if (targets.size() > 1) {
             List<Worker> emptyList = new ArrayList<>();
-            teams.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
+            targets.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
         }
 
-        ObservableList list = FXCollections.observableArrayList(teams);
+        ObservableList list = FXCollections.observableArrayList(targets);
 
         targetComboBox.setItems(list);
 
@@ -127,7 +135,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         } else if (!nameMatch) {
             targetComboBox.getSelectionModel().selectFirst();
         }
-
     }
 
     public Button getXButton() {
@@ -308,7 +315,18 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 ? (TimingType) timingComboBox.getSelectionModel().getSelectedItem()
                 : TimingType.DURING);
 
+        segmentTeam.setOutcome(outcomeType != null
+                ? outcomeType
+                : null);
+
         return segmentTeam;
+    }
+
+    /**
+     * @param outcomeType the outcomeType to set
+     */
+    public void setOutcomeType(OutcomeType outcomeType) {
+        this.outcomeType = outcomeType;
     }
 
 }

@@ -14,11 +14,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
 import wrestling.model.Match;
+import wrestling.model.MatchFinishes;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.Screen;
@@ -74,8 +76,12 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         if (segmentView != null) {
             segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
             Segment segment = segmentView.getSegment();
-            summaryText.setText((segment instanceof Match ? "Match" : "Segment")
-                    + String.format(" rating: %d", segment.getRating()));
+            StringBuilder sb = new StringBuilder();
+            if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinishes.DRAW)) {
+                sb.append("The match resulted in a draw.\n");
+            }
+            sb.append(segment instanceof Match ? "Match" : "Segment").append(String.format(" rating: %d", segment.getRating()));
+            summaryText.setText(sb.toString());
             populateView();
         }
 
@@ -110,7 +116,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 GridPane teamCard = teamCard(workerCards, maxColumns);
                 flowPane.getChildren().add(teamCard);
                 if (defaultTeams.size() > 1 && defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
-                    addIntersertial(team.getWorkers().size(), teamCard.getBoundsInParent().getWidth(), maxColumns);
+                    addIntersertial(team, teamCard.getBoundsInParent().getWidth(), maxColumns);
                 }
             }
 
@@ -136,10 +142,27 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         additionalInfo.getChildren().add(text);
     }
 
-    private void addIntersertial(int teamSize, double cardWidth, int maxColumns) {
+    private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {
         Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
-        intersertial.controller.setCurrent("versus");
-        if (teamSize > maxColumns / 2) {
+        int teamSize = team.getWorkers().size();
+        String text = "";
+        switch (team.getOutcome()) {
+            case WINNER:
+                if (teamSize > 1) {
+                    text = "defeat";
+                } else {
+                    text = "defeats";
+                }
+                break;
+            case LOSER:
+                text = "and";
+                break;
+            default:
+                text = "versus";
+                break;
+        }
+        intersertial.controller.setCurrent(text);
+        if (team.getWorkers().size() > maxColumns / 2) {
             intersertial.pane.setPrefSize(cardWidth, 0.0);
         }
         flowPane.getChildren().add(intersertial.pane);

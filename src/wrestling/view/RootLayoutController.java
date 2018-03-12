@@ -208,6 +208,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     public void setButtonsDisable(boolean disable) {
         for (Button button : buttons) {
             button.setDisable(disable);
+            button.setVisible(!disable);
         }
     }
 
