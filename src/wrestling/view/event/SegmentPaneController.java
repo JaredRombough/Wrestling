@@ -64,6 +64,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
         teamPaneWrappers = new ArrayList<>();
+        //in development
+        angleButton.setDisable(true);
         
     }
     
@@ -419,7 +421,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         
         for (Screen screen : teamPaneWrappers) {
             SegmentTeam team = ((TeamPaneWrapper) screen.controller).getTeam();
-            if (team != null && teamPaneWrappers.indexOf(screen) != notThisIndex) {
+            if (team != null && teamPaneWrappers.indexOf(screen) < notThisIndex) {
                 teams.add(team);
             }
         }

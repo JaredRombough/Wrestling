@@ -109,13 +109,8 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 int maxColumns = getMaxColumns(workerCards.get(0).pane.getBoundsInParent().getWidth());
                 GridPane teamCard = teamCard(workerCards, maxColumns);
                 flowPane.getChildren().add(teamCard);
-                if (defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
-                    Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
-                    intersertial.controller.setCurrent("versus");
-                    if (team.getWorkers().size() > maxColumns / 2) {
-                        intersertial.pane.setPrefSize(teamCard.getBoundsInParent().getWidth(), 0.0);
-                    }
-                    flowPane.getChildren().add(intersertial.pane);
+                if (defaultTeams.size() > 1 && defaultTeams.indexOf(team) < defaultTeams.size() - 1) {
+                    addIntersertial(team.getWorkers().size(), teamCard.getBoundsInParent().getWidth(), maxColumns);
                 }
             }
 
@@ -123,18 +118,31 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
         List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
         if (!interferenceTeams.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (SegmentTeam team : interferenceTeams) {
-                sb.append(String.format("%s interfered %s the match, attacking %s %s\n",
-                        ModelUtils.slashNames(team.getWorkers()),
-                        team.getTiming().result(),
-                        team.getTarget().toString(),
-                        team.getSuccess().result()));
-            }
-            Text text = new Text(sb.toString());
-            additionalInfo.getChildren().add(text);
+            addInterferenceNote(interferenceTeams);
         }
 
+    }
+
+    private void addInterferenceNote(List<SegmentTeam> interferenceTeams) {
+        StringBuilder sb = new StringBuilder();
+        for (SegmentTeam team : interferenceTeams) {
+            sb.append(String.format("%s interfered %s the match, attacking %s %s\n",
+                    ModelUtils.slashNames(team.getWorkers()),
+                    team.getTiming().result(),
+                    team.getTarget().toString(),
+                    team.getSuccess().result()));
+        }
+        Text text = new Text(sb.toString());
+        additionalInfo.getChildren().add(text);
+    }
+
+    private void addIntersertial(int teamSize, double cardWidth, int maxColumns) {
+        Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+        intersertial.controller.setCurrent("versus");
+        if (teamSize > maxColumns / 2) {
+            intersertial.pane.setPrefSize(cardWidth, 0.0);
+        }
+        flowPane.getChildren().add(intersertial.pane);
     }
 
     private int getMaxColumns(double cardWidth) {
