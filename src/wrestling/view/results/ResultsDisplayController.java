@@ -20,7 +20,6 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
-import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.Screen;

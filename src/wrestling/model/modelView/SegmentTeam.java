@@ -3,10 +3,10 @@ package wrestling.model.modelView;
 import java.util.List;
 import wrestling.model.Worker;
 import wrestling.model.segmentEnum.OutcomeType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.SuccessType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
+import wrestling.model.utility.ModelUtils;
 
 public class SegmentTeam {
 
