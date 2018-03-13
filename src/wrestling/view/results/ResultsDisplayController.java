@@ -51,7 +51,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        flowPane.setAlignment(Pos.TOP_CENTER);
+        flowPane.setAlignment(Pos.CENTER);
         flowPane.setHgap(10);
         flowPane.setVgap(10);
         summaryText.setText("");

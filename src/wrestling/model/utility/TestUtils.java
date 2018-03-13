@@ -17,10 +17,11 @@ public final class TestUtils {
     public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
 
         if (addImages) {
-            String imagePath = "worker%03d.jpg";
+            String imagePath = "worker%02d.jpg";
             int imagesAvailable = 8;
             for (int i = 1; i <= imagesAvailable; i++) {
-                roster.get(i - 1).setImageString(String.format(imagePath, i));
+                String path = String.format(imagePath, i);
+                roster.get(i - 1).setImageString(path);
             }
         }
 
