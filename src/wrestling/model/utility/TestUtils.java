@@ -9,6 +9,7 @@ import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.TeamType;
 
 public final class TestUtils {
@@ -46,14 +47,20 @@ public final class TestUtils {
         int currentWorkerIndex = 0;
 
         for (int i = 0; i < numberOfTeams; i++) {
-            List<Worker> team = new ArrayList<>();
+            SegmentTeam team = new SegmentTeam();
 
             for (int x = 0; x < teamSize; x++) {
-                team.add(roster.get(currentWorkerIndex));
+                team.getWorkers().add(roster.get(currentWorkerIndex));
                 currentWorkerIndex++;
             }
 
-            teams.add(new SegmentTeam(team, TeamType.DEFAULT));
+            if (i == 0) {
+                team.setOutcome(OutcomeType.WINNER);
+            } else {
+                team.setOutcome(OutcomeType.LOSER);
+            }
+
+            teams.add(team);
         }
         segmentView.setTeams(teams);
         segmentView.setRules(MatchRules.DEFAULT);

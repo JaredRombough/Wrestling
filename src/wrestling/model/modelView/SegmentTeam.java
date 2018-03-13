@@ -1,5 +1,6 @@
 package wrestling.model.modelView;
 
+import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Worker;
 import wrestling.model.segmentEnum.OutcomeType;
@@ -20,6 +21,12 @@ public class SegmentTeam {
     public SegmentTeam(List<Worker> workers, TeamType type) {
         this.workers = workers;
         this.type = type;
+    }
+
+    public SegmentTeam() {
+        workers = new ArrayList();
+        type = TeamType.DEFAULT;
+        outcome = OutcomeType.WINNER;
     }
 
     /**
