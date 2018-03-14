@@ -32,7 +32,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -65,15 +64,15 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
 
-    private ComboBox angleComboBox;
-    private ComboBox promoComboBox;
-    private ComboBox violenceComboBox;
-    private ComboBox targetComboBox;
-    private ComboBox successComboBox;
-    private ComboBox timingComboBox;
-    private ComboBox joinTeamComboBox;
-    private ComboBox showComboBox;
-    private ComboBox presentComboBox;
+    private ComboBoxWrapper angleComboBox;
+    private ComboBoxWrapper promoComboBox;
+    private ComboBoxWrapper violenceComboBox;
+    private ComboBoxWrapper targetComboBox;
+    private ComboBoxWrapper successComboBox;
+    private ComboBoxWrapper timingComboBox;
+    private ComboBoxWrapper joinTeamComboBox;
+    private ComboBoxWrapper showComboBox;
+    private ComboBoxWrapper presentComboBox;
 
     private List<SegmentTeam> targets;
 
@@ -106,11 +105,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private void updateTargetComboBox() {
         int previousIndex = -1;
         String previousName = "";
-        if (!targetComboBox.getItems().isEmpty()) {
-            previousIndex = targetComboBox.getSelectionModel().getSelectedIndex();
-            previousName = targetComboBox.getSelectionModel().getSelectedItem().toString();
+        if (!targetComboBox.box.getItems().isEmpty()) {
+            previousIndex = targetComboBox.box.getSelectionModel().getSelectedIndex();
+            previousName = targetComboBox.box.getSelectionModel().getSelectedItem().toString();
         }
-        targetComboBox.getItems().clear();
+        targetComboBox.box.getItems().clear();
 
         if (targets.size() > 1) {
             List<Worker> emptyList = new ArrayList<>();
@@ -119,21 +118,21 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
         ObservableList list = FXCollections.observableArrayList(targets);
 
-        targetComboBox.setItems(list);
+        targetComboBox.box.setItems(list);
 
         boolean nameMatch = false;
-        for (int i = 0; i < targetComboBox.getItems().size(); i++) {
-            if (targetComboBox.getItems().get(i).toString().equals(previousName)) {
-                targetComboBox.getSelectionModel().select(i);
+        for (int i = 0; i < targetComboBox.box.getItems().size(); i++) {
+            if (targetComboBox.box.getItems().get(i).toString().equals(previousName)) {
+                targetComboBox.box.getSelectionModel().select(i);
                 nameMatch = true;
                 break;
             }
         }
         if (!nameMatch && previousIndex != -1
-                && targetComboBox.getItems().size() > previousIndex) {
-            targetComboBox.getSelectionModel().select(previousIndex);
+                && targetComboBox.box.getItems().size() > previousIndex) {
+            targetComboBox.box.getSelectionModel().select(previousIndex);
         } else if (!nameMatch) {
-            targetComboBox.getSelectionModel().selectFirst();
+            targetComboBox.box.getSelectionModel().selectFirst();
         }
     }
 
@@ -162,7 +161,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     private void addAngleComboBox() {
         angleComboBox = addComboBox(FXCollections.observableArrayList(AngleType.values()), AngleType.label());
-        angleComboBox.valueProperty().addListener(new ChangeListener<AngleType>() {
+        angleComboBox.box.valueProperty().addListener(new ChangeListener<AngleType>() {
             @Override
             public void changed(ObservableValue ov, AngleType t, AngleType t1) {
                 if (t1 != null) {
@@ -180,8 +179,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                         default:
                             break;
                     }
-                    if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox)) {
-                        violenceComboBox.toFront();
+                    if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox.wrapper)) {
+                        violenceComboBox.wrapper.toFront();
                     }
                 }
             }
@@ -190,7 +189,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void clearControls() {
-        vBox.getChildren().retainAll(Arrays.asList(angleComboBox, teamPane.pane, violenceComboBox, header));
+        vBox.getChildren().retainAll(Arrays.asList(angleComboBox.wrapper, teamPane.pane, violenceComboBox.wrapper, header));
     }
 
     private void addPromoComboBox() {
@@ -225,7 +224,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         timingComboBox = addComboBox(FXCollections.observableArrayList(TimingType.values()), TimingType.label());
     }
 
-    private ComboBox addComboBox(ObservableList items, String text) {
+    private ComboBoxWrapper addComboBox(ObservableList items, String text) {
 
         Label label = new Label(text);
         label.setMaxWidth(Double.MAX_VALUE);
@@ -248,7 +247,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
         comboBox.getSelectionModel().selectFirst();
 
-        return comboBox;
+        return new ComboBoxWrapper(gridPane, comboBox);
     }
 
     public void setTeamTypeLabel(String string) {
@@ -303,16 +302,16 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         SegmentTeam segmentTeam = new SegmentTeam(getTeamPaneController().getWorkers(), teamType);
 
         segmentTeam.setTarget(targetComboBox != null
-                ? (SegmentTeam) targetComboBox.getSelectionModel().getSelectedItem()
+                ? (SegmentTeam) targetComboBox.box.getSelectionModel().getSelectedItem()
                 : segmentTeam
         );
 
         segmentTeam.setSuccess(successComboBox != null
-                ? (SuccessType) successComboBox.getSelectionModel().getSelectedItem()
+                ? (SuccessType) successComboBox.box.getSelectionModel().getSelectedItem()
                 : SuccessType.DRAW);
 
         segmentTeam.setTiming(timingComboBox != null
-                ? (TimingType) timingComboBox.getSelectionModel().getSelectedItem()
+                ? (TimingType) timingComboBox.box.getSelectionModel().getSelectedItem()
                 : TimingType.DURING);
 
         segmentTeam.setOutcome(outcomeType != null
@@ -327,6 +326,17 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
      */
     public void setOutcomeType(OutcomeType outcomeType) {
         this.outcomeType = outcomeType;
+    }
+
+    private class ComboBoxWrapper {
+
+        public GridPane wrapper;
+        public ComboBox box;
+
+        public ComboBoxWrapper(GridPane gridPane, ComboBox comboBox) {
+            this.wrapper = gridPane;
+            this.box = comboBox;
+        }
     }
 
 }

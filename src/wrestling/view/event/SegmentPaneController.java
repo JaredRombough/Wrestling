@@ -66,7 +66,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         logger = LogManager.getLogger(this.getClass());
         teamPaneWrappers = new ArrayList<>();
         //in development
-        angleButton.setDisable(true);
+        //angleButton.setDisable(true);
 
     }
 
