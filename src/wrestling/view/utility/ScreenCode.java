@@ -222,6 +222,17 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    MATCH_OPTIONS {
+        @Override
+        public String resourcePath() {
+            return "view/event/MatchOptions.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     SORT_CONTROL {
         @Override
         public String resourcePath() {

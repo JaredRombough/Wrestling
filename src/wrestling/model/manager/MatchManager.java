@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import wrestling.model.Match;
-import wrestling.model.MatchFinishes;
-import wrestling.model.MatchRules;
+import wrestling.model.segmentEnum.MatchFinish;
+import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
 import wrestling.model.Title;
@@ -128,7 +128,7 @@ public class MatchManager {
 
     public String getMatchTitle(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
-        MatchRules rules = segmentView.getRules();
+        MatchRule rules = segmentView.getRules();
 
         String string = "";
 
@@ -139,7 +139,7 @@ public class MatchManager {
         if (isHandicapMatch(teams)) {
             string += "Handicap Match\n";
 
-        } else if (rules.equals(MatchRules.DEFAULT)) {
+        } else if (rules.equals(MatchRule.DEFAULT)) {
 
             int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
 
@@ -180,7 +180,7 @@ public class MatchManager {
 
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
-        MatchFinishes finish = segmentView.getFinish();
+        MatchFinish finish = segmentView.getFinish();
         int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
         String matchString = getMatchTitle(segmentView);
 

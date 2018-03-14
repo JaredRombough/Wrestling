@@ -1,8 +1,8 @@
-package wrestling.model;
+package wrestling.model.segmentEnum;
 
-import wrestling.model.interfaces.MatchFinish;
+import wrestling.model.interfaces.iMatchFinish;
 
-public enum MatchFinishes implements MatchFinish {
+public enum MatchFinish implements iMatchFinish {
 
     CLEAN {
         @Override
@@ -91,6 +91,11 @@ public enum MatchFinishes implements MatchFinish {
         public String description() {
             return "Cheating";
         }
+    };
+
+    @Override
+    public String toString() {
+        return description();
     }
 
 }

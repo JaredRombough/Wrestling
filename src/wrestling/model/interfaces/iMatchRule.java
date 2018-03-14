@@ -1,6 +1,6 @@
 package wrestling.model.interfaces;
 
-public interface MatchRule {
+public interface iMatchRule {
 
     int injuryRate();
 

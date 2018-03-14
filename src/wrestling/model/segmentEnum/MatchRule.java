@@ -1,8 +1,8 @@
-package wrestling.model;
+package wrestling.model.segmentEnum;
 
-import wrestling.model.interfaces.MatchRule;
+import wrestling.model.interfaces.iMatchRule;
 
-public enum MatchRules implements MatchRule {
+public enum MatchRule implements iMatchRule {
 
     DEFAULT {
         @Override
@@ -201,6 +201,11 @@ public enum MatchRules implements MatchRule {
         public String description() {
             return "Barbed Wire";
         }
+    };
+    
+    @Override
+    public String toString() {
+        return description();
     }
 
 }

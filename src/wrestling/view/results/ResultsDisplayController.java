@@ -14,7 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
 import wrestling.model.Match;
-import wrestling.model.MatchFinishes;
+import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
@@ -76,7 +76,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
             Segment segment = segmentView.getSegment();
             StringBuilder sb = new StringBuilder();
-            if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinishes.DRAW)) {
+            if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinish.DRAW)) {
                 sb.append("The match resulted in a draw.\n");
             }
             sb.append(segment instanceof Match ? "Match" : "Segment").append(String.format(" rating: %d", segment.getRating()));

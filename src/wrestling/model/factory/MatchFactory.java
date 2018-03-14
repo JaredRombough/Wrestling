@@ -3,8 +3,8 @@ package wrestling.model.factory;
 import java.io.Serializable;
 import java.util.List;
 import wrestling.model.Match;
-import wrestling.model.MatchFinishes;
-import wrestling.model.MatchRules;
+import wrestling.model.segmentEnum.MatchFinish;
+import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
 import wrestling.model.Title;
@@ -28,19 +28,19 @@ public class MatchFactory implements Serializable {
     this constructor takes an arbitrary number of teams
      */
     public Match processMatch(final List<SegmentTeam> teams) {
-        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
+        Match match = new Match(MatchRule.DEFAULT, MatchFinish.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
-    public Match processMatch(final List<SegmentTeam> teams, final MatchRules rules, final MatchFinishes finish) {
+    public Match processMatch(final List<SegmentTeam> teams, final MatchRule rules, final MatchFinish finish) {
         Match match = new Match(rules, finish, calculateMatchRating(teams));
         saveMatch(match, teams);
         return match;
     }
 
     public Match processMatch(final List<SegmentTeam> teams, Title title) {
-        Match match = new Match(MatchRules.DEFAULT, MatchFinishes.CLEAN, calculateMatchRating(teams));
+        Match match = new Match(MatchRule.DEFAULT, MatchFinish.CLEAN, calculateMatchRating(teams));
         saveMatch(match, teams, title);
         return match;
 

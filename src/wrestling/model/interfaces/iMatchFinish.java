@@ -1,6 +1,6 @@
 package wrestling.model.interfaces;
 
-public interface MatchFinish {
+public interface iMatchFinish {
 
     public boolean nodq();
     public String description();

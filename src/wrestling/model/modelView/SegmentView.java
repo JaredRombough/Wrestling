@@ -3,8 +3,8 @@ package wrestling.model.modelView;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.MatchFinishes;
-import wrestling.model.MatchRules;
+import wrestling.model.segmentEnum.MatchFinish;
+import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
@@ -13,15 +13,15 @@ import wrestling.model.segmentEnum.TeamType;
 public class SegmentView {
 
     private List<SegmentTeam> teams;
-    private MatchRules rules;
-    private MatchFinishes finish;
+    private MatchRule rules;
+    private MatchFinish finish;
     private LocalDate date;
     private Segment segment;
     private Title title;
 
     public SegmentView() {
-        rules = MatchRules.DEFAULT;
-        finish = MatchFinishes.CLEAN;
+        rules = MatchRule.DEFAULT;
+        finish = MatchFinish.CLEAN;
         teams = new ArrayList<>();
     }
 
@@ -60,28 +60,28 @@ public class SegmentView {
     /**
      * @return the rules
      */
-    public MatchRules getRules() {
+    public MatchRule getRules() {
         return rules;
     }
 
     /**
      * @param rules the rules to set
      */
-    public void setRules(MatchRules rules) {
+    public void setRules(MatchRule rules) {
         this.rules = rules;
     }
 
     /**
      * @return the finish
      */
-    public MatchFinishes getFinish() {
+    public MatchFinish getFinish() {
         return finish;
     }
 
     /**
      * @param finish the finish to set
      */
-    public void setFinish(MatchFinishes finish) {
+    public void setFinish(MatchFinish finish) {
         this.finish = finish;
     }
 
