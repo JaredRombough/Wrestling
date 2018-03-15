@@ -146,7 +146,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void setAngle() {
         vBox.getChildren().retainAll(teamPane.pane, header);
-        addAngleComboBox();
+      //  addAngleComboBox();
         addViolenceComboBox();
 
     }
@@ -157,35 +157,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         addTargetComboBox();
         addTimingComboBox();
         addSuccessComboBox();
-    }
-
-    private void addAngleComboBox() {
-        angleComboBox = addComboBox(FXCollections.observableArrayList(AngleType.values()), AngleType.label());
-        angleComboBox.box.valueProperty().addListener(new ChangeListener<AngleType>() {
-            @Override
-            public void changed(ObservableValue ov, AngleType t, AngleType t1) {
-                if (t1 != null) {
-                    clearControls();
-                    switch (t1) {
-                        case PROMO:
-                            addPromoComboBox();
-                            break;
-                        case OFFER:
-                            addJoinTeamComboBox();
-                            break;
-                        case CHALLENGE:
-                            addShowComboBox();
-                            break;
-                        default:
-                            break;
-                    }
-                    if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox.wrapper)) {
-                        violenceComboBox.wrapper.toFront();
-                    }
-                }
-            }
-        });
-
     }
 
     private void clearControls() {

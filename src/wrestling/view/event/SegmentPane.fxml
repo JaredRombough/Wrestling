@@ -57,7 +57,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Button>
-            <AnchorPane fx:id="optionsPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="6" />
+            <AnchorPane fx:id="optionsPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="6" />
          </children>
       </GridPane>
    </children>

@@ -233,6 +233,17 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    ANGLE_OPTIONS {
+        @Override
+        public String resourcePath() {
+            return "view/event/AngleOptions.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     SORT_CONTROL {
         @Override
         public String resourcePath() {
