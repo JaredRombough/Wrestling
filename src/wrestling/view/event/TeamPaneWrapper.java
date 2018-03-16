@@ -4,7 +4,6 @@ import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.segmentEnum.PromoType;
 import wrestling.model.segmentEnum.JoinTeamType;
-import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SuccessType;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -65,14 +62,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ObjectProperty<AnchorPane> draggingTab;
 
     private ComboBoxWrapper angleComboBox;
-    private ComboBoxWrapper promoComboBox;
     private ComboBoxWrapper violenceComboBox;
     private ComboBoxWrapper targetComboBox;
     private ComboBoxWrapper successComboBox;
     private ComboBoxWrapper timingComboBox;
-    private ComboBoxWrapper joinTeamComboBox;
-    private ComboBoxWrapper showComboBox;
-    private ComboBoxWrapper presentComboBox;
 
     private List<SegmentTeam> targets;
 
@@ -83,6 +76,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         teamType = state;
         switch (teamType) {
             case CHALLENGER:
+                setTeamTypeLabel("Challenger");
                 break;
             case CHALLENGED:
                 break;
@@ -90,6 +84,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 setInterference();
                 break;
             case INTERVIEWER:
+                break;
+            case WINNER:
+                setTeamTypeLabel("Winner");
+                break;
+            case LOSER:
+                setTeamTypeLabel("Loser");
                 break;
         }
     }
@@ -146,12 +146,13 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void setAngle() {
         vBox.getChildren().retainAll(teamPane.pane, header);
-      //  addAngleComboBox();
+        //  addAngleComboBox();
         addViolenceComboBox();
 
     }
 
     private void setInterference() {
+        setTeamTypeLabel("Interference");
         teamType = TeamType.INTERFERENCE;
         vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();
@@ -163,24 +164,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         vBox.getChildren().retainAll(Arrays.asList(angleComboBox.wrapper, teamPane.pane, violenceComboBox.wrapper, header));
     }
 
-    private void addPromoComboBox() {
-        promoComboBox = addComboBox(FXCollections.observableArrayList(PromoType.values()), PromoType.label());
-    }
-
-    private void addJoinTeamComboBox() {
-        joinTeamComboBox = addComboBox(FXCollections.observableArrayList(JoinTeamType.values()), JoinTeamType.label());
-    }
-
-    private void addShowComboBox() {
-        showComboBox = addComboBox(FXCollections.observableArrayList(ShowType.values()), ShowType.label());
-    }
-
     private void addViolenceComboBox() {
         violenceComboBox = addComboBox(FXCollections.observableArrayList(ViolenceType.values()), ViolenceType.label());
-    }
-
-    private void addPresentComboBox() {
-        presentComboBox = addComboBox(FXCollections.observableArrayList(PresenceType.values()), PresenceType.label());
     }
 
     private void addSuccessComboBox() {

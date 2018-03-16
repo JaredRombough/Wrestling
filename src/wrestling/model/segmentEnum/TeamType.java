@@ -6,5 +6,8 @@ public enum TeamType {
     INTERFERENCE,
     INTERVIEWER,
     DEFAULT,
+    WINNER,
+    LOSER,
+    DRAW,
     EVERYONE
 }
