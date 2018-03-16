@@ -13,6 +13,14 @@ public enum AngleType implements Description {
             return "";
         }
 
+        public int minWorkers() {
+            return 1;
+        }
+
+        public int defaultWorkers() {
+            return 1;
+        }
+
     },
     OFFER {
         @Override
@@ -23,6 +31,14 @@ public enum AngleType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public int minWorkers() {
+            return 2;
+        }
+
+        public int defaultWorkers() {
+            return 2;
         }
 
     },
@@ -37,6 +53,14 @@ public enum AngleType implements Description {
             return "";
         }
 
+        public int minWorkers() {
+            return 2;
+        }
+
+        public int defaultWorkers() {
+            return 2;
+        }
+
     },
     ANNOUNCEMENT {
         @Override
@@ -47,6 +71,14 @@ public enum AngleType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public int minWorkers() {
+            return 1;
+        }
+
+        public int defaultWorkers() {
+            return 1;
         }
 
     };
