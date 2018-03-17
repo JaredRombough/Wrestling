@@ -22,10 +22,50 @@ public enum AngleType implements Description {
         }
 
     },
+    ATTACK {
+        @Override
+        public String description() {
+            return "Attack";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        public int minWorkers() {
+            return 2;
+        }
+
+        public int defaultWorkers() {
+            return 2;
+        }
+
+    },
     OFFER {
         @Override
         public String description() {
             return "Offer";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        public int minWorkers() {
+            return 2;
+        }
+
+        public int defaultWorkers() {
+            return 2;
+        }
+
+    },
+    BRAWL {
+        @Override
+        public String description() {
+            return "Brawl";
         }
 
         @Override

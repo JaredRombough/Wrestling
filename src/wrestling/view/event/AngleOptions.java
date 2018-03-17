@@ -42,10 +42,6 @@ public class AngleOptions extends ControllerBase implements Initializable {
     public void setAngleType(AngleType type) {
         this.type = type;
         switch (type) {
-            case PROMO:
-                setCombo1Visibility(false);
-                setCombo2Visibility(false);
-                break;
             case OFFER:
                 setCombo1(FXCollections.observableArrayList(JoinTeamType.values()),
                         JoinTeamType.label());
@@ -57,6 +53,8 @@ public class AngleOptions extends ControllerBase implements Initializable {
                 setCombo2Visibility(false);
                 break;
             default:
+                setCombo1Visibility(false);
+                setCombo2Visibility(false);
                 break;
         }
     }
@@ -100,7 +98,7 @@ public class AngleOptions extends ControllerBase implements Initializable {
             @Override
             public void changed(ObservableValue ov, AngleType t, AngleType t1) {
                 if (t1 != null) {
-                    
+
                     setAngleType(t1);
 
                 }

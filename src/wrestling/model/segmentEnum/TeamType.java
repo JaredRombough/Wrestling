@@ -24,10 +24,44 @@ public enum TeamType implements Description {
             return "";
         }
     },
+    ATTACKER {
+        @Override
+        public String description() {
+            return "Attacker";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+    },
+    VICTIM {
+        @Override
+        public String description() {
+            return "Victim";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+    },
     PROMO {
         @Override
         public String description() {
             return "Promo";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+    },
+    BRAWLER {
+        @Override
+        public String description() {
+            return "Brawler";
         }
 
         @Override

@@ -267,6 +267,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             case ANNOUNCEMENT:
                 teamType = index == 0 ? TeamType.ANNOUNCER : TeamType.AUDIENCE;
                 break;
+            case ATTACK:
+                teamType = index == 0 ? TeamType.ATTACKER : TeamType.VICTIM;
+                break;
+            case BRAWL:
+                teamType = TeamType.BRAWLER;
+                break;
         }
         return teamType;
     }

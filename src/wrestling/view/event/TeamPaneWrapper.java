@@ -2,10 +2,6 @@ package wrestling.view.event;
 
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
-import wrestling.model.segmentEnum.PromoType;
-import wrestling.model.segmentEnum.JoinTeamType;
-import wrestling.model.segmentEnum.ShowType;
-import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SuccessType;
 import wrestling.model.segmentEnum.ViolenceType;
 import java.net.URL;
@@ -146,9 +142,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void setAngle() {
         vBox.getChildren().retainAll(teamPane.pane, header);
-        //  addAngleComboBox();
-        addViolenceComboBox();
-
     }
 
     private void setInterference() {
@@ -161,10 +154,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     private void clearControls() {
         vBox.getChildren().retainAll(Arrays.asList(angleComboBox.wrapper, teamPane.pane, violenceComboBox.wrapper, header));
-    }
-
-    private void addViolenceComboBox() {
-        violenceComboBox = addComboBox(FXCollections.observableArrayList(ViolenceType.values()), ViolenceType.label());
     }
 
     private void addSuccessComboBox() {
