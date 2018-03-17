@@ -24,6 +24,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.OutcomeType;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -56,12 +57,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private SegmentType segmentType;
 
-    private enum SegmentType {
-        MATCH,
-        ANGLE
-
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
@@ -76,10 +71,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         matchOptionsScreen = ViewUtils.loadScreenFromResource(ScreenCode.MATCH_OPTIONS, mainApp, gameController, optionsPane);
 
+        segmentType = SegmentType.MATCH;
+
         initializeMatchOptions();
         initializeAngleOptions();
-
-        setSegmentType(SegmentType.MATCH);
 
     }
 
@@ -101,28 +96,18 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             @Override
             public void changed(ObservableValue ov, AngleType t, AngleType t1) {
                 if (t1 != null) {
-                    // clearControls();
-                    angleOptions.setAngleType(t1);
-                    switch (t1) {
-                        case PROMO:
-                            //    addPromoComboBox();
-                            break;
-                        case OFFER:
-                            //         addJoinTeamComboBox();
-                            break;
-                        case CHALLENGE:
-                            //          addShowComboBox();
-                            break;
-                        default:
-                            break;
-                    }
-//                    if (violenceComboBox != null && vBox.getChildren().contains(violenceComboBox.wrapper)) {
-//                        violenceComboBox.wrapper.toFront();
-//                    }
+                    updateLabels();
                 }
             }
         });
         angleOptions.getAngleTypeComboBox().getSelectionModel().selectFirst();
+
+        angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
+            angleOptionChanged(t1);
+        });
+        angleOptions.getCombo2().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
+            angleOptionChanged(t1);
+        });
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
 
@@ -134,6 +119,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public void setEventScreenController(EventScreenController eventScreenController) {
         this.eventScreenController = eventScreenController;
 
+    }
+
+    private void angleOptionChanged(Object obj) {
+        // if(obj instanceof)
     }
 
     @FXML
@@ -151,21 +140,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 setOptionsPane(angleOptionsScreen.pane);
             }
             setSegmentType(SegmentType.ANGLE);
-        }
-    }
-
-    private void setSegmentType(SegmentType type) {
-        segmentType = type;
-
-        for (Screen wrapperScreen : wrapperScreens) {
-            TeamPaneWrapper controller = ((TeamPaneWrapper) wrapperScreen.controller);
-            if (!controller.getTeamType().equals(TeamType.INTERFERENCE)) {
-                if (type.equals(SegmentType.ANGLE)) {
-                    controller.setTeamType(TeamType.CHALLENGER);
-                } else {
-                    controller.setTeamType(getTeamType(wrapperScreen));
-                }
-            }
         }
     }
 
@@ -250,14 +224,49 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
+    private void setSegmentType(SegmentType type) {
+        segmentType = type;
+        updateLabels();
+
+    }
+
     private TeamType getTeamType(Screen wrapperScreen) {
-        TeamType teamType = null;
-        if (matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
+        TeamPaneWrapper controller = ((TeamPaneWrapper) wrapperScreen.controller);
+        if (controller.getTeamType().equals(TeamType.INTERFERENCE)) {
+            return TeamType.INTERFERENCE;
+        }
+
+        int index = wrapperScreens.indexOf(wrapperScreen);
+        TeamType teamType;
+
+        if (segmentType.equals(SegmentType.ANGLE)) {
+            teamType = getAngleTeamType(index);
+        } else if (matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
             teamType = TeamType.DRAW;
         } else {
-            teamType = wrapperScreens.indexOf(wrapperScreen) == 0
+            teamType = index == 0
                     ? TeamType.WINNER : TeamType.LOSER;
 
+        }
+
+        return teamType;
+    }
+
+    private TeamType getAngleTeamType(int index) {
+        TeamType teamType = null;
+        switch (angleOptions.getAngleType()) {
+            case PROMO:
+                teamType = index == 0 ? TeamType.PROMO : TeamType.PROMO_TARGET;
+                break;
+            case OFFER:
+                teamType = index == 0 ? TeamType.OFFERER : TeamType.OFFEREE;
+                break;
+            case CHALLENGE:
+                teamType = index == 0 ? TeamType.CHALLENGER : TeamType.CHALLENGED;
+                break;
+            case ANNOUNCEMENT:
+                teamType = index == 0 ? TeamType.ANNOUNCER : TeamType.AUDIENCE;
+                break;
         }
         return teamType;
     }
@@ -304,7 +313,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         for (Screen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             controller.setTargets(getOtherTeams(wrapperScreens.indexOf(screen)));
-
+            controller.setTeamType(getTeamType(screen));
             screen.controller.updateLabels();
 
         }
@@ -326,7 +335,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public SegmentView getSegmentView() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-        SegmentView segmentView = new SegmentView();
+        SegmentView segmentView = new SegmentView(segmentType);
         segmentView.setFinish(matchOptions.getMatchFinish());
         segmentView.setRules(matchOptions.getMatchRule());
         segmentView.setTeams(getTeams());

@@ -28,6 +28,7 @@ import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
 
@@ -373,7 +374,7 @@ public class PromotionController implements Serializable {
                     Collections.swap(matchTeams, 0, 1);
                 }
 
-                SegmentView segmentView = new SegmentView();
+                SegmentView segmentView = new SegmentView(SegmentType.MATCH);
                 segmentView.setTeams(matchTeams);
                 segmentView.setTitle(title);
                 segments.add(segmentView);
@@ -393,7 +394,7 @@ public class PromotionController implements Serializable {
                     teams.add(new SegmentTeam(teamA, TeamType.DEFAULT));
                     teams.add(new SegmentTeam(teamB, TeamType.DEFAULT));
 
-                    SegmentView segmentView = new SegmentView();
+                    SegmentView segmentView = new SegmentView(SegmentType.MATCH);
                     segmentView.setTeams(teams);
 
                     segments.add(segmentView);

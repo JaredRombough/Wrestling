@@ -73,7 +73,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     public void updateLabels() {
 
         if (segmentView != null) {
-            segmentTitle.setText(gameController.getMatchManager().getMatchTitle(segmentView));
+            segmentTitle.setText(gameController.getMatchManager().getSegmentTitle(segmentView));
             Segment segment = segmentView.getSegment();
             StringBuilder sb = new StringBuilder();
             if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinish.DRAW)) {
@@ -101,7 +101,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateView() {
 
         flowPane.getChildren().clear();
-        List<SegmentTeam> defaultTeams = segmentView.getTeams(TeamType.DEFAULT);
+        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipants();
 
         for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();

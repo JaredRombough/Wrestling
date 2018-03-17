@@ -74,9 +74,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void setTeamType(TeamType state) {
         teamType = state;
+        setTeamTypeLabel(state.toString());
         switch (teamType) {
             case CHALLENGER:
-                setTeamTypeLabel("Challenger");
                 break;
             case CHALLENGED:
                 break;
@@ -86,10 +86,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             case INTERVIEWER:
                 break;
             case WINNER:
-                setTeamTypeLabel("Winner");
                 break;
             case LOSER:
-                setTeamTypeLabel("Loser");
+                break;
+            case DRAW:
                 break;
         }
     }
@@ -152,7 +152,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void setInterference() {
-        setTeamTypeLabel("Interference");
         teamType = TeamType.INTERFERENCE;
         vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();

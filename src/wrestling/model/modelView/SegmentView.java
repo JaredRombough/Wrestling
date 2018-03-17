@@ -8,6 +8,7 @@ import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 
 public class SegmentView {
@@ -18,8 +19,10 @@ public class SegmentView {
     private LocalDate date;
     private Segment segment;
     private Title title;
+    private final SegmentType segmentType;
 
-    public SegmentView() {
+    public SegmentView(SegmentType segmentType) {
+        this.segmentType = segmentType;
         rules = MatchRule.DEFAULT;
         finish = MatchFinish.CLEAN;
         teams = new ArrayList<>();
@@ -38,6 +41,18 @@ public class SegmentView {
      */
     public List<SegmentTeam> getTeams() {
         return teams;
+    }
+
+    public List<SegmentTeam> getMatchParticipants() {
+        List<SegmentTeam> participants = new ArrayList<>();
+        for (SegmentTeam team : teams) {
+            if (team.getType().equals(TeamType.WINNER)
+                    || team.getType().equals(TeamType.LOSER)
+                    || team.getType().equals(TeamType.DRAW)) {
+                participants.add(team);
+            }
+        }
+        return participants;
     }
 
     public List<SegmentTeam> getTeams(TeamType type) {
@@ -125,6 +140,13 @@ public class SegmentView {
      */
     public void setTitle(Title title) {
         this.title = title;
+    }
+
+    /**
+     * @return the segmentType
+     */
+    public SegmentType getSegmentType() {
+        return segmentType;
     }
 
 }

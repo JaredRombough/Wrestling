@@ -13,6 +13,7 @@ import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentType;
 
 public class MatchFactory implements Serializable {
 
@@ -52,7 +53,7 @@ public class MatchFactory implements Serializable {
     }
 
     private void saveMatch(Match match, List<SegmentTeam> teams) {
-        SegmentView segmentView = new SegmentView();
+        SegmentView segmentView = new SegmentView(SegmentType.MATCH);
         segmentView.setFinish(match.getFinish());
         segmentView.setRules(match.getRules());
         segmentView.setTeams(teams);

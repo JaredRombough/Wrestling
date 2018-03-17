@@ -10,6 +10,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 
 public final class TestUtils {
@@ -42,7 +43,7 @@ public final class TestUtils {
     }
 
     private static SegmentView testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
-        SegmentView segmentView = new SegmentView();
+        SegmentView segmentView = new SegmentView(SegmentType.MATCH);
         List<SegmentTeam> teams = new ArrayList<>();
 
         int currentWorkerIndex = 0;

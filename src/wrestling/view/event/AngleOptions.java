@@ -2,6 +2,8 @@ package wrestling.view.event;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.model.segmentEnum.AngleType;
-import wrestling.model.segmentEnum.Description;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.ShowType;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -60,27 +61,31 @@ public class AngleOptions extends ControllerBase implements Initializable {
         }
     }
 
+    public AngleType getAngleType() {
+        return (AngleType) angleTypeComboBox.getValue();
+    }
+
     private void setCombo1(ObservableList items, String labelText) {
         setCombo1Visibility(true);
-        combo1.setItems(items);
-        combo1.getSelectionModel().selectFirst();
+        getCombo1().setItems(items);
+        getCombo1().getSelectionModel().selectFirst();
         label1.setText(labelText);
     }
 
     private void setCombo2(ObservableList items, String labelText) {
         setCombo2Visibility(true);
-        combo2.setItems(items);
-        combo2.getSelectionModel().selectFirst();
+        getCombo2().setItems(items);
+        getCombo2().getSelectionModel().selectFirst();
         label2.setText(labelText);
     }
 
     private void setCombo1Visibility(boolean visible) {
-        combo1.setVisible(visible);
+        getCombo1().setVisible(visible);
         label1.setVisible(visible);
     }
 
     private void setCombo2Visibility(boolean visible) {
-        combo2.setVisible(visible);
+        getCombo2().setVisible(visible);
         label2.setVisible(visible);
     }
 
@@ -91,6 +96,16 @@ public class AngleOptions extends ControllerBase implements Initializable {
 
     private void intitializeAngleTypeComboBox() {
         angleTypeComboBox.setItems(FXCollections.observableArrayList(AngleType.values()));
+        angleTypeComboBox.valueProperty().addListener(new ChangeListener<AngleType>() {
+            @Override
+            public void changed(ObservableValue ov, AngleType t, AngleType t1) {
+                if (t1 != null) {
+                    
+                    setAngleType(t1);
+
+                }
+            }
+        });
         angleTypeComboBox.getSelectionModel().selectFirst();
     }
 
@@ -99,6 +114,20 @@ public class AngleOptions extends ControllerBase implements Initializable {
      */
     public ComboBox getAngleTypeComboBox() {
         return angleTypeComboBox;
+    }
+
+    /**
+     * @return the combo1
+     */
+    public ComboBox getCombo1() {
+        return combo1;
+    }
+
+    /**
+     * @return the combo2
+     */
+    public ComboBox getCombo2() {
+        return combo2;
     }
 
 }

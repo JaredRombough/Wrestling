@@ -13,6 +13,7 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
 
@@ -87,29 +88,6 @@ public class MatchManager {
         return getMatchWorkers;
     }
 
-    public List<SegmentTeam> getTeams(Match match) {
-        List<SegmentTeam> teams = new ArrayList<>();
-        SegmentTeam team = new SegmentTeam(new ArrayList<>(), TeamType.DEFAULT);
-        teams.add(team);
-
-        List<MatchWorker> allMatchWorkers = getMatchWorkers(match);
-
-        Collections.sort(allMatchWorkers, (MatchWorker o1, MatchWorker o2) -> o1.getTeam() - o2.getTeam());
-
-        int lastTeam = !allMatchWorkers.isEmpty() ? allMatchWorkers.get(0).getTeam() : 0;
-        for (MatchWorker matchWorker : allMatchWorkers) {
-            if (team.getWorkers().isEmpty() || lastTeam == matchWorker.getTeam()) {
-                team.getWorkers().add(matchWorker.getWorker());
-                lastTeam = matchWorker.getTeam();
-            } else {
-                team = new SegmentTeam(new ArrayList<>(), TeamType.DEFAULT);
-                teams.add(team);
-                team.getWorkers().add(matchWorker.getWorker());
-            }
-        }
-        return teams;
-    }
-
     public String getMatchStringForMonths(Worker worker, int months) {
 
         StringBuilder sb = new StringBuilder();
@@ -126,6 +104,13 @@ public class MatchManager {
 
     }
 
+    public String getSegmentTitle(SegmentView segmentView) {
+        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            return getMatchTitle(segmentView);
+        }
+        return "(Angle)\n";
+    }
+
     public String getMatchTitle(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchRule rules = segmentView.getRules();
@@ -136,12 +121,12 @@ public class MatchManager {
             return "Empty Segment";
         }
 
-        if (isHandicapMatch(teams)) {
+        if (isHandicapMatch(segmentView)) {
             string += "Handicap Match\n";
 
         } else if (rules.equals(MatchRule.DEFAULT)) {
 
-            int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
+            int teamsSize = segmentView.getMatchParticipants().size();
 
             switch (teamsSize) {
                 case 2:
@@ -181,8 +166,8 @@ public class MatchManager {
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = segmentView.getFinish();
-        int teamsSize = segmentView.getTeams(TeamType.DEFAULT).size();
-        String matchString = getMatchTitle(segmentView);
+        int teamsSize = segmentView.getMatchParticipants().size();
+        String matchString = getSegmentTitle(segmentView);
 
         if (segmentView.getWorkers().isEmpty()) {
             return matchString;
@@ -230,13 +215,12 @@ public class MatchManager {
 
     }
 
-    private boolean isHandicapMatch(List<SegmentTeam> teams) {
+    private boolean isHandicapMatch(SegmentView segmentView) {
         boolean handicap = false;
 
-        int size = teams.get(0).getWorkers().size();
-        for (SegmentTeam team : teams) {
-            if (team.getType().equals(TeamType.DEFAULT)
-                    && team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
+        int size = segmentView.getMatchParticipants().get(0).getWorkers().size();
+        for (SegmentTeam team : segmentView.getMatchParticipants()) {
+            if (team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
                 handicap = true;
                 break;
 
