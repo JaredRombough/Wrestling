@@ -67,7 +67,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         } else if (obj instanceof EventView) {
             showEventSummary(((EventView) obj).getEvent());
         };
-
     }
 
     @Override
@@ -86,7 +85,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             summaryText.setText(sb.toString());
             populateView();
         }
-
     }
 
     private void showEventSummary(Event event) {
@@ -115,7 +113,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         if (!interferenceTeams.isEmpty()) {
             addInterferenceNote(interferenceTeams);
         }
-
     }
 
     private void populateMatch() {
@@ -135,7 +132,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     addIntersertial(team, teamCard.getBoundsInParent().getWidth(), maxColumns);
                 }
             }
-
         }
     }
 
@@ -153,17 +149,21 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 GridPane teamCard = teamCard(workerCards, maxColumns);
                 flowPane.getChildren().add(teamCard);
             }
-
         }
-
     }
 
     private void addInterferenceNote(List<SegmentTeam> interferenceTeams) {
         StringBuilder sb = new StringBuilder();
         for (SegmentTeam team : interferenceTeams) {
-            sb.append(String.format("%s interfered %s the match, attacking %s %s\n",
+
+            String segmentTypeString = segmentView.getSegmentType().equals(SegmentType.MATCH)
+                    ? "match"
+                    : gameController.getMatchManager().getSegmentTitle(segmentView);
+
+            sb.append(String.format("%s interfered %s the %s, attacking %s %s\n",
                     ModelUtils.slashNames(team.getWorkers()),
                     team.getTiming().result(),
+                    segmentTypeString,
                     team.getTarget().toString(),
                     team.getSuccess().result()));
         }
