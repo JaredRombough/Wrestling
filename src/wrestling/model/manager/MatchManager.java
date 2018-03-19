@@ -108,7 +108,11 @@ public class MatchManager {
         if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
             return getMatchTitle(segmentView);
         }
-        return "(Angle)\n";
+        return getAngleTitle(segmentView);
+    }
+
+    private String getAngleTitle(SegmentView segmentView) {
+        return segmentView.getAngleType().description();
     }
 
     public String getMatchTitle(SegmentView segmentView) {
@@ -118,11 +122,11 @@ public class MatchManager {
         String string = "";
 
         if (segmentView.getWorkers().isEmpty()) {
-            return "Empty Segment";
+            return "Empty Match";
         }
 
         if (isHandicapMatch(segmentView)) {
-            string += "Handicap Match\n";
+            string += "Handicap Match";
 
         } else if (rules.equals(MatchRule.DEFAULT)) {
 
@@ -133,31 +137,31 @@ public class MatchManager {
                     int teamSize = teams.get(0).getWorkers().size();
                     switch (teamSize) {
                         case 1:
-                            string += "Singles Match\n";
+                            string += "Singles Match";
                             break;
                         case 2:
-                            string += "Tag Team Match\n";
+                            string += "Tag Team Match";
                             break;
                         case 3:
-                            string += "Six Man Tag Team Match\n";
+                            string += "Six Man Tag Team Match";
                             break;
                         case 4:
-                            string += "Eight Man Tag Team Match\n";
+                            string += "Eight Man Tag Team Match";
                             break;
                         case 5:
-                            string += "Ten Man Tag Team Match\n";
+                            string += "Ten Man Tag Team Match";
                             break;
                         default:
-                            string += String.format("%d Man Tag Team Match\n", teamSize * 2);
+                            string += String.format("%d Man Tag Team Match", teamSize * 2);
                             break;
                     }
                     break;
                 default:
-                    string += teamsSize + "-Way Match\n";
+                    string += teamsSize + "-Way Match";
                     break;
             }
         } else {
-            string += rules.description() + " Match\n";
+            string += rules.description() + " Match";
         }
 
         return string;
@@ -173,15 +177,18 @@ public class MatchManager {
         AngleType angleType = segmentView.getAngleType();
         List<SegmentTeam> mainTeam = segmentView.getTeams(angleType.mainTeamType());
         String mainTeamString;
+        String pluralString;
         if (mainTeam.isEmpty()) {
             mainTeamString = "?";
+            pluralString = "";
         } else {
             mainTeamString = ModelUtils.slashNames(mainTeam.get(0).getWorkers());
+            pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
         }
 
         return String.format(angleType.resultString(),
                 mainTeamString,
-                mainTeam.size() > 1 ? "" : "s",
+                pluralString,
                 ModelUtils.andTeams(segmentView.getTeams(angleType.addTeamType())));
 
     }
@@ -190,11 +197,7 @@ public class MatchManager {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = segmentView.getFinish();
         int teamsSize = segmentView.getMatchParticipants().size();
-        String matchString = getSegmentTitle(segmentView);
-
-        if (segmentView.getWorkers().isEmpty()) {
-            return matchString;
-        }
+        String matchString = "";
 
         if (teamsSize > 1) {
 
@@ -229,9 +232,14 @@ public class MatchManager {
             //probable placeholder
             matchString += !teams.isEmpty() ? teams.get(0) : "";
         }
+
+        if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinish.DRAW)) {
+            matchString = matchString.replace("def.", "drew");
+        }
+
         if (matchString.isEmpty()) {
 
-            matchString += "Empty Segment";
+            matchString += "Empty Match";
         }
 
         return matchString;

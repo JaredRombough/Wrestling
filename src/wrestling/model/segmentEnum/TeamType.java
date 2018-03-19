@@ -58,6 +58,17 @@ public enum TeamType implements Description {
             return "";
         }
     },
+    BRAWLER_PRIME {
+        @Override
+        public String description() {
+            return "Brawler";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+    },
     BRAWLER {
         @Override
         public String description() {

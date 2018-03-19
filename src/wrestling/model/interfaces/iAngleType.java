@@ -9,9 +9,9 @@ public interface iAngleType {
     public int defaultWorkers();
 
     public TeamType addTeamType();
-    
+
     public TeamType mainTeamType();
-    
+
     public String resultString();
 
 }

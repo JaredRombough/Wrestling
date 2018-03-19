@@ -18,6 +18,10 @@ public final class ModelUtils {
     }
 
     public static String slashNames(List<Worker> workers) {
+        if (workers.isEmpty()) {
+            return "?";
+        }
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < workers.size(); i++) {
             sb.append(workers.get(i).getName());
@@ -34,7 +38,7 @@ public final class ModelUtils {
         for (SegmentTeam team : teams) {
             slashed.add(slashNames(team.getWorkers()));
         }
-        return joinGrammatically(slashed);
+        return slashed.isEmpty() ? "?" : joinGrammatically(slashed);
     }
 
     private static String joinGrammatically(final List<String> list) {
@@ -46,6 +50,10 @@ public final class ModelUtils {
     }
 
     public static String slashShortNames(List<Worker> workers) {
+        if (workers.isEmpty()) {
+            return "?";
+        }
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < workers.size(); i++) {
             sb.append(workers.get(i).getShortName());

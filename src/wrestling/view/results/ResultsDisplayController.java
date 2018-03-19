@@ -20,6 +20,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.Screen;
@@ -76,10 +77,12 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             segmentTitle.setText(gameController.getMatchManager().getSegmentTitle(segmentView));
             Segment segment = segmentView.getSegment();
             StringBuilder sb = new StringBuilder();
-            if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinish.DRAW)) {
-                sb.append("The match resulted in a draw.\n");
-            }
-            sb.append(segment instanceof Match ? "Match" : "Segment").append(String.format(" rating: %d", segment.getRating()));
+
+            sb.append(gameController.getMatchManager().getSegmentString(segmentView));
+            sb.append("\n");
+
+            sb.append(segmentView.getSegmentType().equals(SegmentType.MATCH) ? "Match" : "Segment")
+                    .append(String.format(" rating: %d", segment.getRating()));
             summaryText.setText(sb.toString());
             populateView();
         }
@@ -101,8 +104,22 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateView() {
 
         flowPane.getChildren().clear();
-        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipants();
 
+        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            populateMatch();
+        } else {
+            populateAngle();
+        }
+
+        List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
+        if (!interferenceTeams.isEmpty()) {
+            addInterferenceNote(interferenceTeams);
+        }
+
+    }
+
+    private void populateMatch() {
+        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipants();
         for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
@@ -120,10 +137,23 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             }
 
         }
+    }
 
-        List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
-        if (!interferenceTeams.isEmpty()) {
-            addInterferenceNote(interferenceTeams);
+    private void populateAngle() {
+        List<SegmentTeam> teams = segmentView.getTeams();
+        for (SegmentTeam team : teams) {
+            List<Screen> workerCards = new ArrayList<>();
+            for (Worker worker : team.getWorkers()) {
+                Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                card.controller.setCurrent(worker);
+                workerCards.add(card);
+            }
+            if (!workerCards.isEmpty()) {
+                int maxColumns = getMaxColumns(workerCards.get(0).pane.getBoundsInParent().getWidth());
+                GridPane teamCard = teamCard(workerCards, maxColumns);
+                flowPane.getChildren().add(teamCard);
+            }
+
         }
 
     }
@@ -143,11 +173,22 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
     private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {
         Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
-        int teamSize = team.getWorkers().size();
+        String text = matchIntersertialString(team);
+        intersertial.controller.setCurrent(text);
+        if (team.getWorkers().size() > maxColumns / 2) {
+            intersertial.pane.setPrefSize(cardWidth, 0.0);
+        }
+        flowPane.getChildren().add(intersertial.pane);
+    }
+
+    private String matchIntersertialString(SegmentTeam team) {
         String text = "";
-        switch (team.getOutcome()) {
+        switch (team.getType()) {
+            case DRAW:
+                text = "drew";
+                break;
             case WINNER:
-                if (teamSize > 1) {
+                if (team.getWorkers().size() > 1) {
                     text = "defeat";
                 } else {
                     text = "defeats";
@@ -160,11 +201,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 text = "versus";
                 break;
         }
-        intersertial.controller.setCurrent(text);
-        if (team.getWorkers().size() > maxColumns / 2) {
-            intersertial.pane.setPrefSize(cardWidth, 0.0);
-        }
-        flowPane.getChildren().add(intersertial.pane);
+        return text;
     }
 
     private int getMaxColumns(double cardWidth) {
