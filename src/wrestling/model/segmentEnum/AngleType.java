@@ -1,6 +1,8 @@
 package wrestling.model.segmentEnum;
 
-public enum AngleType implements Description {
+import wrestling.model.interfaces.iAngleType;
+
+public enum AngleType implements Description, iAngleType {
 
     PROMO {
         @Override
@@ -13,10 +15,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 1;
         }
 
+        @Override
         public int defaultWorkers() {
             return 1;
         }
@@ -33,10 +37,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 2;
         }
 
+        @Override
         public int defaultWorkers() {
             return 2;
         }
@@ -53,10 +59,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 2;
         }
 
+        @Override
         public int defaultWorkers() {
             return 2;
         }
@@ -73,10 +81,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 2;
         }
 
+        @Override
         public int defaultWorkers() {
             return 2;
         }
@@ -93,10 +103,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 2;
         }
 
+        @Override
         public int defaultWorkers() {
             return 2;
         }
@@ -113,10 +125,12 @@ public enum AngleType implements Description {
             return "";
         }
 
+        @Override
         public int minWorkers() {
             return 1;
         }
 
+        @Override
         public int defaultWorkers() {
             return 1;
         }
