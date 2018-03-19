@@ -4,6 +4,7 @@ import wrestling.model.segmentEnum.TeamType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -31,73 +32,80 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
-    
+
     private static final int DEFAULTTEAMS = 2;
-    
+
     @FXML
     private VBox teamsPane;
-    
+
     @FXML
     private Button matchButton;
-    
+
     @FXML
     private Button angleButton;
-    
+
     @FXML
     private AnchorPane optionsPane;
-    
+
     @FXML
     private Button addTeamButton;
-    
+
     @FXML
     private Button interferenceButton;
-    
+
+    private List<Button> segmentTypeButtons;
+
     private Screen angleOptionsScreen;
     private AngleOptions angleOptions;
     private Screen matchOptionsScreen;
     private MatchOptions matchOptions;
-    
+
     private List<Screen> wrapperScreens;
-    
+
     private EventScreenController eventScreenController;
-    
+
     private SegmentType segmentType;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
         wrapperScreens = new ArrayList<>();
+        segmentTypeButtons = new ArrayList<>();
+
     }
-    
+
     @Override
     public void initializeMore() {
-        
+
+        segmentTypeButtons.addAll(Arrays.asList(angleButton, matchButton));
+
         matchOptionsScreen = ViewUtils.loadScreenFromResource(ScreenCode.MATCH_OPTIONS, mainApp, gameController, optionsPane);
         matchOptions = (MatchOptions) matchOptionsScreen.controller;
-        
+
         segmentType = SegmentType.MATCH;
-        
+        ViewUtils.updateSelectedButton(matchButton, segmentTypeButtons);
+
         initializeMatchOptions();
         initializeAngleOptions();
-        
+
         addTeamButton.setOnAction(e -> addTeam(
                 angleOptions.getAngleType().addTeamType()
         ));
         interferenceButton.setOnAction(e -> addTeam(TeamType.INTERFERENCE));
-        
+
     }
-    
+
     private void initializeMatchOptions() {
-        
+
         matchOptions.getMatchFinishes().setOnAction(e -> updateLabels());
         matchOptions.getMatchRules().setOnAction(e -> updateLabels());
-        
+
     }
-    
+
     private void initializeAngleOptions() {
         angleOptionsScreen = ViewUtils.loadScreenFromResource(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
         angleOptions = (AngleOptions) angleOptionsScreen.controller;
-        
+
         angleOptions.getAngleTypeComboBox().valueProperty().addListener(new ChangeListener<AngleType>() {
             @Override
             public void changed(ObservableValue ov, AngleType t, AngleType t1) {
@@ -107,48 +115,52 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             }
         });
         angleOptions.getAngleTypeComboBox().getSelectionModel().selectFirst();
-        
+
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);
         });
         angleOptions.getCombo2().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);
         });
-        
+
         for (int i = 0; i < DEFAULTTEAMS; i++) {
-            
+
             addTeam(TeamType.DEFAULT);
-            
+
         }
     }
-    
+
     public void setEventScreenController(EventScreenController eventScreenController) {
         this.eventScreenController = eventScreenController;
-        
+
     }
-    
+
     private void angleOptionChanged(Object obj) {
         // if(obj instanceof)
     }
-    
+
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
-        
-        if (event.getSource() == matchButton) {
+
+        Button button = (Button) event.getSource();
+
+        if (button == matchButton) {
             for (Screen screen : wrapperScreens) {
                 ((TeamPaneWrapper) screen.controller).setMatch();
                 setOptionsPane(matchOptionsScreen.pane);
             }
             setSegmentType(SegmentType.MATCH);
-        } else if (event.getSource() == angleButton) {
+        } else if (button == angleButton) {
             for (Screen screen : wrapperScreens) {
                 ((TeamPaneWrapper) screen.controller).setAngle();
                 setOptionsPane(angleOptionsScreen.pane);
             }
             setSegmentType(SegmentType.ANGLE);
         }
+
+        ViewUtils.updateSelectedButton(button, segmentTypeButtons);
     }
-    
+
     private void setOptionsPane(Pane pane) {
         optionsPane.getChildren().clear();
         ViewUtils.anchorPaneToParent(optionsPane, pane);
@@ -161,9 +173,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         for (Screen screen : wrapperScreens) {
             ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeWorker(worker);
         }
-        
+
     }
-    
+
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
         for (Screen screen : wrapperScreens) {
@@ -171,37 +183,37 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
         return workers;
     }
-    
+
     private Screen addTeam(TeamType teamType) {
-        
+
         Screen wrapperScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         TeamPaneWrapper wrapperController = ((TeamPaneWrapper) wrapperScreen.controller);
-        
+
         if (teamType.equals(TeamType.INTERFERENCE)) {
             wrapperScreens.add(wrapperScreen);
             teamsPane.getChildren().add(wrapperScreen.pane);
         } else {
             int indexToInsert = wrapperScreens.isEmpty() ? 0 : wrapperScreens.size();
-            
+
             for (int i = 0; i < wrapperScreens.size(); i++) {
                 if (isInterference(wrapperScreens.get(i)) && i > 0) {
                     indexToInsert = i;
                     break;
                 }
             }
-            
+
             wrapperScreens.add(indexToInsert, wrapperScreen);
             teamsPane.getChildren().add(indexToInsert, wrapperScreen.pane);
         }
-        
+
         if (teamType.equals(TeamType.DEFAULT)) {
             teamType = getTeamType(wrapperScreen);
-            
+
         }
-        
+
         wrapperController.setTeamType(teamType);
         wrapperController.setOutcomeType(getOutcomeType(wrapperScreen));
-        
+
         wrapperScreen.pane.setOnDragDropped((final DragEvent event) -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -216,43 +228,43 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             event.setDropCompleted(success);
             event.consume();
         });
-        
+
         TeamPaneController teamPaneController = ((TeamPaneWrapper) wrapperScreen.controller).getTeamPaneController();
         teamPaneController.setDragDropHandler(this, eventScreenController);
         teamPaneController.setTeamNumber(wrapperScreens.size() - 1);
         wrapperController.getXButton().setOnAction(e -> removeTeam(wrapperScreen));
-        
+
         eventScreenController.updateSegments();
-        
+
         updateLabels();
-        
+
         return wrapperScreen;
-        
+
     }
-    
+
     private void setSegmentType(SegmentType type) {
         segmentType = type;
         updateLabels();
-        
+
     }
-    
+
     private boolean getXButtonVisible(int index, TeamType teamType) {
         int minTeams = segmentType.equals(SegmentType.MATCH)
                 ? 2
                 : angleOptions.getAngleType().minWorkers();
-        
+
         return index >= minTeams || teamType.equals(TeamType.INTERFERENCE);
     }
-    
+
     private TeamType getTeamType(Screen wrapperScreen) {
         TeamPaneWrapper controller = ((TeamPaneWrapper) wrapperScreen.controller);
         if (controller.getTeamType().equals(TeamType.INTERFERENCE)) {
             return TeamType.INTERFERENCE;
         }
-        
+
         int index = wrapperScreens.indexOf(wrapperScreen);
         TeamType teamType;
-        
+
         if (segmentType.equals(SegmentType.ANGLE)) {
             teamType = index == 0 ? angleOptions.getAngleType().mainTeamType()
                     : angleOptions.getAngleType().addTeamType();
@@ -261,12 +273,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         } else {
             teamType = index == 0
                     ? TeamType.WINNER : TeamType.LOSER;
-            
+
         }
-        
+
         return teamType;
     }
-    
+
     private OutcomeType getOutcomeType(Screen teamPaneWrapper) {
         OutcomeType outcomeType = null;
         if (matchOptions.getMatchFinish() != null && matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
@@ -283,29 +295,29 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
         return outcomeType;
     }
-    
+
     private boolean isInterference(Screen screen) {
         return screen.controller instanceof TeamPaneWrapper
                 && ((TeamPaneWrapper) screen.controller).getTeamType() != null
                 && ((TeamPaneWrapper) screen.controller).getTeamType().equals(TeamType.INTERFERENCE);
     }
-    
+
     private void removeTeam(Screen teamPaneWrapper) {
-        
+
         if (teamsPane.getChildren().contains(teamPaneWrapper.pane)) {
             teamsPane.getChildren().remove(teamPaneWrapper.pane);
         }
-        
+
         if (wrapperScreens.contains(teamPaneWrapper)) {
             wrapperScreens.remove(teamPaneWrapper);
         }
         eventScreenController.updateSegments();
         updateLabels();
     }
-    
+
     @Override
     public void updateLabels() {
-        
+
         for (Screen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             controller.setTargets(getOtherTeams(wrapperScreens.indexOf(screen)));
@@ -313,23 +325,23 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             controller.getXButton().setVisible(
                     getXButtonVisible(wrapperScreens.indexOf(screen), controller.getTeamType()));
             screen.controller.updateLabels();
-            
+
         }
         eventScreenController.updateSegments();
-        
+
     }
-    
+
     public void swapTeams(int indexA, int indexB) {
         List<Worker> teamA = getTeamPaneController(indexA).getWorkers();
         List<Worker> teamB = getTeamPaneController(indexB).getWorkers();
         getTeamPaneController(indexA).setWorkers(teamB);
         getTeamPaneController(indexB).setWorkers(teamA);
-        
+
         eventScreenController.updateSegments();
-        
+
         updateLabels();
     }
-    
+
     public SegmentView getSegmentView() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
@@ -340,7 +352,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentView.setTeams(getTeams());
         return segmentView;
     }
-    
+
     private TeamPaneController getTeamPaneController(int index) {
         return ((TeamPaneWrapper) wrapperScreens.get(index).controller).getTeamPaneController();
     }
@@ -352,36 +364,36 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         while (!wrapperScreens.isEmpty()) {
             removeTeam(wrapperScreens.get(0));
         }
-        
+
         for (int i = 0; i < DEFAULTTEAMS; i++) {
             addTeam(TeamType.DEFAULT);
         }
-        
+
     }
-    
+
     private List<SegmentTeam> getTeams() {
-        
+
         List<SegmentTeam> teams = new ArrayList<>();
-        
+
         for (Screen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             teams.add(controller.getTeam());
         }
-        
+
         return teams;
     }
-    
+
     private List<SegmentTeam> getOtherTeams(int notThisIndex) {
-        
+
         List<SegmentTeam> teams = new ArrayList<>();
-        
+
         for (Screen screen : wrapperScreens) {
             SegmentTeam team = ((TeamPaneWrapper) screen.controller).getTeam();
             if (team != null && wrapperScreens.indexOf(screen) < notThisIndex) {
                 teams.add(team);
             }
         }
-        
+
         return teams;
     }
 }

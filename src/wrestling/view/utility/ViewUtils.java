@@ -11,6 +11,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
@@ -36,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.view.RootLayoutController;
 
 public final class ViewUtils {
 
@@ -228,6 +230,18 @@ public final class ViewUtils {
             comboBox.setItems(comparators);
             comboBox.getSelectionModel().selectFirst();
         }
+    }
+
+    public static void updateSelectedButton(Button button, List<Button> buttons) {
+
+        String selectedButtonClass = "selectedButton";
+
+        buttons.stream().filter((b) -> (b.getStyleClass().contains(selectedButtonClass))).forEach((b) -> {
+            b.getStyleClass().remove(selectedButtonClass);
+        });
+
+        button.getStyleClass().add(selectedButtonClass);
+
     }
 
 }

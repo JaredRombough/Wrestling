@@ -168,22 +168,10 @@ public class BrowserController extends ControllerBase implements Initializable {
         }
 
         if (!button.equals(myPromotionButton)) {
-            updateSelectedButton(button);
+            ViewUtils.updateSelectedButton(button, browseButtons);
         }
 
         browse();
-    }
-
-    private void updateSelectedButton(Button button) {
-
-        String selectedButtonClass = "selectedButton";
-
-        browseButtons.stream().filter((b) -> (b.getStyleClass().contains(selectedButtonClass))).forEach((b) -> {
-            b.getStyleClass().remove(selectedButtonClass);
-        });
-
-        button.getStyleClass().add(selectedButtonClass);
-
     }
 
     private void browse() {
