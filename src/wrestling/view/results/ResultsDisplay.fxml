@@ -45,11 +45,8 @@
                <top>
                   <Text fx:id="segmentTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" BorderPane.alignment="CENTER" />
                </top>
-               <bottom>
-                  <AnchorPane fx:id="additionalInfo" BorderPane.alignment="CENTER" />
-               </bottom>
             </BorderPane>
-            <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <Text fx:id="summaryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
          </children>
       </GridPane>
    </children>

@@ -13,16 +13,14 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
-import wrestling.model.Match;
-import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.SegmentType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -32,9 +30,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
     @FXML
     private AnchorPane anchorPane;
-
-    @FXML
-    private AnchorPane additionalInfo;
 
     @FXML
     private FlowPane flowPane;
@@ -66,7 +61,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             updateLabels();
         } else if (obj instanceof EventView) {
             showEventSummary(((EventView) obj).getEvent());
-        };
+        }
     }
 
     @Override
@@ -76,6 +71,8 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             segmentTitle.setText(gameController.getMatchManager().getSegmentTitle(segmentView));
             Segment segment = segmentView.getSegment();
             StringBuilder sb = new StringBuilder();
+
+            sb.append(getInterferenceNote(segmentView.getTeams(TeamType.INTERFERENCE)));
 
             sb.append(gameController.getMatchManager().getSegmentString(segmentView));
             sb.append("\n");
@@ -111,7 +108,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
         List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
         if (!interferenceTeams.isEmpty()) {
-            addInterferenceNote(interferenceTeams);
+            getInterferenceNote(interferenceTeams);
         }
     }
 
@@ -152,7 +149,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         }
     }
 
-    private void addInterferenceNote(List<SegmentTeam> interferenceTeams) {
+    private String getInterferenceNote(List<SegmentTeam> interferenceTeams) {
         StringBuilder sb = new StringBuilder();
         for (SegmentTeam team : interferenceTeams) {
 
@@ -167,8 +164,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     team.getTarget().toString(),
                     team.getSuccess().result()));
         }
-        Text text = new Text(sb.toString());
-        additionalInfo.getChildren().add(text);
+        return sb.toString();
     }
 
     private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {
