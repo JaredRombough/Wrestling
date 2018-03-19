@@ -25,6 +25,16 @@ public enum AngleType implements Description, iAngleType {
             return 1;
         }
 
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.PROMO;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.PROMO_TARGET;
+        }
+
     },
     ATTACK {
         @Override
@@ -45,6 +55,16 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public int defaultWorkers() {
             return 2;
+        }
+
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.ATTACKER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.VICTIM;
         }
 
     },
@@ -69,6 +89,16 @@ public enum AngleType implements Description, iAngleType {
             return 2;
         }
 
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.OFFERER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.OFFEREE;
+        }
+
     },
     BRAWL {
         @Override
@@ -89,6 +119,16 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public int defaultWorkers() {
             return 2;
+        }
+
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.BRAWLER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.BRAWLER;
         }
 
     },
@@ -113,6 +153,16 @@ public enum AngleType implements Description, iAngleType {
             return 2;
         }
 
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.CHALLENGER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.CHALLENGED;
+        }
+
     },
     ANNOUNCEMENT {
         @Override
@@ -133,6 +183,16 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public int defaultWorkers() {
             return 1;
+        }
+
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.ANNOUNCER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.AUDIENCE;
         }
 
     };

@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchRule;
@@ -15,8 +14,7 @@ import wrestling.view.utility.interfaces.ControllerBase;
 
 public class MatchOptions extends ControllerBase implements Initializable {
 
-    @FXML
-    private Button addTeamButton;
+    
 
     @FXML
     private ComboBox matchRules;
@@ -24,8 +22,6 @@ public class MatchOptions extends ControllerBase implements Initializable {
     @FXML
     private ComboBox matchFinishes;
 
-    @FXML
-    private Button interferenceButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -81,20 +77,6 @@ public class MatchOptions extends ControllerBase implements Initializable {
 
     public MatchFinish getMatchFinish() {
         return (MatchFinish) getMatchFinishes().getSelectionModel().getSelectedItem();
-    }
-
-    /**
-     * @return the addTeamButton
-     */
-    public Button getAddTeamButton() {
-        return addTeamButton;
-    }
-
-    /**
-     * @return the interferenceButton
-     */
-    public Button getInterferenceButton() {
-        return interferenceButton;
     }
 
     /**
