@@ -234,7 +234,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         teamPaneController.setTeamNumber(wrapperScreens.size() - 1);
         wrapperController.getXButton().setOnAction(e -> removeTeam(wrapperScreen));
 
-        eventScreenController.updateSegments();
+        eventScreenController.updateSegmentViews();
 
         updateLabels();
 
@@ -311,7 +311,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         if (wrapperScreens.contains(teamPaneWrapper)) {
             wrapperScreens.remove(teamPaneWrapper);
         }
-        eventScreenController.updateSegments();
+        eventScreenController.updateSegmentViews();
         updateLabels();
     }
 
@@ -327,7 +327,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             screen.controller.updateLabels();
 
         }
-        eventScreenController.updateSegments();
+        eventScreenController.updateSegmentViews();
 
     }
 
@@ -337,7 +337,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         getTeamPaneController(indexA).setWorkers(teamB);
         getTeamPaneController(indexB).setWorkers(teamA);
 
-        eventScreenController.updateSegments();
+        eventScreenController.updateSegmentViews();
 
         updateLabels();
     }
