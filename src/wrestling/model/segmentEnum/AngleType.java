@@ -34,6 +34,11 @@ public enum AngleType implements Description, iAngleType {
         public TeamType addTeamType() {
             return TeamType.PROMO_TARGET;
         }
+        
+        @Override
+        public String resultString() {
+            return "%s cut%s a promo targeting %s";
+        }
 
     },
     ATTACK {
@@ -65,6 +70,11 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public TeamType addTeamType() {
             return TeamType.VICTIM;
+        }
+        
+        @Override
+        public String resultString() {
+            return "%s attack%s %s";
         }
 
     },
@@ -98,6 +108,11 @@ public enum AngleType implements Description, iAngleType {
         public TeamType addTeamType() {
             return TeamType.OFFEREE;
         }
+        
+        @Override
+        public String resultString() {
+            return "%s offer%s %s";
+        }
 
     },
     BRAWL {
@@ -129,6 +144,11 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public TeamType addTeamType() {
             return TeamType.BRAWLER;
+        }
+        
+        @Override
+        public String resultString() {
+            return "%s brawl%s with %s";
         }
 
     },
@@ -162,6 +182,11 @@ public enum AngleType implements Description, iAngleType {
         public TeamType addTeamType() {
             return TeamType.CHALLENGED;
         }
+        
+        @Override
+        public String resultString() {
+            return "%s challenge%s %s";
+        }
 
     },
     ANNOUNCEMENT {
@@ -193,6 +218,11 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public TeamType addTeamType() {
             return TeamType.AUDIENCE;
+        }
+        
+        @Override
+        public String resultString() {
+            return "%s announce%s %s";
         }
 
     };

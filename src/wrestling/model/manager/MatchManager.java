@@ -1,7 +1,6 @@
 package wrestling.model.manager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import wrestling.model.Match;
 import wrestling.model.segmentEnum.MatchFinish;
@@ -13,9 +12,10 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.SegmentType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.utility.ModelUtils;
 
 public class MatchManager {
 
@@ -95,7 +95,7 @@ public class MatchManager {
         for (SegmentView segmentView : segmentViews) {
             if (segmentView.getWorkers().contains(worker)
                     && segmentView.getDate().isBefore(dateManager.today().minusMonths(months))) {
-                sb.append(getMatchString(segmentView));
+                sb.append(getSegmentString(segmentView));
                 sb.append("\n");
             }
         }
@@ -161,6 +161,29 @@ public class MatchManager {
         }
 
         return string;
+    }
+
+    public String getSegmentString(SegmentView segmentView) {
+        return segmentView.getSegmentType().equals(SegmentType.MATCH)
+                ? getMatchString(segmentView)
+                : getAngleString(segmentView);
+    }
+
+    public String getAngleString(SegmentView segmentView) {
+        AngleType angleType = segmentView.getAngleType();
+        List<SegmentTeam> mainTeam = segmentView.getTeams(angleType.mainTeamType());
+        String mainTeamString;
+        if (mainTeam.isEmpty()) {
+            mainTeamString = "?";
+        } else {
+            mainTeamString = ModelUtils.slashNames(mainTeam.get(0).getWorkers());
+        }
+
+        return String.format(angleType.resultString(),
+                mainTeamString,
+                mainTeam.size() > 1 ? "" : "s",
+                ModelUtils.andTeams(segmentView.getTeams(angleType.addTeamType())));
+
     }
 
     public String getMatchString(SegmentView segmentView) {

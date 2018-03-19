@@ -388,7 +388,7 @@ public class EventManager {
             if (segmentView.getSegment() instanceof Match) {
                 Match match = (Match) segmentView.getSegment();
                 if (!segmentView.getWorkers().isEmpty()) {
-                    sb.append(matchManager.getMatchString(segmentView));
+                    sb.append(matchManager.getSegmentString(segmentView));
                     sb.append("\n");
                     sb.append("Rating: ").append((match).getRating());
                 } else {

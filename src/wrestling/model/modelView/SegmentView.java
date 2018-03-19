@@ -8,6 +8,7 @@ import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 
@@ -16,6 +17,7 @@ public class SegmentView {
     private List<SegmentTeam> teams;
     private MatchRule rules;
     private MatchFinish finish;
+    private AngleType angleType;
     private LocalDate date;
     private Segment segment;
     private Title title;
@@ -147,6 +149,20 @@ public class SegmentView {
      */
     public SegmentType getSegmentType() {
         return segmentType;
+    }
+
+    /**
+     * @return the angleType
+     */
+    public AngleType getAngleType() {
+        return angleType;
+    }
+
+    /**
+     * @param angleType the angleType to set
+     */
+    public void setAngleType(AngleType angleType) {
+        this.angleType = angleType;
     }
 
 }

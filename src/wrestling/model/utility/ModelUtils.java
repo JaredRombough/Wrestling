@@ -1,11 +1,13 @@
 package wrestling.model.utility;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.modelView.SegmentTeam;
 
 public final class ModelUtils {
 
@@ -25,6 +27,22 @@ public final class ModelUtils {
         }
 
         return sb.toString();
+    }
+
+    public static String andTeams(List<SegmentTeam> teams) {
+        List<String> slashed = new ArrayList<>();
+        for (SegmentTeam team : teams) {
+            slashed.add(slashNames(team.getWorkers()));
+        }
+        return joinGrammatically(slashed);
+    }
+
+    private static String joinGrammatically(final List<String> list) {
+        return list.size() > 1
+                ? String.join(", ", list.subList(0, list.size() - 1))
+                .concat(String.format("%s and ", list.size() > 2 ? "," : ""))
+                .concat(list.get(list.size() - 1))
+                : list.get(0);
     }
 
     public static String slashShortNames(List<Worker> workers) {

@@ -11,5 +11,7 @@ public interface iAngleType {
     public TeamType addTeamType();
     
     public TeamType mainTeamType();
+    
+    public String resultString();
 
 }
