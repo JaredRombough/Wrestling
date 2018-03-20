@@ -130,7 +130,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             myLabel.setTextAlignment(TextAlignment.CENTER);
 
             myLabel.setWrapText(true);
-            myLabel.setMaxWidth(segmentListView.getWidth() - 40);
+            myLabel.setMaxWidth(segmentListView.getWidth() - 60);
 
             myLabel.getStyleClass().add("sorterLabel");
             HBox.setHgrow(myLabel, Priority.ALWAYS);

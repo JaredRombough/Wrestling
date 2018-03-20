@@ -186,10 +186,17 @@ public class MatchManager {
             pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
         }
 
-        return String.format(angleType.resultString(),
+        String string = String.format(angleType.resultString(),
                 mainTeamString,
                 pluralString,
                 ModelUtils.andTeams(segmentView.getTeams(angleType.addTeamType())));
+
+        if (angleType.equals(AngleType.PROMO) && segmentView.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
+            string = string.split("targeting")[0];
+            string = string.replace(" targeting", "");
+        }
+
+        return string;
 
     }
 
