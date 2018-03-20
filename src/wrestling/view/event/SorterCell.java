@@ -59,7 +59,8 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
 
         setOnDragOver(event -> {
             if (event.getGestureSource() != thisCell
-                    && event.getDragboard().hasString()) {
+                    && event.getDragboard().hasString()
+                    && event.getGestureSource() instanceof SorterCell) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
 
@@ -68,7 +69,8 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
 
         setOnDragEntered(event -> {
             if (event.getGestureSource() != thisCell
-                    && event.getDragboard().hasString()) {
+                    && event.getDragboard().hasString()
+                    && event.getGestureSource() instanceof SorterCell) {
                 setOpacity(0.3);
             }
         });

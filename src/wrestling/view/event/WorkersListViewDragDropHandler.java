@@ -1,8 +1,6 @@
 package wrestling.view.event;
 
-import java.util.List;
 import javafx.event.EventHandler;
-import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import wrestling.model.Worker;
 import wrestling.view.utility.LocalDragboard;

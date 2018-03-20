@@ -39,6 +39,7 @@ import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.TestUtils;
+import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -346,10 +347,14 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         //for the workersListView to accept dragged items
         final EventHandler<DragEvent> dragOverHandler = (DragEvent dragEvent) -> {
-            dragEvent.acceptTransferModes(TransferMode.MOVE);
+            LocalDragboard ldb = LocalDragboard.getINSTANCE();
+            if (ldb.hasType(Worker.class)) {
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+            }
+
         };
 
-        getWorkersListView().setOnDragOver(dragOverHandler);
+        workersListView.setOnDragOver(dragOverHandler);
 
         //do this last as it is dependent on currentSegment
         updateWorkerListView();
