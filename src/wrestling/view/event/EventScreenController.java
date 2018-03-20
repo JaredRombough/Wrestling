@@ -81,7 +81,6 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
-    private final List<SegmentView> segmentViews = new ArrayList<>();
 
     private SortedList workerSortedList;
     private Screen sortControl;
@@ -106,7 +105,15 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private SegmentView currentSegment() {
-        return segmentViews.get(getCurrentSegmentNumber().intValue());
+        return segmentPaneControllers.get(getCurrentSegmentNumber().intValue()).getSegmentView();
+    }
+
+    private List<SegmentView> getSegmentViews() {
+        List<SegmentView> segmentViews = new ArrayList<>();
+        for (SegmentPaneController controller : segmentPaneControllers) {
+            segmentViews.add(controller.getSegmentView());
+        }
+        return segmentViews;
     }
 
     public void setCurrentSegmentNumber(int number) {
@@ -129,7 +136,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-            if (removeEmpty(segmentViews).isEmpty()) {
+            if (removeEmpty(getSegmentViews()).isEmpty()) {
                 ViewUtils.generateAlert(
                         "Error",
                         "Event is not valid.",
@@ -152,8 +159,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (testing) {
             mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, gameController.getContractManager().getFullRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
-            updateSegmentViews();
-            mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(segmentViews)));
+            mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(getSegmentViews())));
         }
 
     }
@@ -170,23 +176,12 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void clearSegments() {
-        segmentViews.clear();
         //go through the segmentPaneControllers and clear all the teams
         for (SegmentPaneController current : getSegmentPaneControllers()) {
             current.clear();
         }
 
         segmentListView.getSelectionModel().selectFirst();
-    }
-
-    public void updateSegmentViews() {
-
-        segmentViews.clear();
-        for (SegmentPaneController currentController : getSegmentPaneControllers()) {
-            segmentViews.add(currentController.getSegmentView());
-        }
-
-        updateLabels();
     }
 
     //updates lists and labels
@@ -201,7 +196,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
 
-            segmentNameItem.segment.set(segmentViews.get(segmentListView.getItems().indexOf(segmentNameItem)));
+            segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));
             segmentNameItem.name.set(
                     gameController.getMatchManager().getSegmentTitle((SegmentView) segmentNameItem.segment.get())
                     + "\n"
@@ -265,9 +260,9 @@ public class EventScreenController extends ControllerBase implements Initializab
             SegmentNameItem item = new SegmentNameItem();
             segmentListView.getItems().add(item);
             item.segment.set(controller.getSegmentView());
-            item.name.set("Segment " + segmentViews.size());
+            item.name.set("Segment " + getSegmentViews().size());
 
-            updateSegmentViews();
+            updateLabels();
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
@@ -284,7 +279,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             currentSegment = segmentListView.getSelectionModel().getSelectedItem();
         }
 
-        if (segmentViews.size() > 1) {
+        if (getSegmentViews().size() > 1) {
 
             int indexToRemove = segmentListView.getItems().indexOf(currentSegment);
 
@@ -298,7 +293,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             getSegmentPaneControllers().remove(indexToRemove);
 
             //update the event since we have changed the number of segments
-            updateSegmentViews();
+            updateLabels();
         }
 
     }
@@ -316,7 +311,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentListView.setCellFactory(param -> new SorterCell(
                 segmentPanes, getSegmentPaneControllers(),
-                segmentViews,
+                getSegmentViews(),
                 segmentListView,
                 this
         ));

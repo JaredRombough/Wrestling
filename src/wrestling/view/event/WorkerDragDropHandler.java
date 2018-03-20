@@ -37,7 +37,7 @@ public class WorkerDragDropHandler implements EventHandler<DragEvent> {
 
             teamPaneController.updateLabels();
             segmentPaneController.updateLabels();
-            eventScreenController.updateSegmentViews();
+            eventScreenController.updateLabels();
 
             //Clear, otherwise we end up with the worker stuck on the dragboard?
             ldb.clearAll();
