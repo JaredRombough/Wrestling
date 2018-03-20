@@ -3,7 +3,6 @@ package wrestling.view.event;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.segmentEnum.SuccessType;
-import wrestling.model.segmentEnum.ViolenceType;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +46,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     @FXML
     private HBox header;
 
-    @FXML
     private Button xButton;
 
     @FXML
@@ -208,6 +206,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         teamPane = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE, mainApp, gameController);
         vBox.getChildren().add(teamPane.pane);
         preparePaneForSorting();
+        xButton = ViewUtils.getXButton();
+        header.getChildren().add(xButton);
+
     }
 
     private void preparePaneForSorting() {

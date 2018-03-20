@@ -19,14 +19,6 @@
                         <Insets left="10.0" />
                      </padding>
                   </Label>
-                  <Button mnemonicParsing="false" text="X" fx:id="xButton">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Button>
                </children>
             </HBox>
          </children></VBox>

@@ -9,6 +9,7 @@ import java.util.Optional;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -26,10 +27,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javax.imageio.ImageIO;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -85,10 +88,12 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
+        {
+            if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
 
             }
+        }
 
     }
 
@@ -103,11 +108,9 @@ public final class ViewUtils {
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
         } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
+         if (imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(false);
             }
-        }
     }
 
     public static Image loadImage(InputStream inputStream) {
@@ -242,6 +245,14 @@ public final class ViewUtils {
 
         button.getStyleClass().add(selectedButtonClass);
 
+    }
+
+    public static Button getXButton() {
+        Button xButton = new Button();
+        HBox.setMargin(xButton, new Insets(5));
+        xButton.setText("X");
+        xButton.setFont(Font.font("Verdana", 10));
+        return xButton;
     }
 
 }

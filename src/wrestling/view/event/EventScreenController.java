@@ -59,9 +59,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Button addSegmentButton;
 
     @FXML
-    private Button removeSegmentButton;
-
-    @FXML
     private ListView<SegmentNameItem> segmentListView;
 
     @FXML
@@ -140,7 +137,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 ViewUtils.generateAlert(
                         "Error",
                         "Event is not valid.",
-                        "An event must have at least one segment.",
+                        "An event must have at least one non-empty segment.",
                         AlertType.ERROR)
                         .showAndWait();
             } else {
@@ -148,8 +145,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
-        } else if (event.getSource() == removeSegmentButton) {
-            removeSegment();
         }
     }
 
@@ -269,33 +264,29 @@ public class EventScreenController extends ControllerBase implements Initializab
         }
     }
 
-    private void removeSegment() {
-
-        SegmentNameItem currentSegment = segmentListView.getSelectionModel().getSelectedItem();
-
-        if (currentSegment == null) {
-
-            segmentListView.getSelectionModel().selectLast();
-            currentSegment = segmentListView.getSelectionModel().getSelectedItem();
-        }
-
+    public void removeSegment(int index) {
         if (getSegmentViews().size() > 1) {
 
-            int indexToRemove = segmentListView.getItems().indexOf(currentSegment);
+            int selectedIndex = segmentListView.getSelectionModel().getSelectedIndex();
 
-            segmentListView.getItems().remove(currentSegment);
+            segmentListView.getItems().remove(index);
 
-            segmentPanes.remove(indexToRemove);
+            segmentPanes.remove(index);
 
             setCurrentSegmentNumber(getCurrentSegmentNumber());
 
             //remove the controller too
-            getSegmentPaneControllers().remove(indexToRemove);
+            getSegmentPaneControllers().remove(index);
+
+            if (segmentListView.getItems().size() > selectedIndex) {
+                segmentListView.getSelectionModel().select(selectedIndex);
+            } else {
+                segmentListView.getSelectionModel().selectLast();
+            }
 
             //update the event since we have changed the number of segments
             updateLabels();
         }
-
     }
 
     /*

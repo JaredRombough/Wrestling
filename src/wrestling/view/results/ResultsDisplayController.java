@@ -20,6 +20,7 @@ import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -72,10 +73,26 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             Segment segment = segmentView.getSegment();
             StringBuilder sb = new StringBuilder();
 
-            sb.append(getInterferenceNote(segmentView.getTeams(TeamType.INTERFERENCE)));
+            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+                if (team.getTiming().equals(TimingType.BEFORE)) {
+                    sb.append(getInterferenceNote(team));
+                }
+            }
 
             sb.append(gameController.getMatchManager().getSegmentString(segmentView));
             sb.append("\n");
+
+            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+                if (team.getTiming().equals(TimingType.DURING)) {
+                    sb.append(getInterferenceNote(team));
+                }
+            }
+
+            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+                if (team.getTiming().equals(TimingType.AFTER)) {
+                    sb.append(getInterferenceNote(team));
+                }
+            }
 
             sb.append(segmentView.getSegmentType().equals(SegmentType.MATCH) ? "Match" : "Segment")
                     .append(String.format(" rating: %d", segment.getRating()));
@@ -104,11 +121,6 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             populateMatch();
         } else {
             populateAngle();
-        }
-
-        List<SegmentTeam> interferenceTeams = segmentView.getTeams(TeamType.INTERFERENCE);
-        if (!interferenceTeams.isEmpty()) {
-            getInterferenceNote(interferenceTeams);
         }
     }
 
@@ -149,22 +161,17 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         }
     }
 
-    private String getInterferenceNote(List<SegmentTeam> interferenceTeams) {
-        StringBuilder sb = new StringBuilder();
-        for (SegmentTeam team : interferenceTeams) {
+    private String getInterferenceNote(SegmentTeam team) {
+        String segmentTypeString = segmentView.getSegmentType().equals(SegmentType.MATCH)
+                ? "match"
+                : gameController.getMatchManager().getSegmentTitle(segmentView);
 
-            String segmentTypeString = segmentView.getSegmentType().equals(SegmentType.MATCH)
-                    ? "match"
-                    : gameController.getMatchManager().getSegmentTitle(segmentView);
-
-            sb.append(String.format("%s interfered %s the %s, attacking %s %s\n",
-                    ModelUtils.slashNames(team.getWorkers()),
-                    team.getTiming().result(),
-                    segmentTypeString,
-                    team.getTarget().toString(),
-                    team.getSuccess().result()));
-        }
-        return sb.toString();
+        return String.format("%s interfered %s the %s, attacking %s %s\n",
+                ModelUtils.slashNames(team.getWorkers()),
+                team.getTiming().result(),
+                segmentTypeString,
+                team.getTarget().toString(),
+                team.getSuccess().result());
     }
 
     private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {

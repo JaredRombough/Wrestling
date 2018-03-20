@@ -3,6 +3,7 @@ package wrestling.view.event;
 import java.util.Collections;
 import java.util.List;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -11,15 +12,20 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.LocalDragboard;
+import wrestling.view.utility.ViewUtils;
 
 public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> {
 
     private Label myLabel;
     private ListView segmentListView;
+
+    private Button xButton;
 
     public SorterCell(
             List<Pane> segmentPanes,
@@ -29,6 +35,9 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             EventScreenController eventScreenController) {
         ListCell thisCell = this;
         segmentListView = listView;
+
+        xButton = ViewUtils.getXButton();
+        xButton.setOnAction(e -> eventScreenController.removeSegment(getListView().getItems().indexOf(getItem())));
 
         setOnDragDetected((MouseEvent event) -> {
             if (getItem() == null) {
@@ -42,6 +51,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             content.putString(getText());
             LocalDragboard.getINSTANCE().putValue(EventScreenController.SegmentNameItem.class, getItem());
             content.putString(getItem().name.get());
+            System.out.println(content);
 
             dragboard.setContent(content);
 
@@ -124,7 +134,11 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             myLabel.setMaxWidth(segmentListView.getWidth() - 40);
 
             myLabel.getStyleClass().add("sorterLabel");
-            setGraphic(myLabel);
+            HBox.setHgrow(myLabel, Priority.ALWAYS);
+            HBox hBox = new HBox();
+            hBox.getChildren().add(myLabel);
+            hBox.getChildren().add(xButton);
+            setGraphic(hBox);
 
         }
 
