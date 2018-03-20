@@ -51,7 +51,6 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             content.putString(getText());
             LocalDragboard.getINSTANCE().putValue(EventScreenController.SegmentNameItem.class, getItem());
             content.putString(getItem().name.get());
-            System.out.println(content);
 
             dragboard.setContent(content);
 

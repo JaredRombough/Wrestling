@@ -86,6 +86,28 @@ GREY
     -fx-border-width: 2px;
 }
 
+/*EVENT SCREEN*/
+/*SEGMENT LIST VIEW*/
+
+.segment-list-view .list-cell {
+    -fx-background-color: #E0E0E0;
+    -fx-border-width: 1px 2px 1px 2px;
+    -fx-border-color: #616161;
+}
+
+.segment-list-view .list-cell:empty {
+    -fx-background-color: #9E9E9E;
+    -fx-border-color: #9E9E9E;
+}
+
+.segment-list-view .list-cell:selected {
+    -fx-text-fill: white;
+    -fx-background-color: #424242;
+}
+
+.segment-list-view .list-cell:selected .button{
+    -fx-border-color: #E0E0E0;
+}
 
 /*TEAM PANE*/
 
