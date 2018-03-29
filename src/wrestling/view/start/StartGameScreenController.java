@@ -48,7 +48,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
     }
 
     @Override
@@ -75,9 +75,8 @@ public class StartGameScreenController extends ControllerBase implements Initial
 
             @Override
             public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
-
                 updateWorkersListView(newValue);
-                ViewUtils.showImage(new File(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+                ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
                         promotionImageBorder,
                         imageView);
 

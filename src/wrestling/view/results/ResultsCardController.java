@@ -63,7 +63,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
         border.setPrefSize(width + padding, height + padding);
         ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
                 border,
-                imageView);
+                imageView,
         if (!border.isVisible()) {
             border.setVisible(true);
         }

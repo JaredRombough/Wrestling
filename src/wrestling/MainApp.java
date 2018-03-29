@@ -210,9 +210,11 @@ public class MainApp extends Application {
     }
 
     public Image loadImageFromPath(String imagePath) {
-//        BufferedImage bufferedImage = ImageIO.read(getClass().getResourceAsStream("images/title.jpg"));
-//        return SwingFXUtils.toFXImage(bufferedImage, null);
         return ViewUtils.loadImage(getClass().getResourceAsStream(imagePath));
+    }
+    
+    public Image getDefaultWorkerImage() {
+        return loadImageFromPath("images/workerDefault.JPG");
     }
 
     public void startGame() throws IOException {

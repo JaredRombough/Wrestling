@@ -40,7 +40,6 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
-import wrestling.view.RootLayoutController;
 
 public final class ViewUtils {
 
@@ -75,52 +74,36 @@ public final class ViewUtils {
         region.setMaxWidth(Double.MAX_VALUE);
     }
 
-    //shows an image if it exists, handles hide/show of image frame
-    public static void showImage(String fileString, StackPane imageFrame, ImageView imageView) {
+    public static void showImage(String fileString, StackPane imageFrame, ImageView imageView, Image defaultImage) {
 
         File imageFile = new File(fileString);
 
         if (imageFile.exists() && !imageFile.isDirectory()) {
-            //show the border if it is not visible
+
             if (!imageFrame.visibleProperty().get()) {
                 imageFrame.setVisible(true);
             }
             Image image = new Image("File:" + imageFile);
             imageView.setImage(image);
-        } else //hide the border if it is visible
-        {
-            if (imageFrame.visibleProperty().get()) {
-                imageFrame.setVisible(false);
-
-            }
+        } else if (defaultImage != null) {
+            imageView.setImage(defaultImage);
+        } else {
+            imageFrame.setVisible(false);
         }
-
     }
 
     //shows an image if it exists, handles hide/show of image frame
-    public static void showImage(File imageFile, StackPane imageFrame, ImageView imageView) {
-
-        if (imageFile.exists() && !imageFile.isDirectory()) {
-            //show the border if it is not visible
-            if (!imageFrame.visibleProperty().get()) {
-                imageFrame.setVisible(true);
-            }
-            Image image = new Image("File:" + imageFile);
-            imageView.setImage(image);
-        } else //hide the border if it is visible
-         if (imageFrame.visibleProperty().get()) {
-                imageFrame.setVisible(false);
-            }
+    public static void showImage(String imageFile, StackPane imageFrame, ImageView imageView) {
+        showImage(imageFile, imageFrame, imageView, null);
     }
 
     public static Image loadImage(InputStream inputStream) {
         Logger logger = LogManager.getLogger("ViewUtils loadImage()");
         BufferedImage bufferedImage = null;
-        Image image = null;
         try {
             bufferedImage = ImageIO.read(inputStream);
         } catch (IOException ex) {
-            logger.log(Level.FATAL, "Error loading iamge", ex);
+            logger.log(Level.FATAL, "Error loading image", ex);
         }
         return SwingFXUtils.toFXImage(bufferedImage, null);
     }
