@@ -116,6 +116,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
                     workerImageBorder,
                     imageView,
+                    mainApp.getDefaultWorkerImage());
 
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,
