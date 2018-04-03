@@ -3,12 +3,9 @@ package wrestling.model.factory;
 import java.io.Serializable;
 import java.util.List;
 import wrestling.model.Match;
-import wrestling.model.segmentEnum.MatchFinish;
-import wrestling.model.segmentEnum.MatchRule;
-import wrestling.model.MatchTitle;
 import wrestling.model.MatchWorker;
-import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.MatchManager;
 import wrestling.model.modelView.SegmentTeam;
@@ -24,32 +21,27 @@ public class MatchFactory implements Serializable {
         this.matchManager = matchManager;
         this.dateManager = dateManager;
     }
-
-    /*
-    this constructor takes an arbitrary number of teams
-     */
-    public Match processMatch(final List<SegmentTeam> teams) {
-        Match match = new Match(MatchRule.DEFAULT, MatchFinish.CLEAN, calculateMatchRating(teams));
-        saveMatch(match, teams);
-        return match;
+    
+    public Segment processSegmentView(SegmentView segmentView) {
+        if(segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            return processMatch(segmentView);
+        } else {
+            return processAngle(segmentView);
+        }
+    }
+    
+    public Segment processAngle(SegmentView segmentView) {
+        //TODO: replace this
+        return processMatch(segmentView);
     }
 
-    public Match processMatch(final List<SegmentTeam> teams, final MatchRule rules, final MatchFinish finish) {
-        Match match = new Match(rules, finish, calculateMatchRating(teams));
-        saveMatch(match, teams);
+    public Match processMatch(SegmentView segmentView) {
+        Match match = new Match(
+                segmentView.getRules(), 
+                segmentView.getFinish(), 
+                calculateMatchRating(segmentView.getTeams()));
+        saveMatch(match, segmentView.getTeams());
         return match;
-    }
-
-    public Match processMatch(final List<SegmentTeam> teams, Title title) {
-        Match match = new Match(MatchRule.DEFAULT, MatchFinish.CLEAN, calculateMatchRating(teams));
-        saveMatch(match, teams, title);
-        return match;
-
-    }
-
-    private void saveMatch(Match match, List<SegmentTeam> teams, Title title) {
-        matchManager.addMatchTitle(new MatchTitle(match, title));
-        saveMatch(match, teams);
     }
 
     private void saveMatch(Match match, List<SegmentTeam> teams) {

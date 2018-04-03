@@ -91,14 +91,9 @@ public class EventFactory {
     private List<Segment> segmentViewsToSegments(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
-            segments.add(EventFactory.this.processSegmentView(tempSegment));
+            segments.add(matchFactory.processSegmentView(tempSegment));
         }
         return segments;
-    }
-    
-    private Segment processSegmentView(SegmentView segmentView) {
-        return matchFactory.processMatch(segmentView.getTeams(), segmentView.getRules(), segmentView.getFinish());
-        
     }
     
     private void processContracts(iEvent event, List<Segment> segments) {
@@ -108,7 +103,7 @@ public class EventFactory {
     }
     
     public Segment processSegmentView(Event event, SegmentView segmentView) {
-        Segment segment = EventFactory.this.processSegmentView(segmentView);
+        Segment segment = matchFactory.processSegmentView(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
             matchManager.getWinners((Match) segment).stream().forEach((w) -> {
