@@ -19,8 +19,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.AngleParams;
+import wrestling.model.MatchParams;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.SegmentParams;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.AngleType;
@@ -346,9 +349,16 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
         SegmentView segmentView = new SegmentView(segmentType);
-        segmentView.setFinish(matchOptions.getMatchFinish());
-        segmentView.setRules(matchOptions.getMatchRule());
-        segmentView.setAngleType(angleOptions.getAngleType());
+        if (segmentType.equals(SegmentType.MATCH)) {
+            MatchParams params = new MatchParams();
+            params.setMatchFinish(matchOptions.getMatchFinish());
+            params.setMatchRule(matchOptions.getMatchRule());
+            segmentView.getSegment().setSegmentParams(params);
+        } else {
+            AngleParams params = new AngleParams();
+            params.setAngleType(angleOptions.getAngleType());
+            segmentView.getSegment().setSegmentParams(params);
+        }
         segmentView.setTeams(getTeams());
         return segmentView;
     }

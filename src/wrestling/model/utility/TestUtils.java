@@ -3,15 +3,12 @@ package wrestling.model.utility;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
-import wrestling.model.segmentEnum.MatchFinish;
-import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
-import wrestling.model.segmentEnum.TeamType;
 
 public final class TestUtils {
 
@@ -65,8 +62,6 @@ public final class TestUtils {
             teams.add(team);
         }
         segmentView.setTeams(teams);
-        segmentView.setRules(MatchRule.DEFAULT);
-        segmentView.setFinish(MatchFinish.CLEAN);
         return segmentView;
 
     }

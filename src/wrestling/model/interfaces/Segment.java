@@ -1,16 +1,17 @@
 package wrestling.model.interfaces;
 
-import wrestling.model.segmentEnum.MatchFinish;
-import wrestling.model.segmentEnum.MatchRule;
+import wrestling.model.segmentEnum.SegmentType;
 
-/*
-generic segment class to be extended by more specific segments like matches
- */
 public interface Segment {
 
     public int getRating();
 
-    public MatchRule getRules();
+    public void setRating(int rating);
 
-    public MatchFinish getFinish();
+    public SegmentParams getSegmentParams();
+
+    public void setSegmentParams(SegmentParams segmentParams);
+
+    public SegmentType getSegmentType();
+
 }

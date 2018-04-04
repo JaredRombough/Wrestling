@@ -2,11 +2,12 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.MatchTitle;
-import wrestling.model.MatchWorker;
+import wrestling.model.SegmentWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
@@ -17,32 +18,32 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 
-public class MatchManager {
+public class SegmentManager {
 
-    private final List<Match> matches;
-    private final List<MatchWorker> matchWorkers;
+    private final List<Segment> segments;
+    private final List<SegmentWorker> segmentWorkers;
     private final List<MatchTitle> matchTitles;
     private final List<SegmentView> segmentViews;
     private final DateManager dateManager;
 
-    public MatchManager(DateManager dateManager) {
-        matches = new ArrayList<>();
-        matchWorkers = new ArrayList<>();
+    public SegmentManager(DateManager dateManager) {
+        segments = new ArrayList<>();
+        segmentWorkers = new ArrayList<>();
         matchTitles = new ArrayList<>();
         segmentViews = new ArrayList<>();
         this.dateManager = dateManager;
     }
 
-    public void addMatchWorker(MatchWorker matchWorker) {
-        matchWorkers.add(matchWorker);
+    public void addSegmentWorker(SegmentWorker segmentWorker) {
+        segmentWorkers.add(segmentWorker);
     }
 
     public void addMatchTitle(MatchTitle matchTitle) {
         matchTitles.add(matchTitle);
     }
 
-    public void addMatch(Match match) {
-        matches.add(match);
+    public void addSegment(Segment segment) {
+        segments.add(segment);
     }
 
     public void addSegmentView(SegmentView segmentView) {
@@ -61,8 +62,8 @@ public class MatchManager {
 
     public List<Worker> getWinners(Match match) {
         List<Worker> winners = new ArrayList<>();
-        for (MatchWorker matchWorker : matchWorkers) {
-            if (matchWorker.getMatch().equals(match)
+        for (SegmentWorker matchWorker : segmentWorkers) {
+            if (matchWorker.getSegment().equals(match)
                     && matchWorker.getTeam() == 0) {
                 winners.add(matchWorker.getWorker());
             }
@@ -72,17 +73,17 @@ public class MatchManager {
 
     public List<Worker> getWorkers(Segment segment) {
         List<Worker> workers = new ArrayList<>();
-        for (MatchWorker matchWorker : matchWorkers) {
-            if (matchWorker.getMatch().equals(segment)) {
+        for (SegmentWorker matchWorker : segmentWorkers) {
+            if (matchWorker.getSegment().equals(segment)) {
                 workers.add(matchWorker.getWorker());
             }
         }
         return workers;
     }
 
-    private List<MatchWorker> getMatchWorkers(Match match) {
-        List<MatchWorker> getMatchWorkers = new ArrayList<>();
-        matchWorkers.stream().filter((matchWorker) -> (matchWorker.getMatch().equals(match))).forEach((matchWorker) -> {
+    private List<SegmentWorker> getMatchWorkers(Match match) {
+        List<SegmentWorker> getMatchWorkers = new ArrayList<>();
+        segmentWorkers.stream().filter((matchWorker) -> (matchWorker.getSegment().equals(match))).forEach((matchWorker) -> {
             getMatchWorkers.add(matchWorker);
         });
         return getMatchWorkers;
@@ -112,12 +113,12 @@ public class MatchManager {
     }
 
     private String getAngleTitle(SegmentView segmentView) {
-        return segmentView.getAngleType().description();
+        return ((AngleParams) segmentView.getSegment().getSegmentParams()).getAngleType().description();
     }
 
     public String getMatchTitle(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
-        MatchRule rules = segmentView.getRules();
+        MatchRule rules = ((Match) segmentView.getSegment()).getSegmentParams().getMatchRule();
 
         String string = "";
 
@@ -174,7 +175,7 @@ public class MatchManager {
     }
 
     public String getAngleString(SegmentView segmentView) {
-        AngleType angleType = segmentView.getAngleType();
+        AngleType angleType = ((AngleParams) segmentView.getSegment().getSegmentParams()).getAngleType();
         List<SegmentTeam> mainTeam = segmentView.getTeams(angleType.mainTeamType());
         String mainTeamString;
         String pluralString;
@@ -202,7 +203,7 @@ public class MatchManager {
 
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
-        MatchFinish finish = segmentView.getFinish();
+        MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
         int teamsSize = segmentView.getMatchParticipants().size();
         String matchString = "";
 
@@ -240,7 +241,7 @@ public class MatchManager {
             matchString += !teams.isEmpty() ? teams.get(0) : "";
         }
 
-        if (segmentView.getFinish() != null && segmentView.getFinish().equals(MatchFinish.DRAW)) {
+        if (finish != null && finish.equals(MatchFinish.DRAW)) {
             matchString = matchString.replace("def.", "drew");
         }
 

@@ -33,7 +33,7 @@ public class EventManager {
     private final List<EventView> eventViews;
 
     private final DateManager dateManager;
-    private final MatchManager matchManager;
+    private final SegmentManager matchManager;
     private final ContractManager contractManager;
 
     private final transient Logger logger = LogManager.getLogger(getClass());
@@ -41,7 +41,7 @@ public class EventManager {
     public EventManager(
             ContractManager contractManager,
             DateManager dateManager,
-            MatchManager matchManager) {
+            SegmentManager matchManager) {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
@@ -385,18 +385,14 @@ public class EventManager {
         }
 
         for (SegmentView segmentView : eventView.getSegments()) {
-            if (segmentView.getSegment() instanceof Match) {
-                Match match = (Match) segmentView.getSegment();
-                if (!segmentView.getWorkers().isEmpty()) {
-                    sb.append(matchManager.getSegmentString(segmentView));
-                    sb.append("\n");
-                    sb.append("Rating: ").append((match).getRating());
-                } else {
-                    logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
-                }
+            if (!segmentView.getWorkers().isEmpty()) {
+                sb.append(matchManager.getSegmentString(segmentView));
+                sb.append("\n");
+                sb.append("Rating: ").append((segmentView.getSegment()).getRating());
             } else {
-                logger.log(Level.ERROR, "Encountered invalid segment when constructing event summary string");
+                logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }
+
             sb.append("\n");
         }
 

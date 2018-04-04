@@ -1,21 +1,18 @@
 package wrestling.model;
 
-public class MatchWorker {
+import wrestling.model.interfaces.Segment;
 
-    private final Match match;
+public class SegmentWorker {
+
+    private final Segment segment;
     private final Worker worker;
-    
-    private final int team;
-    private boolean winner;
-    private boolean interfering;
-    private boolean manager;
-    private int target;
-    private boolean entourage;
 
-    public MatchWorker(Match match,
+    private final int team;
+
+    public SegmentWorker(Segment segment,
             Worker worker,
             int team) {
-        this.match = match;
+        this.segment = segment;
         this.worker = worker;
         this.team = team;
     }
@@ -23,8 +20,8 @@ public class MatchWorker {
     /**
      * @return the match
      */
-    public Match getMatch() {
-        return match;
+    public Segment getSegment() {
+        return segment;
     }
 
     /**

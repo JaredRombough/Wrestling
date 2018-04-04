@@ -13,7 +13,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.EventManager;
-import wrestling.model.manager.MatchManager;
+import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
@@ -26,20 +26,20 @@ import wrestling.model.modelView.SegmentView;
  *
  */
 public class EventFactory {
-    
+
     private final ContractManager contractManager;
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final MatchManager matchManager;
+    private final SegmentManager matchManager;
     private final MatchFactory matchFactory;
     private final PromotionManager promotionManager;
-    
+
     public EventFactory(
             ContractManager contractManager,
             EventManager eventManager,
             MatchFactory matchFactory,
-            MatchManager matchManager,
+            SegmentManager matchManager,
             PromotionManager promotionManager,
             TitleManager titleManager,
             WorkerManager workerManager) {
@@ -51,59 +51,59 @@ public class EventFactory {
         this.titleManager = titleManager;
         this.workerManager = workerManager;
     }
-    
+
     public void processEventView(EventView eventView, LocalDate date, boolean processSegments) {
-        
+
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegments()) {
                 segmentView.setSegment(processSegmentView(eventView.getEvent(), segmentView));
             }
         }
-        
+
         Event event = eventView.getEvent();
         List<Segment> segments = segmentViewsToSegments(eventView.getSegments());
-        
+
         setEventStats(event, segments);
-        
+
         promotionManager.getBankAccount(event.getPromotion()).addFunds(eventManager.calculateGate(event), 'e', date);
-        
+
         for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
         }
         processContracts(event, segments);
-        
+
         eventManager.addEventView(eventView);
     }
-    
+
     public Event createFutureEvent(Promotion promotion, LocalDate date) {
         Event event = new Event(promotion, date);
         eventManager.addEvent(event);
         return event;
     }
-    
+
     private void setEventStats(Event event, List<Segment> segments) {
         event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
     }
-    
+
     private List<Segment> segmentViewsToSegments(List<SegmentView> tempSegments) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView tempSegment : tempSegments) {
-            segments.add(matchFactory.processSegmentView(tempSegment));
+            segments.add(matchFactory.saveSegment(tempSegment));
         }
         return segments;
     }
-    
+
     private void processContracts(iEvent event, List<Segment> segments) {
         eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
             contractManager.appearance(event.getDate(), contract);
         });
     }
-    
+
     public Segment processSegmentView(Event event, SegmentView segmentView) {
-        Segment segment = matchFactory.processSegmentView(segmentView);
+        Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
             matchManager.getWinners((Match) segment).stream().forEach((w) -> {
@@ -112,5 +112,5 @@ public class EventFactory {
         }
         return segment;
     }
-    
+
 }

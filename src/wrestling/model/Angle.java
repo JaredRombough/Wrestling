@@ -4,18 +4,15 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.SegmentParams;
 import wrestling.model.segmentEnum.SegmentType;
 
-public class Match implements Segment {
+public class Angle implements Segment {
 
     private int rating;
-    private MatchParams matchParams;
+    private AngleParams angleParams;
 
-    public Match() {
-        matchParams = new MatchParams();
+    public Angle() {
+        angleParams = new AngleParams();
     }
 
-    /**
-     * @return the rating
-     */
     @Override
     public int getRating() {
         return rating;
@@ -30,18 +27,18 @@ public class Match implements Segment {
     }
 
     @Override
-    public MatchParams getSegmentParams() {
-        return matchParams;
+    public SegmentParams getSegmentParams() {
+        return angleParams;
     }
 
     @Override
     public void setSegmentParams(SegmentParams segmentParams) {
-        this.matchParams = (MatchParams) segmentParams;
+        this.angleParams = (AngleParams) segmentParams;
     }
 
     @Override
     public SegmentType getSegmentType() {
-        return SegmentType.MATCH;
+        return SegmentType.ANGLE;
     }
 
 }

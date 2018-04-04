@@ -2,66 +2,40 @@ package wrestling.model.factory;
 
 import java.io.Serializable;
 import java.util.List;
-import wrestling.model.Match;
-import wrestling.model.MatchWorker;
+import wrestling.model.SegmentWorker;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.MatchManager;
+import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.segmentEnum.SegmentType;
 
 public class MatchFactory implements Serializable {
 
-    private final MatchManager matchManager;
+    private final SegmentManager matchManager;
     private final DateManager dateManager;
 
-    public MatchFactory(MatchManager matchManager, DateManager dateManager) {
+    public MatchFactory(SegmentManager matchManager, DateManager dateManager) {
         this.matchManager = matchManager;
         this.dateManager = dateManager;
     }
-    
-    public Segment processSegmentView(SegmentView segmentView) {
-        if(segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-            return processMatch(segmentView);
-        } else {
-            return processAngle(segmentView);
-        }
-    }
-    
-    public Segment processAngle(SegmentView segmentView) {
-        //TODO: replace this
-        return processMatch(segmentView);
-    }
 
-    public Match processMatch(SegmentView segmentView) {
-        Match match = new Match(
-                segmentView.getRules(), 
-                segmentView.getFinish(), 
-                calculateMatchRating(segmentView.getTeams()));
-        saveMatch(match, segmentView.getTeams());
-        return match;
-    }
-
-    private void saveMatch(Match match, List<SegmentTeam> teams) {
-        SegmentView segmentView = new SegmentView(SegmentType.MATCH);
-        segmentView.setFinish(match.getFinish());
-        segmentView.setRules(match.getRules());
-        segmentView.setTeams(teams);
+    public Segment saveSegment(SegmentView segmentView) {
+        segmentView.getSegment().setRating(calculateSegmentRating(segmentView));
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
-
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentView.getTeams()) {
             for (Worker worker : team.getWorkers()) {
-                matchManager.addMatchWorker(new MatchWorker(match, worker, teams.indexOf(team)));
+                matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
             }
         }
 
-        matchManager.addMatch(match);
+        matchManager.addSegment(segmentView.getSegment());
+        return segmentView.getSegment();
     }
 
-    private int calculateMatchRating(List<SegmentTeam> teams) {
+    private int calculateSegmentRating(SegmentView segmentView) {
+        List<SegmentTeam> teams = segmentView.getTeams();
 
         if (teams.size() < 1) {
             return 0;
