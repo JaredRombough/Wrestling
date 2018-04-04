@@ -238,4 +238,17 @@ public final class ViewUtils {
         return xButton;
     }
 
+    public static String intToStars(int rating) {
+        int halfStars = rating / 10;
+        int stars = rating / 20;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < stars; i++) {
+            sb.append("*");
+        }
+        if (halfStars % 2 != 0) {
+            sb.append("1/2");
+        }
+        return sb.toString();
+    }
+
 }

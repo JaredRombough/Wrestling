@@ -23,6 +23,7 @@ import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.utility.ViewUtils;
 
 public class EventManager {
 
@@ -388,7 +389,7 @@ public class EventManager {
             if (!segmentView.getWorkers().isEmpty()) {
                 sb.append(matchManager.getSegmentString(segmentView));
                 sb.append("\n");
-                sb.append("Rating: ").append((segmentView.getSegment()).getRating());
+                sb.append("Rating: ").append((ViewUtils.intToStars(segmentView.getSegment().getRating())));
             } else {
                 logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }
