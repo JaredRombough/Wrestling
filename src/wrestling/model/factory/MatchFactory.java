@@ -1,6 +1,8 @@
 package wrestling.model.factory;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import wrestling.model.SegmentWorker;
 import wrestling.model.Worker;
@@ -47,15 +49,38 @@ public class MatchFactory implements Serializable {
             float rating = 0;
             for (Worker worker : team.getWorkers()) {
 
-                rating += (worker.getFlying() + worker.getStriking() + worker.getFlying()) / 3;
+                int score = getWeightedScore(new Integer[]{
+                    worker.getFlying(),
+                    worker.getWrestling(),
+                    worker.getStriking(),
+                    worker.getCharisma()
+                });
+
+                System.out.println("score for " + worker.getName() + " is " + score);
+
+                rating += score;
 
             }
-            ratingsTotal += rating;
+            ratingsTotal += rating / team.getWorkers().size();
 
         }
 
         return Math.round(ratingsTotal / teams.size());
 
+    }
+
+    private int getWeightedScore(Integer[] attributes) {
+        Arrays.sort(attributes, Collections.reverseOrder());
+
+        int totalScore = 0;
+
+        for (int i = 0; i < attributes.length; i++) {
+            totalScore += (attributes[i] * (attributes.length - i));
+        }
+
+        int denominator = (attributes.length * (attributes.length + 1)) / 2;
+
+        return totalScore / denominator;
     }
 
 }
