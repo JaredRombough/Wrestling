@@ -92,7 +92,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (obj instanceof Event) {
 
             if (currentEvent != null && !currentEvent.equals(obj)) {
-                clearSegments();
+                resetSegments();
             }
             currentEvent = (Event) obj;
 
@@ -171,10 +171,15 @@ public class EventScreenController extends ControllerBase implements Initializab
         return returnList;
     }
 
-    private void clearSegments() {
-        //go through the segmentPaneControllers and clear all the teams
-        for (SegmentPaneController current : getSegmentPaneControllers()) {
-            current.clear();
+    private void resetSegments() {
+        segmentListView.getSelectionModel().clearSelection();
+
+        segmentListView.getItems().clear();
+        segmentPanes.clear();
+        segmentPaneControllers.clear();
+
+        for (int i = 0; i < totalSegments; i++) {
+            addSegment();
         }
 
         segmentListView.getSelectionModel().selectFirst();
@@ -247,7 +252,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             //keep a reference to the controller
             SegmentPaneController controller = loader.getController();
-            getSegmentPaneControllers().add(controller);
+            segmentPaneControllers.add(controller);
 
             controller.setEventScreenController(this);
             controller.setDependencies(mainApp, gameController);
@@ -458,7 +463,9 @@ public class EventScreenController extends ControllerBase implements Initializab
      * @return the currentSegmentNumber
      */
     public Number getCurrentSegmentNumber() {
-        return currentSegmentNumber;
+        return segmentListView.getSelectionModel().selectedIndexProperty().get() == -1
+                ? 0
+                : currentSegmentNumber;
     }
 
     /**

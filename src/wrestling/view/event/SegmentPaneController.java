@@ -367,20 +367,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return ((TeamPaneWrapper) wrapperScreens.get(index).controller).getTeamPaneController();
     }
 
-    /*
-    just remove all the teams and add new ones to get back up to the default size
-     */
-    public void clear() {
-        while (!wrapperScreens.isEmpty()) {
-            removeTeam(wrapperScreens.get(0));
-        }
-
-        for (int i = 0; i < DEFAULTTEAMS; i++) {
-            addTeam(TeamType.DEFAULT);
-        }
-
-    }
-
     private List<SegmentTeam> getTeams() {
 
         List<SegmentTeam> teams = new ArrayList<>();
