@@ -323,7 +323,7 @@ public class PromotionController implements Serializable {
 
             //if the title is not vacant, make the title holders team 1
             if (!champs.isEmpty()) {
-                matchTeams.add(new SegmentTeam(champs, TeamType.DEFAULT));
+                matchTeams.add(new SegmentTeam(champs, TeamType.WINNER));
                 matchBooked.addAll(champs);
             }
 
@@ -354,7 +354,7 @@ public class PromotionController implements Serializable {
 
                         //if the team is big enough, break out of the loop
                         if (team.size() >= teamSize) {
-                            matchTeams.add(new SegmentTeam(team, TeamType.DEFAULT));
+                            matchTeams.add(new SegmentTeam(team, TeamType.LOSER));
                             matchBooked.addAll(team);
                             teamMade = true;
                             break;
@@ -391,8 +391,8 @@ public class PromotionController implements Serializable {
                     List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
                     List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
                     List<SegmentTeam> teams = new ArrayList<>();
-                    teams.add(new SegmentTeam(teamA, TeamType.DEFAULT));
-                    teams.add(new SegmentTeam(teamB, TeamType.DEFAULT));
+                    teams.add(new SegmentTeam(teamA, TeamType.WINNER));
+                    teams.add(new SegmentTeam(teamB, TeamType.LOSER));
 
                     SegmentView segmentView = new SegmentView(SegmentType.MATCH);
                     segmentView.setTeams(teams);

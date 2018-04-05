@@ -239,14 +239,20 @@ public final class ViewUtils {
     }
 
     public static String intToStars(int rating) {
-        int halfStars = rating / 10;
         int stars = rating / 20;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < stars; i++) {
             sb.append("*");
         }
-        if (halfStars % 2 != 0) {
-            sb.append("1/2");
+
+        int quarterStars = (rating / 5) % 4;
+
+        if (quarterStars != 0) {
+            if (quarterStars == 2) {
+                sb.append("1/2");
+            } else {
+                sb.append(String.format("%d/4", quarterStars));
+            }
         }
         return sb.toString();
     }
