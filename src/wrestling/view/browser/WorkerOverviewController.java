@@ -51,6 +51,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label charismaLabel;
 
     @FXML
+    private Label potentialLabel;
+
+    @FXML
     private Label managerLabel;
 
     @FXML
@@ -70,22 +73,22 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private AnchorPane contractPaneAnchor;
     private Screen contractPaneScreen;
 
-    private Worker currentWorker;
-    private Promotion currentPromotion;
+    private Worker worker;
+    private Promotion promotion;
 
     @Override
     public void setCurrent(Object obj) {
 
         Worker newWorker = (Worker) obj;
 
-        currentWorker = newWorker;
+        worker = newWorker;
         contractPaneScreen.controller.setCurrent(newWorker);
 
         updateLabels();
     }
 
-    public void setCurrentPromotion(Promotion promotion) {
-        this.currentPromotion = promotion;
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
         updateLabels();
     }
 
@@ -103,17 +106,18 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     @Override
     public void updateLabels() {
 
-        if (gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)
-                || gameController.getWorkerManager().freeAgents(currentPromotion).contains(currentWorker)) {
-            nameLabel.setText(currentWorker.getName());
-            wrestlingLabel.setText(Integer.toString(currentWorker.getWrestling()));
-            flyingLabel.setText(Integer.toString(currentWorker.getFlying()));
-            strikingLabel.setText(Integer.toString(currentWorker.getStriking()));
-            behaviourLabel.setText(Integer.toString(currentWorker.getBehaviour()));
-            charismaLabel.setText(Integer.toString(currentWorker.getCharisma()));
-            popularityLabel.setText(Integer.toString(currentWorker.getPopularity()));
+        if (gameController.getContractManager().getFullRoster(promotion).contains(worker)
+                || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
+            nameLabel.setText(worker.getName());
+            wrestlingLabel.setText(Integer.toString(worker.getWrestling()));
+            flyingLabel.setText(Integer.toString(worker.getFlying()));
+            strikingLabel.setText(Integer.toString(worker.getStriking()));
+            behaviourLabel.setText(Integer.toString(worker.getBehaviour()));
+            charismaLabel.setText(Integer.toString(worker.getCharisma()));
+            popularityLabel.setText(Integer.toString(worker.getPopularity()));
+            potentialLabel.setText(ViewUtils.intToStars(gameController.getMatchFactory().getMatchWorkRating(worker)));
 
-            ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + currentWorker.getImageString()),
+            ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + worker.getImageString()),
                     workerImageBorder,
                     imageView,
                     mainApp.getDefaultWorkerImage());
@@ -149,17 +153,17 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 l.getStyleClass().add(style);
             }
 
-            Text text = new Text(gameController.getContractManager().contractString(currentWorker));
+            Text text = new Text(gameController.getContractManager().contractString(worker));
 
             contractInfo.setContent(text);
 
-            if (currentWorker.isManager()) {
+            if (worker.isManager()) {
                 managerLabel.setText("Manager");
             } else {
                 managerLabel.setText("");
             }
-            if (currentWorker.isMainRoster()) {
-                if (currentWorker.isFullTime()) {
+            if (worker.isMainRoster()) {
+                if (worker.isFullTime()) {
                     mainRosterLabel.setText("Full Time");
                 } else {
                     mainRosterLabel.setText("Part Time");
@@ -170,12 +174,12 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
 
             //only show the contract pane if the worker can negotiate with the player
-            contractPaneScreen.pane.setVisible(gameController.getContractManager().canNegotiate(currentWorker, currentPromotion));
+            contractPaneScreen.pane.setVisible(gameController.getContractManager().canNegotiate(worker, promotion));
 
-        } else if (!gameController.getContractManager().getFullRoster(currentPromotion).contains(currentWorker)) {
+        } else if (!gameController.getContractManager().getFullRoster(promotion).contains(worker)) {
             //probably our roster is empty for some reason, should be a rare situation
             //try to eliminate this possibility if we haven't already
-            currentWorker = null;
+            worker = null;
 
             nameLabel.setText("");
             wrestlingLabel.setText("");
@@ -187,7 +191,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             contractPaneScreen.controller.updateLabels();
         }
 
-        feedPaneScreen.controller.setCurrent(currentWorker);
+        feedPaneScreen.controller.setCurrent(worker);
 
     }
 

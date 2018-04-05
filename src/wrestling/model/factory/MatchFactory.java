@@ -60,7 +60,7 @@ public class MatchFactory implements Serializable {
         segmentView.getSegment().setCrowdRating(Math.round(crowdRatingTotal / workers.size()));
     }
 
-    private int getMatchWorkRating(Worker worker) {
+    public int getMatchWorkRating(Worker worker) {
         return getWeightedScore(new Integer[]{
             worker.getFlying(),
             worker.getWrestling(),

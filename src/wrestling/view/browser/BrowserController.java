@@ -128,7 +128,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             //tell the workeroverviewcontroller which promotion we are looking at
             //other controllers would be notified here too if necessary
             if (displaySubScreen != null && displaySubScreen.controller instanceof WorkerOverviewController) {
-                ((WorkerOverviewController) displaySubScreen.controller).setCurrentPromotion(currentPromotion);
+                ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
             }
 
             updateLabels();
@@ -313,7 +313,7 @@ public class BrowserController extends ControllerBase implements Initializable {
                 public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
                     if (displaySubScreen != null && newValue != null) {
                         if (displaySubScreen.controller instanceof WorkerOverviewController && currentPromotion != null) {
-                            ((WorkerOverviewController) displaySubScreen.controller).setCurrentPromotion(currentPromotion);
+                            ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
                         }
                         displaySubScreen.controller.setCurrent(newValue);
                     }
