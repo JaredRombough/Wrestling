@@ -389,7 +389,7 @@ public class EventManager {
             if (!segmentView.getWorkers().isEmpty()) {
                 sb.append(matchManager.getSegmentString(segmentView));
                 sb.append("\n");
-                sb.append("Rating: ").append((ViewUtils.intToStars(segmentView.getSegment().getRating())));
+                sb.append("Rating: ").append((ViewUtils.intToStars(segmentView.getSegment().getWorkRating())));
             } else {
                 logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }

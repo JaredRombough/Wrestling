@@ -6,7 +6,8 @@ import wrestling.model.segmentEnum.SegmentType;
 
 public class Angle implements Segment {
 
-    private int rating;
+    private int workRating;
+    private int crowdRating;
     private AngleParams angleParams;
 
     public Angle() {
@@ -14,16 +15,16 @@ public class Angle implements Segment {
     }
 
     @Override
-    public int getRating() {
-        return rating;
+    public int getWorkRating() {
+        return workRating;
     }
 
     /**
      * @param rating the rating to set
      */
     @Override
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setWorkRating(int rating) {
+        this.workRating = rating;
     }
 
     @Override
@@ -39,6 +40,16 @@ public class Angle implements Segment {
     @Override
     public SegmentType getSegmentType() {
         return SegmentType.ANGLE;
+    }
+
+    @Override
+    public int getCrowdRating() {
+        return crowdRating;
+    }
+
+    @Override
+    public void setCrowdRating(int crowdRating) {
+        this.crowdRating = crowdRating;
     }
 
 }

@@ -4,9 +4,13 @@ import wrestling.model.segmentEnum.SegmentType;
 
 public interface Segment {
 
-    public int getRating();
+    public int getWorkRating();
 
-    public void setRating(int rating);
+    public void setWorkRating(int workRating);
+
+    public int getCrowdRating();
+
+    public void setCrowdRating(int crowdRating);
 
     public SegmentParams getSegmentParams();
 

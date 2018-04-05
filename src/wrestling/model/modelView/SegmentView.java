@@ -44,13 +44,25 @@ public class SegmentView {
         return teams;
     }
 
-    public List<SegmentTeam> getMatchParticipants() {
+    public List<SegmentTeam> getMatchParticipantTeams() {
         List<SegmentTeam> participants = new ArrayList<>();
         for (SegmentTeam team : teams) {
             if (team.getType().equals(TeamType.WINNER)
                     || team.getType().equals(TeamType.LOSER)
                     || team.getType().equals(TeamType.DRAW)) {
                 participants.add(team);
+            }
+        }
+        return participants;
+    }
+
+    public List<Worker> getMatchParticipants() {
+        List<Worker> participants = new ArrayList<>();
+        for (SegmentTeam team : teams) {
+            if (team.getType().equals(TeamType.WINNER)
+                    || team.getType().equals(TeamType.LOSER)
+                    || team.getType().equals(TeamType.DRAW)) {
+                participants.addAll(team.getWorkers());
             }
         }
         return participants;

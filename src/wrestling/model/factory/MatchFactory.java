@@ -11,6 +11,7 @@ import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentType;
 
 public class MatchFactory implements Serializable {
 
@@ -23,7 +24,7 @@ public class MatchFactory implements Serializable {
     }
 
     public Segment saveSegment(SegmentView segmentView) {
-        segmentView.getSegment().setRating(calculateSegmentRating(segmentView));
+        setSegmentRatings(segmentView);
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
         for (SegmentTeam team : segmentView.getTeams()) {
@@ -36,42 +37,51 @@ public class MatchFactory implements Serializable {
         return segmentView.getSegment();
     }
 
-    private int calculateSegmentRating(SegmentView segmentView) {
-        List<SegmentTeam> teams = segmentView.getTeams();
+    private void setSegmentRatings(SegmentView segmentView) {
+        List<Worker> workers = segmentView.getMatchParticipants();
 
-        if (teams.size() < 1) {
-            return 0;
-        }
+        float workRatingTotal = 0;
+        float crowdRatingTotal = 0;
 
-        float ratingsTotal = 0;
-
-        for (SegmentTeam team : teams) {
-            float rating = 0;
-            for (Worker worker : team.getWorkers()) {
-
-                int score = getWeightedScore(new Integer[]{
-                    worker.getFlying(),
-                    worker.getWrestling(),
-                    worker.getStriking(),
-                    worker.getCharisma()
-                });
-
-                System.out.println("score for " + worker.getName() + " is " + score);
-
-                rating += score;
-
+        for (Worker worker : workers) {
+            if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+                workRatingTotal += getMatchWorkRating(worker);
+            } else {
+                workRatingTotal += getAngleWorkRating(worker);
             }
-            ratingsTotal += rating / team.getWorkers().size();
 
+            crowdRatingTotal += getPrioritizedScore(new Integer[]{
+                worker.getPopularity(),
+                worker.getCharisma()
+            });
         }
 
-        return Math.round(ratingsTotal / teams.size());
+        segmentView.getSegment().setWorkRating(Math.round(workRatingTotal / workers.size()));
+        segmentView.getSegment().setCrowdRating(Math.round(crowdRatingTotal / workers.size()));
+    }
 
+    private int getMatchWorkRating(Worker worker) {
+        return getWeightedScore(new Integer[]{
+            worker.getFlying(),
+            worker.getWrestling(),
+            worker.getStriking(),
+            worker.getCharisma()
+        });
+    }
+
+    private int getAngleWorkRating(Worker worker) {
+        return getWeightedScore(new Integer[]{
+            worker.getCharisma()
+        });
     }
 
     private int getWeightedScore(Integer[] attributes) {
         Arrays.sort(attributes, Collections.reverseOrder());
 
+        return getPrioritizedScore(attributes);
+    }
+
+    private int getPrioritizedScore(Integer[] attributes) {
         int totalScore = 0;
 
         for (int i = 0; i < attributes.length; i++) {

@@ -131,7 +131,7 @@ public class SegmentManager {
 
         } else if (rules.equals(MatchRule.DEFAULT)) {
 
-            int teamsSize = segmentView.getMatchParticipants().size();
+            int teamsSize = segmentView.getMatchParticipantTeams().size();
 
             switch (teamsSize) {
                 case 2:
@@ -204,7 +204,7 @@ public class SegmentManager {
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
-        int teamsSize = segmentView.getMatchParticipants().size();
+        int teamsSize = segmentView.getMatchParticipantTeams().size();
         String matchString = "";
 
         if (teamsSize > 1) {
@@ -257,8 +257,8 @@ public class SegmentManager {
     private boolean isHandicapMatch(SegmentView segmentView) {
         boolean handicap = false;
 
-        int size = segmentView.getMatchParticipants().get(0).getWorkers().size();
-        for (SegmentTeam team : segmentView.getMatchParticipants()) {
+        int size = segmentView.getMatchParticipantTeams().get(0).getWorkers().size();
+        for (SegmentTeam team : segmentView.getMatchParticipantTeams()) {
             if (team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
                 handicap = true;
                 break;

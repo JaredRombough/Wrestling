@@ -95,7 +95,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             }
 
             sb.append(segmentView.getSegmentType().equals(SegmentType.MATCH) ? "Match" : "Segment")
-                    .append(String.format(" rating: %s", ViewUtils.intToStars(segment.getRating())));
+                    .append(String.format(" rating: %s", ViewUtils.intToStars(segment.getWorkRating())))
+                    .append("\n")
+                    .append(String.format(" crowd reaction: %d%%", segment.getCrowdRating()));
             summaryText.setText(sb.toString());
             populateView();
         }
@@ -125,7 +127,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void populateMatch() {
-        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipants();
+        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipantTeams();
         for (SegmentTeam team : defaultTeams) {
             List<Screen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {

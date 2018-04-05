@@ -6,7 +6,8 @@ import wrestling.model.segmentEnum.SegmentType;
 
 public class Match implements Segment {
 
-    private int rating;
+    private int workRating;
+    private int crowdRating;
     private MatchParams matchParams;
 
     public Match() {
@@ -17,16 +18,16 @@ public class Match implements Segment {
      * @return the rating
      */
     @Override
-    public int getRating() {
-        return rating;
+    public int getWorkRating() {
+        return workRating;
     }
 
     /**
      * @param rating the rating to set
      */
     @Override
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setWorkRating(int rating) {
+        this.workRating = rating;
     }
 
     @Override
@@ -42,6 +43,16 @@ public class Match implements Segment {
     @Override
     public SegmentType getSegmentType() {
         return SegmentType.MATCH;
+    }
+
+    @Override
+    public int getCrowdRating() {
+        return crowdRating;
+    }
+
+    @Override
+    public void setCrowdRating(int crowdRating) {
+        this.crowdRating = crowdRating;
     }
 
 }
