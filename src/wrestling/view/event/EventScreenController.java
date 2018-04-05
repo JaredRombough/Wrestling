@@ -369,10 +369,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
-        sortControl.controller.setCurrent(FXCollections.observableArrayList(
-                new WorkerNameComparator(),
-                new WorkerPopularityComparator()
-        ));
+        sortControl.controller.setCurrent(ViewUtils.getWorkerComparators(gameController));
 
         ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
 

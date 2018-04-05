@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +42,14 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.view.utility.comparators.WorkerBehaviourComparator;
+import wrestling.view.utility.comparators.WorkerCharismaComparator;
+import wrestling.view.utility.comparators.WorkerFlyingComparator;
+import wrestling.view.utility.comparators.WorkerNameComparator;
+import wrestling.view.utility.comparators.WorkerPopularityComparator;
+import wrestling.view.utility.comparators.WorkerPotentialComparator;
+import wrestling.view.utility.comparators.WorkerStrikingComparator;
+import wrestling.view.utility.comparators.WorkerWrestlingComparator;
 
 public final class ViewUtils {
 
@@ -255,6 +265,19 @@ public final class ViewUtils {
             }
         }
         return sb.toString();
+    }
+
+    public static ObservableList getWorkerComparators(GameController gameController) {
+        return FXCollections.observableArrayList(
+                new WorkerNameComparator(),
+                new WorkerPopularityComparator(),
+                new WorkerPotentialComparator(gameController.getMatchFactory()),
+                new WorkerCharismaComparator(),
+                new WorkerWrestlingComparator(),
+                new WorkerFlyingComparator(),
+                new WorkerStrikingComparator(),
+                new WorkerBehaviourComparator()
+        );
     }
 
 }

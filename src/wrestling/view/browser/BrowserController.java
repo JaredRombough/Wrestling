@@ -15,7 +15,6 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -34,8 +33,14 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.EventDateComparator;
 import wrestling.view.utility.comparators.TagTeamNameComparator;
 import wrestling.view.utility.comparators.TitleNameComparator;
+import wrestling.view.utility.comparators.WorkerBehaviourComparator;
+import wrestling.view.utility.comparators.WorkerCharismaComparator;
+import wrestling.view.utility.comparators.WorkerFlyingComparator;
 import wrestling.view.utility.comparators.WorkerNameComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
+import wrestling.view.utility.comparators.WorkerPotentialComparator;
+import wrestling.view.utility.comparators.WorkerStrikingComparator;
+import wrestling.view.utility.comparators.WorkerWrestlingComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 /**
@@ -182,9 +187,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         switch (currentBrowseMode) {
 
             case WORKERS:
-                comparators = FXCollections.observableArrayList(
-                        new WorkerNameComparator(),
-                        new WorkerPopularityComparator());
+                comparators = ViewUtils.getWorkerComparators(gameController);
                 subScreenCode = ScreenCode.WORKER_OVERVIEW;
                 break;
             case FREE_AGENTS:
