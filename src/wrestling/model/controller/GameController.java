@@ -48,7 +48,7 @@ public final class GameController implements Serializable {
     private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
-    private final SegmentManager matchManager;
+    private final SegmentManager segmentManager;
     
     private final PromotionController promotionController;
     
@@ -63,16 +63,16 @@ public final class GameController implements Serializable {
         televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
-        matchManager = new SegmentManager(dateManager);
+        segmentManager = new SegmentManager(dateManager);
         
         contractManager = new ContractManager(promotionManager);
         eventManager = new EventManager(
                 contractManager,
                 dateManager,
-                matchManager);
+                segmentManager);
         
         titleFactory = new TitleFactory(titleManager);
-        matchFactory = new MatchFactory(matchManager, dateManager);
+        matchFactory = new MatchFactory(segmentManager, dateManager);
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
@@ -81,7 +81,7 @@ public final class GameController implements Serializable {
                 contractManager,
                 eventManager,
                 matchFactory,
-                matchManager,
+                segmentManager,
                 promotionManager,
                 titleManager,
                 workerManager);
@@ -289,8 +289,8 @@ public final class GameController implements Serializable {
     /**
      * @return the matchManager
      */
-    public SegmentManager getMatchManager() {
-        return matchManager;
+    public SegmentManager getSegmentManager() {
+        return segmentManager;
     }
     
 }

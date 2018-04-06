@@ -409,7 +409,7 @@ public class MainApp extends Application {
         logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
     }
 
-    private Task<Void> nextDayTask(NextDayScreenController nextDay, RootLayoutController root) {
+    private Task<Void> nextDayTask(NextDayScreenController nextDayScreenController, RootLayoutController root) {
 
         Task<Void> task = new Task<Void>() {
 
@@ -430,7 +430,8 @@ public class MainApp extends Application {
 
         task.setOnSucceeded((WorkerStateEvent t) -> {
 
-            nextDay.setLoadingMessage("Loading...\nComplete!");
+            nextDayScreenController.setLoadingMessage("Loading...\nComplete!");
+            nextDayScreenController.nextDay();
             updateLabels();
             root.setButtonsDisable(false);
             primaryStage.getScene().setCursor(Cursor.DEFAULT);

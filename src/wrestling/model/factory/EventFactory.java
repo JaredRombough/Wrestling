@@ -61,7 +61,7 @@ public class EventFactory {
         }
 
         Event event = eventView.getEvent();
-        List<Segment> segments = segmentViewsToSegments(eventView.getSegments());
+        List<Segment> segments = segmentsFromSegmentViews(eventView.getSegments());
 
         setEventStats(event, segments);
 
@@ -88,10 +88,10 @@ public class EventFactory {
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
     }
 
-    private List<Segment> segmentViewsToSegments(List<SegmentView> tempSegments) {
+    private List<Segment> segmentsFromSegmentViews(List<SegmentView> segmentViews) {
         List<Segment> segments = new ArrayList<>();
-        for (SegmentView tempSegment : tempSegments) {
-            segments.add(matchFactory.saveSegment(tempSegment));
+        for (SegmentView segmentView : segmentViews) {
+            segments.add(segmentView.getSegment());
         }
         return segments;
     }

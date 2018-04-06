@@ -1,6 +1,11 @@
 package wrestling.model.manager;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import static java.time.temporal.TemporalQueries.localDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import wrestling.model.AngleParams;
 import wrestling.model.Match;
@@ -103,6 +108,24 @@ public class SegmentManager {
 
         return sb.length() > 0 ? sb.toString() : "No recent matches";
 
+    }
+
+    public List<SegmentView> getTopMatches(LocalDate localDate, int total) {
+        LocalDate prevSun = localDate.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
+        List<SegmentView> weekMatches = new ArrayList<>();
+        for (SegmentView segmentView : segmentViews) {
+            if (segmentView.getDate().isAfter(prevSun)) {
+                weekMatches.add(segmentView);
+            }
+        }
+        Collections.sort(weekMatches, (SegmentView sv1, SegmentView sv2)
+                -> sv2.getSegment().getWorkRating() - sv1.getSegment().getWorkRating());
+
+        int actualTotal = total <= weekMatches.size()
+                ? total
+                : weekMatches.size();
+
+        return new ArrayList<>(weekMatches.subList(0, actualTotal));
     }
 
     public String getSegmentTitle(SegmentView segmentView) {

@@ -199,9 +199,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));
             segmentNameItem.name.set(
-                    gameController.getMatchManager().getSegmentTitle((SegmentView) segmentNameItem.segment.get())
+                    gameController.getSegmentManager().getSegmentTitle((SegmentView) segmentNameItem.segment.get())
                     + "\n"
-                    + gameController.getMatchManager().getSegmentString((SegmentView) segmentNameItem.segment.get()));
+                    + gameController.getSegmentManager().getSegmentString((SegmentView) segmentNameItem.segment.get()));
         }
 
         updateWorkerListView();
