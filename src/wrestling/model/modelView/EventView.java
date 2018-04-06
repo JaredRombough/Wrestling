@@ -50,9 +50,17 @@ public class EventView {
     }
 
     public String getVerboseEventTitle() {
-        return String.format("%s %s (%s)",
-                event.getPromotion().getShortName(),
-                event.toString(),
-                event.getDate());
+
+        if (event.toString().contains(event.getPromotion().getShortName())) {
+            return String.format("%s (%s)",
+                    event.toString(),
+                    event.getDate());
+        } else {
+            return String.format("%s %s (%s)",
+                    event.getPromotion().getShortName(),
+                    event.toString(),
+                    event.getDate());
+        }
+
     }
 }

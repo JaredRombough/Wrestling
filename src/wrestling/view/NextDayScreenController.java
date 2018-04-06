@@ -1,18 +1,25 @@
 package wrestling.view;
 
 import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
@@ -23,13 +30,44 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     @FXML
     public ListView rankingsListView;
 
+    @FXML
+    public Button weekButton;
+
+    @FXML
+    public Button monthButton;
+
+    @FXML
+    public Button yearButton;
+
+    private List<Button> timeButtons;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
+        timeButtons = Arrays.asList(weekButton, monthButton, yearButton);
+        rankingsListView.setPlaceholder(new Label("No matches for selected time period"));
     }
 
     @Override
     public void initializeMore() {
+        updateTopMatches(ChronoUnit.WEEKS, 1);
+        ViewUtils.updateSelectedButton(weekButton, timeButtons);
+
+    }
+
+    @FXML
+    private void handleButtonAction(ActionEvent event) {
+        Button button = (Button) event.getSource();
+        ChronoUnit unit = ChronoUnit.WEEKS;
+        if (button.equals(weekButton)) {
+            unit = ChronoUnit.WEEKS;
+        } else if (button.equals(monthButton)) {
+            unit = ChronoUnit.MONTHS;
+        } else if (button.equals(yearButton)) {
+            unit = ChronoUnit.YEARS;
+        }
+        updateTopMatches(unit, 1);
+        ViewUtils.updateSelectedButton(button, timeButtons);
 
     }
 
@@ -40,12 +78,24 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     }
 
     public void nextDay() {
-        updateRankings();
+        updateTopMatches(ChronoUnit.WEEKS, 1);
     }
 
-    public void updateRankings() {
+    public void updateTopMatches(ChronoUnit unit, int units) {
+
+        int matchesToShow = 10;
+
+        if (unit.equals(ChronoUnit.WEEKS) && units == 1
+                && gameController.getDateManager().today().getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+            units++;
+        }
+
         List<SegmentView> topMatches
-                = gameController.getSegmentManager().getTopMatches(gameController.getDateManager().today(), 10);
+                = gameController.getSegmentManager().getTopMatches(
+                        gameController.getDateManager().today(),
+                        unit,
+                        units,
+                        matchesToShow);
 
         ObservableList<SegmentView> items = FXCollections.observableArrayList(topMatches);
 

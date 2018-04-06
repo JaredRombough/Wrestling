@@ -2,8 +2,9 @@ package wrestling.model.manager;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
-import static java.time.temporal.TemporalQueries.localDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,19 +113,42 @@ public class SegmentManager {
 
     }
 
-    public List<SegmentView> getTopMatches(LocalDate localDate, int total) {
-        LocalDate prevSun = localDate.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
+    public List<SegmentView> getTopMatches(LocalDate localDate, ChronoUnit unit, int units, int totalMatches) {
+
+        LocalDate earliestDate = localDate;
+        switch (unit) {
+            case FOREVER:
+                earliestDate = LocalDate.MIN;
+                break;
+            case WEEKS:
+                for (int i = 0; i < units; i++) {
+                    earliestDate = localDate.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
+                }
+                break;
+            case YEARS:
+                earliestDate = localDate.withDayOfYear(1);
+                if (units > 1) {
+                    earliestDate = earliestDate.minusYears(units);
+                }
+                break;
+            case MONTHS:
+                earliestDate = localDate.withDayOfMonth(1);
+                if (units > 1) {
+                    earliestDate = earliestDate.minusMonths(units);
+                }
+                break;
+        }
         List<SegmentView> weekMatches = new ArrayList<>();
         for (SegmentView segmentView : segmentViews) {
-            if (segmentView.getDate().isAfter(prevSun) && segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            if (segmentView.getDate().isAfter(earliestDate) && segmentView.getSegmentType().equals(SegmentType.MATCH)) {
                 weekMatches.add(segmentView);
             }
         }
         Collections.sort(weekMatches, (SegmentView sv1, SegmentView sv2)
                 -> sv2.getSegment().getWorkRating() - sv1.getSegment().getWorkRating());
 
-        int actualTotal = total <= weekMatches.size()
-                ? total
+        int actualTotal = totalMatches <= weekMatches.size()
+                ? totalMatches
                 : weekMatches.size();
 
         return new ArrayList<>(weekMatches.subList(0, actualTotal));
