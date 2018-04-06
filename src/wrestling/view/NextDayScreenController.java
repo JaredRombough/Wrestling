@@ -12,7 +12,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -48,24 +47,19 @@ public class NextDayScreenController extends ControllerBase implements Initializ
         List<SegmentView> topMatches
                 = gameController.getSegmentManager().getTopMatches(gameController.getDateManager().today(), 10);
 
-        for (SegmentView segmentView : topMatches) {
-            System.out.println(gameController.getSegmentManager().getSegmentString(segmentView));
-            System.out.println(segmentView.getSegment().getWorkRating());
-        }
-
         ObservableList<SegmentView> items = FXCollections.observableArrayList(topMatches);
 
         rankingsListView.setItems(items);
 
         rankingsListView.setCellFactory(param -> new ListCell<SegmentView>() {
             @Override
-            protected void updateItem(SegmentView item, boolean empty) {
-                super.updateItem(item, empty);
+            protected void updateItem(SegmentView segmentView, boolean empty) {
+                super.updateItem(segmentView, empty);
 
-                if (empty || item == null || !(item instanceof SegmentView)) {
+                if (empty || segmentView == null || !(segmentView instanceof SegmentView)) {
                     setText(null);
                 } else {
-                    setText(gameController.getSegmentManager().getIsolatedSegmentString(item));
+                    setText(gameController.getSegmentManager().getIsolatedSegmentString(segmentView));
                 }
             }
         });
