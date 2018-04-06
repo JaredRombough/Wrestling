@@ -187,13 +187,8 @@ public class BrowserController extends ControllerBase implements Initializable {
         switch (currentBrowseMode) {
 
             case WORKERS:
-                comparators = ViewUtils.getWorkerComparators(gameController);
-                subScreenCode = ScreenCode.WORKER_OVERVIEW;
-                break;
             case FREE_AGENTS:
-                comparators = FXCollections.observableArrayList(
-                        new WorkerNameComparator(),
-                        new WorkerPopularityComparator());
+                comparators = ViewUtils.getWorkerComparators(gameController);
                 subScreenCode = ScreenCode.WORKER_OVERVIEW;
                 break;
             case EVENTS:

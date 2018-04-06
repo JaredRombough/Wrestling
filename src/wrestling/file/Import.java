@@ -370,7 +370,7 @@ public class Import {
             if (counter == (19 * 16) + 3) {
 
                 Worker worker = gameController.getWorkerFactory().randomWorker();
-
+                
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
                 worker.setImageString(currentLine.substring(45, 65).trim());
@@ -380,6 +380,7 @@ public class Import {
                 worker.setPopularity(hexStringToInt(currentHexLine.get(157)));
                 worker.setCharisma(hexStringToInt(currentHexLine.get(159)));
                 worker.setBehaviour(hexStringToInt(currentHexLine.get(255)));
+                worker.setAge(hexStringToInt(currentHexLine.get(42)));
 
                 boolean manager;
                 boolean fullTime;

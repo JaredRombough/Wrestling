@@ -62,6 +62,7 @@ public class WorkerFactory {
         worker.setBehaviour(ModelUtils.randRange(0, 100));
         worker.setWrestling(ModelUtils.randRange(0, 100));
         worker.setStriking(ModelUtils.randRange(0, 100));
+        worker.setAge(ModelUtils.randRange(18, 60));
 
         worker.setManager(false);
         worker.setMainRoster(true);

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -42,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.view.utility.comparators.WorkerAgeComparator;
 import wrestling.view.utility.comparators.WorkerBehaviourComparator;
 import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
@@ -276,7 +276,8 @@ public final class ViewUtils {
                 new WorkerWrestlingComparator(),
                 new WorkerFlyingComparator(),
                 new WorkerStrikingComparator(),
-                new WorkerBehaviourComparator()
+                new WorkerBehaviourComparator(),
+                new WorkerAgeComparator()
         );
     }
 

@@ -23,6 +23,7 @@ public class Worker implements Serializable {
     private int charisma;
     private int behaviour;
     private int popularity;
+    private int age;
 
     private boolean manager;
     private boolean fullTime;
@@ -225,5 +226,19 @@ public class Worker implements Serializable {
      */
     public void setMinimumPopularity(int minimumPopularity) {
         this.minimumPopularity = minimumPopularity;
+    }
+
+    /**
+     * @return the age
+     */
+    public int getAge() {
+        return age;
+    }
+
+    /**
+     * @param age the age to set
+     */
+    public void setAge(int age) {
+        this.age = age;
     }
 }
