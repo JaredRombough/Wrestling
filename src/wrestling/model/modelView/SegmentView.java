@@ -18,6 +18,7 @@ public class SegmentView {
     private Segment segment;
     private Title title;
     private final SegmentType segmentType;
+    private EventView eventView;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -132,6 +133,20 @@ public class SegmentView {
      */
     public SegmentType getSegmentType() {
         return segmentType;
+    }
+
+    /**
+     * @return the eventView
+     */
+    public EventView getEventView() {
+        return eventView;
+    }
+
+    /**
+     * @param eventView the eventView to set
+     */
+    public void setEventView(EventView eventView) {
+        this.eventView = eventView;
     }
 
 }

@@ -56,7 +56,7 @@ public class EventFactory {
 
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegments()) {
-                segmentView.setSegment(processSegmentView(eventView.getEvent(), segmentView));
+                segmentView.setSegment(processSegmentView(eventView, segmentView));
             }
         }
 
@@ -102,10 +102,11 @@ public class EventFactory {
         });
     }
 
-    public Segment processSegmentView(Event event, SegmentView segmentView) {
+    public Segment processSegmentView(EventView eventView, SegmentView segmentView) {
+        segmentView.setEventView(eventView);
         Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
-            eventManager.addMatchEvent(new MatchEvent((Match) segment, event));
+            eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
             matchManager.getWinners((Match) segment).stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });

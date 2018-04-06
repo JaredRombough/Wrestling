@@ -48,4 +48,11 @@ public class EventView {
 
         return allWorkers;
     }
+
+    public String getVerboseEventTitle() {
+        return String.format("%s %s (%s)",
+                event.getPromotion().getShortName(),
+                event.toString(),
+                event.getDate());
+    }
 }

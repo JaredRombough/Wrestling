@@ -16,12 +16,14 @@ import wrestling.model.SegmentWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.utility.ViewUtils;
 
 public class SegmentManager {
 
@@ -114,7 +116,7 @@ public class SegmentManager {
         LocalDate prevSun = localDate.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
         List<SegmentView> weekMatches = new ArrayList<>();
         for (SegmentView segmentView : segmentViews) {
-            if (segmentView.getDate().isAfter(prevSun)) {
+            if (segmentView.getDate().isAfter(prevSun) && segmentView.getSegmentType().equals(SegmentType.MATCH)) {
                 weekMatches.add(segmentView);
             }
         }
@@ -189,6 +191,18 @@ public class SegmentManager {
         }
 
         return string;
+    }
+
+    public String getIsolatedSegmentString(SegmentView segmentView) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(segmentView.getEventView().getVerboseEventTitle());
+        stringBuilder.append("\n");
+        stringBuilder.append(getSegmentString(segmentView));
+        stringBuilder.append("\n");
+        stringBuilder.append(ViewUtils.intToStars(segmentView.getSegment().getWorkRating()));
+
+        return stringBuilder.toString();
     }
 
     public String getSegmentString(SegmentView segmentView) {

@@ -86,7 +86,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private void nextSegment() {
         SegmentView current = eventView.getSegments().get(currentSegmentViewIndex);
-        current.setSegment(gameController.getEventFactory().processSegmentView(eventView.getEvent(), current));
+        current.setSegment(gameController.getEventFactory().processSegmentView(eventView, current));
         currentSegmentViewIndex++;
         showNextDisplay(current);
     }

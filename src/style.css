@@ -251,3 +251,10 @@ GREY
 .differentMonthText{
     -fx-fill: #E0E0E0
 }
+
+.centeredListView .list-cell {
+
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+
+}
