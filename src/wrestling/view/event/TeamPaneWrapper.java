@@ -1,5 +1,6 @@
 package wrestling.view.event;
 
+import java.io.IOException;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.segmentEnum.SuccessType;
@@ -12,6 +13,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -30,6 +33,7 @@ import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
+import wrestling.model.segmentEnum.ResponseType;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -61,18 +65,25 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBoxWrapper successComboBox;
     private ComboBoxWrapper timingComboBox;
 
+    private List<GridButtonWrapper> gridButtonWrappers;
+
+    private ResponseType responseType;
+
     private List<SegmentTeam> targets;
 
     private TeamType teamType;
     private OutcomeType outcomeType;
 
     public void setTeamType(TeamType state) {
+        vBox.getChildren().retainAll(teamPane.pane, header);
         teamType = state;
         setTeamTypeLabel(state.toString());
         switch (teamType) {
             case CHALLENGER:
                 break;
+            case OFFEREE:
             case CHALLENGED:
+                setResponse();
                 break;
             case INTERFERENCE:
                 setInterference();
@@ -144,10 +155,22 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     private void setInterference() {
         teamType = TeamType.INTERFERENCE;
-        vBox.getChildren().retainAll(teamPane.pane, header);
         addTargetComboBox();
         addTimingComboBox();
         addSuccessComboBox();
+    }
+
+    private void setResponse() {
+        vBox.getChildren().retainAll(teamPane.pane, header);
+        GridButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(ResponseType.values()));
+        for (Button button : wrapper.buttons) {
+            button.setOnAction((ActionEvent event) -> {
+                responseType = (ResponseType) wrapper.items.get(wrapper.buttons.indexOf(button));
+                ViewUtils.updateSelectedButton(button, wrapper.buttons);
+            });
+        }
+        wrapper.setSelected(wrapper.items.indexOf(responseType));
+
     }
 
     private void clearControls() {
@@ -192,6 +215,32 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return new ComboBoxWrapper(gridPane, comboBox);
     }
 
+    private GridButtonWrapper addButtonWrapper(ObservableList items) {
+
+        GridButtonWrapper wrapper = new GridButtonWrapper(items);
+        List<Button> buttons = new ArrayList<>();
+
+        GridPane gridPane = ViewUtils.gridPaneWithColumns(items.size());
+        for (int i = 0; i < items.size(); i++) {
+            Button button = new Button();
+            button.setText(items.get(i).toString());
+            ViewUtils.inititializeRegion(button);
+            GridPane.setConstraints(button, i, 0);
+            GridPane.setMargin(button, new Insets(5));
+            gridPane.getChildren().addAll(button);
+            buttons.add(button);
+        }
+
+        wrapper.setButtons(buttons);
+
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+
+        vBox.getChildren().add(gridPane);
+        VBox.setMargin(gridPane, new Insets(5));
+
+        return wrapper;
+    }
+
     public void setTeamTypeLabel(String string) {
         teamTypeLabel.setText(string);
     }
@@ -199,6 +248,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         targets = new ArrayList<>();
+        responseType = ResponseType.YES;
     }
 
     @Override
@@ -282,6 +332,41 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             this.wrapper = gridPane;
             this.box = comboBox;
         }
+    }
+
+    private class GridButtonWrapper {
+
+        private int selectedIndex;
+        public ObservableList items;
+        private List<Button> buttons;
+
+        public GridButtonWrapper(ObservableList items) {
+            this.items = items;
+        }
+
+        public Object getSelected() {
+            return items.get(selectedIndex);
+        }
+
+        public void setSelected(int index) {
+            selectedIndex = index;
+            ViewUtils.updateSelectedButton(getButtons().get(index), getButtons());
+        }
+
+        /**
+         * @param buttons the buttons to set
+         */
+        public void setButtons(List<Button> buttons) {
+            this.buttons = buttons;
+        }
+
+        /**
+         * @return the buttons
+         */
+        public List<Button> getButtons() {
+            return buttons;
+        }
+
     }
 
 }
