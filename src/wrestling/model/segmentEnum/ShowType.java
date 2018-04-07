@@ -37,18 +37,6 @@ public enum ShowType implements Description {
             return "";
         }
 
-    },
-    ANNOUNCEMENT {
-        @Override
-        public String description() {
-            return "Announcement";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
     };
     
     @Override

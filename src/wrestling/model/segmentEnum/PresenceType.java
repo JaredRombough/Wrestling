@@ -2,10 +2,10 @@ package wrestling.model.segmentEnum;
 
 public enum PresenceType implements Description {
 
-    PRESENT {
+    ABSENT {
         @Override
         public String description() {
-            return "Present";
+            return "Absent";
         }
 
         @Override
@@ -14,10 +14,10 @@ public enum PresenceType implements Description {
         }
 
     },
-    NOT_PRESENT {
+    PRESENT {
         @Override
         public String description() {
-            return "Not Present";
+            return "Respond";
         }
 
         @Override
@@ -31,7 +31,7 @@ public enum PresenceType implements Description {
     public String toString() {
         return description();
     }
-    
+
     public static String label() {
         return "Presence: ";
     }
