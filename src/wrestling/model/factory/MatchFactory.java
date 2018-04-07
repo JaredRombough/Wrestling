@@ -11,7 +11,9 @@ import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.TeamType;
 
 public class MatchFactory implements Serializable {
 
@@ -40,24 +42,46 @@ public class MatchFactory implements Serializable {
     private void setSegmentRatings(SegmentView segmentView) {
         List<Worker> workers = segmentView.getMatchParticipants();
 
-        float workRatingTotal = 0;
-        float crowdRatingTotal = 0;
+        int workRatingTotal = 0;
+        int crowdRatingTotal = 0;
+        int interferenceTotal = 0;
 
-        for (Worker worker : workers) {
-            if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-                workRatingTotal += getMatchWorkRating(worker);
-            } else {
-                workRatingTotal += getAngleWorkRating(worker);
+        for (SegmentTeam team : segmentView.getTeams()) {
+
+            if (segmentView.getSegmentType().equals(SegmentType.MATCH)
+                    && team.getType().equals(TeamType.INTERFERENCE)) {
+                interferenceTotal += getWorkRating(team);
             }
 
-            crowdRatingTotal += getPrioritizedScore(new Integer[]{
-                worker.getPopularity(),
-                worker.getCharisma()
-            });
+            workRatingTotal += getWorkRating(team);
+
+            for (Worker worker : team.getWorkers()) {
+                crowdRatingTotal += getPrioritizedScore(new Integer[]{
+                    worker.getPopularity(),
+                    worker.getCharisma()
+                });
+            }
+
         }
 
-        segmentView.getSegment().setWorkRating(Math.round(workRatingTotal / workers.size()));
-        segmentView.getSegment().setCrowdRating(Math.round(crowdRatingTotal / workers.size()));
+        if (interferenceTotal > 0) {
+            int intRating = interferenceTotal
+                    / segmentView.getTeams(TeamType.INTERFERENCE).size();
+            int workRating = workRatingTotal
+                    / (segmentView.getTeams().size()
+                    - segmentView.getTeams(TeamType.INTERFERENCE).size());
+
+            segmentView.getSegment().setWorkRating(getPrioritizedScore(new Integer[]{
+                intRating,
+                workRating
+            }));
+        } else {
+            segmentView.getSegment().setWorkRating(Math.round(
+                    workRatingTotal / segmentView.getTeams().size()));
+        }
+
+        segmentView.getSegment().setCrowdRating(Math.round(
+                crowdRatingTotal / segmentView.getWorkers().size()));
     }
 
     public int getMatchWorkRating(Worker worker) {
@@ -69,10 +93,42 @@ public class MatchFactory implements Serializable {
         });
     }
 
-    private int getAngleWorkRating(Worker worker) {
-        return getWeightedScore(new Integer[]{
-            worker.getCharisma()
-        });
+    private int getWorkRating(SegmentTeam team) {
+        int score = 0;
+        for (Worker worker : team.getWorkers()) {
+            switch (team.getType()) {
+                case OFFERER:
+                case OFFEREE:
+                case CHALLENGER:
+                case CHALLENGED:
+                case ANNOUNCER:
+                case AUDIENCE:
+                case PROMO: {
+                    if (team.getPresence().equals(PresenceType.PRESENT)) {
+                        score += getWeightedScore(new Integer[]{
+                            worker.getCharisma()
+                        });
+                    }
+                }
+                case PROMO_TARGET: {
+                    if (team.getPresence().equals(PresenceType.PRESENT)) {
+                        score += getWeightedScore(new Integer[]{
+                            worker.getCharisma()
+                        });
+                    } else {
+                        score += getWeightedScore(new Integer[]{
+                            worker.getPopularity()
+                        });
+                    }
+                }
+                break;
+                default:
+                    score += getMatchWorkRating(worker);
+                    break;
+            }
+        }
+
+        return (Math.round(score / team.getWorkers().size()));
     }
 
     private int getWeightedScore(Integer[] attributes) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Worker;
 import wrestling.model.segmentEnum.OutcomeType;
+import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SuccessType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
@@ -17,6 +18,7 @@ public class SegmentTeam {
     private SuccessType success;
     private TimingType timing;
     private OutcomeType outcome;
+    private PresenceType presence;
 
     public SegmentTeam(List<Worker> workers, TeamType type) {
         this.workers = workers;
@@ -126,6 +128,20 @@ public class SegmentTeam {
      */
     public void setOutcome(OutcomeType outcome) {
         this.outcome = outcome;
+    }
+
+    /**
+     * @return the presence
+     */
+    public PresenceType getPresence() {
+        return presence;
+    }
+
+    /**
+     * @param presence the presence to set
+     */
+    public void setPresence(PresenceType presence) {
+        this.presence = presence;
     }
 
 }

@@ -78,6 +78,24 @@ public class SegmentView {
         }
         return defaultTeams;
     }
+    
+    public SegmentTeam getTeam(Worker worker) {
+        for (SegmentTeam team : getTeams()) {
+            if (team.getWorkers().contains(worker)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public TeamType getTeamType(Worker worker) {
+        for (SegmentTeam team : getTeams()) {
+            if (team.getWorkers().contains(worker)) {
+                return team.getType();
+            }
+        }
+        return null;
+    }
 
     /**
      * @param teams the teams to set

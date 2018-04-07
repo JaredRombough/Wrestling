@@ -1,12 +1,10 @@
 package wrestling.view.event;
 
-import java.io.IOException;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.segmentEnum.SuccessType;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
@@ -14,7 +12,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -64,7 +61,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ComboBoxWrapper angleComboBox;
     private ComboBoxWrapper violenceComboBox;
     private ComboBoxWrapper targetComboBox;
-    private ComboBoxWrapper successComboBox;
     private ComboBoxWrapper timingComboBox;
 
     private List<GridButtonWrapper> gridButtonWrappers;
@@ -331,10 +327,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 : segmentTeam
         );
 
-        segmentTeam.setSuccess(successComboBox != null
-                ? (SuccessType) successComboBox.box.getSelectionModel().getSelectedItem()
-                : SuccessType.DRAW);
-
         segmentTeam.setTiming(timingComboBox != null
                 ? (TimingType) timingComboBox.box.getSelectionModel().getSelectedItem()
                 : TimingType.DURING);
@@ -342,6 +334,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         segmentTeam.setOutcome(outcomeType != null
                 ? outcomeType
                 : null);
+        
+        segmentTeam.setSuccess(successType);
+        segmentTeam.setPresence(presenceType);
 
         return segmentTeam;
     }

@@ -94,9 +94,13 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 }
             }
 
-            sb.append(segmentView.getSegmentType().equals(SegmentType.MATCH) ? "Match" : "Segment")
-                    .append(String.format(" rating: %s", ViewUtils.intToStars(segment.getWorkRating())))
-                    .append("\n")
+            boolean isMatch = segmentView.getSegmentType().equals(SegmentType.MATCH);
+
+            sb.append(isMatch ? "Match" : "Segment");
+            sb.append(String.format(" rating: %s", isMatch
+                    ? ViewUtils.intToStars(segment.getWorkRating())
+                    : String.format("%d%%", segment.getWorkRating())));
+            sb.append("\n")
                     .append(String.format(" crowd reaction: %d%%", segment.getCrowdRating()));
             summaryText.setText(sb.toString());
             populateView();
