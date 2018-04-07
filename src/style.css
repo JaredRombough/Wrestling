@@ -179,6 +179,7 @@ GREY
 
     -fx-background-color: #F5F5F5;
     -fx-text-fill: black;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.7), 5, 0.0, 3, 3);
 }
 
 .bookShowButtonShowToday

@@ -96,16 +96,8 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             if (button.getStyleClass().contains(SELECTED_BUTTON)) {
                 button.getStyleClass().remove(SELECTED_BUTTON);
             }
-            if (button.getStyleClass().contains(SHOW_TODAY_SELECTED)) {
-                button.getStyleClass().remove(SHOW_TODAY_SELECTED);
-            }
         }
-        if (selectedButton.equals(eventButton) && eventButtonState.equals(EventButtonState.EVENT_TODAY)) {
-            selectedButton.getStyleClass().add(SHOW_TODAY_SELECTED);
-        } else {
-            selectedButton.getStyleClass().add(SELECTED_BUTTON);
-        }
-
+        selectedButton.getStyleClass().add(SELECTED_BUTTON);
     }
 
     @Override
@@ -145,16 +137,11 @@ public class RootLayoutController extends ControllerBase implements Initializabl
         Event nextEvent = gameController.getEventManager().getNextEvent(
                 playerPromotion(), gameController.getDateManager().today());
 
-        if (eventButton.getStyleClass().contains(SHOW_TODAY)) {
-            eventButton.getStyleClass().remove(SHOW_TODAY);
-        }
-
         if (nextEvent == null) {
             eventButton.setText("No event booked!");
             eventButtonState = EventButtonState.NO_EVENT;
         } else if (nextEvent.getDate().equals(gameController.getDateManager().today())) {
             eventButton.setText("Book today's event: \n" + nextEvent.toString());
-            eventButton.getStyleClass().add(SHOW_TODAY);
             eventButtonState = EventButtonState.EVENT_TODAY;
         } else {
             long days = DAYS.between(gameController.getDateManager().today(), nextEvent.getDate());
