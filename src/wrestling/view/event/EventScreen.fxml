@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" minHeight="300.0" minWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.event.EventScreenController">
@@ -44,11 +45,15 @@
                   <String fx:value="segment-list-view" />
                </styleClass></ListView>
             <AnchorPane fx:id="segmentPaneHolder" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2147483647" />
-            <ListView fx:id="workersListView" maxHeight="1.7976931348623157E308" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+            <VBox GridPane.rowSpan="2147483647">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
-            </ListView>
+               <children>
+                  <AnchorPane fx:id="sortControlPane" />
+                  <ListView fx:id="workersListView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
             <Label fx:id="totalCostLabel" text="Total Cost" GridPane.columnIndex="3" GridPane.rowIndex="10" />
             <Button fx:id="runEventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Run the event" GridPane.columnIndex="4" GridPane.rowIndex="10">
                <GridPane.margin>
@@ -67,11 +72,6 @@
                <font>
                   <Font size="20.0" />
                </font></Label>
-            <AnchorPane fx:id="sortControlPane" prefHeight="200.0" prefWidth="200.0">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </AnchorPane>
          </children>
       </GridPane>
    </children>

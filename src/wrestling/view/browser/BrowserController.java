@@ -140,8 +140,8 @@ public class BrowserController extends ControllerBase implements Initializable {
         if (currentListToBrowse() != null) {
 
             Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
-            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> 
-                    !((SortControlController) sortControl.controller).isFiltered(p));
+            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p
+                    -> !((SortControlController) sortControl.controller).isFiltered(p));
 
             mainListView.setItems(new SortedList<>(filteredList, comparator));
 
@@ -209,15 +209,10 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         sortControl.controller.setCurrent(comparators);
 
-        SortedList sortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> true),
-                sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
-
-        mainListView.setItems(sortedList);
+        updateLabels();
 
         mainListView.getSelectionModel()
                 .selectFirst();
-        
-        updateLabels();
 
     }
 

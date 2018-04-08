@@ -3,6 +3,7 @@ package wrestling.view.event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
@@ -337,9 +338,18 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void initializeMore() {
 
+        
+        
+        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
+
+        sortControl.controller.setCurrent(ViewUtils.getWorkerComparators(gameController));
+
+        ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
+        
+
         //here we set a blank event
         initializeSegmentListView();
-
+        
         /*
         create versespanes and controllers for each segment and keeps references
         will need to be more flexible when other segment types are possible
@@ -359,6 +369,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         };
 
+        
+
         workersListView.setOnDragOver(dragOverHandler);
 
         //do this last as it is dependent on currentSegment
@@ -366,12 +378,6 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         //add the special DragDropHandlder
         getWorkersListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
-
-        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-
-        sortControl.controller.setCurrent(ViewUtils.getWorkerComparators(gameController));
-
-        ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
 
     }
 
@@ -386,10 +392,11 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
 
-        workerSortedList = new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(workers), p -> true),
-                sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null);
+        Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
+        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(workers)), p
+                -> !((SortControlController) sortControl.controller).isFiltered(p));
 
-        getWorkersListView().setItems(workerSortedList);
+        workersListView.setItems(new SortedList<>(filteredList, comparator));
 
         if (previousIndex > 0) {
             workersListView.getSelectionModel().select(previousIndex);
