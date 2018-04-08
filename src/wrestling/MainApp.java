@@ -76,6 +76,7 @@ public class MainApp extends Application {
 
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
+        
         logger.log(Level.INFO, "Logger online. Running version " + VERSION);
 
         Locale locale = new Locale("en", "US");

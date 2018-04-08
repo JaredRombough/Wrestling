@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -33,14 +34,6 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.EventDateComparator;
 import wrestling.view.utility.comparators.TagTeamNameComparator;
 import wrestling.view.utility.comparators.TitleNameComparator;
-import wrestling.view.utility.comparators.WorkerBehaviourComparator;
-import wrestling.view.utility.comparators.WorkerCharismaComparator;
-import wrestling.view.utility.comparators.WorkerFlyingComparator;
-import wrestling.view.utility.comparators.WorkerNameComparator;
-import wrestling.view.utility.comparators.WorkerPopularityComparator;
-import wrestling.view.utility.comparators.WorkerPotentialComparator;
-import wrestling.view.utility.comparators.WorkerStrikingComparator;
-import wrestling.view.utility.comparators.WorkerWrestlingComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 /**
@@ -143,9 +136,15 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     @Override
     public void updateLabels() {
+
         if (currentListToBrowse() != null) {
-            mainListView.setItems(new SortedList<>(new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> true),
-                    sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null));
+
+            Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
+            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p -> 
+                    !((SortControlController) sortControl.controller).isFiltered(p));
+
+            mainListView.setItems(new SortedList<>(filteredList, comparator));
+
             if (mainListView.getSelectionModel().getSelectedItem() == null && !mainListView.getItems().isEmpty()) {
                 mainListView.getSelectionModel().selectFirst();
             }
@@ -217,6 +216,8 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         mainListView.getSelectionModel()
                 .selectFirst();
+        
+        updateLabels();
 
     }
 

@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.VBox;
+import wrestling.model.Worker;
+import wrestling.model.segmentEnum.Gender;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SortControlController extends ControllerBase implements Initializable {
@@ -20,13 +24,32 @@ public class SortControlController extends ControllerBase implements Initializab
     @FXML
     private ComboBox comboBox;
 
+    @FXML
+    private VBox vBox;
+
     private Comparator currentComparator;
 
     private ScreenCode parentScreenCode;
 
+    private Gender gender;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         reverseButton.setText("▼");
+        addGenderFilter();
+    }
+
+    public void addGenderFilter() {
+        ButtonWrapper genderWrapper = new ButtonWrapper(FXCollections.observableArrayList(Gender.values()));
+        vBox.getChildren().add(genderWrapper.getGridPane());
+        gender = Gender.ALL;
+        genderWrapper.getButtons().stream().forEach((button) -> {
+            button.setOnAction(e -> {
+                gender = (Gender) genderWrapper.updateSelected(button);
+                updateLabels();
+            });
+        });
+        genderWrapper.updateSelected(genderWrapper.getItems().indexOf(gender));
     }
 
     @FXML
@@ -50,10 +73,15 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private void setCurrentComparator(Comparator comparator) {
         currentComparator = comparator;
+        updateLabels();
+
+    }
+
+    @Override
+    public void updateLabels() {
         if (parentScreenCode != null) {
             mainApp.updateLabels(parentScreenCode);
         }
-
     }
 
     private void setComparators(ObservableList<Comparator> comparators) {
@@ -80,6 +108,17 @@ public class SortControlController extends ControllerBase implements Initializab
      */
     public void setParentScreenCode(ScreenCode parentScreenCode) {
         this.parentScreenCode = parentScreenCode;
+    }
+
+    public boolean isFiltered(Object p) {
+        if (p instanceof Worker) {
+            Worker worker = (Worker) p;
+            if (!gender.equals(Gender.ALL)
+                    && !gender.equals(worker.getGender())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

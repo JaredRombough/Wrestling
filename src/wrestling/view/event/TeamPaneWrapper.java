@@ -33,6 +33,7 @@ import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.ResponseType;
+import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -58,12 +59,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
 
-    private ComboBoxWrapper angleComboBox;
-    private ComboBoxWrapper violenceComboBox;
     private ComboBoxWrapper targetComboBox;
     private ComboBoxWrapper timingComboBox;
 
-    private List<GridButtonWrapper> gridButtonWrappers;
+    private List<ButtonWrapper> buttonWrappers;
 
     private ResponseType responseType;
     private PresenceType presenceType;
@@ -162,18 +161,18 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void setResponse() {
-        GridButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(ResponseType.values()));
+        ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(ResponseType.values()));
         for (Button button : wrapper.getButtons()) {
             button.setOnAction((ActionEvent event) -> {
                 responseType = (ResponseType) wrapper.updateSelected(button);
             });
         }
-        wrapper.updateSelected(wrapper.items.indexOf(responseType));
+        wrapper.updateSelected(wrapper.getItems().indexOf(responseType));
     }
 
     private void setPromoTarget() {
-        GridButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(PresenceType.values()));
-        for (Button button : wrapper.buttons) {
+        ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(PresenceType.values()));
+        for (Button button : wrapper.getButtons()) {
             button.setOnAction((ActionEvent event) -> {
                 if (!((PresenceType) wrapper.updateSelected(button)).equals(presenceType)) {
                     presenceType = (PresenceType) wrapper.updateSelected(button);
@@ -182,27 +181,27 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
             });
         }
-        wrapper.updateSelected(wrapper.items.indexOf(presenceType));
+        wrapper.updateSelected(wrapper.getItems().indexOf(presenceType));
         setPresent(wrapper);
 
     }
 
-    private void setPresent(GridButtonWrapper wrapper) {
+    private void setPresent(ButtonWrapper wrapper) {
         if (presenceType.equals(PresenceType.PRESENT)) {
             addSuccessButtons();
         } else {
-            vBox.getChildren().retainAll(teamPane.pane, header, wrapper.getNode());
+            vBox.getChildren().retainAll(teamPane.pane, header, wrapper.getGridPane());
         }
     }
 
     private void addSuccessButtons() {
-        GridButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(SuccessType.values()));
-        for (Button button : wrapper.buttons) {
+        ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(SuccessType.values()));
+        for (Button button : wrapper.getButtons()) {
             button.setOnAction((ActionEvent event) -> {
                 successType = (SuccessType) wrapper.updateSelected(button);
             });
         }
-        wrapper.updateSelected(wrapper.items.indexOf(successType));
+        wrapper.updateSelected(wrapper.getItems().indexOf(successType));
 
     }
 
@@ -240,27 +239,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return new ComboBoxWrapper(gridPane, comboBox);
     }
 
-    private GridButtonWrapper addButtonWrapper(ObservableList items) {
-        GridPane gridPane = ViewUtils.gridPaneWithColumns(items.size());
-        GridButtonWrapper wrapper = new GridButtonWrapper(items, gridPane);
-        List<Button> buttons = new ArrayList<>();
-
-        for (int i = 0; i < items.size(); i++) {
-            Button button = new Button();
-            button.setText(items.get(i).toString());
-            ViewUtils.inititializeRegion(button);
-            GridPane.setConstraints(button, i, 0);
-            GridPane.setMargin(button, new Insets(5));
-            gridPane.getChildren().addAll(button);
-            buttons.add(button);
-        }
-
-        wrapper.setButtons(buttons);
-
-        gridPane.setMaxWidth(Double.MAX_VALUE);
-
-        vBox.getChildren().add(gridPane);
-        VBox.setMargin(gridPane, new Insets(5));
+    private ButtonWrapper addButtonWrapper(ObservableList items) {
+        
+        ButtonWrapper wrapper = new ButtonWrapper(items);
+        vBox.getChildren().add(wrapper.getGridPane());
+        VBox.setMargin(wrapper.getGridPane(), new Insets(5));
 
         return wrapper;
     }
@@ -359,53 +342,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
     }
 
-    private class GridButtonWrapper {
-
-        private int selectedIndex;
-        private ObservableList items;
-        private List<Button> buttons;
-        private Node node;
-
-        public GridButtonWrapper(ObservableList items, Node node) {
-            this.items = items;
-            this.node = node;
-        }
-
-        public Object getSelected() {
-            return items.get(selectedIndex);
-        }
-
-        public Object updateSelected(Button button) {
-            return updateSelected(buttons.indexOf(button));
-        }
-
-        public Object updateSelected(int index) {
-            selectedIndex = index;
-            ViewUtils.updateSelectedButton(getButtons().get(index), getButtons());
-            return items.get(index);
-        }
-
-        /**
-         * @param buttons the buttons to set
-         */
-        public void setButtons(List<Button> buttons) {
-            this.buttons = buttons;
-        }
-
-        /**
-         * @return the buttons
-         */
-        public List<Button> getButtons() {
-            return buttons;
-        }
-
-        /**
-         * @return the node
-         */
-        public Node getNode() {
-            return node;
-        }
-
-    }
+    
 
 }

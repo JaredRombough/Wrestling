@@ -3,7 +3,6 @@ package wrestling.model.factory;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import wrestling.model.SegmentWorker;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
@@ -40,7 +39,6 @@ public class MatchFactory implements Serializable {
     }
 
     private void setSegmentRatings(SegmentView segmentView) {
-        List<Worker> workers = segmentView.getMatchParticipants();
 
         int workRatingTotal = 0;
         int crowdRatingTotal = 0;

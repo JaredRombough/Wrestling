@@ -24,6 +24,7 @@ import wrestling.model.TagTeamWorker;
 import wrestling.model.Television;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.model.segmentEnum.Gender;
 
 /**
  *
@@ -370,7 +371,7 @@ public class Import {
             if (counter == (19 * 16) + 3) {
 
                 Worker worker = gameController.getWorkerFactory().randomWorker();
-                
+
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
                 worker.setImageString(currentLine.substring(45, 65).trim());
@@ -381,6 +382,9 @@ public class Import {
                 worker.setCharisma(hexStringToInt(currentHexLine.get(159)));
                 worker.setBehaviour(hexStringToInt(currentHexLine.get(255)));
                 worker.setAge(hexStringToInt(currentHexLine.get(42)));
+                worker.setGender(
+                        currentStringLine.get(293).equals("ÿ")
+                        ? Gender.FEMALE : Gender.MALE);
 
                 boolean manager;
                 boolean fullTime;

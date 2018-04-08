@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import wrestling.model.segmentEnum.Gender;
 
 public class Worker implements Serializable {
 
@@ -24,6 +25,8 @@ public class Worker implements Serializable {
     private int behaviour;
     private int popularity;
     private int age;
+    
+    private Gender gender;
 
     private boolean manager;
     private boolean fullTime;
@@ -240,5 +243,19 @@ public class Worker implements Serializable {
      */
     public void setAge(int age) {
         this.age = age;
+    }
+
+    /**
+     * @return the gender
+     */
+    public Gender getGender() {
+        return gender;
+    }
+
+    /**
+     * @param gender the gender to set
+     */
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 }
