@@ -47,7 +47,7 @@ import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
 import wrestling.view.utility.comparators.WorkerNameComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
-import wrestling.view.utility.comparators.WorkerPotentialComparator;
+import wrestling.view.utility.comparators.WorkrateComparator;
 import wrestling.view.utility.comparators.WorkerStrikingComparator;
 import wrestling.view.utility.comparators.WorkerWrestlingComparator;
 
@@ -268,10 +268,9 @@ public final class ViewUtils {
     }
 
     public static ObservableList getWorkerComparators(GameController gameController) {
-        return FXCollections.observableArrayList(
-                new WorkerNameComparator(),
+        return FXCollections.observableArrayList(new WorkerNameComparator(),
                 new WorkerPopularityComparator(),
-                new WorkerPotentialComparator(gameController.getMatchFactory()),
+                new WorkrateComparator(gameController.getMatchFactory()),
                 new WorkerCharismaComparator(),
                 new WorkerWrestlingComparator(),
                 new WorkerFlyingComparator(),

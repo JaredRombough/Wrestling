@@ -4,11 +4,11 @@ import java.util.Comparator;
 import wrestling.model.Worker;
 import wrestling.model.factory.MatchFactory;
 
-public class WorkerPotentialComparator implements Comparator<Worker> {
+public class WorkrateComparator implements Comparator<Worker> {
 
     private final MatchFactory matchFactory;
 
-    public WorkerPotentialComparator(MatchFactory matchFactory) {
+    public WorkrateComparator(MatchFactory matchFactory) {
         this.matchFactory = matchFactory;
     }
 
@@ -24,7 +24,7 @@ public class WorkerPotentialComparator implements Comparator<Worker> {
 
     @Override
     public String toString() {
-        return "Potential";
+        return "Workrate";
     }
 
 }

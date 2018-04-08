@@ -51,7 +51,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label charismaLabel;
     
     @FXML
-    private Label potentialLabel;
+    private Label workrate;
     
     @FXML
     private Label ageLabel;
@@ -121,7 +121,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             behaviourLabel.setText(Integer.toString(worker.getBehaviour()));
             charismaLabel.setText(Integer.toString(worker.getCharisma()));
             popularityLabel.setText(Integer.toString(worker.getPopularity()));
-            potentialLabel.setText(ViewUtils.intToStars(gameController.getMatchFactory().getMatchWorkRating(worker)));
+            workrate.setText(ViewUtils.intToStars(gameController.getMatchFactory().getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
             
