@@ -18,4 +18,8 @@ public interface Segment {
 
     public SegmentType getSegmentType();
 
+    public int getSegmentLength();
+
+    public void setSegmentLength(int segmentLengths);
+
 }

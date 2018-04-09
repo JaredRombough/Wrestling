@@ -9,6 +9,7 @@ public class Angle implements Segment {
     private int workRating;
     private int crowdRating;
     private AngleParams angleParams;
+    private int segmentLength;
 
     public Angle() {
         angleParams = new AngleParams();
@@ -50,6 +51,22 @@ public class Angle implements Segment {
     @Override
     public void setCrowdRating(int crowdRating) {
         this.crowdRating = crowdRating;
+    }
+
+    /**
+     * @return the segmentLength
+     */
+    @Override
+    public int getSegmentLength() {
+        return segmentLength;
+    }
+
+    /**
+     * @param segmentLength the segmentLength to set
+     */
+    @Override
+    public void setSegmentLength(int segmentLength) {
+        this.segmentLength = segmentLength;
     }
 
 }

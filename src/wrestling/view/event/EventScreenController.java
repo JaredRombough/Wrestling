@@ -39,6 +39,7 @@ import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
@@ -88,6 +89,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private Number currentSegmentNumber;
 
+    private int eventLength;
+
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
@@ -109,8 +112,11 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private List<SegmentView> getSegmentViews() {
         List<SegmentView> segmentViews = new ArrayList<>();
+        eventLength = 0;
         for (SegmentPaneController controller : segmentPaneControllers) {
-            segmentViews.add(controller.getSegmentView());
+            SegmentView segmentView = controller.getSegmentView();
+            segmentViews.add(segmentView);
+            eventLength += segmentView.getSegment().getSegmentLength();
         }
         return segmentViews;
     }
@@ -190,19 +196,15 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void updateLabels() {
 
-        if (currentEvent != null) {
-            eventTitleLabel.setText("Now booking: " + currentEvent.toString());
-        }
-
         totalCostLabel.setText("Total Cost: $" + currentCost());
 
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
-
             segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));
-            segmentNameItem.name.set(
-                    gameController.getSegmentManager().getSegmentTitle((SegmentView) segmentNameItem.segment.get())
-                    + "\n"
-                    + gameController.getSegmentManager().getSegmentString((SegmentView) segmentNameItem.segment.get()));
+        }
+
+        if (currentEvent != null) {
+            eventTitleLabel.setText("Now booking: " + currentEvent.toString()
+                    + String.format("\nEvent length: %d minutes", eventLength));
         }
 
         updateWorkerListView();
@@ -262,7 +264,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             SegmentNameItem item = new SegmentNameItem();
             segmentListView.getItems().add(item);
             item.segment.set(controller.getSegmentView());
-            item.name.set("Segment " + getSegmentViews().size());
 
             updateLabels();
 
@@ -311,7 +312,8 @@ public class EventScreenController extends ControllerBase implements Initializab
                 segmentPanes, getSegmentPaneControllers(),
                 getSegmentViews(),
                 segmentListView,
-                this
+                this,
+                gameController.getSegmentManager()
         ));
 
         segmentListView.setItems(items);
@@ -338,18 +340,15 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void initializeMore() {
 
-        
-        
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
         sortControl.controller.setCurrent(ViewUtils.getWorkerComparators(gameController));
 
         ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
-        
 
         //here we set a blank event
         initializeSegmentListView();
-        
+
         /*
         create versespanes and controllers for each segment and keeps references
         will need to be more flexible when other segment types are possible
@@ -368,8 +367,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
 
         };
-
-        
 
         workersListView.setOnDragOver(dragOverHandler);
 
@@ -427,6 +424,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        eventLength = 0;
 
         logger = LogManager.getLogger(this.getClass());
 
@@ -490,15 +489,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     public static class SegmentNameItem {
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {
-            return (SegmentNameItem param) -> new Observable[]{param.segment, param.name};
+            return (SegmentNameItem param) -> new Observable[]{param.segment};
         }
-        StringProperty name = new SimpleStringProperty();
         ObjectProperty<SegmentView> segment = new SimpleObjectProperty();
 
-        @Override
-        public String toString() {
-            return name.get();
-        }
     }
 
 }

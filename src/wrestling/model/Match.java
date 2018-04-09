@@ -9,6 +9,7 @@ public class Match implements Segment {
     private int workRating;
     private int crowdRating;
     private MatchParams matchParams;
+    private int segmentLength;
 
     public Match() {
         matchParams = new MatchParams();
@@ -53,6 +54,19 @@ public class Match implements Segment {
     @Override
     public void setCrowdRating(int crowdRating) {
         this.crowdRating = crowdRating;
+    }
+
+    @Override
+    public int getSegmentLength() {
+        return segmentLength;
+    }
+
+    /**
+     * @param segmentLength the segmentLength to set
+     */
+    @Override
+    public void setSegmentLength(int segmentLength) {
+        this.segmentLength = segmentLength;
     }
 
 }

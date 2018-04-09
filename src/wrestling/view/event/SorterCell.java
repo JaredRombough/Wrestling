@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
+import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;
@@ -26,16 +27,18 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
     private ListView segmentListView;
 
     private Button xButton;
+    private SegmentManager segmentManager;
 
     public SorterCell(
             List<Pane> segmentPanes,
             List<SegmentPaneController> segmentPaneControllers,
             List<SegmentView> segments,
             ListView listView,
-            EventScreenController eventScreenController) {
+            EventScreenController eventScreenController,
+            SegmentManager segmentManager) {
         ListCell thisCell = this;
         segmentListView = listView;
-
+        this.segmentManager = segmentManager;
         xButton = ViewUtils.getXButton();
         xButton.setOnAction(e -> eventScreenController.removeSegment(getListView().getItems().indexOf(getItem())));
 
@@ -50,7 +53,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
 
             content.putString(getText());
             LocalDragboard.getINSTANCE().putValue(EventScreenController.SegmentNameItem.class, getItem());
-            content.putString(getItem().name.get());
+            content.putString(getItem().segment.get().toString());
 
             dragboard.setContent(content);
 
@@ -128,7 +131,11 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             setGraphic(null);
         } else {
 
-            myLabel = new Label(item.name.getValue());
+            myLabel = new Label(
+                    segmentManager.getSegmentTitle(item.segment.get())
+                    + String.format(" (%d min)", item.segment.get().getSegment().getSegmentLength())
+                    + "\n"
+                    + segmentManager.getSegmentString(item.segment.get()));
             myLabel.setTextAlignment(TextAlignment.CENTER);
 
             myLabel.setWrapText(true);

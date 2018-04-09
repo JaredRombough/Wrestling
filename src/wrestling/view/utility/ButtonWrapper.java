@@ -10,26 +10,18 @@ import javafx.scene.layout.GridPane;
 public class ButtonWrapper {
 
     private int selectedIndex;
+    private int insets = 5;
     private ObservableList items;
     private List<Button> buttons;
     private GridPane gridPane;
 
     public ButtonWrapper(ObservableList items) {
-        this.items = items;
+        this(items, 5);
+    }
 
-        buttons = new ArrayList<>();
-
-        gridPane = ViewUtils.gridPaneWithColumns(items.size());
-
-        for (int i = 0; i < items.size(); i++) {
-            Button button = new Button();
-            button.setText(items.get(i).toString());
-            ViewUtils.inititializeRegion(button);
-            GridPane.setConstraints(button, i, 0);
-            GridPane.setMargin(button, new Insets(5));
-            gridPane.getChildren().addAll(button);
-            buttons.add(button);
-        }
+    public ButtonWrapper(ObservableList items, int insets) {
+        this.insets = insets;
+        setItems(items);
 
         gridPane.setMaxWidth(Double.MAX_VALUE);
 
@@ -75,6 +67,36 @@ public class ButtonWrapper {
      */
     public GridPane getGridPane() {
         return gridPane;
+    }
+
+    /**
+     * @param items the items to set
+     */
+    public void setItems(ObservableList items) {
+        if (buttons == null || items.size() != this.items.size()) {
+            buttons = new ArrayList<>();
+            for (int i = 0; i < items.size(); i++) {
+                buttons.add(new Button());
+            }
+        }
+
+        this.items = items;
+
+        if (gridPane == null) {
+            gridPane = ViewUtils.gridPaneWithColumns(items.size());
+        } else {
+            gridPane.getChildren().clear();
+        }
+
+        for (int i = 0; i < items.size(); i++) {
+            Button button = buttons.get(i);
+            button.setText(items.get(i).toString());
+            ViewUtils.inititializeRegion(button);
+            GridPane.setConstraints(button, i, 0);
+            GridPane.setMargin(button, new Insets(insets));
+            gridPane.getChildren().addAll(button);
+            buttons.add(button);
+        }
     }
 
 }

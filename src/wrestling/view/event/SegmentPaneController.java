@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,12 +24,15 @@ import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.Worker;
-import wrestling.model.interfaces.SegmentParams;
+import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.AngleType;
+import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -48,6 +52,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private Button angleButton;
 
     @FXML
+    private AnchorPane segmentLengthAnchor;
+
+    @FXML
     private AnchorPane optionsPane;
 
     @FXML
@@ -62,6 +69,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private AngleOptions angleOptions;
     private Screen matchOptionsScreen;
     private MatchOptions matchOptions;
+    private ButtonWrapper segmentLengthWrapper;
+    private iSegmentLength segmentLength;
 
     private List<Screen> wrapperScreens;
 
@@ -87,6 +96,17 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         segmentType = SegmentType.MATCH;
         ViewUtils.updateSelectedButton(matchButton, segmentTypeButtons);
+
+        segmentLength = MatchLength.FIFTEEN;
+        segmentLengthWrapper = new ButtonWrapper(FXCollections.observableArrayList(MatchLength.values()), 3);
+        ViewUtils.anchorPaneToParent(segmentLengthAnchor, segmentLengthWrapper.getGridPane());
+        for (Button button : segmentLengthWrapper.getButtons()) {
+            button.setOnAction(e -> {
+                segmentLength = ((iSegmentLength) segmentLengthWrapper.updateSelected(button));
+                updateLabels();
+            });
+        }
+        segmentLengthWrapper.updateSelected(segmentLengthWrapper.getItems().indexOf(segmentLength));
 
         initializeMatchOptions();
         initializeAngleOptions();
@@ -247,6 +267,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void setSegmentType(SegmentType type) {
         segmentType = type;
+        segmentLengthWrapper.setItems(FXCollections.observableArrayList(type.equals(SegmentType.MATCH)
+                ? MatchLength.values() : AngleLength.values()));
+        segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
         updateLabels();
 
     }
@@ -359,6 +382,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             params.setAngleType(angleOptions.getAngleType());
             segmentView.getSegment().setSegmentParams(params);
         }
+        segmentView.getSegment().setSegmentLength(segmentLength.value());
         segmentView.setTeams(getTeams());
         return segmentView;
     }
