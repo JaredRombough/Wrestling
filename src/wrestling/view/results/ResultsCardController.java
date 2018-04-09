@@ -83,4 +83,8 @@ public class ResultsCardController extends ControllerBase implements Initializab
         anchorPane.setMaxHeight(text.getBoundsInParent().getHeight());
     }
 
+    public void setNameLabelVisibile(boolean visible) {
+        nameLabel.setVisible(visible);
+    }
+
 }
