@@ -457,6 +457,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         return segmentPaneControllers;
     }
 
+    public SegmentPaneController currentSegmentPaneController() {
+        return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex());
+    }
+
     // update the listview according to whatever browse mode we are in
     public static class SegmentNameItem {
 

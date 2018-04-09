@@ -26,11 +26,9 @@ public class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
             Worker worker = ldb.getValue(Worker.class);
 
             if (!eventScreenController.getWorkersListView().getItems().contains(worker)) {
-                eventScreenController.getSegmentPaneControllers().get(eventScreenController.getCurrentSegmentNumber().intValue()).removeWorker(worker);
+                eventScreenController.currentSegmentPaneController().removeWorker(worker);
             }
 
-            eventScreenController.updateLabels();
-            eventScreenController.getSegmentPaneControllers().get(eventScreenController.getCurrentSegmentNumber().intValue()).updateLabels();
             eventScreenController.updateLabels();
 
             //Clear, otherwise we end up with the worker stuck on the dragboard?

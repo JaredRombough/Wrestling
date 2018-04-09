@@ -143,7 +143,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             HBox.setHgrow(myLabel, Priority.ALWAYS);
             HBox hBox = new HBox();
             hBox.getChildren().add(myLabel);
-            hBox.getChildren().add(getxButton());
+            hBox.getChildren().add(xButton);
             setGraphic(hBox);
 
         }
