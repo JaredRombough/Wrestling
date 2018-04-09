@@ -42,7 +42,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com";
-    private static final String VERSION = "0.2.2";
+    private static final String VERSION = "0.2.3";
 
     public static void main(String[] args) {
 
@@ -76,7 +76,7 @@ public class MainApp extends Application {
 
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
-        
+
         logger.log(Level.INFO, "Logger online. Running version " + VERSION);
 
         Locale locale = new Locale("en", "US");
@@ -213,7 +213,7 @@ public class MainApp extends Application {
     public Image loadImageFromPath(String imagePath) {
         return ViewUtils.loadImage(getClass().getResourceAsStream(imagePath));
     }
-    
+
     public Image getDefaultWorkerImage() {
         return loadImageFromPath("images/workerDefault.JPG");
     }

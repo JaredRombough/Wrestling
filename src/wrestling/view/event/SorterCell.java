@@ -107,8 +107,6 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
                 Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
                 Collections.swap(segments, thisIdx, draggedIdx);
 
-                eventScreenController.setCurrentSegmentNumber(thisIdx);
-
                 segmentListView.getSelectionModel().select(segmentNameItem);
                 success = true;
             }
@@ -145,7 +143,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             HBox.setHgrow(myLabel, Priority.ALWAYS);
             HBox hBox = new HBox();
             hBox.getChildren().add(myLabel);
-            hBox.getChildren().add(xButton);
+            hBox.getChildren().add(getxButton());
             setGraphic(hBox);
 
         }

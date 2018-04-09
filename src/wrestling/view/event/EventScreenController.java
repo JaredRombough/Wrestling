@@ -9,9 +9,6 @@ import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,7 +36,6 @@ import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
@@ -47,13 +43,11 @@ import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.ViewUtils;
-import wrestling.view.utility.comparators.WorkerNameComparator;
-import wrestling.view.utility.comparators.WorkerPopularityComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
-    private int totalSegments;
+    private int defaultSegments;
 
     @FXML
     private Button runEventButton;
@@ -82,12 +76,9 @@ public class EventScreenController extends ControllerBase implements Initializab
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
 
-    private SortedList workerSortedList;
     private Screen sortControl;
 
     private Event currentEvent;
-
-    private Number currentSegmentNumber;
 
     private int eventLength;
 
@@ -107,7 +98,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private SegmentView currentSegment() {
-        return segmentPaneControllers.get(getCurrentSegmentNumber().intValue()).getSegmentView();
+        if (segmentListView == null || segmentListView.getSelectionModel().getSelectedIndex() < 0) {
+            return null;
+        }
+        return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex()).getSegmentView();
     }
 
     private List<SegmentView> getSegmentViews() {
@@ -119,22 +113,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             eventLength += segmentView.getSegment().getSegmentLength();
         }
         return segmentViews;
-    }
-
-    public void setCurrentSegmentNumber(int number) {
-
-        Number newNumber = number;
-        setCurrentSegmentNumber(newNumber);
-    }
-
-    private void setCurrentSegmentNumber(Number number) {
-        currentSegmentNumber = number;
-
-        segmentPaneHolder.getChildren().clear();
-        ViewUtils.anchorPaneToParent(segmentPaneHolder, segmentPanes.get(getCurrentSegmentNumber().intValue()));
-
-        updateLabels();
-
     }
 
     @FXML
@@ -185,7 +163,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentPanes.clear();
         segmentPaneControllers.clear();
 
-        for (int i = 0; i < totalSegments; i++) {
+        for (int i = 0; i < defaultSegments; i++) {
             addSegment();
         }
 
@@ -204,10 +182,14 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         if (currentEvent != null) {
             String eventTitle = "Now booking: " + currentEvent.toString() + "\n";
+            int hours = eventLength / 60;
+            int minutes = eventLength % 60;
+            int maxHours = currentEvent.getTelevision().getDuration() / 60;
+            int maxMinutes = currentEvent.getTelevision().getDuration() % 60;
             if (currentEvent.getTelevision() != null) {
-                eventTitle += String.format("Event length: %d/%d", eventLength, currentEvent.getTelevision().getDuration());
+                eventTitle += String.format("Event length: %d:%02d out of %d:%02d max", hours, minutes, maxHours, maxMinutes);
             } else {
-                eventTitle += String.format("Event length: %d", eventLength);
+                eventTitle += String.format("Event length: %d:%02d", hours, minutes);
             }
             eventTitleLabel.setText(eventTitle);
 
@@ -268,8 +250,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             //update the segment listview
             SegmentNameItem item = new SegmentNameItem();
-            segmentListView.getItems().add(item);
             item.segment.set(controller.getSegmentView());
+            segmentListView.getItems().add(item);
+            segmentListView.getSelectionModel().select(item);
 
             updateLabels();
 
@@ -287,18 +270,15 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             segmentPanes.remove(index);
 
-            setCurrentSegmentNumber(getCurrentSegmentNumber());
-
             //remove the controller too
             getSegmentPaneControllers().remove(index);
 
             if (segmentListView.getItems().size() > selectedIndex) {
                 segmentListView.getSelectionModel().select(selectedIndex);
             } else {
-                segmentListView.getSelectionModel().selectLast();
+                segmentListView.getSelectionModel().select(selectedIndex - 1);
             }
 
-            //update the event since we have changed the number of segments
             updateLabels();
         }
     }
@@ -324,19 +304,15 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentListView.setItems(items);
 
-        segmentListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        segmentListView.getSelectionModel().selectedIndexProperty().addListener(
+                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    if (newValue != null && newValue.intValue() >= 0) {
+                        segmentPaneHolder.getChildren().clear();
+                        ViewUtils.anchorPaneToParent(segmentPaneHolder, segmentPanes.get(newValue.intValue()));
+                        updateLabels();
+                    }
+                });
 
-                //check that we have a valid newValue, because strange things happen otherwise
-                //when we clear the list and refresh it
-                if (newValue.intValue() >= 0) {
-                    setCurrentSegmentNumber(newValue);
-
-                }
-
-            }
-        });
     }
 
 
@@ -359,7 +335,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         create versespanes and controllers for each segment and keeps references
         will need to be more flexible when other segment types are possible
          */
-        for (int i = 0; i < totalSegments; i++) {
+        for (int i = 0; i < defaultSegments; i++) {
             addSegment();
         }
 
@@ -412,7 +388,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private boolean workerIsAvailableForCurrentSegment(Worker worker) {
-        return !currentSegment().getWorkers().contains(worker)
+        return currentSegment() != null && !currentSegment().getWorkers().contains(worker)
                 && gameController.getEventManager().isAvailable(
                         worker,
                         gameController.getDateManager().today(),
@@ -435,9 +411,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         logger = LogManager.getLogger(this.getClass());
 
-        totalSegments = 8;
+        defaultSegments = 1;
 
-        currentSegmentNumber = 0;
         initializeSegmentListView();
 
         setWorkerCellFactory(getWorkersListView());
@@ -466,15 +441,6 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         });
 
-    }
-
-    /**
-     * @return the currentSegmentNumber
-     */
-    public Number getCurrentSegmentNumber() {
-        return segmentListView.getSelectionModel().selectedIndexProperty().get() == -1
-                ? 0
-                : currentSegmentNumber;
     }
 
     /**
