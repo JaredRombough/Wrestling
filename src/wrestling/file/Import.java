@@ -195,6 +195,21 @@ public class Import {
 
                 Television tv = new Television();
                 tv.setName(currentLine.substring(1, 21).trim());
+                switch (currentStringLine.get(32)) {
+                    case "P":
+                        tv.setDuration(120);
+                        break;
+                    case "G":
+                        tv.setDuration(60);
+                        break;
+                    case "E":
+                        tv.setDuration(60);
+                        break;
+                    case "L":
+                        tv.setDuration(60);
+                        break;
+                }
+
                 String day = currentLine.substring(22, 32);
 
                 switch (day.trim().toUpperCase()) {

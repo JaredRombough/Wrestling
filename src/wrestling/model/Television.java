@@ -7,6 +7,7 @@ public class Television {
     private DayOfWeek day;
     private String name;
     private Promotion promotion;
+    private int duration;
 
     /**
      * @return the day
@@ -48,6 +49,20 @@ public class Television {
      */
     public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
+    }
+
+    /**
+     * @return the duration
+     */
+    public int getDuration() {
+        return duration;
+    }
+
+    /**
+     * @param duration the duration to set
+     */
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
 }

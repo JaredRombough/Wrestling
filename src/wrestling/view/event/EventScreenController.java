@@ -203,8 +203,14 @@ public class EventScreenController extends ControllerBase implements Initializab
         }
 
         if (currentEvent != null) {
-            eventTitleLabel.setText("Now booking: " + currentEvent.toString()
-                    + String.format("\nEvent length: %d minutes", eventLength));
+            String eventTitle = "Now booking: " + currentEvent.toString() + "\n";
+            if (currentEvent.getTelevision() != null) {
+                eventTitle += String.format("Event length: %d/%d", eventLength, currentEvent.getTelevision().getDuration());
+            } else {
+                eventTitle += String.format("Event length: %d", eventLength);
+            }
+            eventTitleLabel.setText(eventTitle);
+
         }
 
         updateWorkerListView();
