@@ -15,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -60,13 +59,13 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private ObjectProperty<AnchorPane> draggingTab;
 
     private ComboBoxWrapper targetComboBox;
-    private ComboBoxWrapper timingComboBox;
 
     private List<ButtonWrapper> buttonWrappers;
 
     private ResponseType responseType;
     private PresenceType presenceType;
     private SuccessType successType;
+    private TimingType timingType;
 
     private List<SegmentTeam> targets;
 
@@ -156,7 +155,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private void setInterference() {
         teamType = TeamType.INTERFERENCE;
         addTargetComboBox();
-        addTimingComboBox();
+        addTimingButtons();
         addSuccessButtons();
     }
 
@@ -209,8 +208,14 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         targetComboBox = addComboBox(FXCollections.observableArrayList(targets), "Target: ");
     }
 
-    private void addTimingComboBox() {
-        timingComboBox = addComboBox(FXCollections.observableArrayList(TimingType.values()), TimingType.label());
+    private void addTimingButtons() {
+        ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(TimingType.values()));
+        for (Button button : wrapper.getButtons()) {
+            button.setOnAction((ActionEvent event) -> {
+                timingType = (TimingType) wrapper.updateSelected(button);
+            });
+        }
+        wrapper.updateSelected(wrapper.getItems().indexOf(timingType));
     }
 
     private ComboBoxWrapper addComboBox(ObservableList items, String text) {
@@ -240,7 +245,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private ButtonWrapper addButtonWrapper(ObservableList items) {
-        
+
         ButtonWrapper wrapper = new ButtonWrapper(items);
         vBox.getChildren().add(wrapper.getGridPane());
         VBox.setMargin(wrapper.getGridPane(), new Insets(5));
@@ -258,6 +263,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         responseType = ResponseType.YES;
         presenceType = PresenceType.ABSENT;
         successType = SuccessType.WIN;
+        timingType = TimingType.DURING;
     }
 
     @Override
@@ -310,14 +316,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 : segmentTeam
         );
 
-        segmentTeam.setTiming(timingComboBox != null
-                ? (TimingType) timingComboBox.box.getSelectionModel().getSelectedItem()
-                : TimingType.DURING);
-
         segmentTeam.setOutcome(outcomeType != null
                 ? outcomeType
                 : null);
-        
+
+        segmentTeam.setTiming(timingType);
         segmentTeam.setSuccess(successType);
         segmentTeam.setPresence(presenceType);
 
@@ -341,7 +344,5 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             this.box = comboBox;
         }
     }
-
-    
 
 }
