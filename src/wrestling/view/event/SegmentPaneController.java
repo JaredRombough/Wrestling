@@ -169,13 +169,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         if (button == matchButton) {
             for (Screen screen : wrapperScreens) {
-                ((TeamPaneWrapper) screen.controller).setMatch();
+                ((TeamPaneWrapper) screen.controller).changeSegmentType();
                 setOptionsPane(matchOptionsScreen.pane);
             }
             setSegmentType(SegmentType.MATCH);
         } else if (button == angleButton) {
             for (Screen screen : wrapperScreens) {
-                ((TeamPaneWrapper) screen.controller).setAngle();
+                ((TeamPaneWrapper) screen.controller).changeSegmentType();
                 setOptionsPane(angleOptionsScreen.pane);
             }
             setSegmentType(SegmentType.ANGLE);

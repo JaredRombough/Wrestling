@@ -72,29 +72,32 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private TeamType teamType;
     private OutcomeType outcomeType;
 
-    public void setTeamType(TeamType state) {
-        vBox.getChildren().retainAll(teamPane.pane, header);
-        teamType = state;
-        setTeamTypeLabel(state.toString());
-        switch (teamType) {
-            case PROMO_TARGET:
-                setPromoTarget();
-                break;
-            case OFFEREE:
-            case CHALLENGED:
-                setResponse();
-                break;
-            case INTERFERENCE:
-                setInterference();
-                break;
-            case INTERVIEWER:
-                break;
-            case WINNER:
-                break;
-            case LOSER:
-                break;
-            case DRAW:
-                break;
+    public void setTeamType(TeamType newTeamType) {
+        if (teamType != newTeamType) {
+            vBox.getChildren().retainAll(teamPane.pane, header);
+
+            teamType = newTeamType;
+            setTeamTypeLabel(newTeamType.toString());
+            switch (teamType) {
+                case PROMO_TARGET:
+                    setPromoTarget();
+                    break;
+                case OFFEREE:
+                case CHALLENGED:
+                    setResponse();
+                    break;
+                case INTERFERENCE:
+                    setInterference();
+                    break;
+                case INTERVIEWER:
+                    break;
+                case WINNER:
+                    break;
+                case LOSER:
+                    break;
+                case DRAW:
+                    break;
+            }
         }
     }
 
@@ -144,12 +147,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return xButton;
     }
 
-    public void setMatch() {
-        vBox.getChildren().retainAll(teamPane.pane, header);
-    }
-
-    public void setAngle() {
-        vBox.getChildren().retainAll(teamPane.pane, header);
+    public void changeSegmentType() {
+        if (!teamType.equals(TeamType.INTERFERENCE)) {
+            vBox.getChildren().retainAll(teamPane.pane, header);
+        }
     }
 
     private void setInterference() {
