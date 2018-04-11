@@ -28,7 +28,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
@@ -81,6 +80,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Label maxTimeLabel;
     @FXML
     private Label remainingTimeLabel;
+    private List<Label> timeLabels;
 
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
@@ -196,17 +196,26 @@ public class EventScreenController extends ControllerBase implements Initializab
             int minutes = eventLength % 60;
             int maxHours = currentEvent.getTelevision().getDuration() / 60;
             int maxMinutes = currentEvent.getTelevision().getDuration() % 60;
+            int remaining = currentEvent.getTelevision().getDuration() - eventLength;
             int remainingHours = (currentEvent.getTelevision().getDuration() - eventLength) / 60;
             int remainingMinutes = (currentEvent.getTelevision().getDuration() - eventLength) % 60;
 
-            totalTimeLabel.setText(String.format("Total: %d:%02d", hours, minutes));
-            maxTimeLabel.setText(String.format("Max: %d:%02d", maxHours, maxMinutes));
+            totalTimeLabel.setText(String.format("Total:\t\t%d:%02d", hours, minutes));
+            maxTimeLabel.setText(String.format("Max:\t\t\t%d:%02d", maxHours, maxMinutes));
             if (remainingHours < 0 || remainingMinutes < 0) {
-                remainingTimeLabel.setText(String.format("Remaining: -%d:%02d",
+                remainingTimeLabel.setText(String.format("Remaining:\t-%d:%02d",
                         Math.abs(remainingHours), Math.abs(remainingMinutes)));
             } else {
-                remainingTimeLabel.setText(String.format("Remaining: %d:%02d",
+                remainingTimeLabel.setText(String.format("Remaining:\t%d:%02d",
                         remainingHours, remainingMinutes));
+            }
+            totalTimeLabel.getStyleClass().clear();
+            if (Math.abs(remaining) <= 10) {
+                totalTimeLabel.getStyleClass().add("highStat");
+            } else if (Math.abs(remaining) <= 30) {
+                totalTimeLabel.getStyleClass().add("midStat");
+            } else {
+                totalTimeLabel.getStyleClass().add("lowStat");
             }
 
         }
@@ -424,6 +433,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
 
         eventLength = 0;
+
+        timeLabels = new ArrayList<>(Arrays.asList(totalTimeLabel, maxTimeLabel, remainingTimeLabel));
 
         logger = LogManager.getLogger(this.getClass());
 
