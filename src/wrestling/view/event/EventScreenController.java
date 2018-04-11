@@ -3,6 +3,7 @@ package wrestling.view.event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +28,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
@@ -73,6 +75,13 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private AnchorPane sortControlPane;
 
+    @FXML
+    private Label totalTimeLabel;
+    @FXML
+    private Label maxTimeLabel;
+    @FXML
+    private Label remainingTimeLabel;
+
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
 
@@ -90,6 +99,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 resetSegments();
             }
             currentEvent = (Event) obj;
+            eventTitleLabel.setText("Now booking: " + currentEvent.toString());
 
             updateLabels();
         } else {
@@ -181,17 +191,23 @@ public class EventScreenController extends ControllerBase implements Initializab
         }
 
         if (currentEvent != null) {
-            String eventTitle = "Now booking: " + currentEvent.toString() + "\n";
+
             int hours = eventLength / 60;
             int minutes = eventLength % 60;
             int maxHours = currentEvent.getTelevision().getDuration() / 60;
             int maxMinutes = currentEvent.getTelevision().getDuration() % 60;
-            if (currentEvent.getTelevision() != null) {
-                eventTitle += String.format("Event length: %d:%02d out of %d:%02d max", hours, minutes, maxHours, maxMinutes);
+            int remainingHours = (currentEvent.getTelevision().getDuration() - eventLength) / 60;
+            int remainingMinutes = (currentEvent.getTelevision().getDuration() - eventLength) % 60;
+
+            totalTimeLabel.setText(String.format("Total: %d:%02d", hours, minutes));
+            maxTimeLabel.setText(String.format("Max: %d:%02d", maxHours, maxMinutes));
+            if (remainingHours < 0 || remainingMinutes < 0) {
+                remainingTimeLabel.setText(String.format("Remaining: -%d:%02d",
+                        Math.abs(remainingHours), Math.abs(remainingMinutes)));
             } else {
-                eventTitle += String.format("Event length: %d:%02d", hours, minutes);
+                remainingTimeLabel.setText(String.format("Remaining: %d:%02d",
+                        remainingHours, remainingMinutes));
             }
-            eventTitleLabel.setText(eventTitle);
 
         }
 
