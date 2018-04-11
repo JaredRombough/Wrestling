@@ -40,7 +40,9 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
         segmentListView = listView;
         this.segmentManager = segmentManager;
         xButton = ViewUtils.getXButton();
-        xButton.setOnAction(e -> eventScreenController.removeSegment(getListView().getItems().indexOf(getItem())));
+        xButton.setOnAction(e -> {
+            eventScreenController.removeSegment(getListView().getItems().indexOf(getItem()));
+        });
 
         setOnDragDetected((MouseEvent event) -> {
             if (getItem() == null) {

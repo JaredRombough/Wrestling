@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -291,12 +292,18 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             int selectedIndex = segmentListView.getSelectionModel().getSelectedIndex();
 
-            segmentListView.getItems().remove(index);
+            segmentListView.getItems().clear();
 
             segmentPanes.remove(index);
 
             //remove the controller too
             getSegmentPaneControllers().remove(index);
+
+            for (SegmentView segmentView : getSegmentViews()) {
+                SegmentNameItem item = new SegmentNameItem();
+                item.segment.set(segmentView);
+                segmentListView.getItems().add(item);
+            }
 
             if (segmentListView.getItems().size() > selectedIndex) {
                 segmentListView.getSelectionModel().select(selectedIndex);
@@ -331,7 +338,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentListView.getSelectionModel().selectedIndexProperty().addListener(
                 (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    if (newValue != null && newValue.intValue() >= 0) {
+                    if (newValue != null && newValue.intValue() != oldValue.intValue() && newValue.intValue() >= 0) {
                         segmentPaneHolder.getChildren().clear();
                         ViewUtils.anchorPaneToParent(segmentPaneHolder, segmentPanes.get(newValue.intValue()));
                         updateLabels();
