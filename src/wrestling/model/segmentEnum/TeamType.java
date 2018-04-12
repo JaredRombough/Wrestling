@@ -1,5 +1,7 @@
 package wrestling.model.segmentEnum;
 
+import wrestling.model.interfaces.Description;
+
 public enum TeamType implements Description {
     CHALLENGER {
         @Override

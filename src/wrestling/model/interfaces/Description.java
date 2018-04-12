@@ -1,4 +1,4 @@
-package wrestling.model.segmentEnum;
+package wrestling.model.interfaces;
 
 public interface Description {
 

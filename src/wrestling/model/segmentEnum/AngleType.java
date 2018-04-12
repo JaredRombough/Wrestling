@@ -1,5 +1,6 @@
 package wrestling.model.segmentEnum;
 
+import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iAngleType;
 
 public enum AngleType implements Description, iAngleType {

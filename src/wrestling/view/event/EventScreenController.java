@@ -37,7 +37,9 @@ import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
@@ -130,11 +132,12 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource() == runEventButton) {
-            if (removeEmpty(getSegmentViews()).isEmpty()) {
+            String errors = getErrors();
+            if (!errors.isEmpty()) {
                 ViewUtils.generateAlert(
                         "Error",
                         "Event is not valid.",
-                        "An event must have at least one non-empty segment.",
+                        errors,
                         AlertType.ERROR)
                         .showAndWait();
             } else {
@@ -143,6 +146,25 @@ public class EventScreenController extends ControllerBase implements Initializab
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
         }
+    }
+
+    private String getErrors() {
+        StringBuilder errors = new StringBuilder();
+        List<SegmentView> segmentViews = getSegmentViews();
+        for (int i = 0; i < segmentViews.size(); i++) {
+            SegmentValidation validation = segmentViews.get(i).getValidationStatus();
+            if (validation.equals(SegmentValidation.EMPTY)) {
+                errors.append(String.format("Segment #%d is empty.\n", i + 1));
+                continue;
+            }
+
+            if (validation.equals(SegmentValidation.INCOMPLETE)) {
+                errors.append(String.format("Segment #%d has an empty team.\n", i + 1));
+                break;
+            }
+
+        }
+        return errors.toString();
     }
 
     private void showResults() {

@@ -18,6 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;
 
@@ -131,6 +132,10 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             setGraphic(null);
         } else {
 
+            SegmentValidation segmentValidation = item.segment.get().getValidationStatus();
+            Label validation = new Label(segmentValidation.getSymbol());
+            validation.getStyleClass().add(segmentValidation.getCss());
+
             myLabel = new Label(
                     segmentManager.getSegmentTitle(item.segment.get())
                     + String.format(" (%d min)", item.segment.get().getSegment().getSegmentLength())
@@ -144,6 +149,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             myLabel.getStyleClass().add("sorterLabel");
             HBox.setHgrow(myLabel, Priority.ALWAYS);
             HBox hBox = new HBox();
+            hBox.getChildren().add(validation);
             hBox.getChildren().add(myLabel);
             hBox.getChildren().add(xButton);
             setGraphic(hBox);

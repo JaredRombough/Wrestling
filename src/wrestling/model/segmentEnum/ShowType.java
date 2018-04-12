@@ -1,5 +1,7 @@
 package wrestling.model.segmentEnum;
 
+import wrestling.model.interfaces.Description;
+
 public enum ShowType implements Description {
 
     TONIGHT {

@@ -9,6 +9,7 @@ import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.TeamType;
 
 public class SegmentView {
@@ -78,7 +79,7 @@ public class SegmentView {
         }
         return defaultTeams;
     }
-    
+
     public SegmentTeam getTeam(Worker worker) {
         for (SegmentTeam team : getTeams()) {
             if (team.getWorkers().contains(worker)) {
@@ -95,6 +96,20 @@ public class SegmentView {
             }
         }
         return null;
+    }
+
+    public SegmentValidation getValidationStatus() {
+        if (getWorkers().isEmpty()) {
+            return SegmentValidation.EMPTY;
+        } else {
+            for (SegmentTeam team : getTeams()) {
+                if (team.getWorkers().isEmpty()) {
+                    return SegmentValidation.INCOMPLETE;
+                }
+            }
+        }
+
+        return SegmentValidation.COMPLETE;
     }
 
     /**
