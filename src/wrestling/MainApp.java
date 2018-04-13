@@ -27,7 +27,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
+import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.model.segmentEnum.Gender;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.calendar.CalendarController;
@@ -214,8 +216,13 @@ public class MainApp extends Application {
         return ViewUtils.loadImage(getClass().getResourceAsStream(imagePath));
     }
 
-    public Image getDefaultWorkerImage() {
-        return loadImageFromPath("images/workerDefault.JPG");
+    public Image getDefaultWorkerImage(Worker worker) {
+        if (worker.getGender().equals(Gender.MALE)) {
+            return loadImageFromPath("images/workerDefaultMale.jpg");
+        } else {
+            return loadImageFromPath("images/workerDefaultFemale.jpg");
+        }
+
     }
 
     public void startGame() throws IOException {

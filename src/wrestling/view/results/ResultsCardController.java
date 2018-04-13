@@ -64,7 +64,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
         ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
                 border,
                 imageView,
-                mainApp.getDefaultWorkerImage());
+                mainApp.getDefaultWorkerImage(w));
         if (!border.isVisible()) {
             border.setVisible(true);
         }

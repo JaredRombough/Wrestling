@@ -226,6 +226,11 @@ GREY
     -fx-background-color: #424242;
 }
 
+.image-view {
+    -fx-border-width: 1px 2px 1px 2px;
+    -fx-border-color: #616161;
+}
+
 /*CALENDAR*/
 
 .currentDate {
