@@ -41,11 +41,14 @@ public class NextDayScreenController extends ControllerBase implements Initializ
 
     private List<Button> timeButtons;
 
+    private ChronoUnit chornoUnit;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
         timeButtons = Arrays.asList(weekButton, monthButton, yearButton);
         rankingsListView.setPlaceholder(new Label("No matches for selected time period"));
+        chornoUnit = ChronoUnit.WEEKS;
     }
 
     @Override
@@ -58,15 +61,14 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     @FXML
     private void handleButtonAction(ActionEvent event) {
         Button button = (Button) event.getSource();
-        ChronoUnit unit = ChronoUnit.WEEKS;
         if (button.equals(weekButton)) {
-            unit = ChronoUnit.WEEKS;
+            chornoUnit = ChronoUnit.WEEKS;
         } else if (button.equals(monthButton)) {
-            unit = ChronoUnit.MONTHS;
+            chornoUnit = ChronoUnit.MONTHS;
         } else if (button.equals(yearButton)) {
-            unit = ChronoUnit.YEARS;
+            chornoUnit = ChronoUnit.YEARS;
         }
-        updateTopMatches(unit, 1);
+        updateTopMatches(chornoUnit, 1);
         ViewUtils.updateSelectedButton(button, timeButtons);
 
     }
@@ -78,7 +80,7 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     }
 
     public void nextDay() {
-        updateTopMatches(ChronoUnit.WEEKS, 1);
+        updateTopMatches(chornoUnit, 1);
     }
 
     public void updateTopMatches(ChronoUnit unit, int units) {
