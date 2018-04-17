@@ -151,6 +151,9 @@ public class EventScreenController extends ControllerBase implements Initializab
     private String getErrors() {
         StringBuilder errors = new StringBuilder();
         List<SegmentView> segmentViews = getSegmentViews();
+        if (!validateDuration()) {
+            errors.append("Event duration is invalid\n");
+        }
         for (int i = 0; i < segmentViews.size(); i++) {
             SegmentValidation validation = segmentViews.get(i).getValidationStatus();
             if (validation.equals(SegmentValidation.EMPTY)) {
@@ -164,6 +167,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
 
         }
+
         return errors.toString();
     }
 
@@ -215,13 +219,15 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         if (currentEvent != null) {
 
+            int duration = getDuration();
+
             int hours = eventLength / 60;
             int minutes = eventLength % 60;
-            int maxHours = currentEvent.getTelevision().getDuration() / 60;
-            int maxMinutes = currentEvent.getTelevision().getDuration() % 60;
-            int remaining = currentEvent.getTelevision().getDuration() - eventLength;
-            int remainingHours = (currentEvent.getTelevision().getDuration() - eventLength) / 60;
-            int remainingMinutes = (currentEvent.getTelevision().getDuration() - eventLength) % 60;
+            int maxHours = duration / 60;
+            int maxMinutes = duration % 60;
+            int remaining = duration - eventLength;
+            int remainingHours = (duration - eventLength) / 60;
+            int remainingMinutes = (duration - eventLength) % 60;
 
             totalTimeLabel.setText(String.format("Total:\t\t%d:%02d", hours, minutes));
             maxTimeLabel.setText(String.format("Max:\t\t\t%d:%02d", maxHours, maxMinutes));
@@ -247,6 +253,15 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         ((RefreshSkin) segmentListView.getSkin()).refresh();
 
+    }
+
+    private int getDuration() {
+        return currentEvent.getTelevision() != null
+                ? currentEvent.getTelevision().getDuration() : 180;
+    }
+
+    private boolean validateDuration() {
+        return Math.abs(getDuration() - eventLength) <= eventLength / 10;
     }
 
     private int currentCost() {
@@ -283,7 +298,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(ScreenCode.SEGMENT_PANE.resourcePath()));
+            loader
+                    .setLocation(MainApp.class
+                            .getResource(ScreenCode.SEGMENT_PANE.resourcePath()));
             Pane segmentPane = (Pane) loader.load();
 
             //keep a reference to the segment pane
@@ -398,7 +415,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         //for the workersListView to accept dragged items
         final EventHandler<DragEvent> dragOverHandler = (DragEvent dragEvent) -> {
             LocalDragboard ldb = LocalDragboard.getINSTANCE();
-            if (ldb.hasType(Worker.class)) {
+
+            if (ldb.hasType(Worker.class
+            )) {
                 dragEvent.acceptTransferModes(TransferMode.MOVE);
             }
 
@@ -515,6 +534,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     public SegmentPaneController currentSegmentPaneController() {
         return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex());
+
     }
 
     // update the listview according to whatever browse mode we are in
