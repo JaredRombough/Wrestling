@@ -27,6 +27,7 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Promotion;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -95,14 +96,6 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private BrowseMode currentBrowseMode;
 
-    private enum BrowseMode {
-        FREE_AGENTS,
-        WORKERS,
-        TITLES,
-        TAG_TEAMS,
-        EVENTS
-    }
-
     /*
     sets the current promotion
     updates relevant labels
@@ -157,18 +150,10 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         Button button = (Button) event.getSource();
 
-        if (button == rosterButton) {
-            currentBrowseMode = BrowseMode.WORKERS;
-        } else if (button == eventsButton) {
-            currentBrowseMode = BrowseMode.EVENTS;
-        } else if (button == freeAgentsButton) {
-            currentBrowseMode = BrowseMode.FREE_AGENTS;
-        } else if (button == myPromotionButton) {
+        if (button == myPromotionButton) {
             setCurrentPromotion(playerPromotion());
-        } else if (button == titlesButton) {
-            currentBrowseMode = BrowseMode.TITLES;
-        } else if (button == teamsButton) {
-            currentBrowseMode = BrowseMode.TAG_TEAMS;
+        } else {
+            currentBrowseMode = BrowseMode.valueOf(button.getId());
         }
 
         if (!button.equals(myPromotionButton)) {
@@ -249,6 +234,12 @@ public class BrowserController extends ControllerBase implements Initializable {
                 eventsButton, freeAgentsButton, myPromotionButton, rosterButton,
                 stablesButton, staffButton, teamsButton, titlesButton
         ));
+
+        rosterButton.setId(BrowseMode.WORKERS.name());
+        freeAgentsButton.setId(BrowseMode.WORKERS.name());
+        eventsButton.setId(BrowseMode.EVENTS.name());
+        teamsButton.setId(BrowseMode.TAG_TEAMS.name());
+        titlesButton.setId(BrowseMode.TITLES.name());
 
         ViewUtils.lockGridPane(gridPane);
 
