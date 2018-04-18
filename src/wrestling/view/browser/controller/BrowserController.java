@@ -151,9 +151,6 @@ public class BrowserController extends ControllerBase implements Initializable {
             setCurrentPromotion(playerPromotion());
         } else {
             currentBrowseMode = BrowseMode.valueOf(button.getId());
-        }
-
-        if (!button.equals(myPromotionButton)) {
             ViewUtils.updateSelectedButton(button, browseButtons);
         }
 

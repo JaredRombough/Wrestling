@@ -2,7 +2,9 @@ package wrestling.view.utility;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,25 +33,27 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private ScreenCode parentScreenCode;
 
-    private Gender gender;
+    private List<ButtonWrapper> buttonWrappers;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         reverseButton.setText("▼");
-        addGenderFilter();
+        buttonWrappers = new ArrayList<>();
+        addGenderFilter(FXCollections.observableArrayList(Gender.values()), Gender.ALL.ordinal());
+
     }
 
-    public void addGenderFilter() {
-        ButtonWrapper genderWrapper = new ButtonWrapper(FXCollections.observableArrayList(Gender.values()));
-        vBox.getChildren().add(genderWrapper.getGridPane());
-        gender = Gender.ALL;
-        genderWrapper.getButtons().stream().forEach((button) -> {
+    private void addGenderFilter(ObservableList list, int startingIndex) {
+        ButtonWrapper wrapper = new ButtonWrapper(list);
+        buttonWrappers.add(wrapper);
+        vBox.getChildren().add(wrapper.getGridPane());
+        wrapper.getButtons().stream().forEach((button) -> {
             button.setOnAction(e -> {
-                gender = (Gender) genderWrapper.updateSelected(button);
+                wrapper.updateSelected(button);
                 updateLabels();
             });
         });
-        genderWrapper.updateSelected(genderWrapper.getItems().indexOf(gender));
+        wrapper.updateSelected(startingIndex);
     }
 
     @FXML
@@ -113,12 +117,21 @@ public class SortControlController extends ControllerBase implements Initializab
     public boolean isFiltered(Object p) {
         if (p instanceof Worker) {
             Worker worker = (Worker) p;
-            if (!gender.equals(Gender.ALL)
-                    && !gender.equals(worker.getGender())) {
+            if (!getFilter(Gender.class).equals(Gender.ALL)
+                    && !getFilter(Gender.class).equals(worker.getGender())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Object getFilter(Class<?> cls) {
+        for (ButtonWrapper wrapper : buttonWrappers) {
+            if (cls.isInstance(wrapper.getSelected())) {
+                return wrapper.getSelected();
+            }
+        }
+        return null;
     }
 
 }
