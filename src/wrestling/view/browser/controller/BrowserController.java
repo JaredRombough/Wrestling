@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -32,9 +31,6 @@ import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
-import wrestling.view.utility.comparators.EventDateComparator;
-import wrestling.view.utility.comparators.TagTeamNameComparator;
-import wrestling.view.utility.comparators.TitleNameComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 /**
@@ -130,10 +126,11 @@ public class BrowserController extends ControllerBase implements Initializable {
     @Override
     public void updateLabels() {
 
-        if (currentListToBrowse() != null) {
+        List currentListToBrowse = currentListToBrowse();
+        if (currentListToBrowse != null) {
 
             Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
-            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse()), p
+            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse), p
                     -> !((SortControlController) sortControl.controller).isFiltered(p));
 
             mainListView.setItems(new SortedList<>(filteredList, comparator));
@@ -165,34 +162,11 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private void browse() {
 
-        ScreenCode subScreenCode = ScreenCode.SIMPLE_DISPLAY;
-        ObservableList comparators = null;
-
-        switch (currentBrowseMode) {
-
-            case WORKERS:
-            case FREE_AGENTS:
-                comparators = ViewUtils.getWorkerComparators(gameController);
-                subScreenCode = ScreenCode.WORKER_OVERVIEW;
-                break;
-            case EVENTS:
-                comparators = FXCollections.observableArrayList(
-                        new EventDateComparator());
-                break;
-            case TITLES:
-                comparators = FXCollections.observableArrayList(
-                        new TitleNameComparator());
-                break;
-            case TAG_TEAMS:
-                comparators = FXCollections.observableArrayList(
-                        new TagTeamNameComparator());
-                break;
-        }
-
         mainDisplayPane.getChildren().clear();
-        displaySubScreen = ViewUtils.loadScreenFromResource(subScreenCode, mainApp, gameController, mainDisplayPane);
+        displaySubScreen = ViewUtils.loadScreenFromResource(
+                currentBrowseMode.subScreenCode(), mainApp, gameController, mainDisplayPane);
 
-        sortControl.controller.setCurrent(comparators);
+        sortControl.controller.setCurrent(currentBrowseMode.comparators());
 
         updateLabels();
 
@@ -202,27 +176,9 @@ public class BrowserController extends ControllerBase implements Initializable {
     }
 
     private List currentListToBrowse() {
-        List listToBrowse = null;
-        switch (currentBrowseMode) {
-
-            case WORKERS:
-                listToBrowse = gameController.getContractManager().getFullRoster(currentPromotion);
-                break;
-            case FREE_AGENTS:
-                listToBrowse = gameController.getWorkerManager().freeAgents(playerPromotion());
-                break;
-            case EVENTS:
-                listToBrowse = gameController.getEventManager().getEvents(currentPromotion);
-                break;
-            case TITLES:
-                listToBrowse = gameController.getTitleManager().getTitles(currentPromotion);
-                break;
-            case TAG_TEAMS:
-                listToBrowse = gameController.getTagTeamManager().getTagTeams(currentPromotion);
-                break;
-        }
-
-        return listToBrowse;
+        Promotion promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
+                ? playerPromotion() : currentPromotion;
+        return currentBrowseMode.listToBrowse(gameController, promotion);
     }
 
     @Override

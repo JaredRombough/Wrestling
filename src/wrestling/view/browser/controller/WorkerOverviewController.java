@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -119,7 +120,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             behaviourLabel.setText(Integer.toString(worker.getBehaviour()));
             charismaLabel.setText(Integer.toString(worker.getCharisma()));
             popularityLabel.setText(Integer.toString(worker.getPopularity()));
-            workrate.setText(ViewUtils.intToStars(gameController.getMatchFactory().getMatchWorkRating(worker)));
+            workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
 

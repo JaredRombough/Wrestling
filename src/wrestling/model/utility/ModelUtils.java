@@ -2,7 +2,9 @@ package wrestling.model.utility;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.Promotion;
@@ -74,6 +76,33 @@ public final class ModelUtils {
     //the maximum popularity worker the promotion can hire
     public static int maxPopularity(Promotion promotion) {
         return promotion.getLevel() * 20;
+    }
+
+    public static int getMatchWorkRating(Worker worker) {
+        return getWeightedScore(new Integer[]{
+            worker.getFlying(),
+            worker.getWrestling(),
+            worker.getStriking(),
+            worker.getCharisma()
+        });
+    }
+
+    public static int getWeightedScore(Integer[] attributes) {
+        Arrays.sort(attributes, Collections.reverseOrder());
+
+        return getPrioritizedScore(attributes);
+    }
+
+    public static int getPrioritizedScore(Integer[] attributes) {
+        int totalScore = 0;
+
+        for (int i = 0; i < attributes.length; i++) {
+            totalScore += (attributes[i] * (attributes.length - i));
+        }
+
+        int denominator = (attributes.length * (attributes.length + 1)) / 2;
+
+        return totalScore / denominator;
     }
 
 }

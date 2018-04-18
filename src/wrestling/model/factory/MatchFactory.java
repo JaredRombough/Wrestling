@@ -13,6 +13,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.utility.ModelUtils;
 
 public class MatchFactory implements Serializable {
 
@@ -54,7 +55,7 @@ public class MatchFactory implements Serializable {
             workRatingTotal += getWorkRating(team);
 
             for (Worker worker : team.getWorkers()) {
-                crowdRatingTotal += getPrioritizedScore(new Integer[]{
+                crowdRatingTotal += ModelUtils.getPrioritizedScore(new Integer[]{
                     worker.getPopularity(),
                     worker.getCharisma()
                 });
@@ -69,7 +70,7 @@ public class MatchFactory implements Serializable {
                     / (segmentView.getTeams().size()
                     - segmentView.getTeams(TeamType.INTERFERENCE).size());
 
-            segmentView.getSegment().setWorkRating(getPrioritizedScore(new Integer[]{
+            segmentView.getSegment().setWorkRating(ModelUtils.getPrioritizedScore(new Integer[]{
                 intRating,
                 workRating
             }));
@@ -80,15 +81,6 @@ public class MatchFactory implements Serializable {
 
         segmentView.getSegment().setCrowdRating(Math.round(
                 crowdRatingTotal / segmentView.getWorkers().size()));
-    }
-
-    public int getMatchWorkRating(Worker worker) {
-        return getWeightedScore(new Integer[]{
-            worker.getFlying(),
-            worker.getWrestling(),
-            worker.getStriking(),
-            worker.getCharisma()
-        });
     }
 
     private int getWorkRating(SegmentTeam team) {
@@ -103,48 +95,30 @@ public class MatchFactory implements Serializable {
                 case AUDIENCE:
                 case PROMO: {
                     if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += getWeightedScore(new Integer[]{
+                        score += ModelUtils.getWeightedScore(new Integer[]{
                             worker.getCharisma()
                         });
                     }
                 }
                 case PROMO_TARGET: {
                     if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += getWeightedScore(new Integer[]{
+                        score += ModelUtils.getWeightedScore(new Integer[]{
                             worker.getCharisma()
                         });
                     } else {
-                        score += getWeightedScore(new Integer[]{
+                        score += ModelUtils.getWeightedScore(new Integer[]{
                             worker.getPopularity()
                         });
                     }
                 }
                 break;
                 default:
-                    score += getMatchWorkRating(worker);
+                    score += ModelUtils.getMatchWorkRating(worker);
                     break;
             }
         }
 
         return (Math.round(score / team.getWorkers().size()));
-    }
-
-    private int getWeightedScore(Integer[] attributes) {
-        Arrays.sort(attributes, Collections.reverseOrder());
-
-        return getPrioritizedScore(attributes);
-    }
-
-    private int getPrioritizedScore(Integer[] attributes) {
-        int totalScore = 0;
-
-        for (int i = 0; i < attributes.length; i++) {
-            totalScore += (attributes[i] * (attributes.length - i));
-        }
-
-        int denominator = (attributes.length * (attributes.length + 1)) / 2;
-
-        return totalScore / denominator;
     }
 
 }

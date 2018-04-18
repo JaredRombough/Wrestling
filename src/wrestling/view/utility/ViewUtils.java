@@ -267,10 +267,10 @@ public final class ViewUtils {
         return sb.toString();
     }
 
-    public static ObservableList getWorkerComparators(GameController gameController) {
+    public static ObservableList getWorkerComparators() {
         return FXCollections.observableArrayList(new WorkerNameComparator(),
                 new WorkerPopularityComparator(),
-                new WorkrateComparator(gameController.getMatchFactory()),
+                new WorkrateComparator(),
                 new WorkerCharismaComparator(),
                 new WorkerWrestlingComparator(),
                 new WorkerFlyingComparator(),
