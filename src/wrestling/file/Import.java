@@ -17,14 +17,19 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import wrestling.model.EventName;
+import wrestling.model.EventTemplate;
+import wrestling.model.RecurringEvent;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Television;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.model.segmentEnum.EventBroadcast;
+import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.Gender;
+import wrestling.model.utility.ModelUtils;
 
 /**
  *
@@ -54,9 +59,10 @@ public class Import {
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
-    private final List<Television> allTelevision = new ArrayList<>();
-
-    private final List<EventName> allEventNames = new ArrayList<>();
+//    private final List<Television> allTelevision = new ArrayList<>();
+//
+//    private final List<RecurringEvent> allEventNames = new ArrayList<>();
+    private final List<EventTemplate> eventTemplates = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
@@ -90,10 +96,11 @@ public class Import {
             }
             processOther();
             gameController.getPromotionManager().addPromotions(allPromotions);
-            gameController.getEventManager().addEventNames(allEventNames);
+            //gameController.getEventManager().addEventNames(allEventNames);
+            gameController.getEventManager().addEventTemplates(eventTemplates);
             gameController.getWorkerManager().addWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
-            gameController.getTelevisionManager().addTelevision(allTelevision);
+            //gameController.getTelevisionManager().addTelevision(allTelevision);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -193,57 +200,69 @@ public class Import {
 
             if (counter == 51) {
 
-                Television tv = new Television();
-                tv.setName(currentLine.substring(1, 21).trim());
+                //Television tv = new Television();
+                EventTemplate eventTemplate = new EventTemplate();
+                eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
+                eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
+                eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
+                eventTemplate.setEventsLeft(ModelUtils.randRange(30, 60));
+                //tv.setName(currentLine.substring(1, 21).trim());
+                eventTemplate.setName(currentLine.substring(1, 21).trim());
+                int duration = 0;
                 switch (currentStringLine.get(32)) {
                     case "P":
-                        tv.setDuration(120);
+                        duration = 120;
                         break;
                     case "G":
-                        tv.setDuration(60);
+                        duration = 60;
                         break;
                     case "E":
-                        tv.setDuration(60);
+                        duration = 60;
                         break;
                     case "L":
-                        tv.setDuration(60);
+                        duration = 60;
                         break;
                 }
+                eventTemplate.setDefaultDuration(duration);
 
-                String day = currentLine.substring(22, 32);
-
-                switch (day.trim().toUpperCase()) {
-                    case "MONDAY":
-                        tv.setDay(DayOfWeek.MONDAY);
-                        break;
-                    case "TUESDAY":
-                        tv.setDay(DayOfWeek.TUESDAY);
-                        break;
-                    case "WEDNESDAY":
-                        tv.setDay(DayOfWeek.WEDNESDAY);
-                        break;
-                    case "THURSDAY":
-                        tv.setDay(DayOfWeek.THURSDAY);
-                        break;
-                    case "FRIDAY":
-                        tv.setDay(DayOfWeek.FRIDAY);
-                        break;
-                    case "SATURDAY":
-                        tv.setDay(DayOfWeek.SATURDAY);
-                        break;
-                    case "SUNDAY":
-                        tv.setDay(DayOfWeek.SUNDAY);
-                        break;
-
-                }
+//                String day = currentLine.substring(22, 32);
+//                DayOfWeek dayOfWeek = DayOfWeek.MONDAY;
+                eventTemplate.setDayOfWeek(DayOfWeek.valueOf(
+                        currentLine.substring(22, 32).toUpperCase().trim()));
+//                switch (day.trim().toUpperCase()) {
+//                    case "MONDAY":
+//                        dayOfWeek = DayOfWeek.MONDAY;
+//                        break;
+//                    case "TUESDAY":
+//                        dayOfWeek = DayOfWeek.MONDAY;
+//                        break;
+//                    case "WEDNESDAY":
+//                        dayOfWeek = DayOfWeek.MONDAY;
+//                        break;
+//                    case "THURSDAY":
+//                        tv.setDay(DayOfWeek.THURSDAY);
+//                        break;
+//                    case "FRIDAY":
+//                        tv.setDay(DayOfWeek.FRIDAY);
+//                        break;
+//                    case "SATURDAY":
+//                        tv.setDay(DayOfWeek.SATURDAY);
+//                        break;
+//                    case "SUNDAY":
+//                        tv.setDay(DayOfWeek.SUNDAY);
+//                        break;
+//
+//                }
                 int key = hexStringToInt(currentHexLine.get(21));
                 for (int x = 0; x < promotionKeys.size(); x++) {
                     if (promotionKeys.get(x) == key) {
-                        tv.setPromotion(allPromotions.get(x));
+                        //tv.setPromotion(allPromotions.get(x));
+                        eventTemplate.setPromotion(allPromotions.get(x));
                     }
                 }
 
-                allTelevision.add(tv);
+                //allTelevision.add(tv);
+                eventTemplates.add(eventTemplate);
 
                 counter = 0;
                 currentLine = "";
@@ -512,11 +531,18 @@ public class Import {
             }
 
             if (counter == 47) {
-                allEventNames.add(new EventName(
-                        currentLine.substring(1, 32).trim(),
-                        promotion,
-                        month
-                ));
+                EventTemplate eventTemplate = new EventTemplate();
+                eventTemplate.setName(currentLine.substring(1, 32).trim());
+                eventTemplate.setPromotion(promotion);
+                eventTemplate.setMonth(month);
+                eventTemplate.setEventBroadcast(EventBroadcast.NONE);
+                eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
+//                allEventNames.add(new RecurringEvent(
+//                        currentLine.substring(1, 32).trim(),
+//                        promotion,
+//                        month
+//                ));
+                eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
 

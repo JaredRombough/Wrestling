@@ -12,7 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
 import wrestling.model.Event;
-import wrestling.model.EventName;
+import wrestling.model.EventTemplate;
+import wrestling.model.RecurringEvent;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
@@ -30,7 +31,8 @@ public class EventManager {
     private final List<Event> events;
     private final List<EventWorker> eventWorkers;
     private final List<MatchEvent> matchEvents;
-    private final List<EventName> eventNames;
+//    private final List<RecurringEvent> eventNames;
+    private final List<EventTemplate> eventTemplates;
     private final List<EventView> eventViews;
 
     private final DateManager dateManager;
@@ -46,15 +48,19 @@ public class EventManager {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
-        eventNames = new ArrayList<>();
+//        eventNames = new ArrayList<>();
+        eventTemplates = new ArrayList<>();
         eventViews = new ArrayList<>();
         this.matchManager = matchManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
     }
 
-    public void addEventNames(List<EventName> names) {
-        eventNames.addAll(names);
+//    public void addEventNames(List<RecurringEvent> names) {
+//        eventNames.addAll(names);
+//    }
+    public void addEventTemplates(List<EventTemplate> templates) {
+        getEventTemplates().addAll(templates);
     }
 
     public void addEvent(Event event) {
@@ -100,19 +106,27 @@ public class EventManager {
         }
     }
 
-    public EventName getEventName(Promotion promotion, Month month) {
-        for (EventName eventName : eventNames) {
-            if (eventName.getPromotion().equals(promotion)
-                    && eventName.getMonth().equals(month)) {
-                return eventName;
-            }
-        }
-        return null;
-    }
-
+//    public RecurringEvent getEventName(Promotion promotion, Month month) {
+//        for (RecurringEvent eventName : eventNames) {
+//            if (eventName.getPromotion().equals(promotion)
+//                    && eventName.getMonth().equals(month)) {
+//                return eventName;
+//            }
+//        }
+//        return null;
+//    }
     public List<Event> getEvents(Promotion promotion) {
         List<Event> promotionEvents = new ArrayList();
         events.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
+            promotionEvents.add(event);
+        });
+        return promotionEvents;
+    }
+
+    public List<EventView> getEventViews(Promotion promotion) {
+        List<EventView> promotionEvents = new ArrayList();
+        eventViews.stream().filter((eventView)
+                -> (eventView.getEvent().getPromotion().equals(promotion))).forEach((event) -> {
             promotionEvents.add(event);
         });
         return promotionEvents;
@@ -385,7 +399,7 @@ public class EventManager {
             return sb.append("This event is scheduled for later today\n").append(futureEventString(event)).toString();
         }
 
-        for (SegmentView segmentView : eventView.getSegments()) {
+        for (SegmentView segmentView : eventView.getSegmentViews()) {
             if (!segmentView.getWorkers().isEmpty()) {
                 sb.append(matchManager.getSegmentString(segmentView));
                 sb.append("\n");
@@ -473,7 +487,15 @@ public class EventManager {
     }
 
     public boolean canReschedule(Event event) {
-        return event != null && event.getTelevision() == null;
+        //return event != null && event.getTelevision() == null;
+        return true;
+    }
+
+    /**
+     * @return the eventTemplates
+     */
+    public List<EventTemplate> getEventTemplates() {
+        return eventTemplates;
     }
 
 }

@@ -45,7 +45,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (event.getSource() == nextButton) {
-            if (currentSegmentViewIndex < eventView.getSegments().size()) {
+            if (currentSegmentViewIndex < eventView.getSegmentViews().size()) {
                 nextSegment();
             } else if (eventView.getEvent().getAttendance() == 0) {
                 showSummary();
@@ -85,7 +85,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     }
 
     private void nextSegment() {
-        SegmentView current = eventView.getSegments().get(currentSegmentViewIndex);
+        SegmentView current = eventView.getSegmentViews().get(currentSegmentViewIndex);
         current.setSegment(gameController.getEventFactory().processSegmentView(eventView, current));
         currentSegmentViewIndex++;
         showNextDisplay(current);

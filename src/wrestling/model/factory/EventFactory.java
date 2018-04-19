@@ -55,13 +55,13 @@ public class EventFactory {
     public void processEventView(EventView eventView, LocalDate date, boolean processSegments) {
 
         if (processSegments) {
-            for (SegmentView segmentView : eventView.getSegments()) {
+            for (SegmentView segmentView : eventView.getSegmentViews()) {
                 segmentView.setSegment(processSegmentView(eventView, segmentView));
             }
         }
 
         Event event = eventView.getEvent();
-        List<Segment> segments = segmentsFromSegmentViews(eventView.getSegments());
+        List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
 
         setEventStats(event, segments);
 

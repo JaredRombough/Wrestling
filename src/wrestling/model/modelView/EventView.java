@@ -7,19 +7,19 @@ import wrestling.model.Worker;
 
 public class EventView {
 
-    private List<SegmentView> segments;
+    private List<SegmentView> segmentViews;
     private final Event event;
 
     public EventView(Event event, List<SegmentView> segments) {
-        this.segments = new ArrayList<>(segments);
+        this.segmentViews = new ArrayList<>(segments);
         this.event = event;
     }
 
     /**
      * @return the segments
      */
-    public List<SegmentView> getSegments() {
-        return segments;
+    public List<SegmentView> getSegmentViews() {
+        return segmentViews;
     }
 
     /**
@@ -30,15 +30,15 @@ public class EventView {
     }
 
     /**
-     * @param segments the segments to set
+     * @param segmentViews the segments to set
      */
-    public void setSegments(List<SegmentView> segments) {
-        this.segments = segments;
+    public void setSegmentViews(List<SegmentView> segmentViews) {
+        this.segmentViews = segmentViews;
     }
 
     public List<Worker> allWorkers() {
         List<Worker> allWorkers = new ArrayList<>();
-        for (SegmentView segment : segments) {
+        for (SegmentView segment : segmentViews) {
             for (Worker worker : segment.getWorkers()) {
                 if (!allWorkers.contains(worker)) {
                     allWorkers.add(worker);

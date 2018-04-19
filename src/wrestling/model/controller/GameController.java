@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
-import wrestling.model.EventName;
+import wrestling.model.EventTemplate;
+import wrestling.model.RecurringEvent;
 import wrestling.model.Promotion;
 import wrestling.model.Television;
 import wrestling.model.factory.ContractFactory;
@@ -25,6 +27,8 @@ import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.utility.ModelUtils;
 
 /**
@@ -32,51 +36,51 @@ import wrestling.model.utility.ModelUtils;
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
-    
+
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
     private final MatchFactory matchFactory;
-    
+
     private final DateManager dateManager;
     private final ContractManager contractManager;
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final TelevisionManager televisionManager;
+    //private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final SegmentManager segmentManager;
-    
+
     private final PromotionController promotionController;
-    
+
     private final int EVENT_MONTHS = 6;
-    
+
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 5));
-        
+
         titleManager = new TitleManager(dateManager);
-        
-        televisionManager = new TelevisionManager();
+
+        //televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
         segmentManager = new SegmentManager(dateManager);
-        
+
         contractManager = new ContractManager(promotionManager);
         eventManager = new EventManager(
                 contractManager,
                 dateManager,
                 segmentManager);
-        
+
         titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(segmentManager, dateManager);
         tagTeamManager = new TagTeamManager(contractManager);
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
-        
+
         eventFactory = new EventFactory(
                 contractManager,
                 eventManager,
@@ -85,7 +89,7 @@ public final class GameController implements Serializable {
                 promotionManager,
                 titleManager,
                 workerManager);
-        
+
         promotionFactory = new PromotionFactory(
                 contractFactory,
                 workerFactory,
@@ -93,7 +97,7 @@ public final class GameController implements Serializable {
                 dateManager,
                 promotionManager,
                 workerManager);
-        
+
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
@@ -101,14 +105,14 @@ public final class GameController implements Serializable {
                 contractManager,
                 dateManager,
                 eventManager,
-                televisionManager,
+                //televisionManager,
                 titleManager,
                 workerManager);
-        
+
         if (randomGame) {
             promotionFactory.preparePromotions();
         }
-        
+
     }
 
     //only called by MainApp
@@ -117,70 +121,101 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {
             getPromotionController().dailyUpdate(promotion);
-            
+
         }
-        
+
         if (dateManager.today().getDayOfMonth() == 1) {
             monthlyUpdate();
         }
-        
+
         dateManager.nextDay();
     }
-    
+
     public void initializeEvents() {
         YearMonth yearMonth = YearMonth.from(dateManager.today());
         for (int i = 0; i < EVENT_MONTHS; i++) {
-            bookEventsForMonth(yearMonth);
+            //bookEventsForMonth(yearMonth);
+            bookEventTemplates();
             yearMonth = yearMonth.plusMonths(1);
         }
     }
-    
+
     private void monthlyUpdate() {
         YearMonth yearMonth = YearMonth.from(dateManager.today());
         yearMonth = yearMonth.plusMonths(EVENT_MONTHS);
-        bookEventsForMonth(yearMonth);
+        //bookEventsForMonth(yearMonth);
+        bookEventTemplates();
     }
-    
-    private void bookEventsForMonth(YearMonth yearMonth) {
-        LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
-        List<LocalDate> weekends = new ArrayList<>();
-        
-        while (currentDate.getMonth().equals(yearMonth.getMonth())) {
-            
-            for (Promotion promotion : promotionManager.getPromotions()) {
-                List<Television> tvOnDate = televisionManager.tvOnDate(promotion, currentDate);
-                for (Television television : tvOnDate) {
-                    Event eventOnDate = eventManager.getEventOnDate(promotion, currentDate);
-                    if (eventOnDate == null || !television.equals(eventOnDate.getTelevision())) {
-                        promotionController.bookNextEvent(promotion, currentDate, television);
+
+    private void bookEventTemplates() {
+        for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
+            if (eventTemplate.getNextDate().isBefore(dateManager.today())) {
+
+                int timesToBook = eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)
+                        ? eventTemplate.getEventsLeft() : 1;
+
+                LocalDate nextDate = dateManager.today();
+
+                if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+                    while (!nextDate.getMonth().equals(eventTemplate.getMonth())) {
+                        nextDate = nextDate.plusMonths(1);
+                    }
+                    nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
+                            ModelUtils.randRange(1, 4),
+                            eventTemplate.getDayOfWeek()));
+                    promotionController.bookNextEvent(eventTemplate, nextDate);
+                } else {
+                    nextDate = nextDate.with(
+                            TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
+                    for (int i = 0; i < timesToBook; i++) {
+                        promotionController.bookNextEvent(eventTemplate, nextDate);
+                        nextDate = nextDate.plusWeeks(1);
                     }
                 }
-            }
-            if (currentDate.getDayOfWeek().toString().equals("SUNDAY")
-                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")
-                    || currentDate.getDayOfWeek().toString().equals("FRIDAY")) {
-                weekends.add(currentDate);
-            }
-            currentDate = LocalDate.from(currentDate).plusDays(1);
-        }
 
-        //add monthly events
-        for (Promotion promotion : promotionManager.getPromotions()) {
-            LocalDate eventDate = null;
-            do {
-                eventDate = weekends.get(ModelUtils.randRange(0, weekends.size() - 1));
-            } while (eventManager.getEventOnDate(promotion, eventDate) != null);
-            
-            EventName eventName = eventManager.getEventName(promotion, yearMonth.getMonth());
-            if (eventName != null) {
-                promotionController.bookNextEvent(promotion, eventDate, eventName);
-            } else {
-                promotionController.bookNextEvent(promotion, eventDate);
             }
-            
         }
     }
 
+//    private void bookEventsForMonth(YearMonth yearMonth) {
+//        LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
+//        List<LocalDate> weekends = new ArrayList<>();
+//        //this should be easier with more organized event types...
+//        while (currentDate.getMonth().equals(yearMonth.getMonth())) {
+//
+//            for (Promotion promotion : promotionManager.getPromotions()) {
+//                List<Television> tvOnDate = televisionManager.tvOnDate(promotion, currentDate);
+//                for (Television television : tvOnDate) {
+//                    Event eventOnDate = eventManager.getEventOnDate(promotion, currentDate);
+//                    if (eventOnDate == null || !television.equals(eventOnDate.getTelevision())) {
+//                        promotionController.bookNextEvent(promotion, currentDate, television);
+//                    }
+//                }
+//            }
+//            if (currentDate.getDayOfWeek().toString().equals("SUNDAY")
+//                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")
+//                    || currentDate.getDayOfWeek().toString().equals("FRIDAY")) {
+//                weekends.add(currentDate);
+//            }
+//            currentDate = LocalDate.from(currentDate).plusDays(1);
+//        }
+//
+//        //add monthly events
+//        for (Promotion promotion : promotionManager.getPromotions()) {
+//            LocalDate eventDate = null;
+//            do {
+//                eventDate = weekends.get(ModelUtils.randRange(0, weekends.size() - 1));
+//            } while (eventManager.getEventOnDate(promotion, eventDate) != null);
+//
+//            RecurringEvent eventName = eventManager.getEventName(promotion, yearMonth.getMonth());
+//            if (eventName != null) {
+//                promotionController.bookNextEvent(promotion, eventDate, eventName);
+//            } else {
+//                promotionController.bookNextEvent(promotion, eventDate);
+//            }
+//
+//        }
+//    }
     /**
      * @return the contractFactory
      */
@@ -261,10 +296,9 @@ public final class GameController implements Serializable {
     /**
      * @return the televisionManager
      */
-    public TelevisionManager getTelevisionManager() {
-        return televisionManager;
-    }
-
+//    public TelevisionManager getTelevisionManager() {
+//        return televisionManager;
+//    }
     /**
      * @return the promotionManager
      */
@@ -292,5 +326,5 @@ public final class GameController implements Serializable {
     public SegmentManager getSegmentManager() {
         return segmentManager;
     }
-    
+
 }

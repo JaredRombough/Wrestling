@@ -256,8 +256,9 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private int getDuration() {
-        return currentEvent.getTelevision() != null
-                ? currentEvent.getTelevision().getDuration() : 180;
+//        return currentEvent.getTelevision() != null
+//                ? currentEvent.getTelevision().getDuration() : 180;
+        return currentEvent.getDefaultDuration();
     }
 
     private boolean validateDuration() {

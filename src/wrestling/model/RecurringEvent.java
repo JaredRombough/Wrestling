@@ -2,13 +2,13 @@ package wrestling.model;
 
 import java.time.Month;
 
-public class EventName {
+public class RecurringEvent {
 
     private String name;
     private Promotion promotion;
     private Month month;
 
-    public EventName(String name, Promotion promotion, Month month) {
+    public RecurringEvent(String name, Promotion promotion, Month month) {
         this.name = name;
         this.promotion = promotion;
         this.month = month;

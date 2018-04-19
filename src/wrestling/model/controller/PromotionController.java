@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Event;
-import wrestling.model.EventName;
+import wrestling.model.EventTemplate;
+import wrestling.model.RecurringEvent;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.Promotion;
@@ -41,7 +42,7 @@ public class PromotionController implements Serializable {
     private final ContractManager contractManager;
     private final DateManager dateManager;
     private final EventManager eventManager;
-    private final TelevisionManager televisionManager;
+    //private final TelevisionManager televisionManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
 
@@ -52,7 +53,7 @@ public class PromotionController implements Serializable {
             ContractManager contractManager,
             DateManager dateManager,
             EventManager eventManager,
-            TelevisionManager televisionManager,
+            //TelevisionManager televisionManager,
             TitleManager titleManager,
             WorkerManager workerManager) {
         this.contractFactory = contractFactory;
@@ -61,7 +62,7 @@ public class PromotionController implements Serializable {
         this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.eventManager = eventManager;
-        this.televisionManager = televisionManager;
+        //this.televisionManager = televisionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
     }
@@ -225,15 +226,21 @@ public class PromotionController implements Serializable {
         return target;
     }
 
-    public void bookNextEvent(Promotion promotion, LocalDate eventDate, Television television) {
-        Event event = bookNextEvent(promotion, eventDate);
-        event.setTelevision(television);
+    public void bookNextEvent(EventTemplate template, LocalDate eventDate) {
+        Event event = bookNextEvent(template.getPromotion(), eventDate);
+        event.setName(template.getName());
+        event.setDefaultDuration(template.getDefaultDuration());
     }
 
-    public void bookNextEvent(Promotion promotion, LocalDate eventDate, EventName eventName) {
-        Event event = bookNextEvent(promotion, eventDate);
-        event.setEventName(eventName);
-    }
+//    public void bookNextEvent(Promotion promotion, LocalDate eventDate, Television television) {
+//        Event event = bookNextEvent(promotion, eventDate);
+//        event.setTelevision(television);
+//    }
+//
+//    public void bookNextEvent(Promotion promotion, LocalDate eventDate, RecurringEvent eventName) {
+//        Event event = bookNextEvent(promotion, eventDate);
+//        event.setName(eventName);
+//    }
 
     public Event bookNextEvent(Promotion promotion, LocalDate eventDate) {
 
