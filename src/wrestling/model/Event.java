@@ -2,8 +2,9 @@ package wrestling.model;
 
 import java.time.LocalDate;
 import wrestling.model.interfaces.iEvent;
+import wrestling.model.interfaces.iEventDate;
 
-public class Event implements iEvent {
+public class Event implements iEvent, iEventDate {
 
     private final Promotion promotion;
 

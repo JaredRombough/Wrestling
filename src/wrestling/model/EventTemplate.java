@@ -4,12 +4,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import wrestling.model.interfaces.iEventDate;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.utility.ModelUtils;
 
-public class EventTemplate {
+public class EventTemplate implements iEventDate {
 
     private Promotion promotion;
     private LocalDate bookedUntil;
@@ -173,6 +174,11 @@ public class EventTemplate {
      */
     public void setEventsLeft(int eventsLeft) {
         this.eventsLeft = eventsLeft;
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return bookedUntil;
     }
 
 }

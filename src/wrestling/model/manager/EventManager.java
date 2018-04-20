@@ -29,7 +29,6 @@ public class EventManager {
     private final List<Event> events;
     private final List<EventWorker> eventWorkers;
     private final List<MatchEvent> matchEvents;
-//    private final List<RecurringEvent> eventNames;
     private final List<EventTemplate> eventTemplates;
     private final List<EventView> eventViews;
 
@@ -46,7 +45,6 @@ public class EventManager {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
         matchEvents = new ArrayList<>();
-//        eventNames = new ArrayList<>();
         eventTemplates = new ArrayList<>();
         eventViews = new ArrayList<>();
         this.matchManager = matchManager;
@@ -54,9 +52,6 @@ public class EventManager {
         this.dateManager = dateManager;
     }
 
-//    public void addEventNames(List<RecurringEvent> names) {
-//        eventNames.addAll(names);
-//    }
     public void addEventTemplates(List<EventTemplate> templates) {
         getEventTemplates().addAll(templates);
     }
@@ -104,18 +99,17 @@ public class EventManager {
         }
     }
 
-//    public RecurringEvent getEventName(Promotion promotion, Month month) {
-//        for (RecurringEvent eventName : eventNames) {
-//            if (eventName.getPromotion().equals(promotion)
-//                    && eventName.getMonth().equals(month)) {
-//                return eventName;
-//            }
-//        }
-//        return null;
-//    }
     public List<Event> getEvents(Promotion promotion) {
         List<Event> promotionEvents = new ArrayList();
         events.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
+            promotionEvents.add(event);
+        });
+        return promotionEvents;
+    }
+
+    public List<EventTemplate> getEventTemplates(Promotion promotion) {
+        List<EventTemplate> promotionEvents = new ArrayList();
+        eventTemplates.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
             promotionEvents.add(event);
         });
         return promotionEvents;

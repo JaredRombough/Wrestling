@@ -11,7 +11,7 @@ import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iSortFilter;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
-import wrestling.view.utility.comparators.EventDateComparator;
+import wrestling.view.utility.comparators.DateComparator;
 import wrestling.view.utility.comparators.TagTeamNameComparator;
 import wrestling.view.utility.comparators.TitleNameComparator;
 
@@ -105,8 +105,7 @@ public enum BrowseMode implements iBrowseMode {
     EVENTS {
         @Override
         public ObservableList comparators() {
-            return FXCollections.observableArrayList(
-                    new EventDateComparator());
+            return FXCollections.observableArrayList(new DateComparator());
         }
 
         @Override
@@ -116,7 +115,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getEventManager().getEvents(promotion);
+            return gameController.getEventManager().getEventTemplates(promotion);
         }
 
         @Override
