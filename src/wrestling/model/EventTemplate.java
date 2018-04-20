@@ -3,14 +3,16 @@ package wrestling.model;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
+import wrestling.model.utility.ModelUtils;
 
 public class EventTemplate {
 
     private Promotion promotion;
-    private LocalDate nextDate;
+    private LocalDate bookedUntil;
     private int defaultDuration;
     private String name;
     private EventFrequency eventFrequency;
@@ -21,13 +23,15 @@ public class EventTemplate {
     private Month month;
 
     public EventTemplate() {
-        nextDate = LocalDate.MIN;
+        bookedUntil = LocalDate.MIN;
         defaultDuration = 180;
         eventFrequency = EventFrequency.ANNUAL;
         eventBroadcast = EventBroadcast.NONE;
         eventRecurrence = EventRecurrence.UNLIMITED;
         eventsLeft = 0;
-        dayOfWeek = DayOfWeek.MONDAY;
+        dayOfWeek = Arrays.asList(
+                DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
+                        ModelUtils.randRange(0, 2));
         month = Month.JANUARY;
     }
 
@@ -48,15 +52,15 @@ public class EventTemplate {
     /**
      * @return the nextDate
      */
-    public LocalDate getNextDate() {
-        return nextDate;
+    public LocalDate getBookedUntil() {
+        return bookedUntil;
     }
 
     /**
-     * @param nextDate the nextDate to set
+     * @param bookedUntil the nextDate to set
      */
-    public void setNextDate(LocalDate nextDate) {
-        this.nextDate = nextDate;
+    public void setBookedUntil(LocalDate bookedUntil) {
+        this.bookedUntil = bookedUntil;
     }
 
     /**

@@ -238,7 +238,7 @@ public class MainApp extends Application {
             primaryStage.getScene().setCursor(Cursor.WAIT);
         });
 
-        gameController.initializeEvents();
+        gameController.bookEventTemplates();
 
         try {
             loadScreens();

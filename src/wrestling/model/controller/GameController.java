@@ -3,15 +3,9 @@ package wrestling.model.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
-import wrestling.model.Event;
 import wrestling.model.EventTemplate;
-import wrestling.model.RecurringEvent;
 import wrestling.model.Promotion;
-import wrestling.model.Television;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -21,10 +15,9 @@ import wrestling.model.factory.WorkerFactory;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
-import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TagTeamManager;
-import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.segmentEnum.EventFrequency;
@@ -49,7 +42,6 @@ public final class GameController implements Serializable {
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    //private final TelevisionManager televisionManager;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final SegmentManager segmentManager;
@@ -64,7 +56,6 @@ public final class GameController implements Serializable {
 
         titleManager = new TitleManager(dateManager);
 
-        //televisionManager = new TelevisionManager();
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
         segmentManager = new SegmentManager(dateManager);
@@ -105,7 +96,6 @@ public final class GameController implements Serializable {
                 contractManager,
                 dateManager,
                 eventManager,
-                //televisionManager,
                 titleManager,
                 workerManager);
 
@@ -125,31 +115,15 @@ public final class GameController implements Serializable {
         }
 
         if (dateManager.today().getDayOfMonth() == 1) {
-            monthlyUpdate();
+            bookEventTemplates();
         }
 
         dateManager.nextDay();
     }
 
-    public void initializeEvents() {
-        YearMonth yearMonth = YearMonth.from(dateManager.today());
-        for (int i = 0; i < EVENT_MONTHS; i++) {
-            //bookEventsForMonth(yearMonth);
-            bookEventTemplates();
-            yearMonth = yearMonth.plusMonths(1);
-        }
-    }
-
-    private void monthlyUpdate() {
-        YearMonth yearMonth = YearMonth.from(dateManager.today());
-        yearMonth = yearMonth.plusMonths(EVENT_MONTHS);
-        //bookEventsForMonth(yearMonth);
-        bookEventTemplates();
-    }
-
-    private void bookEventTemplates() {
+    public void bookEventTemplates() {
         for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
-            if (eventTemplate.getNextDate().isBefore(dateManager.today())) {
+            if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
 
                 int timesToBook = eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)
                         ? eventTemplate.getEventsLeft() : 1;
@@ -163,6 +137,7 @@ public final class GameController implements Serializable {
                     nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
                             ModelUtils.randRange(1, 4),
                             eventTemplate.getDayOfWeek()));
+
                     promotionController.bookNextEvent(eventTemplate, nextDate);
                 } else {
                     nextDate = nextDate.with(
@@ -172,50 +147,12 @@ public final class GameController implements Serializable {
                         nextDate = nextDate.plusWeeks(1);
                     }
                 }
+                eventTemplate.setBookedUntil(nextDate);
 
             }
         }
     }
 
-//    private void bookEventsForMonth(YearMonth yearMonth) {
-//        LocalDate currentDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
-//        List<LocalDate> weekends = new ArrayList<>();
-//        //this should be easier with more organized event types...
-//        while (currentDate.getMonth().equals(yearMonth.getMonth())) {
-//
-//            for (Promotion promotion : promotionManager.getPromotions()) {
-//                List<Television> tvOnDate = televisionManager.tvOnDate(promotion, currentDate);
-//                for (Television television : tvOnDate) {
-//                    Event eventOnDate = eventManager.getEventOnDate(promotion, currentDate);
-//                    if (eventOnDate == null || !television.equals(eventOnDate.getTelevision())) {
-//                        promotionController.bookNextEvent(promotion, currentDate, television);
-//                    }
-//                }
-//            }
-//            if (currentDate.getDayOfWeek().toString().equals("SUNDAY")
-//                    || currentDate.getDayOfWeek().toString().equals("SATURDAY")
-//                    || currentDate.getDayOfWeek().toString().equals("FRIDAY")) {
-//                weekends.add(currentDate);
-//            }
-//            currentDate = LocalDate.from(currentDate).plusDays(1);
-//        }
-//
-//        //add monthly events
-//        for (Promotion promotion : promotionManager.getPromotions()) {
-//            LocalDate eventDate = null;
-//            do {
-//                eventDate = weekends.get(ModelUtils.randRange(0, weekends.size() - 1));
-//            } while (eventManager.getEventOnDate(promotion, eventDate) != null);
-//
-//            RecurringEvent eventName = eventManager.getEventName(promotion, yearMonth.getMonth());
-//            if (eventName != null) {
-//                promotionController.bookNextEvent(promotion, eventDate, eventName);
-//            } else {
-//                promotionController.bookNextEvent(promotion, eventDate);
-//            }
-//
-//        }
-//    }
     /**
      * @return the contractFactory
      */
@@ -293,12 +230,6 @@ public final class GameController implements Serializable {
         return workerManager;
     }
 
-    /**
-     * @return the televisionManager
-     */
-//    public TelevisionManager getTelevisionManager() {
-//        return televisionManager;
-//    }
     /**
      * @return the promotionManager
      */

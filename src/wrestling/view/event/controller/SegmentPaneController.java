@@ -1,6 +1,5 @@
 package wrestling.view.event.controller;
 
-import wrestling.model.segmentEnum.TeamType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,16 +21,17 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
-import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iSegmentLength;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.AngleType;
+import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;

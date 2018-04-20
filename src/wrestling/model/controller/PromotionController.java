@@ -9,29 +9,24 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
-import wrestling.model.RecurringEvent;
 import wrestling.model.EventWorker;
-import wrestling.model.Match;
 import wrestling.model.Promotion;
-import wrestling.model.Television;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
-import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
-import wrestling.model.manager.TelevisionManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.SegmentType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.utility.ModelUtils;
 
 public class PromotionController implements Serializable {
 
@@ -42,7 +37,6 @@ public class PromotionController implements Serializable {
     private final ContractManager contractManager;
     private final DateManager dateManager;
     private final EventManager eventManager;
-    //private final TelevisionManager televisionManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
 
@@ -53,7 +47,6 @@ public class PromotionController implements Serializable {
             ContractManager contractManager,
             DateManager dateManager,
             EventManager eventManager,
-            //TelevisionManager televisionManager,
             TitleManager titleManager,
             WorkerManager workerManager) {
         this.contractFactory = contractFactory;
@@ -62,7 +55,6 @@ public class PromotionController implements Serializable {
         this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.eventManager = eventManager;
-        //this.televisionManager = televisionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
     }
@@ -231,16 +223,6 @@ public class PromotionController implements Serializable {
         event.setName(template.getName());
         event.setDefaultDuration(template.getDefaultDuration());
     }
-
-//    public void bookNextEvent(Promotion promotion, LocalDate eventDate, Television television) {
-//        Event event = bookNextEvent(promotion, eventDate);
-//        event.setTelevision(television);
-//    }
-//
-//    public void bookNextEvent(Promotion promotion, LocalDate eventDate, RecurringEvent eventName) {
-//        Event event = bookNextEvent(promotion, eventDate);
-//        event.setName(eventName);
-//    }
 
     public Event bookNextEvent(Promotion promotion, LocalDate eventDate) {
 

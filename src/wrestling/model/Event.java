@@ -2,7 +2,6 @@ package wrestling.model;
 
 import java.time.LocalDate;
 import wrestling.model.interfaces.iEvent;
-import wrestling.model.segmentEnum.EventFrequency;
 
 public class Event implements iEvent {
 
@@ -16,8 +15,6 @@ public class Event implements iEvent {
     private int defaultDuration;
     private String name;
 
-//    private Television television;
-//    private RecurringEvent eventName;
     public Event(Promotion promotion, LocalDate date, EventType eventType, int cost, int gate, int attendance) {
         this.promotion = promotion;
         this.date = date;
@@ -34,24 +31,8 @@ public class Event implements iEvent {
 
     @Override
     public String toString() {
-//        String name = "";
-//        if (getName() != null) {
-//            name = promotion.getShortName() + " " + eventName.getName();
-//        } else {
-//            name = television == null
-//                    ? promotion.getShortName() + " event"
-//                    : television.getName();
-//        }
-//        String name = "";
-//        if (name != null) {
-//            return promotion.getShortName() + " " + name;
-//        } 
-//        else {
-//            return = television == null
-//                    ? promotion.getShortName() + " event"
-//                    : television.getName();
-//        }
-        return promotion.getShortName() + " " + name;
+        return name.contains(promotion.getShortName())
+                ? name : promotion.getShortName() + " " + name;
     }
 
     public void setDate(LocalDate date) {
@@ -96,19 +77,6 @@ public class Event implements iEvent {
         return attendance;
     }
 
-//    /**
-//     * @return the television
-//     */
-//    public Television getTelevision() {
-//        return television;
-//    }
-//
-//    /**
-//     * @param television the television to set
-//     */
-//    public void setTelevision(Television television) {
-//        this.television = television;
-//    }
     /**
      * @param eventType the eventType to set
      */
@@ -150,20 +118,6 @@ public class Event implements iEvent {
     public void setName(String name) {
         this.name = name;
     }
-
-    /**
-     * @return the eventFrequency
-     */
-//    public EventFrequency getEventFrequency() {
-//        return eventFrequency;
-//    }
-//
-//    /**
-//     * @param eventFrequency the eventFrequency to set
-//     */
-//    public void setEventFrequency(EventFrequency eventFrequency) {
-//        this.eventFrequency = eventFrequency;
-//    }
 
     /**
      * @return the defaultDuration

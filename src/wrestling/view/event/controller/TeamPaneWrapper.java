@@ -1,8 +1,5 @@
 package wrestling.view.event.controller;
 
-import wrestling.model.segmentEnum.TeamType;
-import wrestling.model.segmentEnum.TimingType;
-import wrestling.model.segmentEnum.SuccessType;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,9 @@ import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.ResponseType;
+import wrestling.model.segmentEnum.SuccessType;
+import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.segmentEnum.TimingType;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -39,6 +39,7 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TeamPaneWrapper extends ControllerBase implements Initializable {
+    private static final String TAB_DRAG_KEY = "anchorpane";
 
     @FXML
     private AnchorPane anchorPane;
@@ -55,7 +56,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private Label teamTypeLabel;
 
     private Screen teamPane;
-    private static final String TAB_DRAG_KEY = "anchorpane";
     private ObjectProperty<AnchorPane> draggingTab;
 
     private ComboBoxWrapper targetComboBox;

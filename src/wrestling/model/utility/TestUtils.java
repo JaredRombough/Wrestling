@@ -5,8 +5,8 @@ import java.util.List;
 import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
 

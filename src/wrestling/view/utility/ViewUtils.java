@@ -47,9 +47,9 @@ import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
 import wrestling.view.utility.comparators.WorkerNameComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
-import wrestling.view.utility.comparators.WorkrateComparator;
 import wrestling.view.utility.comparators.WorkerStrikingComparator;
 import wrestling.view.utility.comparators.WorkerWrestlingComparator;
+import wrestling.view.utility.comparators.WorkrateComparator;
 
 public final class ViewUtils {
 

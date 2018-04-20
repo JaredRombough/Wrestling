@@ -1,8 +1,6 @@
 package wrestling.model.factory;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collections;
 import wrestling.model.SegmentWorker;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;

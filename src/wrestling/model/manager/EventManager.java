@@ -1,7 +1,6 @@
 package wrestling.model.manager;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -13,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
-import wrestling.model.RecurringEvent;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
