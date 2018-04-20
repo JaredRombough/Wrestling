@@ -41,6 +41,12 @@ public class ButtonWrapper {
         return getItems().get(index);
     }
 
+    public Object updateSelected(Object obj) {
+        selectedIndex = items.indexOf(obj);
+        ViewUtils.updateSelectedButton(getButtons().get(selectedIndex), getButtons());
+        return getItems().get(selectedIndex);
+    }
+
     /**
      * @param buttons the buttons to set
      */

@@ -1,6 +1,8 @@
 package wrestling.model.segmentEnum;
 
-public enum Gender {
+import wrestling.model.interfaces.iSortFilter;
+
+public enum Gender implements iSortFilter {
     ALL {
         @Override
         public String toString() {

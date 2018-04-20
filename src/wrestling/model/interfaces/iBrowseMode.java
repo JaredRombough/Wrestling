@@ -1,5 +1,6 @@
 package wrestling.model.interfaces;
 
+import java.util.EnumSet;
 import java.util.List;
 import javafx.collections.ObservableList;
 import wrestling.model.Promotion;
@@ -11,6 +12,8 @@ public interface iBrowseMode {
     public ObservableList comparators();
 
     public ScreenCode subScreenCode();
+
+    public List<EnumSet> getSortFilters();
 
     public List listToBrowse(GameController gameController, Promotion promotion);
 }

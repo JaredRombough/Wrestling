@@ -37,6 +37,7 @@ import wrestling.model.Event;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
@@ -394,7 +395,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
-        sortControl.controller.setCurrent(ViewUtils.getWorkerComparators());
+        sortControl.controller.setCurrent(BrowseMode.WORKERS);
 
         ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
 

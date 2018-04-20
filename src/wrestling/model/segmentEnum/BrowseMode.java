@@ -1,11 +1,14 @@
 package wrestling.model.segmentEnum;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import wrestling.model.Promotion;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iBrowseMode;
+import wrestling.model.interfaces.iSortFilter;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.EventDateComparator;
@@ -28,6 +31,11 @@ public enum BrowseMode implements iBrowseMode {
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getWorkerManager().freeAgents(promotion);
         }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList(EnumSet.allOf(Gender.class));
+        }
     },
     WORKERS {
         @Override
@@ -44,6 +52,11 @@ public enum BrowseMode implements iBrowseMode {
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getContractManager().getFullRoster(promotion);
         }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList(EnumSet.allOf(Gender.class));
+        }
     },
     TITLES {
         @Override
@@ -56,10 +69,15 @@ public enum BrowseMode implements iBrowseMode {
         public ScreenCode subScreenCode() {
             return ScreenCode.SIMPLE_DISPLAY;
         }
-        
+
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getTitleManager().getTitles(promotion);
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
         }
     },
     TAG_TEAMS {
@@ -73,10 +91,15 @@ public enum BrowseMode implements iBrowseMode {
         public ScreenCode subScreenCode() {
             return ScreenCode.SIMPLE_DISPLAY;
         }
-        
+
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getTagTeamManager().getTagTeams(promotion);
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
         }
     },
     EVENTS {
@@ -90,10 +113,15 @@ public enum BrowseMode implements iBrowseMode {
         public ScreenCode subScreenCode() {
             return ScreenCode.SIMPLE_DISPLAY;
         }
-        
+
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getEventManager().getEvents(promotion);
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
         }
     };
 
