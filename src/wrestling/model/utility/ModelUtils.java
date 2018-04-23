@@ -1,6 +1,7 @@
 package wrestling.model.utility;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,6 +18,16 @@ public final class ModelUtils {
     public static int randRange(int low, int high) {
         Random r = new Random();
         return r.nextInt(high - low) + low;
+    }
+
+    public static String dateString(LocalDate localDate) {
+        return localDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)"));
+    }
+
+    public static String timeString(int totalMinutes) {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        return String.format("%d:%02d", hours, minutes);
     }
 
     public static String slashNames(List<Worker> workers) {

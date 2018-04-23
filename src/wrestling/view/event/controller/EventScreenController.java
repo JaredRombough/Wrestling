@@ -39,6 +39,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
+import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
@@ -220,22 +221,18 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             int duration = getDuration();
 
-            int hours = eventLength / 60;
-            int minutes = eventLength % 60;
-            int maxHours = duration / 60;
-            int maxMinutes = duration % 60;
             int remaining = duration - eventLength;
             int remainingHours = (duration - eventLength) / 60;
             int remainingMinutes = (duration - eventLength) % 60;
 
-            totalTimeLabel.setText(String.format("Total:\t\t%d:%02d", hours, minutes));
-            maxTimeLabel.setText(String.format("Max:\t\t\t%d:%02d", maxHours, maxMinutes));
+            totalTimeLabel.setText("Total:\t\t" + ModelUtils.timeString(eventLength));
+            maxTimeLabel.setText("Max:\t\t\t" + ModelUtils.timeString(duration));
             if (remainingHours < 0 || remainingMinutes < 0) {
-                remainingTimeLabel.setText(String.format("Remaining:\t-%d:%02d",
-                        Math.abs(remainingHours), Math.abs(remainingMinutes)));
+                remainingTimeLabel.setText("Remaining:\t-"
+                        + ModelUtils.timeString(Math.abs(duration - eventLength)));
             } else {
-                remainingTimeLabel.setText(String.format("Remaining:\t%d:%02d",
-                        remainingHours, remainingMinutes));
+                remainingTimeLabel.setText("Remaining:\t"
+                        + ModelUtils.timeString(Math.abs(duration - eventLength)));
             }
             totalTimeLabel.getStyleClass().clear();
             if (Math.abs(remaining) <= 10) {
@@ -255,8 +252,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private int getDuration() {
-//        return currentEvent.getTelevision() != null
-//                ? currentEvent.getTelevision().getDuration() : 180;
         return currentEvent.getDefaultDuration();
     }
 

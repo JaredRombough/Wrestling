@@ -13,6 +13,7 @@ import wrestling.model.utility.ModelUtils;
 public class EventTemplate implements iEventDate {
 
     private Promotion promotion;
+    private LocalDate nextDate;
     private LocalDate bookedUntil;
     private int defaultDuration;
     private String name;
@@ -183,7 +184,21 @@ public class EventTemplate implements iEventDate {
 
     @Override
     public LocalDate getDate() {
-        return bookedUntil;
+        return nextDate;
+    }
+
+    /**
+     * @return the nextDate
+     */
+    public LocalDate getNextDate() {
+        return nextDate;
+    }
+
+    /**
+     * @param nextDate the nextDate to set
+     */
+    public void setNextDate(LocalDate nextDate) {
+        this.nextDate = nextDate;
     }
 
 }

@@ -184,7 +184,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     private void updateCalendarButton() {
-        calendarButton.setText(gameController.getDateManager().today().format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)")));
+        calendarButton.setText(gameController.getDateManager().todayString());
     }
 
     private void updateCurrentFundsButton() {

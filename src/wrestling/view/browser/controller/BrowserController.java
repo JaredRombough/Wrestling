@@ -189,7 +189,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         ));
 
         rosterButton.setId(BrowseMode.WORKERS.name());
-        freeAgentsButton.setId(BrowseMode.WORKERS.name());
+        freeAgentsButton.setId(BrowseMode.FREE_AGENTS.name());
         eventsButton.setId(BrowseMode.EVENTS.name());
         teamsButton.setId(BrowseMode.TAG_TEAMS.name());
         titlesButton.setId(BrowseMode.TITLES.name());

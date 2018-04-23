@@ -137,11 +137,12 @@ public final class GameController implements Serializable {
                     nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
                             ModelUtils.randRange(1, 4),
                             eventTemplate.getDayOfWeek()));
-
+                    eventTemplate.setNextDate(nextDate);
                     promotionController.bookNextEvent(eventTemplate, nextDate);
                 } else {
                     nextDate = nextDate.with(
                             TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
+                    eventTemplate.setNextDate(nextDate);
                     for (int i = 0; i < timesToBook; i++) {
                         promotionController.bookNextEvent(eventTemplate, nextDate);
                         nextDate = nextDate.plusWeeks(1);

@@ -2,6 +2,8 @@ package wrestling.model.manager;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import wrestling.model.utility.ModelUtils;
 
 public class DateManager {
     
@@ -9,6 +11,10 @@ public class DateManager {
     
     public DateManager(LocalDate startDate) {
         gameDate = startDate;
+    }
+    
+    public String todayString() {
+        return ModelUtils.dateString(gameDate);
     }
     
     public void nextDay() {
