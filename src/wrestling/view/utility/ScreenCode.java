@@ -254,5 +254,16 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    },
+    EVENT_TEMPLATE {
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/EventTemplate.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }

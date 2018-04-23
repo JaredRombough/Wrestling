@@ -36,6 +36,11 @@ public class EventTemplate implements iEventDate {
         month = Month.JANUARY;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     /**
      * @return the promotion
      */

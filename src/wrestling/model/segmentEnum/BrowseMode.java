@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import wrestling.model.Promotion;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iBrowseMode;
-import wrestling.model.interfaces.iSortFilter;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.DateComparator;
@@ -110,7 +109,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public ScreenCode subScreenCode() {
-            return ScreenCode.SIMPLE_DISPLAY;
+            return ScreenCode.EVENT_TEMPLATE;
         }
 
         @Override
