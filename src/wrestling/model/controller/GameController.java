@@ -3,7 +3,6 @@ package wrestling.model.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.factory.ContractFactory;
@@ -123,34 +122,7 @@ public final class GameController implements Serializable {
 
     public void bookEventTemplates() {
         for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
-            if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
-
-                int timesToBook = eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)
-                        ? eventTemplate.getEventsLeft() : 1;
-
-                LocalDate nextDate = dateManager.today();
-
-                if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-                    while (!nextDate.getMonth().equals(eventTemplate.getMonth())) {
-                        nextDate = nextDate.plusMonths(1);
-                    }
-                    nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
-                            ModelUtils.randRange(1, 4),
-                            eventTemplate.getDayOfWeek()));
-                    eventTemplate.setNextDate(nextDate);
-                    promotionController.bookNextEvent(eventTemplate, nextDate);
-                } else {
-                    nextDate = nextDate.with(
-                            TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
-                    eventTemplate.setNextDate(nextDate);
-                    for (int i = 0; i < timesToBook; i++) {
-                        promotionController.bookNextEvent(eventTemplate, nextDate);
-                        nextDate = nextDate.plusWeeks(1);
-                    }
-                }
-                eventTemplate.setBookedUntil(nextDate);
-
-            }
+            promotionController.bookEventTemplate(eventTemplate);
         }
     }
 

@@ -80,7 +80,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     }
 
     private void showSummary() {
-        gameController.getEventFactory().processEventView(eventView, gameController.getDateManager().today(), false);
+        gameController.getEventFactory().processEventView(eventView, false, gameController.getPromotionController());
         showNextDisplay(eventView);
     }
 

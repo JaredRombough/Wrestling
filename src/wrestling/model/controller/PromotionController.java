@@ -2,6 +2,7 @@ package wrestling.model.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +25,8 @@ import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
@@ -401,7 +404,61 @@ public class PromotionController implements Serializable {
 
     //book an event
     private void bookEvent(Event event, Promotion promotion) {
-        eventFactory.processEventView(new EventView(event, bookSegments(promotion)), dateManager.today(), true);
+        eventFactory.processEventView(new EventView(event, bookSegments(promotion)), true, this);
+    }
+
+    public LocalDate bookEventTemplate(EventTemplate eventTemplate) {
+        LocalDate nextDate = dateManager.today();
+        if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
+
+            int timesToBook = eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)
+                    ? eventTemplate.getEventsLeft() : 1;
+
+            if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+                while (!nextDate.getMonth().equals(eventTemplate.getMonth())) {
+                    nextDate = nextDate.plusMonths(1);
+                }
+                nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
+                        ModelUtils.randRange(1, 4),
+                        eventTemplate.getDayOfWeek()));
+                eventTemplate.setNextDate(nextDate);
+                bookNextEvent(eventTemplate, nextDate);
+            } else {
+                nextDate = nextDate.with(
+                        TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
+                eventTemplate.setNextDate(nextDate);
+                for (int i = 0; i < timesToBook; i++) {
+                    bookNextEvent(eventTemplate, nextDate);
+                    nextDate = nextDate.plusWeeks(1);
+                }
+            }
+            eventTemplate.setBookedUntil(nextDate);
+
+        }
+        return nextDate;
+    }
+
+    public void updateEventTemplate(EventView eventView) {
+        EventTemplate eventTemplate = null;
+        for (EventTemplate template : eventManager.getEventTemplates()) {
+            if (template.getName().equals(eventView.getEvent().getName())
+                    && template.getPromotion().equals(eventView.getEvent().getPromotion())) {
+                eventTemplate = template;
+                break;
+            }
+        }
+        if (eventTemplate != null) {
+            LocalDate nextDate = eventTemplate.getNextDate();
+            if (eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)) {
+                eventTemplate.setEventsLeft(eventTemplate.getEventsLeft() - 1);
+                nextDate = nextDate.with(TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
+            }
+
+            if (eventTemplate.getEventsLeft() <= 0) {
+                nextDate = bookEventTemplate(eventTemplate);
+            }
+            eventTemplate.setNextDate(nextDate);
+        }
     }
 
     private List<Worker> getEventRoster(Promotion promotion) {

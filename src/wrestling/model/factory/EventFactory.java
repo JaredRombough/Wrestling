@@ -1,14 +1,17 @@
 package wrestling.model.factory;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
+import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
+import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.manager.ContractManager;
@@ -19,6 +22,9 @@ import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.model.segmentEnum.EventRecurrence;
+import wrestling.model.utility.ModelUtils;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -52,7 +58,8 @@ public class EventFactory {
         this.workerManager = workerManager;
     }
 
-    public void processEventView(EventView eventView, LocalDate date, boolean processSegments) {
+    public void processEventView(EventView eventView, boolean processSegments,
+            PromotionController promotionController) {
 
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegmentViews()) {
@@ -65,7 +72,8 @@ public class EventFactory {
 
         setEventStats(event, segments);
 
-        promotionManager.getBankAccount(event.getPromotion()).addFunds(eventManager.calculateGate(event), 'e', date);
+        promotionManager.getBankAccount(event.getPromotion()).addFunds(
+                eventManager.calculateGate(event), 'e', eventView.getEvent().getDate());
 
         for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
@@ -74,6 +82,8 @@ public class EventFactory {
         processContracts(event, segments);
 
         eventManager.addEventView(eventView);
+
+        promotionController.updateEventTemplate(eventView);
     }
 
     public Event createFutureEvent(Promotion promotion, LocalDate date) {
