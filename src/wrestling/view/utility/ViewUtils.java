@@ -45,7 +45,7 @@ import wrestling.view.utility.comparators.WorkerAgeComparator;
 import wrestling.view.utility.comparators.WorkerBehaviourComparator;
 import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
-import wrestling.view.utility.comparators.WorkerNameComparator;
+import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
 import wrestling.view.utility.comparators.WorkerStrikingComparator;
 import wrestling.view.utility.comparators.WorkerWrestlingComparator;
@@ -268,7 +268,7 @@ public final class ViewUtils {
     }
 
     public static ObservableList getWorkerComparators() {
-        return FXCollections.observableArrayList(new WorkerNameComparator(),
+        return FXCollections.observableArrayList(new NameComparator(),
                 new WorkerPopularityComparator(),
                 new WorkrateComparator(),
                 new WorkerCharismaComparator(),

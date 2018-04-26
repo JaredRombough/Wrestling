@@ -11,8 +11,7 @@ import wrestling.model.interfaces.iBrowseMode;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.DateComparator;
-import wrestling.view.utility.comparators.TagTeamNameComparator;
-import wrestling.view.utility.comparators.TitleNameComparator;
+import wrestling.view.utility.comparators.NameComparator;
 
 public enum BrowseMode implements iBrowseMode {
     FREE_AGENTS {
@@ -61,7 +60,7 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public ObservableList comparators() {
             return FXCollections.observableArrayList(
-                    new TitleNameComparator());
+                    new NameComparator());
         }
 
         @Override
@@ -83,7 +82,7 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public ObservableList comparators() {
             return FXCollections.observableArrayList(
-                    new TagTeamNameComparator());
+                    new NameComparator());
         }
 
         @Override
@@ -104,7 +103,7 @@ public enum BrowseMode implements iBrowseMode {
     EVENTS {
         @Override
         public ObservableList comparators() {
-            return FXCollections.observableArrayList(new DateComparator());
+            return FXCollections.observableArrayList(new DateComparator(), new NameComparator());
         }
 
         @Override

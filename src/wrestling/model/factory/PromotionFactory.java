@@ -8,6 +8,7 @@ import wrestling.model.Worker;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
+import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.utility.ModelUtils;
@@ -24,6 +25,7 @@ public class PromotionFactory {
     private final DateManager dateManager;
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
+    private final EventManager eventManager;
 
     public PromotionFactory(
             ContractFactory contractFactory,
@@ -31,13 +33,15 @@ public class PromotionFactory {
             ContractManager contractManager,
             DateManager dateManager,
             PromotionManager promotionManager,
-            WorkerManager workerManager) {
+            WorkerManager workerManager,
+            EventManager eventManager) {
         this.contractFactory = contractFactory;
         this.workerFactory = workerFactory;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.promotionManager = promotionManager;
         this.workerManager = workerManager;
+        this.eventManager = eventManager;
     }
 
     public void preparePromotions() throws IOException {
@@ -96,6 +100,7 @@ public class PromotionFactory {
         }
         promotionManager.addPromotions(promotions);
         workerManager.addWorkers(allWorkers);
+
     }
 
     public Promotion newPromotion() {

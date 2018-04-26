@@ -8,6 +8,7 @@ import wrestling.model.interfaces.iEventDate;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
+import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
 
 public class EventTemplate implements iEventDate {
@@ -20,6 +21,7 @@ public class EventTemplate implements iEventDate {
     private EventFrequency eventFrequency;
     private EventBroadcast eventBroadcast;
     private EventRecurrence eventRecurrence;
+    private EventVenueSize eventVenueSize;
     private int eventsLeft;
     private DayOfWeek dayOfWeek;
     private Month month;
@@ -30,6 +32,7 @@ public class EventTemplate implements iEventDate {
         eventFrequency = EventFrequency.ANNUAL;
         eventBroadcast = EventBroadcast.NONE;
         eventRecurrence = EventRecurrence.UNLIMITED;
+        eventVenueSize = EventVenueSize.MEDIUM;
         eventsLeft = 0;
         dayOfWeek = Arrays.asList(
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
@@ -199,6 +202,20 @@ public class EventTemplate implements iEventDate {
      */
     public void setNextDate(LocalDate nextDate) {
         this.nextDate = nextDate;
+    }
+
+    /**
+     * @return the eventVenueSize
+     */
+    public EventVenueSize getEventVenueSize() {
+        return eventVenueSize;
+    }
+
+    /**
+     * @param eventVenueSize the eventVenueSize to set
+     */
+    public void setEventVenueSize(EventVenueSize eventVenueSize) {
+        this.eventVenueSize = eventVenueSize;
     }
 
 }
