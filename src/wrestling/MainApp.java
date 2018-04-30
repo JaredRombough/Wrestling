@@ -246,14 +246,13 @@ public class MainApp extends Application {
             logger.log(Level.ERROR, "Error preparing screens", ex);
         }
 
+        gameController.initializeGameData();
+        preRun();
+
         Platform.runLater(() -> {
             show(ScreenCode.BROWSER);
             updateLabels();
         });
-
-        preRun();
-
-        gameController.initializeGameData();
 
         setRootLayoutButtonDisable(false);
         primaryStage.getScene().setCursor(Cursor.DEFAULT);
