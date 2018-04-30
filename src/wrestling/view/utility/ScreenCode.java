@@ -94,7 +94,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public boolean alwaysUpdate() {
-            return true;
+            return false;
         }
     },
     SIMPLE_DISPLAY {

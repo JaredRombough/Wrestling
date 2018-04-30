@@ -105,6 +105,12 @@ public final class GameController implements Serializable {
 
     }
 
+    public void initializeGameData() {
+        for (Promotion promotion : promotionManager.getPromotions()) {
+            promotionController.eventCheck(promotion);
+        }
+    }
+
     //only called by MainApp
     public void nextDay() {
 
@@ -114,9 +120,7 @@ public final class GameController implements Serializable {
 
         }
 
-        if (dateManager.today().getDayOfMonth() == 1) {
-            bookEventTemplates();
-        }
+        bookEventTemplates();
 
         dateManager.nextDay();
     }

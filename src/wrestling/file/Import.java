@@ -57,9 +57,6 @@ public class Import {
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
-//    private final List<Television> allTelevision = new ArrayList<>();
-//
-//    private final List<RecurringEvent> allEventNames = new ArrayList<>();
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(

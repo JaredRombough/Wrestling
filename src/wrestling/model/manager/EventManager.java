@@ -55,6 +55,11 @@ public class EventManager {
     public void addEventTemplates(List<EventTemplate> templates) {
         getEventTemplates().addAll(templates);
     }
+    
+    public void addEventTemplate(EventTemplate template) {
+        getEventTemplates().add(template);
+    }
+
 
     public void addEvent(Event event) {
         if (!events.contains(event)) {
