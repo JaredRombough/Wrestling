@@ -150,7 +150,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         }
     }
 
-    private void startReschedule(Event event) {
+    public void startReschedule(Event event) {
         rescheduling = true;
         eventToReschedule = event;
         updateLabels();

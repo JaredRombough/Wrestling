@@ -55,11 +55,10 @@ public class EventManager {
     public void addEventTemplates(List<EventTemplate> templates) {
         getEventTemplates().addAll(templates);
     }
-    
+
     public void addEventTemplate(EventTemplate template) {
         getEventTemplates().add(template);
     }
-
 
     public void addEvent(Event event) {
         if (!events.contains(event)) {
@@ -110,6 +109,16 @@ public class EventManager {
             promotionEvents.add(event);
         });
         return promotionEvents;
+    }
+
+    public Event getNextEvent(EventTemplate template) {
+        for (Event event : events) {
+            if (event.getDate().equals(template.getNextDate())
+                    && event.getPromotion().equals(template.getPromotion())) {
+                return event;
+            }
+        }
+        return null;
     }
 
     public List<EventTemplate> getEventTemplates(Promotion promotion) {

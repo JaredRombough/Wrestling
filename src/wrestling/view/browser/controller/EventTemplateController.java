@@ -4,9 +4,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import wrestling.model.EventTemplate;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventTemplateController extends ControllerBase implements Initializable {
@@ -28,9 +30,19 @@ public class EventTemplateController extends ControllerBase implements Initializ
     @FXML
     private Label broadcastLabel;
 
+    @FXML
+    private Label remainingLabel;
+
+    @FXML
+    private Button calendarButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        calendarButton.setOnAction(e -> {
+            mainApp.show(ScreenCode.CALENDAR,
+                    gameController.getEventManager().getNextEvent(eventTemplate));
+            
+        });
     }
 
     @Override
@@ -49,7 +61,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
-
+            remainingLabel.setText(Integer.toString(eventTemplate.getEventsLeft()));
         }
 
     }
