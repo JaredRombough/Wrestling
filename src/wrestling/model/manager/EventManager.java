@@ -82,7 +82,23 @@ public class EventManager {
         return events.contains(event);
     }
 
+    public void rescheduleEvent(Event event, LocalDate newDate) {
+        EventTemplate template = event.getEventTemplate();
+        event.setDate(newDate);
+        updateFirstAndLastEvents(template);
+    }
+
+    private void updateFirstAndLastEvents(EventTemplate template) {
+        if (template != null) {
+            template.setNextDate(getNextEvent(template,
+                    dateManager.today()).getDate());
+            template.setBookedUntil(getLastEvent(template).getDate());
+        }
+    }
+
     public void cancelEvent(Event eventToCancel) {
+        EventTemplate template = eventToCancel.getEventTemplate();
+
         for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext();) {
             MatchEvent matchEvent = iter.next();
             if (matchEvent.getEvent().equals(eventToCancel)) {
@@ -101,6 +117,12 @@ public class EventManager {
                 iter.remove();
             }
         }
+
+        if (template != null) {
+            template.setEventsLeft(template.getEventsLeft() - 1);
+            updateFirstAndLastEvents(template);
+        }
+
     }
 
     public List<Event> getEvents(Promotion promotion) {
@@ -113,12 +135,45 @@ public class EventManager {
 
     public Event getNextEvent(EventTemplate template) {
         for (Event event : events) {
-            if (event.getDate().equals(template.getNextDate())
-                    && event.getPromotion().equals(template.getPromotion())) {
+            if (event.getEventTemplate().equals(template)
+                    && event.getDate().equals(template.getNextDate())) {
                 return event;
             }
         }
+
         return null;
+    }
+
+    public Event getNextEvent(EventTemplate template, LocalDate startDate) {
+        List<Event> templateEvents = new ArrayList<>();
+        for (Event event : getEventsForTemplate(template)) {
+            if (event.getDate().isAfter(startDate)) {
+                templateEvents.add(event);
+            }
+        }
+
+        templateEvents.sort(
+                (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+        return templateEvents.isEmpty()
+                ? null : templateEvents.get(0);
+    }
+
+    public List<Event> getEventsForTemplate(EventTemplate template) {
+        List<Event> templateEvents = new ArrayList<>();
+        for (Event event : events) {
+            if (event.getEventTemplate().equals(template)) {
+                templateEvents.add(event);
+            }
+        }
+        return templateEvents;
+    }
+
+    public Event getLastEvent(EventTemplate template) {
+        List<Event> templateEvents = getEventsForTemplate(template);
+        templateEvents.sort(
+                (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+        return templateEvents.isEmpty()
+                ? null : templateEvents.get(templateEvents.size() - 1);
     }
 
     public List<EventTemplate> getEventTemplates(Promotion promotion) {

@@ -159,7 +159,8 @@ public class BookShowController extends ControllerBase implements Initializable 
     private void confirmReschedule() {
         if (ViewUtils.generateConfirmationDialogue(String.format("Rescheduling %s from %s to %s", eventToReschedule.toString(), eventToReschedule.getDate(), currentDate),
                 "Are you sure?")) {
-            eventToReschedule.setDate(currentDate);
+            gameController.getEventManager().rescheduleEvent(eventToReschedule, currentDate);
+
             rescheduling = false;
             mainApp.show(ScreenCode.CALENDAR, eventToReschedule);
         }

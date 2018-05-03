@@ -15,15 +15,7 @@ public class Event implements iEvent, iEventDate {
     private int attendance;
     private int defaultDuration;
     private String name;
-
-    public Event(Promotion promotion, LocalDate date, EventType eventType, int cost, int gate, int attendance) {
-        this.promotion = promotion;
-        this.date = date;
-        this.eventType = eventType;
-        this.cost = cost;
-        this.gate = gate;
-        this.attendance = attendance;
-    }
+    private EventTemplate eventTemplate;
 
     public Event(Promotion promotion, LocalDate date) {
         this.promotion = promotion;
@@ -132,6 +124,20 @@ public class Event implements iEvent, iEventDate {
      */
     public void setDefaultDuration(int defaultDuration) {
         this.defaultDuration = defaultDuration;
+    }
+
+    /**
+     * @return the eventTemplate
+     */
+    public EventTemplate getEventTemplate() {
+        return eventTemplate;
+    }
+
+    /**
+     * @param eventTemplate the eventTemplate to set
+     */
+    public void setEventTemplate(EventTemplate eventTemplate) {
+        this.eventTemplate = eventTemplate;
     }
 
 }
