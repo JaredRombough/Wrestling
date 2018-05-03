@@ -57,7 +57,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         } else if (obj instanceof Worker) {
             newText = gameController.getSegmentManager().getMatchStringForMonths((Worker) obj, 3);
         } else {
-            newText = obj == null ? "null" : obj.toString();
+            newText = obj == null ? "" : obj.toString();
         }
 
         displayTitle.setText(obj != null ? obj.toString() : defaultTitle);

@@ -459,26 +459,29 @@ public class EventManager {
         if (event.getDate().equals(dateManager.today())) {
             return sb.append("This event is scheduled for later today\n").append(futureEventString(event)).toString();
         }
+        if (eventView != null) {
+            for (SegmentView segmentView : eventView.getSegmentViews()) {
+                if (!segmentView.getWorkers().isEmpty()) {
+                    sb.append(matchManager.getSegmentString(segmentView));
+                    sb.append("\n");
+                    sb.append("Rating: ").append((ViewUtils.intToStars(segmentView.getSegment().getWorkRating())));
+                } else {
+                    logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
+                }
 
-        for (SegmentView segmentView : eventView.getSegmentViews()) {
-            if (!segmentView.getWorkers().isEmpty()) {
-                sb.append(matchManager.getSegmentString(segmentView));
                 sb.append("\n");
-                sb.append("Rating: ").append((ViewUtils.intToStars(segmentView.getSegment().getWorkRating())));
-            } else {
-                logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }
 
             sb.append("\n");
+
+            sb.append("Total cost: $").append(event.getCost());
+            sb.append("\n");
+            sb.append("Attendance: ").append(event.getAttendance());
+            sb.append("\n");
+            sb.append("Gross profit: $").append(event.getGate());
+        } else {
+            sb.append("Event information not available");
         }
-
-        sb.append("\n");
-
-        sb.append("Total cost: $").append(event.getCost());
-        sb.append("\n");
-        sb.append("Attendance: ").append(event.getAttendance());
-        sb.append("\n");
-        sb.append("Gross profit: $").append(event.getGate());
 
         return sb.toString();
     }
