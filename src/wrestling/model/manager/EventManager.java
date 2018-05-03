@@ -453,11 +453,11 @@ public class EventManager {
         StringBuilder sb = new StringBuilder();
 
         if (event.getDate().isAfter(dateManager.today())) {
-            return sb.append("This event is in the future\n").append(futureEventString(event)).toString();
+            return sb.append("This event is in the future.\n").append(futureEventString(event)).toString();
         }
 
         if (event.getDate().equals(dateManager.today())) {
-            return sb.append("This event is scheduled for later today\n").append(futureEventString(event)).toString();
+            return sb.append("This event is scheduled for later today.\n").append(futureEventString(event)).toString();
         }
         if (eventView != null) {
             for (SegmentView segmentView : eventView.getSegmentViews()) {
@@ -480,7 +480,7 @@ public class EventManager {
             sb.append("\n");
             sb.append("Gross profit: $").append(event.getGate());
         } else {
-            sb.append("Event information not available");
+            sb.append("Event information not available.\n");
         }
 
         return sb.toString();

@@ -33,7 +33,7 @@ public class EventTemplate implements iEventDate {
         eventBroadcast = EventBroadcast.NONE;
         eventRecurrence = EventRecurrence.UNLIMITED;
         eventVenueSize = EventVenueSize.MEDIUM;
-        eventsLeft = 0;
+        eventsLeft = 1;
         dayOfWeek = Arrays.asList(
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
                         ModelUtils.randRange(0, 2));

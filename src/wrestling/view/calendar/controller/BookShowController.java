@@ -123,9 +123,9 @@ public class BookShowController extends ControllerBase implements Initializable 
             cancelButtonVisible = false;
 
         } else {
-            dateLabelContent = "Modify existing event";
-            infoTextContent = String.format("Cancel or reschedule event on %s?", currentDate);
-
+            dateLabelContent = String.format("Modify %s", eventOnDate.toString());
+            infoTextContent = String.format("Cancel or reschedule %s on %s?",
+                    eventOnDate.toString(), currentDate);
             confirmButtonText = "Reschedule";
             cancelButtonText = "Cancel Event";
             cancelButtonDisable = false;
