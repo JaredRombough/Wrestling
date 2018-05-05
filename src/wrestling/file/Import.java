@@ -91,11 +91,9 @@ public class Import {
             }
             processOther();
             gameController.getPromotionManager().addPromotions(allPromotions);
-            //gameController.getEventManager().addEventNames(allEventNames);
             gameController.getEventManager().addEventTemplates(eventTemplates);
             gameController.getWorkerManager().addWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
-            //gameController.getTelevisionManager().addTelevision(allTelevision);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -175,6 +173,8 @@ public class Import {
     private void tvDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\tv.dat");
         byte[] data = Files.readAllBytes(path);
+        int timeSlotIndex = 32;
+        int promotionKeyIndex = 21;
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
@@ -195,16 +195,14 @@ public class Import {
 
             if (counter == 51) {
 
-                //Television tv = new Television();
                 EventTemplate eventTemplate = new EventTemplate();
                 eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
                 eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
                 eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
                 eventTemplate.setEventsLeft(ModelUtils.randRange(30, 60));
-                //tv.setName(currentLine.substring(1, 21).trim());
                 eventTemplate.setName(currentLine.substring(1, 21).trim());
                 int duration = 0;
-                switch (currentStringLine.get(32)) {
+                switch (currentStringLine.get(timeSlotIndex)) {
                     case "P":
                         duration = 120;
                         break;
@@ -220,43 +218,16 @@ public class Import {
                 }
                 eventTemplate.setDefaultDuration(duration);
 
-//                String day = currentLine.substring(22, 32);
-//                DayOfWeek dayOfWeek = DayOfWeek.MONDAY;
                 eventTemplate.setDayOfWeek(DayOfWeek.valueOf(
                         currentLine.substring(22, 32).toUpperCase().trim()));
-//                switch (day.trim().toUpperCase()) {
-//                    case "MONDAY":
-//                        dayOfWeek = DayOfWeek.MONDAY;
-//                        break;
-//                    case "TUESDAY":
-//                        dayOfWeek = DayOfWeek.MONDAY;
-//                        break;
-//                    case "WEDNESDAY":
-//                        dayOfWeek = DayOfWeek.MONDAY;
-//                        break;
-//                    case "THURSDAY":
-//                        tv.setDay(DayOfWeek.THURSDAY);
-//                        break;
-//                    case "FRIDAY":
-//                        tv.setDay(DayOfWeek.FRIDAY);
-//                        break;
-//                    case "SATURDAY":
-//                        tv.setDay(DayOfWeek.SATURDAY);
-//                        break;
-//                    case "SUNDAY":
-//                        tv.setDay(DayOfWeek.SUNDAY);
-//                        break;
-//
-//                }
-                int key = hexStringToInt(currentHexLine.get(21));
+
+                int key = hexStringToInt(currentHexLine.get(promotionKeyIndex));
                 for (int x = 0; x < promotionKeys.size(); x++) {
                     if (promotionKeys.get(x) == key) {
-                        //tv.setPromotion(allPromotions.get(x));
                         eventTemplate.setPromotion(allPromotions.get(x));
                     }
                 }
 
-                //allTelevision.add(tv);
                 eventTemplates.add(eventTemplate);
 
                 counter = 0;
@@ -277,6 +248,7 @@ public class Import {
         String currentLine = "";
         int counter = 0;
         int level = 0;
+        int lineLength = 397;
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
@@ -296,7 +268,7 @@ public class Import {
 
             counter++;
 
-            if (counter == (25 * 16) - 3) {
+            if (counter == lineLength) {
 
                 Promotion promotion = gameController.getPromotionFactory().newPromotion();
 
@@ -333,6 +305,7 @@ public class Import {
         List<String> currentHexLine = new ArrayList<>();
         List<String> currentStringLine = new ArrayList<>();
         int counter = 0;
+        int lineLength = 59;
 
         for (int i = 0; i < fileString.length(); i += 2) {
 
@@ -345,7 +318,7 @@ public class Import {
 
             counter++;
 
-            if (counter == 59) {
+            if (counter == lineLength) {
 
                 TagTeam team = new TagTeam();
                 String id1 = currentHexLine.get(26) + currentHexLine.get(27);
@@ -385,6 +358,8 @@ public class Import {
         List<String> currentHexLine = new ArrayList<>();
         List<String> currentStringLine = new ArrayList<>();
         int counter = 0;
+        int lineLength = 307;
+        int rosterPositionIndex = 82;
 
         for (int i = 0; i < fileString.length(); i += 2) {
 
@@ -397,7 +372,7 @@ public class Import {
 
             counter++;
 
-            if (counter == (19 * 16) + 3) {
+            if (counter == lineLength) {
 
                 Worker worker = gameController.getWorkerFactory().randomWorker();
 
@@ -419,7 +394,7 @@ public class Import {
                 boolean fullTime;
                 boolean mainRoster;
 
-                switch (currentHexLine.get(82)) {
+                switch (currentHexLine.get(rosterPositionIndex)) {
                     case "07":
                         //development
                         manager = false;
@@ -503,6 +478,9 @@ public class Import {
         Promotion promotion = null;
         Month month = null;
         int counter = 0;
+        int lineLength = 47;
+        int promotionKeyIndex = 34;
+        int monthValueIndex = 36;
 
         for (int i = 0; i < fileString.length(); i += 2) {
 
@@ -510,11 +488,11 @@ public class Import {
             currentLine += hexStringToLetter(hexValueString);
             counter++;
 
-            if (counter == 34) {
+            if (counter == promotionKeyIndex) {
                 promotion = getPromotionFromKey(hexStringToInt(hexValueString));
             }
 
-            if (counter == 36) {
+            if (counter == monthValueIndex) {
                 int monthInt = hexStringToInt(hexValueString);
                 if (monthInt < 1 || monthInt > 12) {
                     logger.log(Level.WARN, String.format("Invalid month of %d for %s", monthInt, currentLine.substring(1, 32).trim()));
@@ -525,18 +503,13 @@ public class Import {
 
             }
 
-            if (counter == 47) {
+            if (counter == lineLength) {
                 EventTemplate eventTemplate = new EventTemplate();
                 eventTemplate.setName(currentLine.substring(1, 32).trim());
                 eventTemplate.setPromotion(promotion);
                 eventTemplate.setMonth(month);
                 eventTemplate.setEventBroadcast(EventBroadcast.NONE);
                 eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
-//                allEventNames.add(new RecurringEvent(
-//                        currentLine.substring(1, 32).trim(),
-//                        promotion,
-//                        month
-//                ));
                 eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
@@ -558,6 +531,12 @@ public class Import {
         String currentLine = "";
 
         int counter = 0;
+        int lineLength = 457;
+        int promotionKeyIndex = 33;
+        int worker1IdIndex1 = 35;
+        int worker1IdIndex2 = 36;
+        int worker2IdIndex1 = 37;
+        int worker2IdIndex2 = 38;
 
         for (int i = 0; i < fileString.length(); i += 2) {
 
@@ -566,32 +545,17 @@ public class Import {
 
             currentLine += hexStringToLetter(hexValueString);
 
-            switch (counter) {
-                case 33:
-                    //track the promotion number associated with this belt
-                    titlePromotionKeys.add(hexStringToInt(hexValueString));
-                    break;
-                case 35:
-                    //workerID is two hex values that correspond to the worker
-                    //with the belt
-                    workerId += hexValueString;
-                    break;
-                case 36:
-                    workerId += hexValueString;
-                    break;
-                case 37:
-                    workerId2 += hexValueString;
-                    break;
-                case 38:
-                    workerId2 += hexValueString;
-                    break;
-                default:
-                    break;
+            if (counter == promotionKeyIndex) {
+                titlePromotionKeys.add(hexStringToInt(hexValueString));
+            } else if (counter == worker1IdIndex1 || counter == worker1IdIndex2) {
+                workerId += hexValueString;
+            } else if (counter == worker2IdIndex1 || counter == worker2IdIndex2) {
+                workerId2 += hexValueString;
             }
 
             counter++;
 
-            if (counter == (28 * 16) + 9) {
+            if (counter == lineLength) {
 
                 counter = 0;
 
