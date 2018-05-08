@@ -37,7 +37,7 @@ public class Import {
 
     private GameController gameController;
 
-    private transient Logger logger = LogManager.getLogger(getClass());
+    private final transient Logger logger = LogManager.getLogger(getClass());
 
     private File importFolder;
 
@@ -49,11 +49,6 @@ public class Import {
     private final List<String> workerIDs = new ArrayList<>();
     private final List<Worker> otherWorkers = new ArrayList<>();
     private final List<String> otherWorkerPromotions = new ArrayList<>();
-
-    private final List<String> beltWorkerIDs = new ArrayList<>();
-    private final List<String> beltWorkerIDs2 = new ArrayList<>();
-
-    private final List<String> titleNames = new ArrayList<>();
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
@@ -526,6 +521,9 @@ public class Import {
         String workerId2 = new String();
         String titleName = new String();
 
+        List<String> titleNames = new ArrayList<>();
+        List<String> beltWorkerIDs = new ArrayList<>();
+        List<String> beltWorkerIDs2 = new ArrayList<>();
         List<Integer> titlePromotionKeys = new ArrayList<>();
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
