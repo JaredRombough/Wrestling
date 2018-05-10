@@ -17,6 +17,14 @@ public class Event implements iEvent, iEventDate {
     private String name;
     private EventTemplate eventTemplate;
 
+    public Event(EventTemplate eventTemplate, LocalDate date) {
+        this.eventTemplate = eventTemplate;
+        this.promotion = eventTemplate.getPromotion();
+        this.date = date;
+        this.name = eventTemplate.getName();
+        this.defaultDuration = eventTemplate.getDefaultDuration();
+    }
+
     public Event(Promotion promotion, LocalDate date) {
         this.promotion = promotion;
         this.date = date;

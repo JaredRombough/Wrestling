@@ -149,35 +149,6 @@ public class PromotionController implements Serializable {
 
     }
 
-    public void eventCheck(Promotion promotion) {
-
-        List<EventTemplate> templates = eventManager.getEventTemplates(promotion);
-        if (templates.isEmpty()) {
-            Month month = Month.JANUARY;
-            for (int i = 0; i < 12; i++) {
-
-                EventTemplate template = new EventTemplate();
-                template.setPromotion(promotion);
-                template.setMonth(month);
-                template.setName(promotion.getShortName() + " "
-                        + month.toString().substring(0, 1).toUpperCase()
-                        + month.toString().toLowerCase().substring(1)
-                        + " Event");
-                month = month.plus(1);
-                if (promotion.getLevel() > 4) {
-                    template.setEventVenueSize(EventVenueSize.LARGE);
-                } else if (promotion.getLevel() <= 4
-                        && promotion.getLevel() >= 3) {
-                    template.setEventVenueSize(EventVenueSize.MEDIUM);
-                } else {
-                    template.setEventVenueSize(EventVenueSize.SMALL);
-                }
-                eventManager.addEventTemplate(template);
-                bookEventTemplate(template);
-            }
-        }
-    }
-
     private void dailyUpdateContracts(Promotion promotion) {
         //update all the contracts associated with the current promotion
         List<Contract> tempContractList = new ArrayList<>(contractManager.getContracts(promotion));
@@ -441,34 +412,38 @@ public class PromotionController implements Serializable {
     }
 
     public LocalDate bookEventTemplate(EventTemplate eventTemplate) {
-        LocalDate nextDate = dateManager.today();
-        if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
+        return bookEventTemplate(eventTemplate, dateManager.today());
+    }
 
-            int timesToBook = eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)
-                    ? eventTemplate.getEventsLeft() : 1;
+    public LocalDate bookEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
+
+        if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
+            int timesToBook = eventTemplate.getEventsLeft();
 
             if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-                while (!nextDate.getMonth().equals(eventTemplate.getMonth())) {
-                    nextDate = nextDate.plusMonths(1);
+                while (!startDate.getMonth().equals(eventTemplate.getMonth())) {
+                    startDate = startDate.plusMonths(1);
                 }
-                nextDate = nextDate.with(TemporalAdjusters.dayOfWeekInMonth(
+                startDate = startDate.with(TemporalAdjusters.dayOfWeekInMonth(
                         ModelUtils.randRange(1, 4),
                         eventTemplate.getDayOfWeek()));
-                eventTemplate.setNextDate(nextDate);
-                bookNextEvent(eventTemplate, nextDate);
+                eventTemplate.setNextDate(startDate);
+                bookNextEvent(eventTemplate, startDate);
             } else {
-                nextDate = nextDate.with(
-                        TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
-                eventTemplate.setNextDate(nextDate);
+                if (startDate.getDayOfWeek() != eventTemplate.getDayOfWeek()) {
+                    startDate = startDate.with(
+                            TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
+                }
+                eventTemplate.setNextDate(startDate);
                 for (int i = 0; i < timesToBook; i++) {
-                    bookNextEvent(eventTemplate, nextDate);
-                    nextDate = nextDate.plusWeeks(1);
+                    bookNextEvent(eventTemplate, startDate);
+                    startDate = startDate.plusWeeks(1);
                 }
             }
-            eventTemplate.setBookedUntil(nextDate);
+            eventTemplate.setBookedUntil(startDate);
 
         }
-        return nextDate;
+        return startDate;
     }
 
     public void updateEventTemplate(EventView eventView) {

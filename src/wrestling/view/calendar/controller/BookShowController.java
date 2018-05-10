@@ -2,18 +2,31 @@ package wrestling.view.calendar.controller;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
+import wrestling.model.EventTemplate;
+import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -144,10 +157,61 @@ public class BookShowController extends ControllerBase implements Initializable 
     }
 
     private void bookShowOnDate() {
-        if (ViewUtils.generateConfirmationDialogue("Booking a new show on " + currentDate, "Are you sure?")) {
-            Event event = gameController.getEventFactory().createFutureEvent(playerPromotion(), currentDate);
-            mainApp.show(ScreenCode.CALENDAR, event);
-        }
+        Optional<EventTemplate> optionalResult = createShowDialog().showAndWait();
+        optionalResult.ifPresent((EventTemplate template) -> {
+
+            gameController.getEventManager().addEventTemplate(template);
+            gameController.getPromotionController().bookEventTemplate(template, currentDate);
+
+            mainApp.show(ScreenCode.CALENDAR,
+                    gameController.getEventManager().getEventOnDate(
+                            playerPromotion(), currentDate));
+        });
+    }
+
+    private Dialog createShowDialog() {
+        Dialog<EventTemplate> dialog = new Dialog<>();
+        DialogPane dialogPane = dialog.getDialogPane();
+        TextField eventName = new TextField();
+        ComboBox<EventVenueSize> venueSize = new ComboBox(FXCollections.observableArrayList(EventVenueSize.values()));
+        ComboBox<EventFrequency> frequency = new ComboBox(FXCollections.observableArrayList(EventFrequency.values()));
+        ComboBox duration = new ComboBox(FXCollections.observableArrayList(
+                Arrays.asList(30, 60, 90, 120, 180, 240, 300)));
+        VBox vBox = new VBox(8);
+
+        dialog.setTitle("Book Event");
+        dialog.setHeaderText("Event Values");
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        venueSize.getSelectionModel().selectFirst();
+        frequency.getSelectionModel().selectFirst();
+        duration.getSelectionModel().selectFirst();
+
+        ViewUtils.addRegionWrapperToVBox(eventName, "Event Name: ", vBox);
+        ViewUtils.addRegionWrapperToVBox(venueSize, "Venue Size: ", vBox);
+        ViewUtils.addRegionWrapperToVBox(frequency, "Frequency: ", vBox);
+        ViewUtils.addRegionWrapperToVBox(duration, "Duration (Minutes): ", vBox);
+
+        dialogPane.setContent(vBox);
+        dialogPane.getStylesheets().add("style.css");
+
+        Platform.runLater(eventName::requestFocus);
+
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == ButtonType.OK) {
+                EventTemplate template = new EventTemplate();
+                template.setName(eventName.getText());
+                template.setEventVenueSize(venueSize.getValue());
+                template.setEventFrequency(frequency.getValue());
+                template.setDefaultDuration((int) duration.getValue());
+                template.setPromotion(playerPromotion());
+                template.setMonth(currentDate.getMonth());
+                template.setDayOfWeek(currentDate.getDayOfWeek());
+                template.setEventsLeft(52);
+                return template;
+            }
+            return null;
+        });
+        return dialog;
     }
 
     public void startReschedule(Event event) {

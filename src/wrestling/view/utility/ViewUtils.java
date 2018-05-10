@@ -18,6 +18,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,6 +34,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javax.imageio.ImageIO;
 import org.apache.logging.log4j.Level;
@@ -41,6 +43,7 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.WorkerAgeComparator;
 import wrestling.view.utility.comparators.WorkerBehaviourComparator;
 import wrestling.view.utility.comparators.WorkerCharismaComparator;
@@ -193,6 +196,34 @@ public final class ViewUtils {
         AnchorPane.setRightAnchor(child, 0.0);
         AnchorPane.setLeftAnchor(child, 0.0);
         AnchorPane.setBottomAnchor(child, 0.0);
+    }
+
+    public static RegionWrapper addComboBoxWrapperToVBox(ObservableList items, String text, VBox vBox) {
+        ComboBox comboBox = new ComboBox();
+        comboBox.setItems(items);
+        return addRegionWrapperToVBox(comboBox, text, vBox);
+    }
+
+    public static RegionWrapper addRegionWrapperToVBox(Region region, String text, VBox vBox) {
+
+        Label label = new Label(text);
+        label.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setConstraints(label, 0, 0);
+        GridPane.setMargin(label, new Insets(5));
+
+        region.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setConstraints(region, 1, 0);
+        GridPane.setColumnSpan(region, 2);
+        GridPane.setMargin(region, new Insets(5));
+
+        GridPane gridPane = ViewUtils.gridPaneWithColumns(3);
+        gridPane.getChildren().addAll(label, region);
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+
+        vBox.getChildren().add(gridPane);
+        VBox.setMargin(gridPane, new Insets(5));
+
+        return new RegionWrapper(gridPane, region);
     }
 
     public static void initListCellForWorkerDragAndDrop(ListCell listCell, Worker worker, boolean empty) {

@@ -1,6 +1,7 @@
 package wrestling.model.factory;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
+import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
 
 /**
@@ -86,10 +88,30 @@ public class EventFactory {
         promotionController.updateEventTemplate(eventView);
     }
 
-    public Event createFutureEvent(Promotion promotion, LocalDate date) {
-        Event event = new Event(promotion, date);
-        eventManager.addEvent(event);
-        return event;
+    public void createMonthlyEvents(Promotion promotion) {
+
+        Month month = Month.JANUARY;
+        for (int i = 0; i < 12; i++) {
+
+            EventTemplate template = new EventTemplate();
+            template.setPromotion(promotion);
+            template.setMonth(month);
+            template.setName(promotion.getShortName() + " "
+                    + month.toString().substring(0, 1).toUpperCase()
+                    + month.toString().toLowerCase().substring(1)
+                    + " Event");
+            month = month.plus(1);
+            if (promotion.getLevel() > 4) {
+                template.setEventVenueSize(EventVenueSize.LARGE);
+            } else if (promotion.getLevel() <= 4
+                    && promotion.getLevel() >= 3) {
+                template.setEventVenueSize(EventVenueSize.MEDIUM);
+            } else {
+                template.setEventVenueSize(EventVenueSize.SMALL);
+            }
+            eventManager.addEventTemplate(template);
+
+        }
     }
 
     private void setEventStats(Event event, List<Segment> segments) {
