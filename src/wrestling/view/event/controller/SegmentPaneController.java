@@ -99,7 +99,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         segmentLength = MatchLength.FIFTEEN;
         segmentLengthWrapper = new ButtonWrapper(FXCollections.observableArrayList(MatchLength.values()), 3);
-        ViewUtils.anchorPaneToParent(segmentLengthAnchor, segmentLengthWrapper.getGridPane());
+        ViewUtils.anchorRegionToParent(segmentLengthAnchor, segmentLengthWrapper.getGridPane());
         for (Button button : segmentLengthWrapper.getButtons()) {
             button.setOnAction(e -> {
                 segmentLength = ((iSegmentLength) segmentLengthWrapper.updateSelected(button));
@@ -186,7 +186,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void setOptionsPane(Pane pane) {
         optionsPane.getChildren().clear();
-        ViewUtils.anchorPaneToParent(optionsPane, pane);
+        ViewUtils.anchorRegionToParent(optionsPane, pane);
     }
 
     //removes a worker from any teams he might be on

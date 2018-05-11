@@ -25,6 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.Screen;
@@ -266,6 +267,18 @@ public class BrowserController extends ControllerBase implements Initializable {
             logger.log(Level.ERROR, "Error initializing broswerController", ex);
         }
 
+    }
+
+    @Override
+    public void setCurrent(Object obj) {
+        if (obj instanceof EventTemplate) {
+            EventTemplate template = (EventTemplate) obj;
+            setCurrentPromotion(template.getPromotion());
+            currentBrowseMode = BrowseMode.EVENTS;
+            ViewUtils.updateSelectedButton(eventsButton, browseButtons);
+            browse();
+            mainListView.getSelectionModel().select(obj);
+        }
     }
 
 }

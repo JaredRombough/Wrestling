@@ -76,7 +76,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.getChildren().add(text);
-        ViewUtils.anchorPaneToParent(anchorPane, vbox);
+        ViewUtils.anchorRegionToParent(anchorPane, vbox);
         anchorPane.getStyleClass().clear();
         anchorPane.getStyleClass().add("resultsCardText");
         anchorPane.setMaxWidth(text.getBoundsInParent().getWidth());

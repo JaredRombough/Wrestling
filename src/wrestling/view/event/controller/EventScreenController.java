@@ -374,7 +374,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                     if (newValue != null && newValue.intValue() != oldValue.intValue() && newValue.intValue() >= 0) {
                         segmentPaneHolder.getChildren().clear();
-                        ViewUtils.anchorPaneToParent(segmentPaneHolder, segmentPanes.get(newValue.intValue()));
+                        ViewUtils.anchorRegionToParent(segmentPaneHolder, segmentPanes.get(newValue.intValue()));
                         updateLabels();
                     }
                 });

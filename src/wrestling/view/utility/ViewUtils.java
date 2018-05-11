@@ -123,7 +123,7 @@ public final class ViewUtils {
 
     public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController, AnchorPane parent) {
         Screen screen = loadScreenFromResource(code, mainApp, gameController);
-        anchorPaneToParent(parent, screen.pane);
+        anchorRegionToParent(parent, screen.pane);
         return screen;
     }
 
@@ -188,7 +188,7 @@ public final class ViewUtils {
         return result.get() == ButtonType.OK;
     }
 
-    public static void anchorPaneToParent(AnchorPane parent, Pane child) {
+    public static void anchorRegionToParent(AnchorPane parent, Region child) {
 
         parent.getChildren().add(child);
 

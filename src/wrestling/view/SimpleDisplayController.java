@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
@@ -26,6 +27,9 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @FXML
     private Text displayTitle;
+    
+    @FXML
+    private Button actionButton;
 
     private String defaultTitle;
 
@@ -72,6 +76,14 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultTitle = "";
+        getActionButton().setVisible(false);
+    }
+
+    /**
+     * @return the actionButton
+     */
+    public Button getActionButton() {
+        return actionButton;
     }
 
 }
