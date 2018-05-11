@@ -115,7 +115,7 @@ public class CalendarController extends ControllerBase implements Initializable 
         SimpleDisplayController simpleDisplayController = (SimpleDisplayController) simpleDisplayScreen.controller;
         simpleDisplayController.setDefaultTitle("No event selected");
         Button viewTemplateButton = simpleDisplayController.getActionButton();
-        viewTemplateButton.setText("View Event");
+        viewTemplateButton.setText("View Event Series");
         viewTemplateButton.setVisible(true);
         viewTemplateButton.setOnAction(e -> {
             System.out.println(currentEvent.toString());
@@ -198,10 +198,7 @@ public class CalendarController extends ControllerBase implements Initializable 
     private void clicked(CalendarNode calendarNode) {
         selectedDate = checkCurrentMonth(calendarNode.getDate()).getDate();
 
-        if (!listView.getItems().isEmpty()) {
-            listView.getItems().clear();
-        }
-        listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selectedDate)));
+        listView.setItems(FXCollections.observableArrayList(gameController.getEventManager().getEventsOnDate(selectedDate)).sorted());
 
         if (!listView.getItems().isEmpty()) {
             listView.getSelectionModel().selectFirst();
