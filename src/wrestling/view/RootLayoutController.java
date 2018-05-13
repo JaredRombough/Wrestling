@@ -2,7 +2,6 @@ package wrestling.view;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +38,6 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     private Button newsButton;
 
     private final String SELECTED_BUTTON = "selectedButton";
-    private final String SHOW_TODAY = "bookShowButtonShowToday";
-    private final String SHOW_TODAY_SELECTED = "bookShowButtonShowTodaySelected";
 
     private EventButtonState eventButtonState;
     private List<Button> buttons;

@@ -90,9 +90,17 @@ public class EventManager {
 
     private void updateFirstAndLastEvents(EventTemplate template) {
         if (template != null) {
-            template.setNextDate(getNextEvent(template,
-                    dateManager.today()).getDate());
-            template.setBookedUntil(getLastEvent(template).getDate());
+            Event event = getNextEvent(template,
+                    dateManager.today());
+            if (event != null) {
+                template.setNextDate(getNextEvent(template,
+                        dateManager.today()).getDate());
+                template.setBookedUntil(getLastEvent(template).getDate());
+            } else {
+                template.setNextDate(LocalDate.MIN);
+                template.setBookedUntil(LocalDate.MIN);
+            }
+
         }
     }
 
