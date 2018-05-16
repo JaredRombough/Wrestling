@@ -11,16 +11,23 @@ public class ButtonWrapper {
 
     private int selectedIndex;
     private int insets = 5;
+    private int rows;
     private ObservableList items;
     private List<Button> buttons;
     private GridPane gridPane;
 
     public ButtonWrapper(ObservableList items) {
-        this(items, 5);
+        this(items, 5, 1);
     }
 
     public ButtonWrapper(ObservableList items, int insets) {
+        this(items, insets, 1);
+
+    }
+
+    public ButtonWrapper(ObservableList items, int insets, int rows) {
         this.insets = insets;
+        this.rows = rows;
         setItems(items);
 
         gridPane.setMaxWidth(Double.MAX_VALUE);
@@ -89,19 +96,32 @@ public class ButtonWrapper {
         this.items = items;
 
         if (gridPane == null) {
-            gridPane = ViewUtils.gridPaneWithColumns(items.size());
+            if (rows == 1) {
+                gridPane = ViewUtils.gridPaneWithColumns(items.size());
+            } else {
+                gridPane = ViewUtils.gridPaneWithDimensions(items.size() / rows, rows);
+            }
+
         } else {
             gridPane.getChildren().clear();
         }
+
+        int row = 0;
+        int col = 0;
 
         for (int i = 0; i < items.size(); i++) {
             Button button = buttons.get(i);
             button.setText(items.get(i).toString());
             ViewUtils.inititializeRegion(button);
-            GridPane.setConstraints(button, i, 0);
+            GridPane.setConstraints(button, col, row);
             GridPane.setMargin(button, new Insets(insets));
             gridPane.getChildren().addAll(button);
             buttons.add(button);
+            col++;
+            if (col >= items.size() / rows) {
+                col = 0;
+                row++;
+            }
         }
     }
 

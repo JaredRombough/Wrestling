@@ -77,6 +77,23 @@ public final class ViewUtils {
         }
         return gridPane;
     }
+    
+    public static GridPane gridPaneWithDimensions(int columns, int rows) {
+        GridPane gridPane = new GridPane();
+        for (int i = 0; i < columns; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100);
+            gridPane.getColumnConstraints().add(colConst);
+        }
+        
+        for (int i = 0; i < rows; i++) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setPercentHeight(100);
+            gridPane.getRowConstraints().add(rowConst);
+        }
+        gridPane.setGridLinesVisible(true);
+        return gridPane;
+    }
 
     public static void inititializeRegion(Region region) {
         region.setMinWidth(Control.USE_COMPUTED_SIZE);
