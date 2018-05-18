@@ -13,11 +13,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
+import wrestling.model.interfaces.iBrowseMode;
+import wrestling.model.segmentEnum.BookingBrowseMode;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -44,19 +48,27 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private Gender genderFilter;
 
+    private boolean bookingBrowseMode;
+
+    private ComboBox<iBrowseMode> bookingBrowseComboBox;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         reverseButton.setText("▼");
         buttonWrappers = new ArrayList<>();
         genderFilter = Gender.ALL;
-
+        bookingBrowseMode = false;
+        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BookingBrowseMode.values()));
+        bookingBrowseComboBox.getSelectionModel().selectFirst();
+        bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(bookingBrowseComboBox, new Insets(0, 5, 10, 5));
     }
 
     private List<Enum> getActiveFilters() {
         return Arrays.asList(genderFilter);
     }
 
-    private void addButtonWrapper(BrowseMode browseMode) {
+    private void addButtonWrapper(iBrowseMode browseMode) {
         for (EnumSet set : browseMode.getSortFilters()) {
 
             ButtonWrapper wrapper = new ButtonWrapper(FXCollections.observableArrayList(
@@ -112,11 +124,19 @@ public class SortControlController extends ControllerBase implements Initializab
         }
     }
 
-    private void setCurrentBrowseMode(BrowseMode browseMode) {
+    private void setCurrentBrowseMode(iBrowseMode browseMode) {
         vBox.getChildren().retainAll(gridPane);
         buttonWrappers.clear();
         setComparators(browseMode.comparators());
         addButtonWrapper(browseMode);
+        if (bookingBrowseMode) {
+            addBookingBrowseComboBox();
+        }
+
+    }
+
+    private void addBookingBrowseComboBox() {
+        vBox.getChildren().add(0, bookingBrowseComboBox);
     }
 
     private void setCurrentComparator(Comparator comparator) {
@@ -167,6 +187,16 @@ public class SortControlController extends ControllerBase implements Initializab
             }
         }
         return false;
+    }
+
+    /**
+     * @param bookingBrowseMode the bookingBrowseMode to set
+     */
+    public void setBookingBrowseMode(boolean bookingBrowseMode) {
+        this.bookingBrowseMode = bookingBrowseMode;
+        if (bookingBrowseMode) {
+            addBookingBrowseComboBox();
+        }
     }
 
 }

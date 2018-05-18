@@ -393,6 +393,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         sortControl.controller.setCurrent(BrowseMode.WORKERS);
 
         ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
+        ((SortControlController) sortControl.controller).setBookingBrowseMode(true);
 
         //here we set a blank event
         initializeSegmentListView();
