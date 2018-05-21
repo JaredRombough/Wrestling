@@ -3,7 +3,7 @@ package wrestling.model;
 import java.io.Serializable;
 import wrestling.model.segmentEnum.Gender;
 
-public class Worker implements Serializable {
+public class Worker implements Serializable, SegmentItem {
 
     private static int workerID = 0;
 
@@ -25,7 +25,7 @@ public class Worker implements Serializable {
     private int behaviour;
     private int popularity;
     private int age;
-    
+
     private Gender gender;
 
     private boolean manager;

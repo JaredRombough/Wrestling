@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import wrestling.model.Promotion;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
 
@@ -62,7 +63,7 @@ public final class ModelUtils {
                 : list.get(0);
     }
 
-    public static String slashShortNames(List<Worker> workers) {
+    public static String slashShortNames(List<? extends SegmentItem> workers) {
         if (workers.isEmpty()) {
             return "?";
         }
@@ -114,6 +115,17 @@ public final class ModelUtils {
         int denominator = (attributes.length * (attributes.length + 1)) / 2;
 
         return totalScore / denominator;
+    }
+
+    public static List<Worker> getWorkersFromSegmentItems(List<SegmentItem> segmentItems) {
+        List<Worker> workers = new ArrayList<>();
+
+        segmentItems.forEach((item) -> {
+            if (item instanceof Worker) {
+                workers.add((Worker) item);
+            }
+        });
+        return workers;
     }
 
 }

@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
@@ -32,6 +33,7 @@ import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -192,19 +194,19 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     //removes a worker from any teams he might be on
     //called from a teamPaneController when adding a worker
     //from another team to avoid duplicates
-    public void removeWorker(Worker worker) {
+    public void removeWorker(SegmentItem worker) {
         for (Screen screen : wrapperScreens) {
-            ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeWorker(worker);
+            ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeSegmentItem(worker);
         }
 
     }
 
     public List<Worker> getWorkers() {
-        List<Worker> workers = new ArrayList<>();
+        List<SegmentItem> segmentItems = new ArrayList<>();
         for (Screen screen : wrapperScreens) {
-            workers.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getWorkers());
+            segmentItems.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getSegmentItems());
         }
-        return workers;
+        return ModelUtils.getWorkersFromSegmentItems(segmentItems);
     }
 
     private Screen addTeam(TeamType teamType) {
@@ -358,10 +360,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     public void swapTeams(int indexA, int indexB) {
-        List<Worker> teamA = getTeamPaneController(indexA).getWorkers();
-        List<Worker> teamB = getTeamPaneController(indexB).getWorkers();
-        getTeamPaneController(indexA).setWorkers(teamB);
-        getTeamPaneController(indexB).setWorkers(teamA);
+        List<SegmentItem> teamA = getTeamPaneController(indexA).getSegmentItems();
+        List<SegmentItem> teamB = getTeamPaneController(indexB).getSegmentItems();
+        getTeamPaneController(indexA).setSegmentItems(teamB);
+        getTeamPaneController(indexB).setSegmentItems(teamA);
 
         eventScreenController.updateLabels();
 

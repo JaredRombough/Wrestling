@@ -14,7 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import wrestling.model.Worker;
+import wrestling.model.SegmentItem;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -47,14 +47,13 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
-        //updateTeamNameLabel();
         updateLabels();
     }
 
-    public void removeWorker(Worker worker) {
+    public void removeSegmentItem(SegmentItem segmentItem) {
 
-        if (teamListView.getItems().contains(worker)) {
-            teamListView.getItems().remove(worker);
+        if (teamListView.getItems().contains(segmentItem)) {
+            teamListView.getItems().remove(segmentItem);
             updateLabels();
         }
     }
@@ -68,8 +67,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     }
 
     public void updateTeamNameLabel() {
-        if (!getWorkers().isEmpty()) {
-            teamNameLabel.setText(ModelUtils.slashShortNames(getWorkers()));
+        if (!getSegmentItems().isEmpty()) {
+            teamNameLabel.setText(ModelUtils.slashShortNames(getSegmentItems()));
         } else {
             teamNameLabel.setText("(Empty Team)");
         }
@@ -96,7 +95,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
             }
         };
 
-        setWorkerCellFactory(teamListView);
+        setSegmentItemCellFactory(teamListView);
 
         teamListView.setOnDragOver(dragOverHandler);
 
@@ -106,36 +105,35 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     }
 
-    public ObservableList<Worker> getItems() {
+    public ObservableList<SegmentItem> getItems() {
         return teamListView.getItems();
     }
 
     public void setDragDropHandler(SegmentPaneController segmentPaneController, EventScreenController eventScreenController) {
-        teamListView.setOnDragDropped(new WorkerDragDropHandler(segmentPaneController, eventScreenController, this));
+        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, eventScreenController, this));
     }
 
-    private void setWorkerCellFactory(ListView listView) {
-        listView.setCellFactory(lv -> new ListCell<Worker>() {
+    private void setSegmentItemCellFactory(ListView listView) {
+        listView.setCellFactory(lv -> new ListCell<SegmentItem>() {
 
             @Override
-            public void updateItem(final Worker worker, boolean empty) {
-                super.updateItem(worker, empty);
-                ViewUtils.initListCellForWorkerDragAndDrop(this, worker, empty);
+            public void updateItem(final SegmentItem segmentItem, boolean empty) {
+                super.updateItem(segmentItem, empty);
+                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
             }
 
         });
     }
 
-    public List<Worker> getWorkers() {
+    public List<SegmentItem> getSegmentItems() {
 
         return new ArrayList<>(teamListView.getItems());
 
     }
 
-    public void setWorkers(List<Worker> workers) {
+    public void setSegmentItems(List<SegmentItem> segmentItems) {
         teamListView.getItems().clear();
-        teamListView.getItems().addAll(workers);
-        //updateTeamNameLabel();
+        teamListView.getItems().addAll(segmentItems);
         updateLabels();
     }
 

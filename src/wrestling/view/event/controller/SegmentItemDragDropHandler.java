@@ -3,17 +3,17 @@ package wrestling.view.event.controller;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
-import wrestling.model.Worker;
+import wrestling.model.SegmentItem;
 import wrestling.view.utility.LocalDragboard;
 
-public class WorkerDragDropHandler implements EventHandler<DragEvent> {
+public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
 
-    private final ObservableList<Worker> itemList;
+    private final ObservableList<SegmentItem> itemList;
     private final SegmentPaneController segmentPaneController;
     private final EventScreenController eventScreenController;
     private final TeamPaneController teamPaneController;
 
-    public WorkerDragDropHandler(
+    public SegmentItemDragDropHandler(
             SegmentPaneController segmentPaneController,
             EventScreenController eventScreenController,
             TeamPaneController teamPaneController) {
@@ -29,17 +29,16 @@ public class WorkerDragDropHandler implements EventHandler<DragEvent> {
     public void handle(DragEvent event) {
 
         LocalDragboard ldb = LocalDragboard.getINSTANCE();
-        if (ldb.hasType(Worker.class)) {
-            Worker worker = ldb.getValue(Worker.class);
+        if (ldb.hasInterface(SegmentItem.class)) {
+            SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
-            segmentPaneController.removeWorker(worker);
-            itemList.add(worker);
+            segmentPaneController.removeWorker(segmentItem);
+            itemList.add(segmentItem);
 
             teamPaneController.updateLabels();
             segmentPaneController.updateLabels();
             eventScreenController.updateLabels();
 
-            //Clear, otherwise we end up with the worker stuck on the dragboard?
             ldb.clearAll();
 
         }

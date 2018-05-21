@@ -506,7 +506,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 } else {
                     getStyleClass().remove("highStat");
                 }
-                ViewUtils.initListCellForWorkerDragAndDrop(this, worker, empty);
+                ViewUtils.initListCellForSegmentItemDragAndDrop(this, worker, empty);
 
             }
 

@@ -41,7 +41,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.Worker;
+import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
 import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.WorkerAgeComparator;
@@ -77,7 +77,7 @@ public final class ViewUtils {
         }
         return gridPane;
     }
-    
+
     public static GridPane gridPaneWithDimensions(int columns, int rows) {
         GridPane gridPane = new GridPane();
         for (int i = 0; i < columns; i++) {
@@ -85,7 +85,7 @@ public final class ViewUtils {
             colConst.setPercentWidth(100);
             gridPane.getColumnConstraints().add(colConst);
         }
-        
+
         for (int i = 0; i < rows; i++) {
             RowConstraints rowConst = new RowConstraints();
             rowConst.setPercentHeight(100);
@@ -243,19 +243,19 @@ public final class ViewUtils {
         return new RegionWrapper(gridPane, region);
     }
 
-    public static void initListCellForWorkerDragAndDrop(ListCell listCell, Worker worker, boolean empty) {
+    public static void initListCellForSegmentItemDragAndDrop(ListCell listCell, SegmentItem segmentItem, boolean empty) {
         if (empty) {
             listCell.setText(null);
             listCell.setGraphic(null);
             listCell.setOnDragDetected(null);
         } else {
-            listCell.setText(worker.toString());
+            listCell.setText(segmentItem.toString());
 
             listCell.setOnDragDetected((MouseEvent event) -> {
                 ClipboardContent cc = new ClipboardContent();
                 cc.putString(listCell.getItem().toString());
                 listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
-                LocalDragboard.getINSTANCE().putValue(Worker.class, worker);
+                LocalDragboard.getINSTANCE().putValue(SegmentItem.class, segmentItem);
                 event.consume();
             });
         }

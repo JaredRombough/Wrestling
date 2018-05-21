@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -23,6 +24,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
@@ -31,6 +33,7 @@ import wrestling.model.segmentEnum.ResponseType;
 import wrestling.model.segmentEnum.SuccessType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
@@ -285,7 +288,10 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public SegmentTeam getTeam() {
-        SegmentTeam segmentTeam = new SegmentTeam(getTeamPaneController().getWorkers(), teamType);
+        List<SegmentItem> segmentItems = getTeamPaneController().getSegmentItems();
+        List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(segmentItems);
+
+        SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
 
         segmentTeam.setTarget(targetComboBox != null
                 ? targetComboBox.getSelectionModel().getSelectedItem()

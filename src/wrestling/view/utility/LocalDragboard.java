@@ -1,23 +1,17 @@
-
 package wrestling.view.utility;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LocalDragboard {
-    
-    
-
 
     private static final LocalDragboard INSTANCE = new LocalDragboard();
-    
-    
-
 
     public static LocalDragboard getINSTANCE() {
         return INSTANCE;
     }
     private final Map<Class<?>, Object> contents;
+
     private LocalDragboard() {
         this.contents = new HashMap<>();
     }
@@ -32,6 +26,16 @@ public class LocalDragboard {
 
     public boolean hasType(Class<?> type) {
         return contents.keySet().contains(type);
+    }
+
+    public boolean hasInterface(Class interf) {
+        boolean hasInterface = false;
+        for (Object object : contents.values()) {
+            if (interf.isInstance(object)) {
+                hasInterface = true;
+            }
+        }
+        return hasInterface;
     }
 
     public void clear(Class<?> type) {
