@@ -32,8 +32,10 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
         if (ldb.hasInterface(SegmentItem.class)) {
             SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
-            segmentPaneController.removeWorker(segmentItem);
-            itemList.add(segmentItem);
+            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
+                segmentPaneController.removeWorker(subItem);
+                itemList.add(subItem);
+            }
 
             teamPaneController.updateLabels();
             segmentPaneController.updateLabels();

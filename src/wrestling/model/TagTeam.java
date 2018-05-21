@@ -5,10 +5,9 @@ public class TagTeam {
     private String name;
     private int experience;
     private boolean active;
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 

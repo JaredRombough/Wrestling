@@ -6,16 +6,19 @@ import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;
+import wrestling.model.modelView.TagTeamView;
 
 public class TagTeamManager {
 
     private final List<TagTeam> tagTeams;
     private final List<TagTeamWorker> tagTeamWorkers;
     private final ContractManager contractManager;
+    private final List<TagTeamView> tagTeamViews;
 
     public TagTeamManager(ContractManager contractManager) {
         tagTeams = new ArrayList<>();
         tagTeamWorkers = new ArrayList<>();
+        tagTeamViews = new ArrayList<>();
         this.contractManager = contractManager;
     }
 
@@ -26,6 +29,15 @@ public class TagTeamManager {
             teams.add(tt);
         });
         return teams;
+    }
+
+    public List<TagTeamView> getTagTeamViews(Promotion promotion) {
+        List<TagTeamView> teamViews = new ArrayList<>();
+        tagTeamViews.stream().filter((tagTeamView) -> (contractManager.getFullRoster(promotion)
+                .containsAll(tagTeamView.getWorkers()))).forEach((tagTeamView) -> {
+            teamViews.add(tagTeamView);
+        });
+        return teamViews;
     }
 
     public List<Worker> getWorkers(TagTeam tagTeam) {
@@ -49,6 +61,12 @@ public class TagTeamManager {
     public void addTagTeams(List<TagTeam> tagTeams) {
         for (TagTeam team : tagTeams) {
             this.tagTeams.add(team);
+        }
+    }
+
+    public void addTagTeamViews(List<TagTeamView> tagTeamViews) {
+        for (TagTeamView team : tagTeamViews) {
+            this.tagTeamViews.add(team);
         }
     }
 

@@ -17,7 +17,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iBrowseMode;
@@ -50,7 +49,7 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private boolean bookingBrowseMode;
 
-    private ComboBox<iBrowseMode> bookingBrowseComboBox;
+    private ComboBox<BookingBrowseMode> bookingBrowseComboBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,9 +58,9 @@ public class SortControlController extends ControllerBase implements Initializab
         genderFilter = Gender.ALL;
         bookingBrowseMode = false;
         bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BookingBrowseMode.values()));
-        bookingBrowseComboBox.getSelectionModel().selectFirst();
-        bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(bookingBrowseComboBox, new Insets(0, 5, 10, 5));
+        getBookingBrowseComboBox().getSelectionModel().selectFirst();
+        getBookingBrowseComboBox().setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(getBookingBrowseComboBox(), new Insets(0, 5, 10, 5));
     }
 
     private List<Enum> getActiveFilters() {
@@ -136,7 +135,7 @@ public class SortControlController extends ControllerBase implements Initializab
     }
 
     private void addBookingBrowseComboBox() {
-        vBox.getChildren().add(0, bookingBrowseComboBox);
+        vBox.getChildren().add(0, getBookingBrowseComboBox());
     }
 
     private void setCurrentComparator(Comparator comparator) {
@@ -192,11 +191,18 @@ public class SortControlController extends ControllerBase implements Initializab
     /**
      * @param bookingBrowseMode the bookingBrowseMode to set
      */
-    public void setBookingBrowseMode(boolean bookingBrowseMode) {
+    public void setBookingBrowseModeEnabled(boolean bookingBrowseMode) {
         this.bookingBrowseMode = bookingBrowseMode;
         if (bookingBrowseMode) {
             addBookingBrowseComboBox();
         }
+    }
+
+    /**
+     * @return the bookingBrowseComboBox
+     */
+    public ComboBox<BookingBrowseMode> getBookingBrowseComboBox() {
+        return bookingBrowseComboBox;
     }
 
 }

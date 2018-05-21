@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import wrestling.model.Promotion;
 import wrestling.model.controller.GameController;
-import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -56,7 +55,7 @@ public enum BookingBrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getTagTeamManager().getTagTeams(promotion);
+            return gameController.getTagTeamManager().getTagTeamViews(promotion);
         }
 
         @Override

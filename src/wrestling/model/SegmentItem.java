@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface SegmentItem {
 
-    default List<SegmentItem> getSegmentItems() {
+    default List<? extends SegmentItem> getSegmentItems() {
         List<SegmentItem> items = new ArrayList<>();
         items.add(this);
         return items;

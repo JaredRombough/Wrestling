@@ -23,6 +23,7 @@ import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
@@ -51,6 +52,7 @@ public class Import {
     private final List<String> otherWorkerPromotions = new ArrayList<>();
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
+    private final List<TagTeamView> allTagTeamViews = new ArrayList<>();
 
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
 
@@ -89,6 +91,7 @@ public class Import {
             gameController.getEventManager().addEventTemplates(eventTemplates);
             gameController.getWorkerManager().addWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
+            gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -316,6 +319,7 @@ public class Import {
             if (counter == lineLength) {
 
                 TagTeam team = new TagTeam();
+                TagTeamView tagTeamView = new TagTeamView();
                 String id1 = currentHexLine.get(26) + currentHexLine.get(27);
                 String id2 = currentHexLine.get(28) + currentHexLine.get(29);
 
@@ -326,12 +330,15 @@ public class Import {
                             || workerIDs.get(x).equals(id2)) {
                         TagTeamWorker tagTeamWorker = new TagTeamWorker(team, allWorkers.get(x));
                         gameController.getTagTeamManager().addTagTeamWorker(tagTeamWorker);
+                        tagTeamView.addWorker(tagTeamWorker.getWorker());
                     }
                 }
                 team.setExperience(hexStringToInt(currentHexLine.get(55)));
-
                 team.setActive(currentHexLine.get(57).equals("FF"));
 
+                tagTeamView.setTagTeam(team);
+
+                allTagTeamViews.add(tagTeamView);
                 allTagTeams.add(team);
 
                 counter = 0;

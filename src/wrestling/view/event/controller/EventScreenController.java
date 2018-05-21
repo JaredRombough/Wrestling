@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,9 +35,12 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
+import wrestling.model.Promotion;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.BookingBrowseMode;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.ModelUtils;
@@ -391,9 +395,15 @@ public class EventScreenController extends ControllerBase implements Initializab
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
         sortControl.controller.setCurrent(BrowseMode.WORKERS);
-
-        ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.EVENT);
-        ((SortControlController) sortControl.controller).setBookingBrowseMode(true);
+        SortControlController sortControlController = (SortControlController) sortControl.controller;
+        sortControlController.setParentScreenCode(ScreenCode.EVENT);
+        sortControlController.setBookingBrowseModeEnabled(true);
+        sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BookingBrowseMode>() {
+            @Override
+            public void changed(ObservableValue<? extends BookingBrowseMode> observable, BookingBrowseMode oldValue, BookingBrowseMode newValue) {
+                workersListView.setItems(FXCollections.observableArrayList(newValue.listToBrowse(gameController, playerPromotion())));
+            }
+        });
 
         //here we set a blank event
         initializeSegmentListView();
@@ -464,7 +474,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                         playerPromotion());
     }
 
-    private boolean workerIsBookedOnShow(Worker worker) {
+    private boolean workerIsBookedOnShow(SegmentItem worker) {
         for (SegmentPaneController controller : getSegmentPaneControllers()) {
             if (controller.getWorkers().contains(worker)) {
                 return true;
@@ -486,7 +496,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         initializeSegmentListView();
 
-        setWorkerCellFactory(getWorkersListView());
+        setSegmentItemCellFactory(getWorkersListView());
 
         RefreshSkin skin = new RefreshSkin(getWorkersListView());
 
@@ -494,19 +504,19 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    private void setWorkerCellFactory(ListView listView) {
+    private void setSegmentItemCellFactory(ListView listView) {
 
-        listView.setCellFactory(lv -> new ListCell<Worker>() {
+        listView.setCellFactory(lv -> new ListCell<SegmentItem>() {
 
             @Override
-            public void updateItem(final Worker worker, boolean empty) {
-                super.updateItem(worker, empty);
-                if (workerIsBookedOnShow(worker)) {
+            public void updateItem(final SegmentItem segmentItem, boolean empty) {
+                super.updateItem(segmentItem, empty);
+                if (workerIsBookedOnShow(segmentItem)) {
                     getStyleClass().add("highStat");
                 } else {
                     getStyleClass().remove("highStat");
                 }
-                ViewUtils.initListCellForSegmentItemDragAndDrop(this, worker, empty);
+                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
 
             }
 
