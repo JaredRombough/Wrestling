@@ -33,7 +33,7 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
             SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                segmentPaneController.removeWorker(subItem);
+                segmentPaneController.removeSegmentItem(subItem);
                 itemList.add(subItem);
             }
 

@@ -70,7 +70,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Label totalCostLabel;
 
     @FXML
-    private ListView<Worker> workersListView;
+    private ListView<SegmentItem> listView;
 
     @FXML
     private AnchorPane segmentPaneHolder;
@@ -97,6 +97,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Event currentEvent;
 
     private int eventLength;
+
+    private BookingBrowseMode bookingBrowseMode;
 
     @Override
     public void setCurrent(Object obj) {
@@ -249,7 +251,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         }
 
-        updateWorkerListView();
+        updateListView();
 
         ((RefreshSkin) segmentListView.getSkin()).refresh();
 
@@ -401,7 +403,8 @@ public class EventScreenController extends ControllerBase implements Initializab
         sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BookingBrowseMode>() {
             @Override
             public void changed(ObservableValue<? extends BookingBrowseMode> observable, BookingBrowseMode oldValue, BookingBrowseMode newValue) {
-                workersListView.setItems(FXCollections.observableArrayList(newValue.listToBrowse(gameController, playerPromotion())));
+                bookingBrowseMode = newValue;
+                updateListView();
             }
         });
 
@@ -422,61 +425,65 @@ public class EventScreenController extends ControllerBase implements Initializab
         final EventHandler<DragEvent> dragOverHandler = (DragEvent dragEvent) -> {
             LocalDragboard ldb = LocalDragboard.getINSTANCE();
 
-            if (ldb.hasType(Worker.class
-            )) {
+            if (ldb.hasInterface(SegmentItem.class)) {
                 dragEvent.acceptTransferModes(TransferMode.MOVE);
             }
-
         };
 
-        workersListView.setOnDragOver(dragOverHandler);
+        listView.setOnDragOver(dragOverHandler);
 
         //do this last as it is dependent on currentSegment
-        updateWorkerListView();
+        updateListView();
 
         //add the special DragDropHandlder
-        getWorkersListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
+        getListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
     }
 
-    private void updateWorkerListView() {
-        List<Worker> workers = new ArrayList<>();
+    private void updateListView() {
+        List<SegmentItem> segmentItems = new ArrayList<>();
 
-        int previousIndex = workersListView.getSelectionModel().getSelectedIndex();
+        int previousIndex = listView.getSelectionModel().getSelectedIndex();
 
-        for (Worker worker : gameController.getContractManager().getFullRoster(playerPromotion())) {
-            if (workerIsAvailableForCurrentSegment(worker)) {
-                workers.add(worker);
+        for (SegmentItem segmentItem : bookingBrowseMode.listToBrowse(gameController, playerPromotion())) {
+            if (!segmentItemIsBookedForCurrentSegment(segmentItem)) {
+                segmentItems.add(segmentItem);
             }
         }
 
         Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
-        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(workers)), p
+        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), p
                 -> !((SortControlController) sortControl.controller).isFiltered(p));
 
-        workersListView.setItems(new SortedList<>(filteredList, comparator));
+        listView.setItems(new SortedList<>(filteredList, comparator));
 
         if (previousIndex > 0) {
-            workersListView.getSelectionModel().select(previousIndex);
+            listView.getSelectionModel().select(previousIndex);
         } else {
-            workersListView.getSelectionModel().selectFirst();
+            listView.getSelectionModel().selectFirst();
         }
 
-        ((RefreshSkin) getWorkersListView().getSkin()).refresh();
+        ((RefreshSkin) getListView().getSkin()).refresh();
 
     }
 
-    private boolean workerIsAvailableForCurrentSegment(Worker worker) {
-        return currentSegment() != null && !currentSegment().getWorkers().contains(worker)
-                && gameController.getEventManager().isAvailable(
-                        worker,
-                        gameController.getDateManager().today(),
-                        playerPromotion());
+    private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
+        boolean isBooked = false;
+        if (currentSegment() != null && currentSegment().getWorkers().contains(segmentItem)) {
+            isBooked = true;
+        } else if (segmentItem instanceof Worker && !gameController.getEventManager().isAvailable(
+                (Worker) segmentItem,
+                gameController.getDateManager().today(),
+                playerPromotion())) {
+            isBooked = true;
+        }
+
+        return isBooked;
     }
 
-    private boolean workerIsBookedOnShow(SegmentItem worker) {
+    private boolean segmentItemIsBookedForCurrentShow(SegmentItem segmentItem) {
         for (SegmentPaneController controller : getSegmentPaneControllers()) {
-            if (controller.getWorkers().contains(worker)) {
+            if (controller.getWorkers().contains(segmentItem)) {
                 return true;
             }
         }
@@ -485,6 +492,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        bookingBrowseMode = BookingBrowseMode.WORKERS;
 
         eventLength = 0;
 
@@ -496,11 +505,11 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         initializeSegmentListView();
 
-        setSegmentItemCellFactory(getWorkersListView());
+        setSegmentItemCellFactory(getListView());
 
-        RefreshSkin skin = new RefreshSkin(getWorkersListView());
+        RefreshSkin skin = new RefreshSkin(getListView());
 
-        getWorkersListView().setSkin(skin);
+        getListView().setSkin(skin);
 
     }
 
@@ -511,7 +520,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             @Override
             public void updateItem(final SegmentItem segmentItem, boolean empty) {
                 super.updateItem(segmentItem, empty);
-                if (workerIsBookedOnShow(segmentItem)) {
+                if (segmentItemIsBookedForCurrentShow(segmentItem)) {
                     getStyleClass().add("highStat");
                 } else {
                     getStyleClass().remove("highStat");
@@ -527,8 +536,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     /**
      * @return the workersListView
      */
-    public ListView<Worker> getWorkersListView() {
-        return workersListView;
+    public ListView<SegmentItem> getListView() {
+        return listView;
     }
 
     /**

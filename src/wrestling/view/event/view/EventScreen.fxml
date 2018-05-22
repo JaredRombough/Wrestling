@@ -51,7 +51,7 @@
                </GridPane.margin>
                <children>
                   <AnchorPane fx:id="sortControlPane" />
-                  <ListView fx:id="workersListView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="listView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <Label fx:id="totalCostLabel" text="Total Cost" GridPane.columnIndex="3" GridPane.rowIndex="10" />

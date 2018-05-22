@@ -83,7 +83,7 @@ public enum BookingBrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getTitleManager().getTitles(promotion);
+            return gameController.getTitleManager().getTitleViews(promotion);
         }
 
         @Override

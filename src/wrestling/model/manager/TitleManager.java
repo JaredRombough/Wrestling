@@ -45,6 +45,17 @@ public class TitleManager {
         return promotionTitles;
     }
 
+    public List<TitleView> getTitleViews(Promotion promotion) {
+        List<TitleView> promotionTitleViews = new ArrayList();
+        for (TitleView titleView : titleViews) {
+            if (titleView.getTitle().getPromotion().equals(promotion)) {
+                promotionTitleViews.add(titleView);
+            }
+        }
+
+        return promotionTitleViews;
+    }
+
     public List<Worker> getCurrentChampionWorkers(Title title) {
         List<Worker> workers = new ArrayList<>();
         for (TitleWorker titleWorker : titleWorkers) {
@@ -149,8 +160,8 @@ public class TitleManager {
         TitleView titleView = getTitleView(title);
 
         for (TitleReign titleReign : titleView.getTitleReigns()) {
-                sb.append(titleReignString(titleReign));
-                sb.append("\n");
+            sb.append(titleReignString(titleReign));
+            sb.append("\n");
         }
 
         return sb.length() > 0 ? sb.toString() : "No title reigns on record";
@@ -170,5 +181,5 @@ public class TitleManager {
 
         return sb.toString();
     }
-    
+
 }

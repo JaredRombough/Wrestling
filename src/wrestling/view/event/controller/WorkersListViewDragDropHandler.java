@@ -2,6 +2,7 @@ package wrestling.view.event.controller;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.view.utility.LocalDragboard;
 
@@ -22,11 +23,11 @@ public class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
     public void handle(DragEvent event) {
 
         LocalDragboard ldb = LocalDragboard.getINSTANCE();
-        if (ldb.hasType(Worker.class)) {
-            Worker worker = ldb.getValue(Worker.class);
+        if (ldb.hasInterface(SegmentItem.class)) {
+            SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
-            if (!eventScreenController.getWorkersListView().getItems().contains(worker)) {
-                eventScreenController.currentSegmentPaneController().removeWorker(worker);
+            if (!eventScreenController.getListView().getItems().contains(segmentItem)) {
+                eventScreenController.currentSegmentPaneController().removeSegmentItem(segmentItem);
             }
 
             eventScreenController.updateLabels();
