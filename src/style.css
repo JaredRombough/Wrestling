@@ -212,10 +212,19 @@ GREY
 {
     -fx-text-fill: green;
 }
+.highStat.list-cell { 
+    -fx-text-fill: black;
+    -fx-background-color: lightgreen;
+}
 .midStat
 {
     -fx-text-fill: yellow;
 }
+.midStat.list-cell { 
+    -fx-text-fill: black;
+    -fx-background-color: lightyellow;
+}
+
 .lowStat
 {
     -fx-text-fill: red;

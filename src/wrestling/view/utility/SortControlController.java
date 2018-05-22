@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -58,8 +60,14 @@ public class SortControlController extends ControllerBase implements Initializab
         genderFilter = Gender.ALL;
         bookingBrowseMode = false;
         bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BookingBrowseMode.values()));
-        getBookingBrowseComboBox().getSelectionModel().selectFirst();
-        getBookingBrowseComboBox().setMaxWidth(Double.MAX_VALUE);
+        bookingBrowseComboBox.getSelectionModel().selectFirst();
+        bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
+        bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BookingBrowseMode>() {
+            @Override
+            public void changed(ObservableValue<? extends BookingBrowseMode> observable, BookingBrowseMode oldValue, BookingBrowseMode newValue) {
+                setComparators(newValue.comparators());
+            }
+        });
         VBox.setMargin(getBookingBrowseComboBox(), new Insets(0, 5, 10, 5));
     }
 

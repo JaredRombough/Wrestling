@@ -469,12 +469,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
         boolean isBooked = false;
-        if (currentSegment() != null && currentSegment().getWorkers().contains(segmentItem)) {
-            isBooked = true;
-        } else if (segmentItem instanceof Worker && !gameController.getEventManager().isAvailable(
-                (Worker) segmentItem,
-                gameController.getDateManager().today(),
-                playerPromotion())) {
+        if (currentSegment() != null &&
+                currentSegment().getWorkers().containsAll(segmentItem.getSegmentItems())) {
             isBooked = true;
         }
 
@@ -520,12 +516,25 @@ public class EventScreenController extends ControllerBase implements Initializab
             @Override
             public void updateItem(final SegmentItem segmentItem, boolean empty) {
                 super.updateItem(segmentItem, empty);
-                if (segmentItemIsBookedForCurrentShow(segmentItem)) {
-                    getStyleClass().add("highStat");
-                } else {
-                    getStyleClass().remove("highStat");
+                int booked = 0;
+                if (segmentItem != null) {
+                    for (SegmentItem subItem : segmentItem.getSegmentItems()) {
+                        if (segmentItemIsBookedForCurrentShow(subItem)) {
+                            booked++;
+                        }
+                    }
+
+                    if (segmentItem.getSegmentItems().size() == booked) {
+                        getStyleClass().add("highStat");
+                    } else if (booked != 0 && segmentItem.getSegmentItems().size() > booked) {
+                        getStyleClass().add("midStat");
+                    } else {
+                        getStyleClass().remove("highStat");
+                        getStyleClass().remove("midStat");
+                    }
+
+                    ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
                 }
-                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
 
             }
 

@@ -61,6 +61,18 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    TAG_TEAM_VIEW {
+
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/TagTeamView.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     BROWSER {
 
         @Override

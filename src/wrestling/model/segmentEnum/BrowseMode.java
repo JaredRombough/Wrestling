@@ -87,12 +87,12 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public ScreenCode subScreenCode() {
-            return ScreenCode.SIMPLE_DISPLAY;
+            return ScreenCode.TAG_TEAM_VIEW;
         }
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getTagTeamManager().getTagTeams(promotion);
+            return gameController.getTagTeamManager().getTagTeamViews(promotion);
         }
 
         @Override
