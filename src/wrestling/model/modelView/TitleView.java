@@ -35,4 +35,9 @@ public class TitleView implements SegmentItem {
         return titleReigns;
     }
 
+    @Override
+    public String toString() {
+        return title.toString();
+    }
+
 }
