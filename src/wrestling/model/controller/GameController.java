@@ -19,23 +19,20 @@ import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.segmentEnum.EventFrequency;
-import wrestling.model.segmentEnum.EventRecurrence;
-import wrestling.model.utility.ModelUtils;
 
 /**
  *
  * game controller handles game stuff
  */
 public final class GameController implements Serializable {
-    
+
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
     private final WorkerFactory workerFactory;
     private final MatchFactory matchFactory;
-    
+
     private final DateManager dateManager;
     private final ContractManager contractManager;
     private final EventManager eventManager;
@@ -44,33 +41,37 @@ public final class GameController implements Serializable {
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final SegmentManager segmentManager;
-    
+
     private final PromotionController promotionController;
-    
+
     private final int EVENT_MONTHS = 6;
-    
+
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 5));
-        
+
         titleManager = new TitleManager(dateManager);
-        
+
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
-        segmentManager = new SegmentManager(dateManager);
-        
+
         contractManager = new ContractManager(promotionManager);
+
+        tagTeamManager = new TagTeamManager(contractManager);
+
+        segmentManager = new SegmentManager(dateManager, tagTeamManager);
+
         eventManager = new EventManager(
                 contractManager,
                 dateManager,
                 segmentManager);
-        
+
         titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(segmentManager, dateManager);
-        tagTeamManager = new TagTeamManager(contractManager);
+
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
-        
+
         eventFactory = new EventFactory(
                 contractManager,
                 eventManager,
@@ -79,7 +80,7 @@ public final class GameController implements Serializable {
                 promotionManager,
                 titleManager,
                 workerManager);
-        
+
         promotionFactory = new PromotionFactory(
                 contractFactory,
                 workerFactory,
@@ -88,7 +89,7 @@ public final class GameController implements Serializable {
                 promotionManager,
                 workerManager,
                 eventManager);
-        
+
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
@@ -98,13 +99,13 @@ public final class GameController implements Serializable {
                 eventManager,
                 titleManager,
                 workerManager);
-        
+
         if (randomGame) {
             promotionFactory.preparePromotions();
         }
-        
+
     }
-    
+
     public void initializeGameData() {
         for (Promotion promotion : promotionManager.getPromotions()) {
             if (eventManager.getEventTemplates(promotion).isEmpty()) {
@@ -122,14 +123,14 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {
             getPromotionController().dailyUpdate(promotion);
-            
+
         }
-        
+
         bookEventTemplates();
-        
+
         dateManager.nextDay();
     }
-    
+
     public void bookEventTemplates() {
         for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
             promotionController.bookEventTemplate(eventTemplate);
@@ -240,5 +241,5 @@ public final class GameController implements Serializable {
     public SegmentManager getSegmentManager() {
         return segmentManager;
     }
-    
+
 }

@@ -10,18 +10,21 @@ import java.util.List;
 import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.MatchTitle;
+import wrestling.model.SegmentItem;
 import wrestling.model.SegmentWorker;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import static wrestling.model.utility.ModelUtils.slashShortNames;
 import wrestling.view.utility.ViewUtils;
 
 public class SegmentManager {
@@ -31,13 +34,15 @@ public class SegmentManager {
     private final List<MatchTitle> matchTitles;
     private final List<SegmentView> segmentViews;
     private final DateManager dateManager;
+    private final TagTeamManager tagTeamManager;
 
-    public SegmentManager(DateManager dateManager) {
+    public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager) {
         segments = new ArrayList<>();
         segmentWorkers = new ArrayList<>();
         matchTitles = new ArrayList<>();
         segmentViews = new ArrayList<>();
         this.dateManager = dateManager;
+        this.tagTeamManager = tagTeamManager;
     }
 
     public void addSegmentWorker(SegmentWorker segmentWorker) {
@@ -260,6 +265,29 @@ public class SegmentManager {
 
     }
 
+    public String generateTeamName(List<? extends SegmentItem> segmentItems) {
+        if (!segmentItems.isEmpty()) {
+            if (segmentItems.size() == 2) {
+                String tagTeam = getTagTeamName(segmentItems);
+                if (!tagTeam.isEmpty()) {
+                    return tagTeam;
+                }
+            }
+            return slashShortNames(segmentItems);
+        } else {
+            return "(Empty Team)";
+        }
+    }
+
+    public String getTagTeamName(List<? extends SegmentItem> segmentItems) {
+        for (TagTeamView tagTeamView : tagTeamManager.getTagTeamViews()) {
+            if (tagTeamView.getSegmentItems().containsAll(segmentItems)) {
+                return tagTeamView.getTagTeam().getName();
+            }
+        }
+        return String.format("");
+    }
+
     public String getMatchString(SegmentView segmentView) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
@@ -271,7 +299,7 @@ public class SegmentManager {
             for (int t = 0; t < teamsSize; t++) {
                 List<Worker> team = teams.get(t).getWorkers();
 
-                matchString += ModelUtils.slashShortNames(team);
+                matchString += generateTeamName(team);
 
                 if (t == 0 && !matchString.isEmpty()) {
                     matchString += " def. ";

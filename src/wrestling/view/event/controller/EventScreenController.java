@@ -35,12 +35,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
-import wrestling.model.Promotion;
 import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.segmentEnum.BookingBrowseMode;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.ModelUtils;
@@ -98,7 +96,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private int eventLength;
 
-    private BookingBrowseMode bookingBrowseMode;
+    private BrowseMode browseMode;
 
     @Override
     public void setCurrent(Object obj) {
@@ -400,10 +398,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         SortControlController sortControlController = (SortControlController) sortControl.controller;
         sortControlController.setParentScreenCode(ScreenCode.EVENT);
         sortControlController.setBookingBrowseModeEnabled(true);
-        sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BookingBrowseMode>() {
+        sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BrowseMode>() {
             @Override
-            public void changed(ObservableValue<? extends BookingBrowseMode> observable, BookingBrowseMode oldValue, BookingBrowseMode newValue) {
-                bookingBrowseMode = newValue;
+            public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
+                browseMode = newValue;
                 updateListView();
             }
         });
@@ -445,7 +443,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         int previousIndex = listView.getSelectionModel().getSelectedIndex();
 
-        for (SegmentItem segmentItem : bookingBrowseMode.listToBrowse(gameController, playerPromotion())) {
+        for (SegmentItem segmentItem : browseMode.listToBrowse(gameController, playerPromotion())) {
             if (!segmentItemIsBookedForCurrentSegment(segmentItem)) {
                 segmentItems.add(segmentItem);
             }
@@ -469,8 +467,8 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
         boolean isBooked = false;
-        if (currentSegment() != null &&
-                currentSegment().getWorkers().containsAll(segmentItem.getSegmentItems())) {
+        if (currentSegment() != null
+                && currentSegment().getWorkers().containsAll(segmentItem.getSegmentItems())) {
             isBooked = true;
         }
 
@@ -489,7 +487,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        bookingBrowseMode = BookingBrowseMode.WORKERS;
+        browseMode = BrowseMode.WORKERS;
 
         eventLength = 0;
 

@@ -22,7 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iBrowseMode;
-import wrestling.model.segmentEnum.BookingBrowseMode;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -51,7 +51,7 @@ public class SortControlController extends ControllerBase implements Initializab
 
     private boolean bookingBrowseMode;
 
-    private ComboBox<BookingBrowseMode> bookingBrowseComboBox;
+    private ComboBox<BrowseMode> bookingBrowseComboBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,12 +59,12 @@ public class SortControlController extends ControllerBase implements Initializab
         buttonWrappers = new ArrayList<>();
         genderFilter = Gender.ALL;
         bookingBrowseMode = false;
-        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BookingBrowseMode.values()));
+        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS));
         bookingBrowseComboBox.getSelectionModel().selectFirst();
         bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
-        bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BookingBrowseMode>() {
+        bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BrowseMode>() {
             @Override
-            public void changed(ObservableValue<? extends BookingBrowseMode> observable, BookingBrowseMode oldValue, BookingBrowseMode newValue) {
+            public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
                 setComparators(newValue.comparators());
             }
         });
@@ -185,12 +185,21 @@ public class SortControlController extends ControllerBase implements Initializab
         this.parentScreenCode = parentScreenCode;
     }
 
-    public boolean isFiltered(Object p) {
-        if (p instanceof Worker) {
-            Worker worker = (Worker) p;
+    public boolean isFiltered(Object object) {
+        if (object instanceof Worker) {
+            Worker worker = (Worker) object;
             if (!genderFilter.equals(Gender.ALL)
                     && !genderFilter.equals(worker.getGender())) {
                 return true;
+            }
+        } else if (object instanceof TagTeamView) {
+            TagTeamView tagTeamView = (TagTeamView) object;
+            if (!genderFilter.equals(Gender.ALL)) {
+                for (Worker worker : tagTeamView.getWorkers()) {
+                    if (!worker.getGender().equals(genderFilter)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -209,7 +218,7 @@ public class SortControlController extends ControllerBase implements Initializab
     /**
      * @return the bookingBrowseComboBox
      */
-    public ComboBox<BookingBrowseMode> getBookingBrowseComboBox() {
+    public ComboBox<BrowseMode> getBookingBrowseComboBox() {
         return bookingBrowseComboBox;
     }
 

@@ -47,7 +47,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
-        updateLabels();
+        
     }
 
     public void removeSegmentItem(SegmentItem segmentItem) {
@@ -63,15 +63,10 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
         updateTeamListViewHeight();
 
-        updateTeamNameLabel();
-    }
-
-    public void updateTeamNameLabel() {
-        if (!getSegmentItems().isEmpty()) {
-            teamNameLabel.setText(ModelUtils.slashShortNames(getSegmentItems()));
-        } else {
-            teamNameLabel.setText("(Empty Team)");
+        if (getSegmentItems() != null) {
+            teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
         }
+
     }
 
     private void updateTeamListViewHeight() {
@@ -102,6 +97,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         double height = CELL_HEIGHT;
         teamListView.setPrefHeight(height);
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
+        
+        updateLabels();
 
     }
 

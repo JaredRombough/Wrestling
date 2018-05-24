@@ -55,6 +55,11 @@ public enum BrowseMode implements iBrowseMode {
         public List<EnumSet> getSortFilters() {
             return Arrays.asList(EnumSet.allOf(Gender.class));
         }
+        
+        @Override
+        public String toString() {
+            return "Workers";
+        }
     },
     TITLES {
         @Override
@@ -97,7 +102,12 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
+            return Arrays.asList(EnumSet.allOf(Gender.class));
+        }
+        
+        @Override
+        public String toString() {
+            return "Tag Teams";
         }
     },
     EVENTS {
