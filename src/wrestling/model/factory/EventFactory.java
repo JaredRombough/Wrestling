@@ -1,8 +1,6 @@
 package wrestling.model.factory;
 
-import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
@@ -23,10 +21,7 @@ import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.segmentEnum.EventFrequency;
-import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.model.utility.ModelUtils;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class

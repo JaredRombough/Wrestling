@@ -8,7 +8,6 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
-import wrestling.model.utility.ModelUtils;
 
 public class ContractManager implements Serializable {
 

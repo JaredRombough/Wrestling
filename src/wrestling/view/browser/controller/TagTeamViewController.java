@@ -2,18 +2,11 @@ package wrestling.view.browser.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import wrestling.model.EventTemplate;
 import wrestling.model.modelView.TagTeamView;
-import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.model.utility.ModelUtils;
-import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.Screen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;

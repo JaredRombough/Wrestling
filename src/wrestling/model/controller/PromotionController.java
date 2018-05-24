@@ -2,7 +2,6 @@ package wrestling.model.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
-import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;

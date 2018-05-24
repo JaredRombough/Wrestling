@@ -3,7 +3,6 @@ package wrestling.model.manager;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Promotion;
-import wrestling.model.SegmentItem;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;

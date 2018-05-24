@@ -3,7 +3,6 @@ package wrestling.view.event.controller;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
 import wrestling.view.utility.LocalDragboard;
 
 /*

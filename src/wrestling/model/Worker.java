@@ -150,6 +150,7 @@ public class Worker implements Serializable, SegmentItem {
     /**
      * @return the shortName
      */
+    @Override
     public String getShortName() {
         return shortName;
     }
