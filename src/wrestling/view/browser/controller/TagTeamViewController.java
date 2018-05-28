@@ -20,25 +20,28 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TagTeamViewController extends ControllerBase implements Initializable {
-    
+
     private TagTeamView tagTeamView;
-    
+
     @FXML
     private AnchorPane imageAnchor1;
-    
+
     @FXML
     private AnchorPane imageAnchor2;
-    
+
     @FXML
     private AnchorPane activeTypeAnchorPane;
-    
+
     @FXML
     private AnchorPane nameAnchor;
-    
+
+    @FXML
+    private Label experienceLabel;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
-    
+
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof TagTeamView) {
@@ -46,11 +49,11 @@ public class TagTeamViewController extends ControllerBase implements Initializab
             updateLabels();
         }
     }
-    
+
     @Override
     public void updateLabels() {
         if (tagTeamView != null && tagTeamView.getWorkers().size() == 2) {
-            
+
             ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     gameController.getContractManager().getFullRoster(playerPromotion()).containsAll(tagTeamView.getWorkers()),
@@ -58,7 +61,7 @@ public class TagTeamViewController extends ControllerBase implements Initializab
                     tagTeamView.getTagTeam().getActiveType());
             nameAnchor.getChildren().clear();
             Screen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
-            
+
             EditLabel editLabel = (EditLabel) screen.controller;
             editLabel.setCurrent(tagTeamView.getTagTeam().getName());
             editLabel.getButton().setOnAction(e -> {
@@ -66,15 +69,18 @@ public class TagTeamViewController extends ControllerBase implements Initializab
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
             });
-            
+
             imageAnchor1.getChildren().clear();
             imageAnchor2.getChildren().clear();
             Screen card1 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor1);
             Screen card2 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor2);
             card1.controller.setCurrent(tagTeamView.getWorkers().get(0));
             card2.controller.setCurrent(tagTeamView.getWorkers().get(1));
+
+            experienceLabel.setText(Integer.toString(tagTeamView.getTagTeam().getExperience()));
+
         }
-        
+
     }
-    
+
 }
