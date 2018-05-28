@@ -11,7 +11,7 @@ import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
 
-public class EventTemplate implements iEventDate {
+public class EventTemplate implements iEventDate, SegmentItem {
 
     private Promotion promotion;
     private LocalDate nextDate;

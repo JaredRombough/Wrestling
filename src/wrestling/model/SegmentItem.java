@@ -2,6 +2,8 @@ package wrestling.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import wrestling.model.segmentEnum.ActiveType;
+import wrestling.model.segmentEnum.Gender;
 
 public interface SegmentItem {
 
@@ -13,5 +15,13 @@ public interface SegmentItem {
 
     default String getShortName() {
         return this.toString();
+    }
+
+    default Gender getGender() {
+        return Gender.ALL;
+    }
+
+    default ActiveType getActiveType() {
+        return ActiveType.ALL;
     }
 }

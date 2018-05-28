@@ -55,7 +55,7 @@ public enum BrowseMode implements iBrowseMode {
         public List<EnumSet> getSortFilters() {
             return Arrays.asList(EnumSet.allOf(Gender.class));
         }
-        
+
         @Override
         public String toString() {
             return "Workers";
@@ -102,9 +102,9 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List<EnumSet> getSortFilters() {
-            return Arrays.asList(EnumSet.allOf(Gender.class));
+            return Arrays.asList(EnumSet.allOf(Gender.class), EnumSet.allOf(ActiveType.class));
         }
-        
+
         @Override
         public String toString() {
             return "Tag Teams";

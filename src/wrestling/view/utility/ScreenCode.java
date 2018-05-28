@@ -85,6 +85,18 @@ public enum ScreenCode implements ScreenCodeInterface {
             return true;
         }
     },
+    EDIT_LABEL {
+
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/EditLabel.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return true;
+        }
+    },
     FINANCIAL {
 
         @Override

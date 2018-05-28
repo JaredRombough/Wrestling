@@ -1,10 +1,12 @@
 package wrestling.model;
 
+import wrestling.model.segmentEnum.ActiveType;
+
 public class TagTeam {
 
     private String name;
     private int experience;
-    private boolean active;
+    private ActiveType activeType;
 
     @Override
     public String toString() {
@@ -40,17 +42,24 @@ public class TagTeam {
     }
 
     /**
-     * @return the active
+     * @return the activeType
      */
-    public boolean isActive() {
-        return active;
+    public ActiveType isActive() {
+        return getActiveType();
     }
 
     /**
-     * @param active the active to set
+     * @param activeType the active to set
      */
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setActiveType(ActiveType activeType) {
+        this.activeType = activeType;
+    }
+
+    /**
+     * @return the activeType
+     */
+    public ActiveType getActiveType() {
+        return activeType;
     }
 
 }

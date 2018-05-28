@@ -20,9 +20,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -48,6 +50,7 @@ public class SortControlController extends ControllerBase implements Initializab
     private List<ButtonWrapper> buttonWrappers;
 
     private Gender genderFilter;
+    private ActiveType activeTypeFilter;
 
     private boolean bookingBrowseMode;
 
@@ -58,6 +61,7 @@ public class SortControlController extends ControllerBase implements Initializab
         reverseButton.setText("▼");
         buttonWrappers = new ArrayList<>();
         genderFilter = Gender.ALL;
+        activeTypeFilter = ActiveType.ALL;
         bookingBrowseMode = false;
         bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS));
         bookingBrowseComboBox.getSelectionModel().selectFirst();
@@ -72,7 +76,7 @@ public class SortControlController extends ControllerBase implements Initializab
     }
 
     private List<Enum> getActiveFilters() {
-        return Arrays.asList(genderFilter);
+        return Arrays.asList(genderFilter, activeTypeFilter);
     }
 
     private void addButtonWrapper(iBrowseMode browseMode) {
@@ -128,6 +132,8 @@ public class SortControlController extends ControllerBase implements Initializab
     private void setFilter(Object obj) {
         if (obj instanceof Gender) {
             genderFilter = (Gender) obj;
+        } else if (obj instanceof ActiveType) {
+            activeTypeFilter = (ActiveType) obj;
         }
     }
 
@@ -186,19 +192,28 @@ public class SortControlController extends ControllerBase implements Initializab
     }
 
     public boolean isFiltered(Object object) {
-        if (object instanceof Worker) {
-            Worker worker = (Worker) object;
-            if (!genderFilter.equals(Gender.ALL)
-                    && !genderFilter.equals(worker.getGender())) {
-                return true;
-            }
-        } else if (object instanceof TagTeamView) {
-            TagTeamView tagTeamView = (TagTeamView) object;
-            if (!genderFilter.equals(Gender.ALL)) {
-                for (Worker worker : tagTeamView.getWorkers()) {
-                    if (!worker.getGender().equals(genderFilter)) {
-                        return true;
-                    }
+        if (object instanceof SegmentItem) {
+            SegmentItem segmentItem = (SegmentItem) object;
+            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem);
+        }
+        return true;
+    }
+
+    private boolean isActiveFiltered(SegmentItem segmentItem) {
+        if (!activeTypeFilter.equals(ActiveType.ALL)
+                && segmentItem instanceof TagTeamView
+                && !activeTypeFilter.equals(((TagTeamView) segmentItem).getTagTeam().getActiveType())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isGenderFiltered(SegmentItem segmentItem) {
+        if (!genderFilter.equals(Gender.ALL)) {
+            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
+                if (subItem instanceof Worker
+                        && !((Worker) subItem).getGender().equals(genderFilter)) {
+                    return true;
                 }
             }
         }

@@ -24,6 +24,7 @@ import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
@@ -334,7 +335,8 @@ public class Import {
                     }
                 }
                 team.setExperience(hexStringToInt(currentHexLine.get(55)));
-                team.setActive(currentHexLine.get(57).equals("FF"));
+                team.setActiveType(currentHexLine.get(57).equals("FF")
+                        ? ActiveType.ACTIVE : ActiveType.INACTIVE);
 
                 tagTeamView.setTagTeam(team);
 
