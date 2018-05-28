@@ -20,6 +20,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -54,6 +55,23 @@ import wrestling.view.utility.comparators.WorkerWrestlingComparator;
 import wrestling.view.utility.comparators.WorkrateComparator;
 
 public final class ViewUtils {
+
+    public static void updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
+            Object[] objects, Object object) {
+        anchorPane.getChildren().clear();
+
+        if (isPlayerPromotion) {
+            ComboBox venueSizeComboBox = new ComboBox();
+            ViewUtils.anchorRegionToParent(anchorPane, venueSizeComboBox);
+            venueSizeComboBox.setItems(FXCollections.observableArrayList(objects));
+            venueSizeComboBox.getSelectionModel().select(object);
+        } else {
+            Label label = new Label(object.toString());
+            label.getStyleClass().add("workerStat");
+            ViewUtils.anchorRegionToParent(anchorPane, label);
+
+        }
+    }
 
     public static void lockGridPane(GridPane gridPane) {
         for (ColumnConstraints c : gridPane.getColumnConstraints()) {
@@ -204,6 +222,18 @@ public final class ViewUtils {
         return result.get() == ButtonType.OK;
     }
 
+    public static String editTextDialog(String string) {
+        TextInputDialog dialog = new TextInputDialog(string);
+        dialog.setHeaderText("Edit this value");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            return string;
+        }
+    }
+
     public static void anchorRegionToParent(AnchorPane parent, Region child) {
 
         parent.getChildren().add(child);
@@ -291,6 +321,14 @@ public final class ViewUtils {
         Button xButton = new Button();
         HBox.setMargin(xButton, new Insets(5));
         xButton.setText("X");
+        xButton.setFont(Font.font("Verdana", 10));
+        return xButton;
+    }
+
+    public static Button getSmallButton(String text) {
+        Button xButton = new Button();
+        HBox.setMargin(xButton, new Insets(5));
+        xButton.setText(text);
         xButton.setFont(Font.font("Verdana", 10));
         return xButton;
     }
