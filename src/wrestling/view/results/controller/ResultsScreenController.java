@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -33,7 +33,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private int currentSegmentViewIndex;
 
-    private Screen currentResultsDisplay;
+    private GameScreen currentResultsDisplay;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

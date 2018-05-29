@@ -17,6 +17,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -34,7 +35,7 @@ import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.calendar.controller.CalendarController;
 import wrestling.view.start.controller.TitleScreenController;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 
@@ -56,7 +57,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private GameController gameController;
-    private final List<Screen> screens;
+    private final List<GameScreen> screens;
 
     private File picsFolder;
     private File logosFolder;
@@ -68,7 +69,7 @@ public class MainApp extends Application {
 
     private final ResourceBundle resx;
 
-    private Screen currentScreen;
+    private GameScreen currentScreen;
 
     private double currentStageWidth;
     private double currentStageHeight;
@@ -92,10 +93,10 @@ public class MainApp extends Application {
     public void start(Stage stage) throws IOException {
 
         primaryStage = stage;
-        primaryStage.setTitle("Wrestling");
+        primaryStage.setTitle("Open Wrestling " + VERSION);
         primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
         primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
-        primaryStage.centerOnScreen();
+        
 
         ChangeListener<Number> stageHeightListener = ((observable, oldValue, newValue) -> {
             currentStageHeight = newValue.doubleValue();
@@ -196,7 +197,7 @@ public class MainApp extends Application {
     //shows initial title screen
     private void showTitleScreen() throws IOException {
 
-        Screen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
+        GameScreen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
 
         // Show the scene containing the root layout.
         Scene scene = new Scene(titleScreen.pane);
@@ -336,12 +337,12 @@ public class MainApp extends Application {
         getPrimaryStage().show();
     }
 
-    public Screen show(ScreenCode code) {
+    public GameScreen show(ScreenCode code) {
         if (currentScreen != null) {
             currentScreen.controller.focusLost();
         }
 
-        Screen screen = ViewUtils.getByCode(screens, code);
+        GameScreen screen = ViewUtils.getByCode(screens, code);
         currentScreen = screen;
 
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
@@ -359,7 +360,7 @@ public class MainApp extends Application {
     }
 
     public void show(ScreenCode code, Object obj) {
-        Screen screen = show(code);
+        GameScreen screen = show(code);
         screen.controller.setCurrent(obj);
     }
 
@@ -369,8 +370,9 @@ public class MainApp extends Application {
      */
     public void showStartGameScreen() throws IOException {
 
-        Screen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
+        GameScreen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
+        primaryStage.setMaximized(true);
     }
 
     /*
@@ -380,7 +382,7 @@ public class MainApp extends Application {
     in labels outside of their screens it can be handled here
      */
     private void updateLabels() {
-        for (Screen screen : screens) {
+        for (GameScreen screen : screens) {
             if (screen.code.alwaysUpdate()) {
                 updateLabels(screen.code);
             }
@@ -388,7 +390,7 @@ public class MainApp extends Application {
     }
 
     public void updateLabels(ScreenCode code) {
-        Screen screen = ViewUtils.getByCode(screens, code);
+        GameScreen screen = ViewUtils.getByCode(screens, code);
         if (screen != null) {
             screen.controller.updateLabels();
         }

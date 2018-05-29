@@ -22,7 +22,7 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.utility.ModelUtils;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -133,9 +133,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateMatch() {
         List<SegmentTeam> defaultTeams = segmentView.getMatchParticipantTeams();
         for (SegmentTeam team : defaultTeams) {
-            List<Screen> workerCards = new ArrayList<>();
+            List<GameScreen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
-                Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
             }
@@ -153,9 +153,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private void populateAngle() {
         List<SegmentTeam> teams = segmentView.getTeams();
         for (SegmentTeam team : teams) {
-            List<Screen> workerCards = new ArrayList<>();
+            List<GameScreen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
-                Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
             }
@@ -181,7 +181,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {
-        Screen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+        GameScreen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
         String text = matchIntersertialString(team);
         intersertial.controller.setCurrent(text);
         if (team.getWorkers().size() > maxColumns / 2) {
@@ -218,7 +218,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         return (int) Math.round(mainApp.getCurrentStageWidth() / cardWidth) - emptyColumnsPadding;
     }
 
-    private GridPane teamCard(List<Screen> workerCards, int maxColumns) {
+    private GridPane teamCard(List<GameScreen> workerCards, int maxColumns) {
 
         if (workerCards.isEmpty()) {
             return null;
@@ -227,7 +227,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         GridPane gridPane = new GridPane();
         int row = 0;
         int column = 0;
-        for (Screen card : workerCards) {
+        for (GameScreen card : workerCards) {
             gridPane.add(card.pane, column, row);
             column++;
             if (column > maxColumns) {

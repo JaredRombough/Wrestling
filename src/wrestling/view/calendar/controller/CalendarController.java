@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
 import wrestling.view.SimpleDisplayController;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -60,8 +60,8 @@ public class CalendarController extends ControllerBase implements Initializable 
     private LocalDate selectedDate;
     private YearMonth currentYearMonth;
 
-    private Screen simpleDisplayScreen;
-    private Screen bookShowScreen;
+    private GameScreen simpleDisplayScreen;
+    private GameScreen bookShowScreen;
     private BookShowController bookShowController;
 
     private final String SELECTED_CALENDAR_NODE = "selectedCalendarNode";

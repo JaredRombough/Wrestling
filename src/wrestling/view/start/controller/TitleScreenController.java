@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Level;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -73,7 +73,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
         importPopup.initModality(Modality.APPLICATION_MODAL);
         importPopup.setTitle("New Import Game");
 
-        Screen importDialog = ViewUtils.loadScreenFromResource(ScreenCode.IMPORT_DIALOG, mainApp, gameController);
+        GameScreen importDialog = ViewUtils.loadScreenFromResource(ScreenCode.IMPORT_DIALOG, mainApp, gameController);
 
         importDialog.controller.updateLabels();
         ((ImportDialogController) importDialog.controller).setStage(importPopup);

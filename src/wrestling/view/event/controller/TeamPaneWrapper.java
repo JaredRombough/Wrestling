@@ -34,7 +34,7 @@ import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ButtonWrapper;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -57,7 +57,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     @FXML
     private Label teamTypeLabel;
 
-    private Screen teamPane;
+    private GameScreen teamPane;
     private ObjectProperty<AnchorPane> draggingTab;
 
     private ResponseType responseType;

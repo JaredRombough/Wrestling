@@ -1,6 +1,7 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -57,10 +58,10 @@ public class TagTeamViewController extends ControllerBase implements Initializab
             ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     gameController.getContractManager().getFullRoster(playerPromotion()).containsAll(tagTeamView.getWorkers()),
-                    ActiveType.values(),
+                    Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     tagTeamView.getTagTeam().getActiveType());
             nameAnchor.getChildren().clear();
-            Screen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
 
             EditLabel editLabel = (EditLabel) screen.controller;
             editLabel.setCurrent(tagTeamView.getTagTeam().getName());
@@ -72,8 +73,8 @@ public class TagTeamViewController extends ControllerBase implements Initializab
 
             imageAnchor1.getChildren().clear();
             imageAnchor2.getChildren().clear();
-            Screen card1 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor1);
-            Screen card2 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor2);
+            GameScreen card1 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor1);
+            GameScreen card2 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor2);
             card1.controller.setCurrent(tagTeamView.getWorkers().get(0));
             card2.controller.setCurrent(tagTeamView.getWorkers().get(1));
 

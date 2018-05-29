@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.collections.FXCollections;
@@ -58,6 +59,11 @@ public final class ViewUtils {
 
     public static void updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
             Object[] objects, Object object) {
+        updatePlayerComboBox(anchorPane, isPlayerPromotion, Arrays.asList(objects), object);
+    }
+
+    public static void updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
+            List objects, Object object) {
         anchorPane.getChildren().clear();
 
         if (isPlayerPromotion) {
@@ -155,16 +161,16 @@ public final class ViewUtils {
         return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 
-    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController, AnchorPane parent) {
-        Screen screen = loadScreenFromResource(code, mainApp, gameController);
+    public static GameScreen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController, AnchorPane parent) {
+        GameScreen screen = loadScreenFromResource(code, mainApp, gameController);
         anchorRegionToParent(parent, screen.pane);
         return screen;
     }
 
-    public static Screen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {
+    public static GameScreen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {
         Logger logger = LogManager.getLogger("ViewUtils loadScreenFromResource()");
         FXMLLoader loader = new FXMLLoader();
-        Screen screen = new Screen();
+        GameScreen screen = new GameScreen();
         loader.setLocation(MainApp.class.getResource(code.resourcePath()));
         try {
             switch (code) {
@@ -186,8 +192,8 @@ public final class ViewUtils {
         return screen;
     }
 
-    public static Screen getByCode(List<Screen> screens, ScreenCode code) {
-        for (Screen screen : screens) {
+    public static GameScreen getByCode(List<GameScreen> screens, ScreenCode code) {
+        for (GameScreen screen : screens) {
             if (screen.code == code) {
                 return screen;
             }

@@ -35,7 +35,7 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ButtonWrapper;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -67,14 +67,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private List<Button> segmentTypeButtons;
 
-    private Screen angleOptionsScreen;
+    private GameScreen angleOptionsScreen;
     private AngleOptions angleOptions;
-    private Screen matchOptionsScreen;
+    private GameScreen matchOptionsScreen;
     private MatchOptions matchOptions;
     private ButtonWrapper segmentLengthWrapper;
     private iSegmentLength segmentLength;
 
-    private List<Screen> wrapperScreens;
+    private List<GameScreen> wrapperScreens;
 
     private EventScreenController eventScreenController;
 
@@ -170,13 +170,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         Button button = (Button) event.getSource();
 
         if (button == matchButton) {
-            for (Screen screen : wrapperScreens) {
+            for (GameScreen screen : wrapperScreens) {
                 ((TeamPaneWrapper) screen.controller).changeSegmentType();
                 setOptionsPane(matchOptionsScreen.pane);
             }
             setSegmentType(SegmentType.MATCH);
         } else if (button == angleButton) {
-            for (Screen screen : wrapperScreens) {
+            for (GameScreen screen : wrapperScreens) {
                 ((TeamPaneWrapper) screen.controller).changeSegmentType();
                 setOptionsPane(angleOptionsScreen.pane);
             }
@@ -195,7 +195,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     //called from a teamPaneController when adding a worker
     //from another team to avoid duplicates
     public void removeSegmentItem(SegmentItem segmentItem) {
-        for (Screen screen : wrapperScreens) {
+        for (GameScreen screen : wrapperScreens) {
             ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeSegmentItem(segmentItem);
         }
 
@@ -203,15 +203,15 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     public List<Worker> getWorkers() {
         List<SegmentItem> segmentItems = new ArrayList<>();
-        for (Screen screen : wrapperScreens) {
+        for (GameScreen screen : wrapperScreens) {
             segmentItems.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getSegmentItems());
         }
         return ModelUtils.getWorkersFromSegmentItems(segmentItems);
     }
 
-    private Screen addTeam(TeamType teamType) {
+    private GameScreen addTeam(TeamType teamType) {
 
-        Screen wrapperScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        GameScreen wrapperScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         TeamPaneWrapper wrapperController = ((TeamPaneWrapper) wrapperScreen.controller);
 
         if (teamType.equals(TeamType.INTERFERENCE)) {
@@ -284,7 +284,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return index >= minTeams || teamType.equals(TeamType.INTERFERENCE);
     }
 
-    private TeamType getTeamType(Screen wrapperScreen) {
+    private TeamType getTeamType(GameScreen wrapperScreen) {
         TeamPaneWrapper controller = ((TeamPaneWrapper) wrapperScreen.controller);
         if (controller.getTeamType().equals(TeamType.INTERFERENCE)) {
             return TeamType.INTERFERENCE;
@@ -307,7 +307,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return teamType;
     }
 
-    private OutcomeType getOutcomeType(Screen teamPaneWrapper) {
+    private OutcomeType getOutcomeType(GameScreen teamPaneWrapper) {
         OutcomeType outcomeType = null;
         if (matchOptions.getMatchFinish() != null && matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
             outcomeType = OutcomeType.DRAW;
@@ -324,13 +324,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return outcomeType;
     }
 
-    private boolean isInterference(Screen screen) {
+    private boolean isInterference(GameScreen screen) {
         return screen.controller instanceof TeamPaneWrapper
                 && ((TeamPaneWrapper) screen.controller).getTeamType() != null
                 && ((TeamPaneWrapper) screen.controller).getTeamType().equals(TeamType.INTERFERENCE);
     }
 
-    private void removeTeam(Screen teamPaneWrapper) {
+    private void removeTeam(GameScreen teamPaneWrapper) {
 
         if (teamsPane.getChildren().contains(teamPaneWrapper.pane)) {
             teamsPane.getChildren().remove(teamPaneWrapper.pane);
@@ -346,7 +346,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @Override
     public void updateLabels() {
 
-        for (Screen screen : wrapperScreens) {
+        for (GameScreen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             controller.setTargets(getOtherTeams(wrapperScreens.indexOf(screen)));
             controller.setTeamType(getTeamType(screen));
@@ -397,7 +397,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         List<SegmentTeam> teams = new ArrayList<>();
 
-        for (Screen screen : wrapperScreens) {
+        for (GameScreen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             teams.add(controller.getTeam());
         }
@@ -409,7 +409,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         List<SegmentTeam> teams = new ArrayList<>();
 
-        for (Screen screen : wrapperScreens) {
+        for (GameScreen screen : wrapperScreens) {
             SegmentTeam team = ((TeamPaneWrapper) screen.controller).getTeam();
             if (team != null && wrapperScreens.indexOf(screen) < notThisIndex) {
                 teams.add(team);

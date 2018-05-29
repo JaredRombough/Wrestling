@@ -28,7 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.segmentEnum.BrowseMode;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.ViewUtils;
@@ -83,9 +83,9 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     @FXML
     private AnchorPane mainDisplayPane;
-    private Screen displaySubScreen;
+    private GameScreen displaySubScreen;
 
-    private Screen sortControl;
+    private GameScreen sortControl;
 
     private Label categoryButton;
 

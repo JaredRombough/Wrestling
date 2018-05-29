@@ -16,7 +16,7 @@ import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.results.controller.ResultsCardController;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -70,11 +70,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private AnchorPane feedAnchor;
-    private Screen feedPaneScreen;
+    private GameScreen feedPaneScreen;
 
     @FXML
     private AnchorPane contractPaneAnchor;
-    private Screen contractPaneScreen;
+    private GameScreen contractPaneScreen;
 
     private Worker worker;
     private Promotion promotion;
@@ -123,7 +123,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             genderLabel.setText(worker.getGender().toString());
 
             imageAnchor.getChildren().clear();
-            Screen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(worker);
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
 

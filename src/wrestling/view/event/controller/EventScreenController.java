@@ -45,7 +45,7 @@ import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
-import wrestling.view.utility.Screen;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.ViewUtils;
@@ -90,7 +90,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
 
-    private Screen sortControl;
+    private GameScreen sortControl;
 
     private Event currentEvent;
 
