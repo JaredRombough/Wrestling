@@ -522,13 +522,13 @@ public class EventScreenController extends ControllerBase implements Initializab
                         }
                     }
 
+                    getStyleClass().remove("highStat");
+                    getStyleClass().remove("midStat");
+
                     if (segmentItem.getSegmentItems().size() == booked) {
                         getStyleClass().add("highStat");
                     } else if (booked != 0 && segmentItem.getSegmentItems().size() > booked) {
                         getStyleClass().add("midStat");
-                    } else {
-                        getStyleClass().remove("highStat");
-                        getStyleClass().remove("midStat");
                     }
 
                     ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
