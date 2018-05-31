@@ -409,8 +409,23 @@ public class PromotionController implements Serializable {
         eventFactory.processEventView(new EventView(event, bookSegments(promotion)), true, this);
     }
 
+    private LocalDate generateEventTemplateStartDate(EventTemplate eventTemplate) {
+        LocalDate date = dateManager.today();
+        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+            while (!date.getMonth().equals(eventTemplate.getMonth())) {
+                date = date.plusMonths(1);
+            }
+            date = date.with(TemporalAdjusters.dayOfWeekInMonth(
+                    ModelUtils.randRange(1, 4),
+                    eventTemplate.getDayOfWeek()));
+            eventTemplate.setNextDate(date);
+            bookNextEvent(eventTemplate, date);
+        }
+        return date;
+    }
+
     public LocalDate bookEventTemplate(EventTemplate eventTemplate) {
-        return bookEventTemplate(eventTemplate, dateManager.today());
+        return bookEventTemplate(eventTemplate, generateEventTemplateStartDate(eventTemplate));
     }
 
     public LocalDate bookEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
@@ -419,12 +434,6 @@ public class PromotionController implements Serializable {
             int timesToBook = eventTemplate.getEventsLeft();
 
             if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-                while (!startDate.getMonth().equals(eventTemplate.getMonth())) {
-                    startDate = startDate.plusMonths(1);
-                }
-                startDate = startDate.with(TemporalAdjusters.dayOfWeekInMonth(
-                        ModelUtils.randRange(1, 4),
-                        eventTemplate.getDayOfWeek()));
                 eventTemplate.setNextDate(startDate);
                 bookNextEvent(eventTemplate, startDate);
             } else {
