@@ -29,6 +29,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
+import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControlController;
 import wrestling.view.utility.ViewUtils;
@@ -140,6 +141,8 @@ public class BrowserController extends ControllerBase implements Initializable {
                 mainListView.getSelectionModel().selectFirst();
             }
         }
+
+        ((RefreshSkin) mainListView.getSkin()).refresh();
 
     }
 
@@ -258,6 +261,9 @@ public class BrowserController extends ControllerBase implements Initializable {
                     }
                 }
             });
+
+            RefreshSkin skin = new RefreshSkin(mainListView);
+            mainListView.setSkin(skin);
 
             promotionComboBox.setValue(playerPromotion());
 

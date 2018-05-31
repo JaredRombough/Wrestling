@@ -3,10 +3,13 @@ package wrestling.view.browser.controller;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -55,11 +58,17 @@ public class TagTeamViewController extends ControllerBase implements Initializab
     public void updateLabels() {
         if (tagTeamView != null && tagTeamView.getWorkers().size() == 2) {
 
-            ViewUtils.updatePlayerComboBox(
+            ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     gameController.getContractManager().getFullRoster(playerPromotion()).containsAll(tagTeamView.getWorkers()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     tagTeamView.getTagTeam().getActiveType());
+            comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {
+                @Override
+                public void changed(ObservableValue<? extends ActiveType> observable, ActiveType oldValue, ActiveType newValue) {
+                    tagTeamView.getTagTeam().setActiveType(newValue);
+                }
+            });
             nameAnchor.getChildren().clear();
             GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
 

@@ -57,26 +57,29 @@ import wrestling.view.utility.comparators.WorkrateComparator;
 
 public final class ViewUtils {
 
-    public static void updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
+    public static ComboBox updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
             Object[] objects, Object object) {
-        updatePlayerComboBox(anchorPane, isPlayerPromotion, Arrays.asList(objects), object);
+        return updatePlayerComboBox(anchorPane, isPlayerPromotion, Arrays.asList(objects), object);
     }
 
-    public static void updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
+    public static ComboBox updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
             List objects, Object object) {
         anchorPane.getChildren().clear();
 
+        ComboBox comboBox = new ComboBox();
         if (isPlayerPromotion) {
-            ComboBox venueSizeComboBox = new ComboBox();
-            ViewUtils.anchorRegionToParent(anchorPane, venueSizeComboBox);
-            venueSizeComboBox.setItems(FXCollections.observableArrayList(objects));
-            venueSizeComboBox.getSelectionModel().select(object);
+
+            ViewUtils.anchorRegionToParent(anchorPane, comboBox);
+            comboBox.setItems(FXCollections.observableArrayList(objects));
+            comboBox.getSelectionModel().select(object);
         } else {
             Label label = new Label(object.toString());
             label.getStyleClass().add("workerStat");
             ViewUtils.anchorRegionToParent(anchorPane, label);
 
         }
+
+        return comboBox;
     }
 
     public static void lockGridPane(GridPane gridPane) {
