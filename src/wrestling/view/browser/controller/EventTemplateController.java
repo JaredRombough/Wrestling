@@ -14,6 +14,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -23,7 +24,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
     private EventTemplate eventTemplate;
 
     @FXML
-    private Label nameLabel;
+    private AnchorPane nameAnchor;
 
     @FXML
     private Label nextEventLabel;
@@ -82,7 +83,17 @@ public class EventTemplateController extends ControllerBase implements Initializ
                 }
             });
 
-            nameLabel.setText(eventTemplate.toString());
+            nameAnchor.getChildren().clear();
+            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+
+            EditLabel editLabel = (EditLabel) screen.controller;
+            editLabel.setCurrent(eventTemplate.getName());
+            editLabel.getButton().setOnAction(e -> {
+                eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
+                updateLabels();
+                mainApp.updateLabels(ScreenCode.BROWSER);
+            });
+
             nextEventLabel.setText(ModelUtils.dateString(eventTemplate.getNextDate()));
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());

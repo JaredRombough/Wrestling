@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.browser.controller.EventTemplateController">
    <children>
@@ -29,11 +28,6 @@
             <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label fx:id="nameLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Duration" GridPane.columnSpan="2" GridPane.rowIndex="2" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Next Event" GridPane.columnSpan="2" GridPane.rowIndex="1" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Broadcast" GridPane.columnSpan="2" GridPane.rowIndex="4" />
@@ -56,6 +50,7 @@
                </GridPane.margin>
             </AnchorPane>
             <AnchorPane fx:id="buttonAnchor" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" />
+            <AnchorPane fx:id="nameAnchor" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" />
          </children>
       </GridPane>
    </children>
