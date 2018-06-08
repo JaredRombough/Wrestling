@@ -90,8 +90,10 @@ public class EventTemplateController extends ControllerBase implements Initializ
             editLabel.setCurrent(eventTemplate.getName());
             editLabel.getButton().setOnAction(e -> {
                 eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
+                gameController.getEventManager().updateEventName(eventTemplate);
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
+                mainApp.updateLabels(ScreenCode.ROOT);
             });
 
             nextEventLabel.setText(ModelUtils.dateString(eventTemplate.getNextDate()));
