@@ -11,6 +11,7 @@ import wrestling.model.Event;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.EventManager;
+import wrestling.model.modelView.TitleView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 
@@ -27,7 +28,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @FXML
     private Text displayTitle;
-    
+
     @FXML
     private Button actionButton;
 
@@ -56,8 +57,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         //call the appropriate method based on object type
         if (obj instanceof Event) {
             newText = eventManager.generateSummaryString((Event) obj);
-        } else if (obj instanceof Title) {
-            newText = gameController.getTitleManager().getTitleReignStrings((Title) obj);
+        } else if (obj instanceof TitleView) {
+            newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
         } else if (obj instanceof Worker) {
             newText = gameController.getSegmentManager().getMatchStringForMonths((Worker) obj, 3);
         } else {
