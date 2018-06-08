@@ -3,6 +3,8 @@ package wrestling.model.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
 import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.factory.ContractFactory;
@@ -19,6 +21,7 @@ import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.segmentEnum.EventFrequency;
 
 /**
  *
@@ -111,10 +114,8 @@ public final class GameController implements Serializable {
             if (eventManager.getEventTemplates(promotion).isEmpty()) {
                 eventFactory.createMonthlyEvents(promotion);
             }
-            for (EventTemplate template : eventManager.getEventTemplates(promotion)) {
-                promotionController.bookEventTemplate(template);
-            }
         }
+        initialBookEventTemplates(getDateManager().today());
     }
 
     //only called by MainApp
@@ -126,14 +127,34 @@ public final class GameController implements Serializable {
 
         }
 
-        bookEventTemplates();
+        if (dateManager.today().getDayOfMonth() == 1) {
+            bookEventTemplatesFuture(dateManager.today().minusMonths(1).getMonth());
+        }
 
         dateManager.nextDay();
     }
 
-    public void bookEventTemplates() {
-        for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
-            promotionController.bookEventTemplate(eventTemplate);
+    public void bookEventTemplatesFuture(Month month) {
+        YearMonth thisMonthNextYear = YearMonth.of(dateManager.today().plusYears(1).getYear(), month);
+        for (EventTemplate eventTemplate : eventManager.getActiveEventTemplatesFuture(thisMonthNextYear)) {
+            if (eventTemplate.getMonth().equals(month)) {
+                promotionController.bookEventTemplate(eventTemplate,
+                        thisMonthNextYear);
+            }
+
+        }
+    }
+
+    public void initialBookEventTemplates(LocalDate startDate) {
+        YearMonth yearMonth = YearMonth.of(startDate.getYear(), startDate.getMonth());
+        for (int i = 0; i < 12; i++) {
+            for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
+                if (eventTemplate.getMonth().equals(yearMonth.getMonth())
+                        || eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
+                    promotionController.bookEventTemplate(eventTemplate, yearMonth);
+                }
+            }
+            yearMonth = yearMonth.plusMonths(1);
         }
     }
 

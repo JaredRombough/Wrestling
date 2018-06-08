@@ -2,6 +2,10 @@ package wrestling.model.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Month;
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -428,6 +432,36 @@ public class PromotionController implements Serializable {
         return bookEventTemplate(eventTemplate, generateEventTemplateStartDate(eventTemplate));
     }
 
+    public LocalDate bookEventTemplate(EventTemplate eventTemplate, YearMonth yearMonth) {
+
+        LocalDate startDate = LocalDate.of(yearMonth.getYear(),
+                yearMonth.getMonth(),
+                1);
+        startDate = startDate.with(firstInMonth(eventTemplate.getDayOfWeek()));
+        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+            startDate = startDate.plusWeeks(ModelUtils.randRange(0, 4));
+            eventTemplate.setNextDate(startDate);
+            bookNextEvent(eventTemplate, startDate);
+            eventTemplate.setBookedUntil(startDate);
+        } else {
+            eventTemplate.setNextDate(startDate);
+            LocalDate weeklyDate = startDate;
+            int eventsToBook = eventManager.getEventsLeftFuture(eventTemplate, yearMonth);
+            int booked = 0;
+            for (int i = 0; i < startDate.lengthOfMonth(); i++) {
+                if (booked >= eventsToBook || !weeklyDate.getMonth().equals(yearMonth.getMonth())) {
+                    break;
+                }
+                bookNextEvent(eventTemplate, weeklyDate);
+                weeklyDate = weeklyDate.plusWeeks(1);
+                booked++;
+            }
+            eventTemplate.setBookedUntil(weeklyDate);
+        }
+
+        return startDate;
+    }
+
     public LocalDate bookEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
 
         if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
@@ -454,14 +488,8 @@ public class PromotionController implements Serializable {
     }
 
     public void updateEventTemplate(EventView eventView) {
-        EventTemplate eventTemplate = null;
-        for (EventTemplate template : eventManager.getEventTemplates()) {
-            if (template.getName().equals(eventView.getEvent().getName())
-                    && template.getPromotion().equals(eventView.getEvent().getPromotion())) {
-                eventTemplate = template;
-                break;
-            }
-        }
+        EventTemplate eventTemplate = eventView.getEvent().getEventTemplate();
+
         if (eventTemplate != null) {
             LocalDate nextDate = eventTemplate.getNextDate();
             if (eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)) {

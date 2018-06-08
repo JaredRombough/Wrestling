@@ -1,6 +1,12 @@
 package wrestling.model.manager;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -21,6 +27,7 @@ import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ViewUtils;
 
@@ -190,6 +197,42 @@ public class EventManager {
             promotionEvents.add(event);
         });
         return promotionEvents;
+    }
+
+    public List<EventTemplate> getActiveEventTemplates() {
+        List<EventTemplate> activeEvents = new ArrayList();
+        eventTemplates.stream().filter((event) -> (!event.getEventRecurrence().equals(EventRecurrence.LIMITED)
+                || event.getEventsLeft() > 0)).forEach((event) -> {
+            activeEvents.add(event);
+        });
+        return activeEvents;
+    }
+
+    public List<EventTemplate> getActiveEventTemplatesFuture(YearMonth yearMonth) {
+        List<EventTemplate> activeEvents = new ArrayList();
+        eventTemplates.stream().filter((event) -> (!event.getEventRecurrence().equals(EventRecurrence.LIMITED)
+                || getEventsLeftFuture(event, yearMonth) > 0)).forEach((event) -> {
+            activeEvents.add(event);
+        });
+        return activeEvents;
+    }
+    
+    
+
+    public int getEventsLeftFuture(EventTemplate eventTemplate, YearMonth yearMonth) {
+        if (!eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)) {
+            return eventTemplate.getEventsLeft();
+        }
+
+        LocalDate presentLast = dateManager.today().minusMonths(1);
+        presentLast = presentLast.with(lastDayOfMonth());
+
+        LocalDate futureFirst = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), 1);
+        futureFirst = futureFirst.with(firstInMonth(eventTemplate.getDayOfWeek()));
+
+        return eventTemplate.getEventsLeft()
+                - Math.toIntExact(
+                        ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
     public List<EventView> getEventViews(Promotion promotion) {
