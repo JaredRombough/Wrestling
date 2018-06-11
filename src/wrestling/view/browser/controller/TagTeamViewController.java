@@ -11,29 +11,20 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import wrestling.model.EventTemplate;
-import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.ActiveType;
-import wrestling.model.segmentEnum.EventFrequency;
-import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -58,6 +49,7 @@ public class TagTeamViewController extends ControllerBase implements Initializab
 
     @FXML
     private Label experienceLabel;
+    private boolean createDialogUpdating = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -169,11 +161,10 @@ public class TagTeamViewController extends ControllerBase implements Initializab
         return dialog;
     }
 
-    private boolean updating = false;
 
     private void updateCreateTeamComboBox(Worker worker, List<Worker> workers, ComboBox<Worker> otherComboBox) {
-        if (!updating) {
-            updating = true;
+        if (!createDialogUpdating) {
+            createDialogUpdating = true;
             List<Worker> currentWorkers = workers;
             currentWorkers.remove(worker);
             Worker selected = otherComboBox.getSelectionModel().getSelectedItem();
@@ -183,7 +174,7 @@ public class TagTeamViewController extends ControllerBase implements Initializab
             } else {
                 otherComboBox.getSelectionModel().selectFirst();
             }
-            updating = false;
+            createDialogUpdating = false;
         }
     }
 
