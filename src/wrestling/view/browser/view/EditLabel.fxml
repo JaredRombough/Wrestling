@@ -12,7 +12,12 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Button fx:id="button" alignment="CENTER_RIGHT" layoutX="164.0" layoutY="39.0" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="25.0" text="Edit" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="2.0">
+      <Button fx:id="editButton" alignment="CENTER_RIGHT" layoutX="164.0" layoutY="39.0" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="25.0" text="Edit" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="30.0">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="createButton" alignment="CENTER_RIGHT" layoutX="174.0" layoutY="49.0" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="25.0" text="New" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="2.0">
          <font>
             <Font size="12.0" />
          </font>

@@ -79,6 +79,12 @@ public class SortControlController extends ControllerBase implements Initializab
         return Arrays.asList(genderFilter, activeTypeFilter);
     }
 
+    public void clearFilters() {
+        for (ButtonWrapper wrapper : buttonWrappers) {
+            wrapper.getButtons().get(0).fire();
+        }
+    }
+
     private void addButtonWrapper(iBrowseMode browseMode) {
         for (EnumSet set : browseMode.getSortFilters()) {
 

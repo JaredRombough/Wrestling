@@ -27,6 +27,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
+import wrestling.model.SegmentItem;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.RefreshSkin;
@@ -280,11 +282,30 @@ public class BrowserController extends ControllerBase implements Initializable {
         if (obj instanceof EventTemplate) {
             EventTemplate template = (EventTemplate) obj;
             setCurrentPromotion(template.getPromotion());
-            currentBrowseMode = BrowseMode.EVENTS;
-            ViewUtils.updateSelectedButton(eventsButton, browseButtons);
-            browse();
-            mainListView.getSelectionModel().select(obj);
+            selectSegmentItem(BrowseMode.EVENTS, eventsButton, template);
+        } else if (obj instanceof TagTeamView) {
+            TagTeamView tagTeamView = (TagTeamView) obj;
+            if (gameController.getTagTeamManager().getTagTeamViews(playerPromotion()).contains(tagTeamView)) {
+                setCurrentPromotion(playerPromotion());
+            } else {
+                for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
+                    if (gameController.getTagTeamManager().getTagTeamViews(promotion).contains(tagTeamView)) {
+                        setCurrentPromotion(playerPromotion());
+                        break;
+                    }
+                }
+            }
+            selectSegmentItem(BrowseMode.TAG_TEAMS, teamsButton, tagTeamView);
         }
+    }
+
+    private void selectSegmentItem(BrowseMode browseMode, Button button, SegmentItem segmentItem) {
+        currentBrowseMode = browseMode;
+        ViewUtils.updateSelectedButton(button, browseButtons);
+        browse();
+        ((SortControlController) sortControl.controller).clearFilters();
+        mainListView.scrollTo(segmentItem);
+        mainListView.getSelectionModel().select(segmentItem);
     }
 
 }

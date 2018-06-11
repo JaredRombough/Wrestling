@@ -8,6 +8,11 @@ public class TagTeam {
     private int experience;
     private ActiveType activeType;
 
+    public TagTeam() {
+        experience = 0;
+        activeType = ActiveType.ACTIVE;
+    }
+
     @Override
     public String toString() {
         return name;

@@ -1,4 +1,3 @@
-
 package wrestling.view.browser.controller;
 
 import java.net.URL;
@@ -15,7 +14,10 @@ public class EditLabel extends ControllerBase implements Initializable {
     Label label;
 
     @FXML
-    private Button button;
+    private Button editButton;
+
+    @FXML
+    private Button createButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -25,8 +27,8 @@ public class EditLabel extends ControllerBase implements Initializable {
     /**
      * @return the button
      */
-    public Button getButton() {
-        return button;
+    public Button getEditButton() {
+        return editButton;
     }
 
     @Override
@@ -35,6 +37,13 @@ public class EditLabel extends ControllerBase implements Initializable {
             label.setText(object.toString());
         }
 
+    }
+
+    /**
+     * @return the createButton
+     */
+    public Button getCreateButton() {
+        return createButton;
     }
 
 }

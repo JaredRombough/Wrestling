@@ -7,6 +7,7 @@ import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.segmentEnum.ActiveType;
 
 public class TagTeamManager {
 
@@ -48,6 +49,26 @@ public class TagTeamManager {
         return workers;
     }
 
+    public TagTeamView createTagTeam(String teamName, Worker workerA, Worker workerB) {
+        TagTeam tagTeam = new TagTeam();
+        tagTeam.setName(teamName);
+        tagTeams.add(tagTeam);
+
+        TagTeamWorker tagTeamWorkerA = new TagTeamWorker(tagTeam, workerA);
+        TagTeamWorker tagTeamWorkerB = new TagTeamWorker(tagTeam, workerB);
+        tagTeamWorkers.add(tagTeamWorkerA);
+        tagTeamWorkers.add(tagTeamWorkerB);
+
+        TagTeamView tagTeamView = new TagTeamView();
+        tagTeamView.setTagTeam(tagTeam);
+        tagTeamView.addWorker(workerA);
+        tagTeamView.addWorker(workerB);
+        tagTeamViews.add(tagTeamView);
+
+        return tagTeamView;
+
+    }
+
     /**
      * @return the tagTeams
      */
@@ -81,5 +102,4 @@ public class TagTeamManager {
         return tagTeamViews;
     }
 
-    
 }

@@ -387,8 +387,10 @@ public class MainApp extends Application {
 
     public void updateLabels(ScreenCode code) {
         GameScreen screen = ViewUtils.getByCode(screens, code);
+        GameScreen root = ViewUtils.getByCode(screens, ScreenCode.ROOT);
         if (screen != null) {
             screen.controller.updateLabels();
+            root.controller.updateLabels();
         }
 
     }
