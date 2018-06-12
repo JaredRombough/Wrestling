@@ -141,6 +141,8 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             if (mainListView.getSelectionModel().getSelectedItem() == null && !mainListView.getItems().isEmpty()) {
                 mainListView.getSelectionModel().selectFirst();
+            } else if (mainListView.getItems().isEmpty()) {
+                displaySubScreen.controller.setCurrent(null);
             }
         }
 

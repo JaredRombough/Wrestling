@@ -36,6 +36,9 @@ public class TagTeamViewController extends ControllerBase implements Initializab
     private TagTeamView tagTeamView;
 
     @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
     private AnchorPane imageAnchor1;
 
     @FXML
@@ -59,8 +62,11 @@ public class TagTeamViewController extends ControllerBase implements Initializab
     public void setCurrent(Object obj) {
         if (obj instanceof TagTeamView) {
             this.tagTeamView = (TagTeamView) obj;
-            updateLabels();
+        } else {
+            this.tagTeamView = null;
         }
+        anchorPane.setVisible(this.tagTeamView != null);
+        updateLabels();
     }
 
     @Override
@@ -160,7 +166,6 @@ public class TagTeamViewController extends ControllerBase implements Initializab
         });
         return dialog;
     }
-
 
     private void updateCreateTeamComboBox(Worker worker, List<Worker> workers, ComboBox<Worker> otherComboBox) {
         if (!createDialogUpdating) {

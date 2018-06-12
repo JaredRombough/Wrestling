@@ -41,6 +41,11 @@ GREY
     -fx-text-fill: white;
 }
 
+.text-input {
+    -fx-highlight-fill: derive(-fx-control-inner-background,-20%);
+    -fx-highlight-text-fill: -fx-text-inner-color;
+}
+
 .bigger {
     -fx-font: 24px "Trebuchet";
 }

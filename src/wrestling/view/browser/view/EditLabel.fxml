@@ -7,7 +7,7 @@
 
 <AnchorPane id="AnchorPane" fx:id="anchorPane" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.browser.controller.EditLabel">
    <children>
-      <Label fx:id="label" alignment="CENTER" layoutX="265.0" layoutY="44.0" text="Label" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label fx:id="label" alignment="CENTER" layoutX="265.0" layoutY="44.0" text="Label" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="24.0" />
          </font>

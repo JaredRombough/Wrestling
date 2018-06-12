@@ -234,6 +234,7 @@ public final class ViewUtils {
     public static String editTextDialog(String string) {
         TextInputDialog dialog = new TextInputDialog(string);
         dialog.setHeaderText("Edit this value");
+        dialog.getDialogPane().getStylesheets().add("style.css");
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
