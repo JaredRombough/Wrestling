@@ -2,6 +2,7 @@ package wrestling.model.modelView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.Match;
@@ -17,7 +18,7 @@ public class SegmentView {
     private List<SegmentTeam> teams;
     private LocalDate date;
     private Segment segment;
-    private Title title;
+    private List<TitleView> titles;
     private final SegmentType segmentType;
     private EventView eventView;
 
@@ -150,15 +151,15 @@ public class SegmentView {
     /**
      * @return the title
      */
-    public Title getTitle() {
-        return title;
+    public List<TitleView> getTitleViews() {
+        return titles;
     }
 
     /**
      * @param title the title to set
      */
-    public void setTitle(Title title) {
-        this.title = title;
+    public void setTitle(TitleView title) {
+        this.titles = Arrays.asList(title);
     }
 
     /**

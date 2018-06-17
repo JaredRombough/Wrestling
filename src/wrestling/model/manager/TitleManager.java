@@ -119,7 +119,7 @@ public class TitleManager {
         getTitleView(title).addReign(winner, dateManager.today());
     }
 
-    private TitleView getTitleView(Title title) {
+    public TitleView getTitleView(Title title) {
         for (TitleView titleView : titleViews) {
             if (titleView.getTitle().equals(title)) {
                 return titleView;

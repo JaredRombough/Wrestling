@@ -63,7 +63,7 @@ public class SortControlController extends ControllerBase implements Initializab
         genderFilter = Gender.ALL;
         activeTypeFilter = ActiveType.ALL;
         bookingBrowseMode = false;
-        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS));
+        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS, BrowseMode.TITLES));
         bookingBrowseComboBox.getSelectionModel().selectFirst();
         bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
         bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BrowseMode>() {

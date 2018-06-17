@@ -82,6 +82,11 @@ public enum BrowseMode implements iBrowseMode {
         public List<EnumSet> getSortFilters() {
             return Arrays.asList();
         }
+        
+        @Override
+        public String toString() {
+            return "Titles";
+        }
     },
     TAG_TEAMS {
         @Override

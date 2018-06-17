@@ -374,7 +374,7 @@ public class PromotionController implements Serializable {
 
                 SegmentView segmentView = new SegmentView(SegmentType.MATCH);
                 segmentView.setTeams(matchTeams);
-                segmentView.setTitle(title);
+                segmentView.setTitle(titleManager.getTitleView(title));
                 segments.add(segmentView);
             }
         }

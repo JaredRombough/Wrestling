@@ -385,7 +385,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             segmentView.getSegment().setSegmentParams(params);
         }
         segmentView.getSegment().setSegmentLength(segmentLength.value());
-        segmentView.setTeams(getTeams());
+        segmentView.setTeams(getSegmentTeams());
         return segmentView;
     }
 
@@ -393,16 +393,16 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return ((TeamPaneWrapper) wrapperScreens.get(index).controller).getTeamPaneController();
     }
 
-    private List<SegmentTeam> getTeams() {
+    private List<SegmentTeam> getSegmentTeams() {
 
-        List<SegmentTeam> teams = new ArrayList<>();
+        List<SegmentTeam> segmentTeams = new ArrayList<>();
 
         for (GameScreen screen : wrapperScreens) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
-            teams.add(controller.getTeam());
+            segmentTeams.add(controller.getSegmentTeam());
         }
 
-        return teams;
+        return segmentTeams;
     }
 
     private List<SegmentTeam> getOtherTeams(int notThisIndex) {
@@ -410,7 +410,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         List<SegmentTeam> teams = new ArrayList<>();
 
         for (GameScreen screen : wrapperScreens) {
-            SegmentTeam team = ((TeamPaneWrapper) screen.controller).getTeam();
+            SegmentTeam team = ((TeamPaneWrapper) screen.controller).getSegmentTeam();
             if (team != null && wrapperScreens.indexOf(screen) < notThisIndex) {
                 teams.add(team);
             }
