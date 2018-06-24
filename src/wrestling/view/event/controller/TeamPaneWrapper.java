@@ -287,9 +287,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return teamType == null ? TeamType.DEFAULT : teamType;
     }
 
+    public List<SegmentItem> getSegmentItems() {
+        return getTeamPaneController().getSegmentItems();
+    }
+
     public SegmentTeam getSegmentTeam() {
-        List<SegmentItem> segmentItems = getTeamPaneController().getSegmentItems();
-        List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(segmentItems);
+        List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
 
         SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
 

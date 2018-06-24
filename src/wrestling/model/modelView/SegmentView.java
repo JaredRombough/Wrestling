@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.Match;
+import wrestling.model.SegmentItem;
 import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
@@ -18,7 +19,7 @@ public class SegmentView {
     private List<SegmentTeam> teams;
     private LocalDate date;
     private Segment segment;
-    private List<TitleView> titles;
+    private List<TitleView> titleViews;
     private final SegmentType segmentType;
     private EventView eventView;
 
@@ -38,6 +39,15 @@ public class SegmentView {
             workers.addAll(team.getWorkers());
         }
         return workers;
+    }
+    
+    public List<SegmentItem> getSegmentItems() {
+        List<SegmentItem> segmentItems = new ArrayList<>();
+        for (SegmentTeam team : teams) {
+            segmentItems.addAll(team.getWorkers());
+        }
+        segmentItems.addAll(titleViews);
+        return segmentItems;
     }
 
     /**
@@ -152,14 +162,18 @@ public class SegmentView {
      * @return the title
      */
     public List<TitleView> getTitleViews() {
-        return titles;
+        return titleViews;
     }
 
     /**
      * @param title the title to set
      */
     public void setTitle(TitleView title) {
-        this.titles = Arrays.asList(title);
+        this.titleViews = Arrays.asList(title);
+    }
+    
+    public void setTitleViews(List<TitleView> titleViews) {
+        this.titleViews = titleViews;
     }
 
     /**

@@ -434,7 +434,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateListView();
 
         //add the special DragDropHandlder
-        getListView().setOnDragDropped(new WorkersListViewDragDropHandler(this));
+        listView.setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
     }
 
@@ -468,7 +468,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
         boolean isBooked = false;
         if (currentSegment() != null
-                && currentSegment().getWorkers().containsAll(segmentItem.getSegmentItems())) {
+                && currentSegment().getSegmentItems().containsAll(segmentItem.getSegmentItems())) {
             isBooked = true;
         }
 
@@ -477,7 +477,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private boolean segmentItemIsBookedForCurrentShow(SegmentItem segmentItem) {
         for (SegmentPaneController controller : getSegmentPaneControllers()) {
-            if (controller.getWorkers().contains(segmentItem)) {
+            if (controller.getSegmentItems().contains(segmentItem)) {
                 return true;
             }
         }

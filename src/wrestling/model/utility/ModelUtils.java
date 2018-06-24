@@ -12,6 +12,7 @@ import wrestling.model.Promotion;
 import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.TitleView;
 
 public final class ModelUtils {
 
@@ -126,6 +127,17 @@ public final class ModelUtils {
             }
         });
         return workers;
+    }
+
+    public static List<TitleView> getTitleViewsFromSegmentItems(List<SegmentItem> segmentItems) {
+        List<TitleView> titleViews = new ArrayList<>();
+
+        segmentItems.forEach((item) -> {
+            if (item instanceof TitleView) {
+                titleViews.add((TitleView) item);
+            }
+        });
+        return titleViews;
     }
 
 }
