@@ -15,6 +15,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import wrestling.model.SegmentItem;
+import wrestling.model.segmentEnum.TeamType;
+import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -35,6 +37,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     private int teamNumber;
 
+    private TeamType teamType;
+
     public int getTeamNumber() {
         return this.teamNumber;
     }
@@ -46,7 +50,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         defaultMainPaneHeight = mainPane.getHeight();
-        
+
     }
 
     public void removeSegmentItem(SegmentItem segmentItem) {
@@ -84,8 +88,11 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent dragEvent) {
-
-                dragEvent.acceptTransferModes(TransferMode.MOVE);
+                LocalDragboard ldb = LocalDragboard.getINSTANCE();
+                if (ldb.hasInterface(SegmentItem.class) && teamType != null
+                        && teamType.droppable(ldb.getValue(SegmentItem.class))) {
+                    dragEvent.acceptTransferModes(TransferMode.MOVE);
+                }
             }
         };
 
@@ -96,7 +103,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         double height = CELL_HEIGHT;
         teamListView.setPrefHeight(height);
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
-        
+
         updateLabels();
 
     }
@@ -135,6 +142,20 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     public String getTeamName() {
         return teamNameLabel.getText();
+    }
+
+    /**
+     * @param teamType the teamType to set
+     */
+    public void setTeamType(TeamType teamType) {
+        this.teamType = teamType;
+    }
+
+    @Override
+    public void setCurrent(Object obj) {
+        if (obj instanceof TeamType) {
+            setTeamType((TeamType) obj);
+        }
     }
 
 }

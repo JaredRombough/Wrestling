@@ -46,6 +46,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     @FXML
     private VBox teamsPane;
+    
+    @FXML
+    private VBox titlesPane;
 
     @FXML
     private Button matchButton;
@@ -117,6 +120,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 angleOptions.getAngleType().addTeamType()
         ));
         interferenceButton.setOnAction(e -> addTeam(TeamType.INTERFERENCE));
+        
+        GameScreen wrapperScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        TeamPaneWrapper wrapperController = ((TeamPaneWrapper) wrapperScreen.controller);
+        wrapperController.setTeamType(TeamType.TITLES);
+        TeamPaneController teamPaneController = ((TeamPaneWrapper) wrapperScreen.controller).getTeamPaneController();
+        teamPaneController.setDragDropHandler(this, eventScreenController);
+        
+        titlesPane.getChildren().add(wrapperScreen.pane);
 
     }
 

@@ -1,8 +1,13 @@
 package wrestling.model.segmentEnum;
 
+import wrestling.model.SegmentItem;
+import wrestling.model.Worker;
 import wrestling.model.interfaces.Description;
+import wrestling.model.interfaces.iTeamType;
+import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.TitleView;
 
-public enum TeamType implements Description {
+public enum TeamType implements Description, iTeamType {
     CHALLENGER {
         @Override
         public String description() {
@@ -12,6 +17,11 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
 
     },
@@ -25,6 +35,11 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     ATTACKER {
         @Override
@@ -35,6 +50,11 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
 
     },
@@ -48,6 +68,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     PROMO {
         @Override
@@ -58,6 +82,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     BRAWLER_PRIME {
@@ -70,6 +98,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     BRAWLER {
         @Override
@@ -80,6 +112,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     PROMO_TARGET {
@@ -92,6 +128,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     OFFERER {
         @Override
@@ -102,6 +142,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     OFFEREE {
@@ -114,6 +158,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     INTERFERENCE {
         @Override
@@ -124,6 +172,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     INTERVIEWER {
@@ -136,6 +188,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     ANNOUNCER {
         @Override
@@ -146,6 +202,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     AUDIENCE {
@@ -158,6 +218,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     DEFAULT {
         @Override
@@ -168,6 +232,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     WINNER {
@@ -180,6 +248,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     LOSER {
         @Override
@@ -190,6 +262,10 @@ public enum TeamType implements Description {
         @Override
         public String result() {
             return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
         }
     },
     DRAW {
@@ -202,6 +278,10 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     },
     EVERYONE {
         @Override
@@ -213,6 +293,25 @@ public enum TeamType implements Description {
         public String result() {
             return "";
         }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return false;
+        }
+    },
+    TITLES {
+        @Override
+        public String description() {
+            return "Titles";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        public boolean droppable(SegmentItem segmentItem) {
+            return segmentItem instanceof TitleView;
+        }
     };
 
     @Override
@@ -223,4 +322,9 @@ public enum TeamType implements Description {
     public boolean isMatch() {
         return this.equals(WINNER) || this.equals(LOSER) || this.equals(DRAW);
     }
+
+    private static boolean workerDroppable(SegmentItem segmentItem) {
+        return segmentItem instanceof Worker || segmentItem instanceof TagTeamView;
+    }
+
 }

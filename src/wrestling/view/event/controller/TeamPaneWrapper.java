@@ -74,6 +74,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     public void setTeamType(TeamType newTeamType) {
         if (teamType != newTeamType) {
             vBox.getChildren().retainAll(teamPane.pane, header);
+            teamPane.controller.setCurrent(newTeamType);
 
             teamType = newTeamType;
             setTeamTypeLabel(newTeamType.toString());
