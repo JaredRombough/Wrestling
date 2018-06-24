@@ -16,6 +16,10 @@ public interface SegmentItem {
     default String getShortName() {
         return this.toString();
     }
+    
+    default String getLongName() {
+        return this.toString();
+    }
 
     default Gender getGender() {
         return Gender.ALL;

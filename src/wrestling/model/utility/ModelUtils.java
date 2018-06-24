@@ -47,6 +47,14 @@ public final class ModelUtils {
 
         return sb.toString();
     }
+    
+    public static String andItemsLongName(List<? extends SegmentItem> items) {
+        List<String> slashed = new ArrayList<>();
+        for (SegmentItem item : items) {
+            slashed.add(item.getLongName());
+        }
+        return slashed.isEmpty() ? "?" : joinGrammatically(slashed);
+    }
 
     public static String andTeams(List<SegmentTeam> teams) {
         List<String> slashed = new ArrayList<>();

@@ -39,5 +39,10 @@ public class TitleView implements SegmentItem {
     public String toString() {
         return title.toString();
     }
+    
+    @Override
+    public String getLongName() {
+        return title.toString() + " Title";
+    }
 
 }

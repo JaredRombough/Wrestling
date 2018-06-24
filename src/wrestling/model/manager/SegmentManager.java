@@ -177,11 +177,16 @@ public class SegmentManager {
         if (segmentView.getWorkers().isEmpty()) {
             return "Empty Match";
         }
+        
+        if(!segmentView.getTitleViews().isEmpty()) {
+            string += ModelUtils.andItemsLongName(segmentView.getTitleViews());
+            string += " ";
+        }
 
         if (isHandicapMatch(segmentView)) {
-            string += "Handicap Match";
+            string += "Handicap";
 
-        } else if (rules.equals(MatchRule.DEFAULT)) {
+        } else if (rules.equals(MatchRule.DEFAULT) && string.isEmpty()) {
 
             int teamsSize = segmentView.getMatchParticipantTeams().size();
 
@@ -190,32 +195,38 @@ public class SegmentManager {
                     int teamSize = teams.get(0).getWorkers().size();
                     switch (teamSize) {
                         case 1:
-                            string += "Singles Match";
+                            string += "Singles";
                             break;
                         case 2:
-                            string += "Tag Team Match";
+                            string += "Tag Team";
                             break;
                         case 3:
-                            string += "Six Man Tag Team Match";
+                            string += "Six Man Tag Team";
                             break;
                         case 4:
-                            string += "Eight Man Tag Team Match";
+                            string += "Eight Man Tag Team";
                             break;
                         case 5:
-                            string += "Ten Man Tag Team Match";
+                            string += "Ten Man Tag Team";
                             break;
                         default:
-                            string += String.format("%d Man Tag Team Match", teamSize * 2);
+                            string += String.format("%d Man Tag Team", teamSize * 2);
                             break;
                     }
                     break;
                 default:
-                    string += teamsSize + "-Way Match";
+                    string += teamsSize + "-Way";
                     break;
             }
-        } else {
-            string += rules.description() + " Match";
+        } else if (!rules.equals(MatchRule.DEFAULT)) {
+            string += rules.description();
         }
+        
+        if(string.lastIndexOf(" ") != string.length() - 1) {
+            string += " ";
+        }
+        
+        string += "Match";
 
         return string;
     }
