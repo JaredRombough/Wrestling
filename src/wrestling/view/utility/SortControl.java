@@ -19,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
@@ -29,7 +30,7 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.utility.interfaces.ControllerBase;
 
-public class SortControlController extends ControllerBase implements Initializable {
+public class SortControl extends ControllerBase implements Initializable {
 
     @FXML
     private Button reverseButton;
@@ -69,7 +70,8 @@ public class SortControlController extends ControllerBase implements Initializab
         bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BrowseMode>() {
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
-                setComparators(newValue.comparators());
+                setBrowseMode(newValue);
+                //setComparators(newValue.comparators());
             }
         });
         VBox.setMargin(getBookingBrowseComboBox(), new Insets(0, 5, 10, 5));
@@ -131,7 +133,7 @@ public class SortControlController extends ControllerBase implements Initializab
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof BrowseMode) {
-            setCurrentBrowseMode((BrowseMode) obj);
+            setBrowseMode((BrowseMode) obj);
         }
     }
 
@@ -143,15 +145,15 @@ public class SortControlController extends ControllerBase implements Initializab
         }
     }
 
-    private void setCurrentBrowseMode(iBrowseMode browseMode) {
-        vBox.getChildren().retainAll(gridPane);
+    private void setBrowseMode(iBrowseMode browseMode) {
+        List<Region> toRetain = new ArrayList<>(Arrays.asList(gridPane));
+        if (bookingBrowseMode) {
+            toRetain.add(bookingBrowseComboBox);
+        }
+        vBox.getChildren().retainAll(toRetain);
         buttonWrappers.clear();
         setComparators(browseMode.comparators());
         addButtonWrapper(browseMode);
-        if (bookingBrowseMode) {
-            addBookingBrowseComboBox();
-        }
-
     }
 
     private void addBookingBrowseComboBox() {

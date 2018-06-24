@@ -33,7 +33,7 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.ScreenCode;
-import wrestling.view.utility.SortControlController;
+import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -133,9 +133,9 @@ public class BrowserController extends ControllerBase implements Initializable {
         List currentListToBrowse = currentListToBrowse();
         if (currentListToBrowse != null) {
 
-            Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
+            Comparator comparator = sortControl != null ? ((SortControl) sortControl.controller).getCurrentComparator() : null;
             FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse), p
-                    -> !((SortControlController) sortControl.controller).isFiltered(p));
+                    -> !((SortControl) sortControl.controller).isFiltered(p));
 
             mainListView.setItems(new SortedList<>(filteredList, comparator));
 
@@ -252,7 +252,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             initializePromotionCombobox();
 
             sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-            ((SortControlController) sortControl.controller).setParentScreenCode(ScreenCode.BROWSER);
+            ((SortControl) sortControl.controller).setParentScreenCode(ScreenCode.BROWSER);
 
             mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
                 @Override
@@ -305,7 +305,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         currentBrowseMode = browseMode;
         ViewUtils.updateSelectedButton(button, browseButtons);
         browse();
-        ((SortControlController) sortControl.controller).clearFilters();
+        ((SortControl) sortControl.controller).clearFilters();
         mainListView.scrollTo(segmentItem);
         mainListView.getSelectionModel().select(segmentItem);
     }

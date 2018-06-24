@@ -47,7 +47,7 @@ import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
-import wrestling.view.utility.SortControlController;
+import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -395,7 +395,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
 
         sortControl.controller.setCurrent(BrowseMode.WORKERS);
-        SortControlController sortControlController = (SortControlController) sortControl.controller;
+        SortControl sortControlController = (SortControl) sortControl.controller;
         sortControlController.setParentScreenCode(ScreenCode.EVENT);
         sortControlController.setBookingBrowseModeEnabled(true);
         sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BrowseMode>() {
@@ -449,9 +449,9 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
 
-        Comparator comparator = sortControl != null ? ((SortControlController) sortControl.controller).getCurrentComparator() : null;
+        Comparator comparator = sortControl != null ? ((SortControl) sortControl.controller).getCurrentComparator() : null;
         FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), p
-                -> !((SortControlController) sortControl.controller).isFiltered(p));
+                -> !((SortControl) sortControl.controller).isFiltered(p));
 
         listView.setItems(new SortedList<>(filteredList, comparator));
 
