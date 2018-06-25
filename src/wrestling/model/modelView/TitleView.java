@@ -6,6 +6,7 @@ import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.Title;
 import wrestling.model.Worker;
+import wrestling.model.segmentEnum.ActiveType;
 
 public class TitleView implements SegmentItem {
 
@@ -39,10 +40,15 @@ public class TitleView implements SegmentItem {
     public String toString() {
         return title.toString();
     }
-    
+
     @Override
     public String getLongName() {
         return title.toString() + " Title";
+    }
+
+    @Override
+    public ActiveType getActiveType() {
+        return title.getActiveType();
     }
 
 }

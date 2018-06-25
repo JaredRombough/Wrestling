@@ -1,19 +1,22 @@
 package wrestling.model;
 
 import java.io.Serializable;
+import wrestling.model.segmentEnum.ActiveType;
 
 public class Title implements Serializable {
 
     private Promotion promotion;
 
-    private int teamSize;
+    private final int teamSize;
     private String name;
+    private ActiveType activeType;
 
     //vacant title
     public Title(Promotion promotion, int teamSize, String name) {
         this.promotion = promotion;
         this.teamSize = teamSize;
         this.name = name;
+        this.activeType = ActiveType.ACTIVE;
     }
 
     @Override
@@ -54,6 +57,20 @@ public class Title implements Serializable {
      */
     public int getTeamSize() {
         return teamSize;
+    }
+
+    /**
+     * @return the activeType
+     */
+    public ActiveType getActiveType() {
+        return activeType;
+    }
+
+    /**
+     * @param activeType the activeType to set
+     */
+    public void setActiveType(ActiveType activeType) {
+        this.activeType = activeType;
     }
 
 }

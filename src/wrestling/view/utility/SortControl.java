@@ -208,12 +208,14 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isActiveFiltered(SegmentItem segmentItem) {
-        if (!activeTypeFilter.equals(ActiveType.ALL)
-                && segmentItem instanceof TagTeamView
-                && !activeTypeFilter.equals(((TagTeamView) segmentItem).getTagTeam().getActiveType())) {
-            return true;
+        if (activeTypeFilter.equals(ActiveType.ALL)
+                || segmentItem.getActiveType().equals(ActiveType.ALL)) {
+            return false;
         }
-        return false;
+        if (activeTypeFilter.equals(segmentItem.getActiveType())) {
+            return false;
+        }
+        return true;
     }
 
     private boolean isGenderFiltered(SegmentItem segmentItem) {
