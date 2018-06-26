@@ -40,7 +40,7 @@ public class SegmentView {
         }
         return workers;
     }
-    
+
     public List<SegmentItem> getSegmentItems() {
         List<SegmentItem> segmentItems = new ArrayList<>();
         for (SegmentTeam team : teams) {
@@ -82,13 +82,21 @@ public class SegmentView {
     }
 
     public List<SegmentTeam> getTeams(TeamType type) {
-        List<SegmentTeam> defaultTeams = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        List<SegmentTeam> teamTypeTeams = new ArrayList<>();
+        for (SegmentTeam team : teamTypeTeams) {
             if (team.getType().equals(type)) {
-                defaultTeams.add(team);
+                teamTypeTeams.add(team);
             }
         }
-        return defaultTeams;
+        return teamTypeTeams;
+    }
+
+    public SegmentTeam getWinner() {
+        List<SegmentTeam> defaultTeams = getTeams(TeamType.WINNER);
+        if (!defaultTeams.isEmpty()) {
+            return defaultTeams.get(0);
+        }
+        return null;
     }
 
     public SegmentTeam getTeam(Worker worker) {
@@ -171,7 +179,7 @@ public class SegmentView {
     public void setTitle(TitleView title) {
         this.titleViews = Arrays.asList(title);
     }
-    
+
     public void setTitleViews(List<TitleView> titleViews) {
         this.titleViews = titleViews;
     }

@@ -2,6 +2,7 @@ package wrestling.model.modelView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.Title;
@@ -12,6 +13,7 @@ public class TitleView implements SegmentItem {
 
     private final Title title;
     private final List<TitleReign> titleReigns;
+    private TitleReign champions;
 
     public TitleView(Title title) {
         this.title = title;
@@ -26,7 +28,12 @@ public class TitleView implements SegmentItem {
     }
 
     public void addReign(List<Worker> workers, LocalDate dayWon) {
-        titleReigns.add(new TitleReign(workers, dayWon));
+        if(champions != null) {
+            champions.setDayLost(dayWon);
+        }
+        TitleReign newChamps = new TitleReign(workers, dayWon);
+        titleReigns.add(newChamps);
+        champions = newChamps;
     }
 
     /**
@@ -49,6 +56,13 @@ public class TitleView implements SegmentItem {
     @Override
     public ActiveType getActiveType() {
         return title.getActiveType();
+    }
+
+    /**
+     * @return the champions
+     */
+    public List<Worker> getChampions() {
+        return champions.getWorkers();
     }
 
 }

@@ -21,7 +21,9 @@ import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.segmentEnum.TeamType;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -134,11 +136,25 @@ public class EventFactory {
         Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
-            matchManager.getWinners((Match) segment).stream().forEach((w) -> {
+            List<Worker> winners = matchManager.getWinners((Match) segment);
+            winners.stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });
+            if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
+                processTitleChanges(segmentView, winners);
+            }
         }
         return segment;
+    }
+
+    private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
+        for (TitleView titleView : segmentView.getTitleViews()) {
+            if (!winners.equals(titleView.getChampions())) {
+                titleManager.titleChange(
+                        titleView.getTitle(),
+                        winners);
+            }
+        }
     }
 
 }
