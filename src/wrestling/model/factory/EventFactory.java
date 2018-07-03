@@ -65,7 +65,6 @@ public class EventFactory {
                 segmentView.setSegment(processSegmentView(eventView, segmentView));
             }
         }
-
         Event event = eventView.getEvent();
         List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
 
@@ -140,6 +139,7 @@ public class EventFactory {
             winners.stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });
+            
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
@@ -149,10 +149,9 @@ public class EventFactory {
 
     private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
         for (TitleView titleView : segmentView.getTitleViews()) {
-            if (!winners.equals(titleView.getChampions())) {
-                titleManager.titleChange(
-                        titleView.getTitle(),
-                        winners);
+            boolean change = !winners.equals(titleView.getChampions());
+            if (change) {
+                titleManager.titleChange(titleView.getTitle(), winners);
             }
         }
     }

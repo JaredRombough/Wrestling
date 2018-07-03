@@ -65,9 +65,13 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     public void updateLabels() {
 
         updateTeamListViewHeight();
-
+        
         if (getSegmentItems() != null) {
-            teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
+            if (teamType != null && teamType.equals(TeamType.TITLES)) {
+                teamNameLabel.setText("Titles");
+            } else {
+                teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
+            }
         }
 
     }
@@ -149,6 +153,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
      */
     public void setTeamType(TeamType teamType) {
         this.teamType = teamType;
+        updateLabels();
     }
 
     @Override
@@ -156,6 +161,20 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         if (obj instanceof TeamType) {
             setTeamType((TeamType) obj);
         }
+    }
+
+    /**
+     * @return the teamNameLabel
+     */
+    public Label getTeamNameLabel() {
+        return teamNameLabel;
+    }
+
+    /**
+     * @return the mainPane
+     */
+    public AnchorPane getMainPane() {
+        return mainPane;
     }
 
 }

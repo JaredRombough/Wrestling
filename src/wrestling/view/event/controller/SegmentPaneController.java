@@ -131,8 +131,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         titlesWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         TeamPaneWrapper wrapperController = ((TeamPaneWrapper) titlesWrapper.controller);
         wrapperController.setTeamType(TeamType.TITLES);
-        TeamPaneController teamPaneController = ((TeamPaneWrapper) titlesWrapper.controller).getTeamPaneController();
-        teamPaneController.setDragDropHandler(this, eventScreenController);
+        wrapperController.setDragDropHandler(this, eventScreenController); 
+        wrapperController.setVisible(false);
 
         titlesPane.getChildren().add(titlesWrapper.pane);
         allWrappers.add(titlesWrapper);

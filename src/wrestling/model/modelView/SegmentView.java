@@ -31,6 +31,7 @@ public class SegmentView {
             segment = new Angle();
         }
         teams = new ArrayList<>();
+        titleViews = new ArrayList<>();
     }
 
     public List<Worker> getWorkers() {

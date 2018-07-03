@@ -216,6 +216,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void updateLabels() {
 
         totalCostLabel.setText("Total Cost: $" + currentCost());
+        totalCostLabel.setVisible(currentCost() != 0);
 
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
             segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));

@@ -118,7 +118,6 @@ public class CalendarController extends ControllerBase implements Initializable 
         viewTemplateButton.setText("View Event Series");
         viewTemplateButton.setVisible(true);
         viewTemplateButton.setOnAction(e -> {
-            System.out.println(currentEvent.toString());
             mainApp.show(ScreenCode.BROWSER, currentEvent.getEventTemplate());
         });
 
