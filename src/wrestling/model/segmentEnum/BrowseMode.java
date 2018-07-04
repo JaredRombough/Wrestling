@@ -70,7 +70,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public ScreenCode subScreenCode() {
-            return ScreenCode.SIMPLE_DISPLAY;
+            return ScreenCode.TITLE_VIEW;
         }
 
         @Override
