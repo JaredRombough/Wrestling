@@ -91,10 +91,13 @@ GREY
     -fx-border-width: 2px;
 }
 
-/*EVENT SCREEN*/
-/*SEGMENT LIST VIEW*/
+.title-reign-list-view,
+.title-reign-list-view .list-cell:empty {
+    -fx-background-color: #9E9E9E;
+}
 
-.segment-list-view .list-cell {
+.segment-list-view .list-cell,
+.title-reign-list-view .list-cell:filled {
     -fx-background-color: #E0E0E0;
     -fx-border-width: 1px 2px 1px 2px;
     -fx-border-color: #616161;
@@ -122,11 +125,11 @@ GREY
     -fx-border-color: #616161;
 }
 
-.teamPaneListView  {
+.teamPaneListView {
     -fx-background-color: #E0E0E0;
 }
 
-.teamPaneListView .list-cell{
+.teamPaneListView .list-cell {
     -fx-background-color: #E0E0E0;
     -fx-text-fill: #212121;
 }

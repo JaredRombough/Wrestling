@@ -19,11 +19,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.view.utility.GameScreen;
@@ -48,8 +51,27 @@ public class TitleViewController extends ControllerBase implements Initializable
     @FXML
     private Label prestigeLabel;
 
+    @FXML
+    private ListView listView;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        listView.setCellFactory(param -> new ListCell<TitleReign>() {
+
+            @Override
+            public void updateItem(TitleReign titleReign, boolean empty) {
+                super.updateItem(titleReign, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    GameScreen titleReignScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE_REIGN, mainApp, gameController);
+                    titleReignScreen.controller.setCurrent(titleReign);
+                    setGraphic(titleReignScreen.pane);
+                }
+            }
+        });
     }
 
     @Override
@@ -96,6 +118,8 @@ public class TitleViewController extends ControllerBase implements Initializable
             });
 
             prestigeLabel.setText("prestige here");
+
+            listView.setItems(FXCollections.observableArrayList(titleView.getTitleReigns()));
 
         }
 

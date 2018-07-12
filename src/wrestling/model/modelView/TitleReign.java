@@ -32,8 +32,12 @@ public class TitleReign {
     /**
      * @return the dayLost
      */
-    public LocalDate getDayLost() {
+    public LocalDate getDateLost() {
         return dayLost;
+    }
+
+    public String getDayLostString() {
+        return dayLost == null ? "Today" : dayLost.toString();
     }
 
     /**

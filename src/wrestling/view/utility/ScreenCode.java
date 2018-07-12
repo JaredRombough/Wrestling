@@ -85,6 +85,18 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    TITLE_REIGN {
+
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/TitleReign.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     BROWSER {
 
         @Override

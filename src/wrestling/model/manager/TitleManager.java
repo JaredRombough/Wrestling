@@ -177,7 +177,7 @@ public class TitleManager {
         sb.append("\t\t\t");
         sb.append(titleReign.getDayWon() == null ? "????" : titleReign.getDayWon());
         sb.append("\tto\t");
-        sb.append(titleReign.getDayLost() == null ? "present" : titleReign.getDayLost());
+        sb.append(titleReign.getDateLost() == null ? "present" : titleReign.getDateLost());
 
         return sb.toString();
     }
