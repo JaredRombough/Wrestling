@@ -31,7 +31,8 @@ public class TitleView implements SegmentItem {
         if(champions != null) {
             champions.setDayLost(dayWon);
         }
-        TitleReign newChamps = new TitleReign(workers, dayWon);
+        int sequenceNumber = titleReigns.size() + 1;
+        TitleReign newChamps = new TitleReign(workers, dayWon, sequenceNumber);
         titleReigns.add(newChamps);
         champions = newChamps;
     }

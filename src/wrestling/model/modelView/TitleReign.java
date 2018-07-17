@@ -9,10 +9,12 @@ public class TitleReign {
     private final List<Worker> workers;
     private final LocalDate dayWon;
     private LocalDate dayLost;
+    private final int sequenceNumber;
 
-    public TitleReign(List<Worker> workers, LocalDate dayWon) {
+    public TitleReign(List<Worker> workers, LocalDate dayWon, int sequenceNumber) {
         this.workers = workers;
         this.dayWon = dayWon;
+        this.sequenceNumber = sequenceNumber;
     }
 
     /**
@@ -45,6 +47,13 @@ public class TitleReign {
      */
     public void setDayLost(LocalDate dayLost) {
         this.dayLost = dayLost;
+    }
+
+    /**
+     * @return the sequenceNumber
+     */
+    public int getSequenceNumber() {
+        return sequenceNumber;
     }
 
 }

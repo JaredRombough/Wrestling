@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -11,6 +12,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -118,8 +120,11 @@ public class TitleViewController extends ControllerBase implements Initializable
             });
 
             prestigeLabel.setText("prestige here");
-
-            listView.setItems(FXCollections.observableArrayList(titleView.getTitleReigns()));
+            
+            Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed(); 
+            ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(titleView.getTitleReigns());
+            FXCollections.sort(titleReigns, comparator);
+            listView.setItems(titleReigns);
 
         }
 
