@@ -10,6 +10,7 @@ public class Title implements Serializable {
     private final int teamSize;
     private String name;
     private ActiveType activeType;
+    private int prestige;
 
     //vacant title
     public Title(Promotion promotion, int teamSize, String name) {
@@ -71,6 +72,20 @@ public class Title implements Serializable {
      */
     public void setActiveType(ActiveType activeType) {
         this.activeType = activeType;
+    }
+
+    /**
+     * @return the prestige
+     */
+    public int getPrestige() {
+        return prestige;
+    }
+
+    /**
+     * @param prestige the prestige to set
+     */
+    public void setPrestige(int prestige) {
+        this.prestige = prestige;
     }
 
 }

@@ -119,9 +119,9 @@ public class TitleViewController extends ControllerBase implements Initializable
                 });
             });
 
-            prestigeLabel.setText("prestige here");
-            
-            Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed(); 
+            prestigeLabel.setText(String.valueOf(titleView.getTitle().getPrestige()));
+
+            Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed();
             ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(titleView.getTitleReigns());
             FXCollections.sort(titleReigns, comparator);
             listView.setItems(titleReigns);

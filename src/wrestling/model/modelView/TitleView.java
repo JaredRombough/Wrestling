@@ -65,5 +65,9 @@ public class TitleView implements SegmentItem {
     public List<Worker> getChampions() {
         return champions.getWorkers();
     }
+    
+    public int getPrestige() {
+        return title.getPrestige();
+    }
 
 }

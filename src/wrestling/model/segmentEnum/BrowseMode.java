@@ -12,6 +12,7 @@ import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.DateComparator;
 import wrestling.view.utility.comparators.NameComparator;
+import wrestling.view.utility.comparators.TitlePrestigeComparator;
 
 public enum BrowseMode implements iBrowseMode {
     FREE_AGENTS {
@@ -65,7 +66,8 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public ObservableList comparators() {
             return FXCollections.observableArrayList(
-                    new NameComparator());
+                    new NameComparator(),
+                    new TitlePrestigeComparator());
         }
 
         @Override
@@ -82,7 +84,7 @@ public enum BrowseMode implements iBrowseMode {
         public List<EnumSet> getSortFilters() {
             return Arrays.asList(EnumSet.allOf(ActiveType.class));
         }
-        
+
         @Override
         public String toString() {
             return "Titles";
