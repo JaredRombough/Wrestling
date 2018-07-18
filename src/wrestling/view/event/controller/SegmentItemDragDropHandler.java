@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import wrestling.model.SegmentItem;
+import wrestling.model.modelView.TitleView;
 import wrestling.view.utility.LocalDragboard;
 
 public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
@@ -32,9 +33,11 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
         if (ldb.hasInterface(SegmentItem.class)) {
             SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
-            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                segmentPaneController.removeSegmentItem(subItem);
-                itemList.add(subItem);
+            segmentPaneController.removeSegmentItems(segmentItem.getSegmentItems());
+            itemList.addAll(segmentItem.getSegmentItems());
+
+            if (segmentItem instanceof TitleView) {
+                segmentPaneController.addTeam(((TitleView) segmentItem).getChampions());
             }
 
             teamPaneController.updateLabels();

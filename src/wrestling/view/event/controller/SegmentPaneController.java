@@ -131,7 +131,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         titlesWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         TeamPaneWrapper wrapperController = ((TeamPaneWrapper) titlesWrapper.controller);
         wrapperController.setTeamType(TeamType.TITLES);
-        wrapperController.setDragDropHandler(this, eventScreenController); 
+        wrapperController.setDragDropHandler(this, eventScreenController);
         wrapperController.setVisible(false);
 
         titlesPane.getChildren().add(titlesWrapper.pane);
@@ -215,6 +215,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
+    public void removeSegmentItems(List<? extends SegmentItem> segmentItems) {
+        for (SegmentItem segmentItem : segmentItems) {
+            removeSegmentItem(segmentItem);
+        }
+    }
+
     public List<Worker> getWorkers() {
         return ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
     }
@@ -225,6 +231,42 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             segmentItems.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getSegmentItems());
         }
         return segmentItems;
+    }
+
+    public void addTeam(List<Worker> workers) {
+        if (!teamIsPresent(workers)) {
+            boolean emptyFound = false;
+
+            removeSegmentItems(workers);
+            for (GameScreen workerTeamWrapper : workerTeamWrappers) {
+                TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrapper.controller;
+                if (emptyWrapper.getSegmentItems().isEmpty()) {
+                    emptyWrapper.getTeamPaneController().getItems().addAll(workers);
+                    emptyWrapper.updateLabels();
+                    emptyFound = true;
+                    break;
+                }
+            }
+
+            if (!emptyFound) {
+                GameScreen newTeam = addTeam(TeamType.DEFAULT);
+                ((TeamPaneWrapper) newTeam.controller).getTeamPaneController().getItems().addAll(workers);
+                newTeam.controller.updateLabels();
+            }
+
+            updateLabels();
+        }
+
+    }
+
+    private boolean teamIsPresent(List<Worker> workers) {
+        for (GameScreen workerTeamWrapper : workerTeamWrappers) {
+            TeamPaneWrapper controller = (TeamPaneWrapper) workerTeamWrapper.controller;
+            if (controller.getTeamPaneController().getSegmentItems().equals(workers)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private GameScreen addTeam(TeamType teamType) {
