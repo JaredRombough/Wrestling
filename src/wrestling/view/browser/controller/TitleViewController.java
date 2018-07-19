@@ -124,6 +124,7 @@ public class TitleViewController extends ControllerBase implements Initializable
             Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed();
             ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(titleView.getTitleReigns());
             FXCollections.sort(titleReigns, comparator);
+            listView.getItems().clear();
             listView.setItems(titleReigns);
 
         }

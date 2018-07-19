@@ -2,6 +2,7 @@ package wrestling.view.browser.controller;
 
 import java.net.URL;
 import java.time.LocalDate;
+import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,14 +45,14 @@ public class TitleReignController extends ControllerBase implements Initializabl
         nameLabel.setText(ModelUtils.slashNames(titleReign.getWorkers()));
         dateWonLabel.setText(titleReign.getDayWon().toString());
         dateLostLabel.setText(titleReign.getDayLostString());
-        numberOfDaysLabel.setText(Integer.toString(getNumberOfDays()) + " Days");
+        numberOfDaysLabel.setText(Long.toString(getNumberOfDays()) + " Days");
     }
 
-    private int getNumberOfDays() {
+    private long getNumberOfDays() {
         if (titleReign.getDateLost() == null) {
-            return gameController.getDateManager().today().compareTo(titleReign.getDayWon());
+            return DAYS.between(titleReign.getDayWon(), gameController.getDateManager().today());
         } else {
-            return titleReign.getDateLost().compareTo(titleReign.getDayWon());
+            return DAYS.between(titleReign.getDayWon(), titleReign.getDateLost());
         }
     }
 }

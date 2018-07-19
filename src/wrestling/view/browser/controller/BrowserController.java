@@ -146,6 +146,9 @@ public class BrowserController extends ControllerBase implements Initializable {
             }
         }
 
+        if (displaySubScreen != null) {
+            displaySubScreen.controller.updateLabels();
+        }
         ((RefreshSkin) mainListView.getSkin()).refresh();
 
     }
