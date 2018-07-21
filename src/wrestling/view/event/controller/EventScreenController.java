@@ -186,8 +186,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         StringBuilder warnings = new StringBuilder();
         for (int i = 0; i < getSegmentViews().size(); i++) {
             for (TitleView titleView : getSegmentViews().get(i).getTitleViews()) {
-                if (!ModelUtils.teamIsPresent(titleView.getChampions(),
-                        segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
+                if (!titleView.getChampions().isEmpty()
+                        && !ModelUtils.teamIsPresent(titleView.getChampions(),
+                                segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
                     warnings.append(String.format("The %s Title is not being defended by %s.\n",
                             titleView.getShortName(),
                             ModelUtils.slashNames(titleView.getChampions())));
