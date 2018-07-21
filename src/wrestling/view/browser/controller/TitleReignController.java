@@ -42,7 +42,9 @@ public class TitleReignController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        nameLabel.setText(ModelUtils.slashNames(titleReign.getWorkers()));
+        nameLabel.setText(titleReign.getWorkers().isEmpty()
+                ? "Vacant"
+                : ModelUtils.slashNames(titleReign.getWorkers()));
         dateWonLabel.setText(titleReign.getDayWon().toString());
         dateLostLabel.setText(titleReign.getDayLostString());
         numberOfDaysLabel.setText(Long.toString(getNumberOfDays()) + " Days");
