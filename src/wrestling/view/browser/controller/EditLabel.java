@@ -21,6 +21,7 @@ public class EditLabel extends ControllerBase implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        label.setText("");
     }
 
     /**

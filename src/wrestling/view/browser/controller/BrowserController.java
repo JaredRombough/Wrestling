@@ -260,7 +260,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
                 @Override
                 public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-                    if (displaySubScreen != null && newValue != null) {
+                    if (displaySubScreen != null) {
                         if (displaySubScreen.controller instanceof WorkerOverviewController && currentPromotion != null) {
                             ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
                         }

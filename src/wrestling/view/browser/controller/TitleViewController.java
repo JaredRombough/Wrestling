@@ -25,6 +25,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
@@ -43,6 +44,9 @@ public class TitleViewController extends ControllerBase implements Initializable
 
     @FXML
     private AnchorPane anchorPane;
+
+    @FXML
+    private GridPane gridPane;
 
     @FXML
     private AnchorPane activeTypeAnchorPane;
@@ -83,14 +87,16 @@ public class TitleViewController extends ControllerBase implements Initializable
         } else {
             this.titleView = null;
         }
-        anchorPane.setVisible(this.titleView != null);
+        gridPane.setVisible(this.titleView != null);
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
-        if (titleView != null) {
+        GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+        EditLabel editLabel = (EditLabel) screen.controller;
 
+        if (titleView != null) {
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     playerPromotion().equals(titleView.getTitle().getPromotion()),
@@ -103,9 +109,7 @@ public class TitleViewController extends ControllerBase implements Initializable
                 }
             });
             nameAnchor.getChildren().clear();
-            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
 
-            EditLabel editLabel = (EditLabel) screen.controller;
             editLabel.setCurrent(titleView.getTitle().getName());
             editLabel.getEditButton().setOnAction(e -> {
                 titleView.getTitle().setName(ViewUtils.editTextDialog(titleView.getTitle().getName()));
@@ -127,6 +131,14 @@ public class TitleViewController extends ControllerBase implements Initializable
             listView.getItems().clear();
             listView.setItems(titleReigns);
 
+        } else {
+            editLabel.getEditButton().setVisible(false);
+            editLabel.getCreateButton().setOnAction(e -> {
+                Optional<TitleView> optionalResult = createTagTeamDialog().showAndWait();
+                optionalResult.ifPresent((TitleView newTitleView) -> {
+                    mainApp.show(ScreenCode.BROWSER, newTitleView);
+                });
+            });
         }
 
     }

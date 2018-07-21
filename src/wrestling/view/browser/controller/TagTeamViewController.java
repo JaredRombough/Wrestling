@@ -21,9 +21,11 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
@@ -37,6 +39,9 @@ public class TagTeamViewController extends ControllerBase implements Initializab
 
     @FXML
     private AnchorPane anchorPane;
+
+    @FXML
+    private GridPane gridPane;
 
     @FXML
     private AnchorPane imageAnchor1;
@@ -65,12 +70,15 @@ public class TagTeamViewController extends ControllerBase implements Initializab
         } else {
             this.tagTeamView = null;
         }
-        anchorPane.setVisible(this.tagTeamView != null);
+        gridPane.setVisible(this.tagTeamView != null);
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
+        GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+        EditLabel editLabel = (EditLabel) screen.controller;
+
         if (tagTeamView != null && tagTeamView.getWorkers().size() == 2) {
 
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
@@ -85,9 +93,7 @@ public class TagTeamViewController extends ControllerBase implements Initializab
                 }
             });
             nameAnchor.getChildren().clear();
-            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
 
-            EditLabel editLabel = (EditLabel) screen.controller;
             editLabel.setCurrent(tagTeamView.getTagTeam().getName());
             editLabel.getEditButton().setOnAction(e -> {
                 tagTeamView.getTagTeam().setName(ViewUtils.editTextDialog(tagTeamView.getTagTeam().getName()));
@@ -110,6 +116,14 @@ public class TagTeamViewController extends ControllerBase implements Initializab
 
             experienceLabel.setText(Integer.toString(tagTeamView.getTagTeam().getExperience()));
 
+        } else {
+            editLabel.getEditButton().setVisible(false);
+            editLabel.getCreateButton().setOnAction(e -> {
+                Optional<TagTeamView> optionalResult = createTagTeamDialog().showAndWait();
+                optionalResult.ifPresent((TagTeamView newTagTeamView) -> {
+                    mainApp.show(ScreenCode.BROWSER, newTagTeamView);
+                });
+            });
         }
 
     }
