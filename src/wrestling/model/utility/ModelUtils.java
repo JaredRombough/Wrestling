@@ -13,6 +13,8 @@ import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
+import wrestling.view.event.controller.TeamPaneWrapper;
+import wrestling.view.utility.GameScreen;
 
 public final class ModelUtils {
 
@@ -47,7 +49,7 @@ public final class ModelUtils {
 
         return sb.toString();
     }
-    
+
     public static String andItemsLongName(List<? extends SegmentItem> items) {
         List<String> slashed = new ArrayList<>();
         for (SegmentItem item : items) {
@@ -146,6 +148,16 @@ public final class ModelUtils {
             }
         });
         return titleViews;
+    }
+
+    public static boolean teamIsPresent(List<Worker> workers, List<GameScreen> workerTeamWrappers) {
+        for (GameScreen workerTeamWrapper : workerTeamWrappers) {
+            TeamPaneWrapper controller = (TeamPaneWrapper) workerTeamWrapper.controller;
+            if (controller.getTeamPaneController().getSegmentItems().equals(workers)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

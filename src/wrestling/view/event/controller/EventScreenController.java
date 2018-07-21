@@ -39,6 +39,7 @@ import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.ModelUtils;
@@ -137,13 +138,23 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         if (event.getSource() == runEventButton) {
             String errors = getErrors();
+            String warnings = getWarnings();
             if (!errors.isEmpty()) {
+
                 ViewUtils.generateAlert(
                         "Error",
                         "Event is not valid.",
-                        errors,
+                        errors + "\n" + warnings,
                         AlertType.ERROR)
                         .showAndWait();
+
+            } else if (!warnings.isEmpty()) {
+                if (ViewUtils.generateConfirmationDialogue(
+                        "Consider the following...",
+                        warnings + "\nRun the event anyway?")) {
+                    showResults();
+                };
+
             } else {
                 showResults();
             }
@@ -156,23 +167,35 @@ public class EventScreenController extends ControllerBase implements Initializab
         StringBuilder errors = new StringBuilder();
         List<SegmentView> segmentViews = getSegmentViews();
         if (!validateDuration()) {
-            errors.append("Event duration is invalid\n");
+            errors.append("Event duration is invalid.\n");
         }
         for (int i = 0; i < segmentViews.size(); i++) {
             SegmentValidation validation = segmentViews.get(i).getValidationStatus();
             if (validation.equals(SegmentValidation.EMPTY)) {
                 errors.append(String.format("Segment #%d is empty.\n", i + 1));
-                continue;
-            }
-
-            if (validation.equals(SegmentValidation.INCOMPLETE)) {
+            } else if (validation.equals(SegmentValidation.INCOMPLETE)) {
                 errors.append(String.format("Segment #%d has an empty team.\n", i + 1));
-                break;
             }
 
         }
 
         return errors.toString();
+    }
+
+    private String getWarnings() {
+        StringBuilder warnings = new StringBuilder();
+        for (int i = 0; i < getSegmentViews().size(); i++) {
+            for (TitleView titleView : getSegmentViews().get(i).getTitleViews()) {
+                if (!ModelUtils.teamIsPresent(titleView.getChampions(),
+                        segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
+                    warnings.append(String.format("The %s Title is not being defended by %s.\n",
+                            titleView.getShortName(),
+                            ModelUtils.slashNames(titleView.getChampions())));
+                }
+
+            }
+        }
+        return warnings.toString();
     }
 
     private void showResults() {

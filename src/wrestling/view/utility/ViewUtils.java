@@ -226,6 +226,9 @@ public final class ViewUtils {
         alert.setTitle("Confirm");
         alert.setHeaderText(header);
         alert.setContentText(content);
+        
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add("style.css");
 
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;

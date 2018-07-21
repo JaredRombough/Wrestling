@@ -234,7 +234,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     public void addTeam(List<Worker> workers) {
-        if (!teamIsPresent(workers)) {
+        if (!ModelUtils.teamIsPresent(workers, workerTeamWrappers)) {
             boolean emptyFound = false;
 
             removeSegmentItems(workers);
@@ -257,16 +257,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             updateLabels();
         }
 
-    }
-
-    private boolean teamIsPresent(List<Worker> workers) {
-        for (GameScreen workerTeamWrapper : workerTeamWrappers) {
-            TeamPaneWrapper controller = (TeamPaneWrapper) workerTeamWrapper.controller;
-            if (controller.getTeamPaneController().getSegmentItems().equals(workers)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private GameScreen addTeam(TeamType teamType) {
@@ -485,5 +475,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
         return teams;
+    }
+
+    /**
+     * @return the workerTeamWrappers
+     */
+    public List<GameScreen> getWorkerTeamWrappers() {
+        return workerTeamWrappers;
     }
 }
