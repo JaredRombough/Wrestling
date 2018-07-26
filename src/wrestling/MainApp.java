@@ -43,7 +43,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_WIDTH = 1200;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
-    private static final String CONTACT = "OpenWrestling@gmail.com";
+    private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
     private static final String VERSION = "0.2.8";
 
     public static void main(String[] args) {
