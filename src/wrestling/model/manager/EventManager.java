@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -449,7 +450,7 @@ public class EventManager {
             }
         }
         
-        attendance += ModelUtils.randRange(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
+        attendance += RandomUtils.nextInt(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
         
         return attendance;
     }
@@ -486,7 +487,7 @@ public class EventManager {
             }
         }
         
-        attendance += ModelUtils.randRange(promotion.getLevel(), promotion.getLevel() * 15) * draws;
+        attendance += RandomUtils.nextInt(promotion.getLevel(), promotion.getLevel() * 15) * draws;
         
         return attendance;
     }

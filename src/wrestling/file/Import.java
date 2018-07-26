@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,7 +200,7 @@ public class Import {
                 eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
                 eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
                 eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
-                eventTemplate.setEventsLeft(ModelUtils.randRange(30, 60));
+                eventTemplate.setEventsLeft(RandomUtils.nextInt(30, 60));
                 eventTemplate.setName(currentLine.substring(1, 21).trim());
                 int duration = 0;
                 switch (currentStringLine.get(timeSlotIndex)) {

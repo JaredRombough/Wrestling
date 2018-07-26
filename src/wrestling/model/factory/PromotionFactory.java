@@ -3,6 +3,7 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Promotion;
 import wrestling.model.Worker;
 import wrestling.model.financial.BankAccount;
@@ -11,7 +12,6 @@ import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
-import wrestling.model.utility.ModelUtils;
 
 /*
 for generating promotions in a random game
@@ -84,7 +84,7 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = workerFactory.randomWorker(ModelUtils.randRange(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = workerFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
                     contractFactory.createContract(worker, promotion, dateManager.today());
 

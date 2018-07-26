@@ -3,6 +3,7 @@ package wrestling.model.manager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
@@ -49,7 +50,7 @@ public class WorkerManager implements Serializable {
         }
 
         if (worker.getPopularity() < maxPopularity
-                || ModelUtils.randRange(1, 10) == 1
+                || RandomUtils.nextInt(1, 10) == 1
                 && worker.getPopularity() > 100) {
 
             int range = 0;
@@ -64,7 +65,7 @@ public class WorkerManager implements Serializable {
                 range = 5;
             }
 
-            if (ModelUtils.randRange(1, range) == 1) {
+            if (RandomUtils.nextInt(1, range) == 1) {
 
                 addPopularity(worker, 1);
             }
@@ -77,7 +78,7 @@ public class WorkerManager implements Serializable {
 
     public void losePopularity(Worker worker) {
 
-        if (ModelUtils.randRange(1, 10) == 10
+        if (RandomUtils.nextInt(1, 10) == 10
                 && worker.getPopularity() > 0
                 && worker.getPopularity() > worker.getMinimumPopularity()) {
             addPopularity(worker, -1);

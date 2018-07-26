@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import wrestling.model.Promotion;
 import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
@@ -17,12 +16,6 @@ import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 
 public final class ModelUtils {
-
-    //returns a random int between the two passed ints
-    public static int randRange(int low, int high) {
-        Random r = new Random();
-        return r.nextInt(high - low) + low;
-    }
 
     public static String dateString(LocalDate localDate) {
         return localDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)"));

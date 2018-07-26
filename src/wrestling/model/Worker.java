@@ -249,6 +249,7 @@ public class Worker implements Serializable, SegmentItem {
     /**
      * @return the gender
      */
+    @Override
     public Gender getGender() {
         return gender;
     }

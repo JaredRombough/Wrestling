@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Worker;
 import wrestling.model.segmentEnum.Gender;
-import wrestling.model.utility.ModelUtils;
 
 /**
  *
@@ -52,11 +52,11 @@ public class WorkerFactory {
         Worker worker = randomWorker();
 
         //set the popularity to be proportionate to the level requested
-        worker.setPopularity((level * 20) + ModelUtils.randRange(-10, 10));
+        worker.setPopularity((level * 20) + RandomUtils.nextInt(-10, 10));
 
         //prevent too many maxed out workers
         if (worker.getPopularity() > 100) {
-            worker.setPopularity(100 + ModelUtils.randRange(-10, 0));
+            worker.setPopularity(100 + RandomUtils.nextInt(-10, 0));
         }
 
         return worker;
@@ -65,14 +65,14 @@ public class WorkerFactory {
     public Worker randomWorker() {
         Worker worker = newWorker();
 
-        worker.setPopularity(ModelUtils.randRange(0, 100));
-        worker.setFlying(ModelUtils.randRange(0, 100));
-        worker.setCharisma(ModelUtils.randRange(0, 100));
-        worker.setBehaviour(ModelUtils.randRange(0, 100));
-        worker.setWrestling(ModelUtils.randRange(0, 100));
-        worker.setStriking(ModelUtils.randRange(0, 100));
-        worker.setAge(ModelUtils.randRange(18, 60));
-        worker.setGender(ModelUtils.randRange(0, 2) == 1
+        worker.setPopularity(RandomUtils.nextInt(0, 100));
+        worker.setFlying(RandomUtils.nextInt(0, 100));
+        worker.setCharisma(RandomUtils.nextInt(0, 100));
+        worker.setBehaviour(RandomUtils.nextInt(0, 100));
+        worker.setWrestling(RandomUtils.nextInt(0, 100));
+        worker.setStriking(RandomUtils.nextInt(0, 100));
+        worker.setAge(RandomUtils.nextInt(18, 60));
+        worker.setGender(RandomUtils.nextInt(0, 2) == 1
                 ? Gender.MALE : Gender.FEMALE);
 
         worker.setManager(false);

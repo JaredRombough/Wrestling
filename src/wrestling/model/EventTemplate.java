@@ -4,12 +4,12 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.interfaces.iEventDate;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.model.utility.ModelUtils;
 
 public class EventTemplate implements iEventDate, SegmentItem {
 
@@ -36,7 +36,7 @@ public class EventTemplate implements iEventDate, SegmentItem {
         eventsLeft = 1;
         dayOfWeek = Arrays.asList(
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
-                        ModelUtils.randRange(0, 2));
+                        RandomUtils.nextInt(0, 2));
         month = Month.JANUARY;
     }
 

@@ -2,13 +2,14 @@ package wrestling.model.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
@@ -258,7 +259,7 @@ public class PromotionController implements Serializable {
     public void bookNextEvent(Promotion promotion) {
 
         LocalDate eventDate = LocalDate.ofYearDay(dateManager.today().getYear(), dateManager.today().getDayOfYear());
-        eventDate = LocalDate.from(eventDate).plusDays(ModelUtils.randRange(25, 35));
+        eventDate = LocalDate.from(eventDate).plusDays(RandomUtils.nextInt(25, 35));
         bookNextEvent(promotion, eventDate);
 
     }
@@ -309,7 +310,7 @@ public class PromotionController implements Serializable {
 
             //determine the number of teams (usually 2)
             int teamsNeeded = 2;
-            int random = ModelUtils.randRange(1, 10);
+            int random = RandomUtils.nextInt(1, 10);
             if (random > 8) {
                 teamsNeeded += 10 - random;
             }
@@ -366,7 +367,7 @@ public class PromotionController implements Serializable {
             //make sure we have enough workers for a match
             if (matchTeams.size() > 1) {
                 //roll for title change
-                if (ModelUtils.randRange(1, 10) > 5) {
+                if (RandomUtils.nextInt(1, 10) > 5) {
                     Collections.swap(matchTeams, 0, 1);
                 }
 
@@ -418,7 +419,7 @@ public class PromotionController implements Serializable {
                 date = date.plusMonths(1);
             }
             date = date.with(TemporalAdjusters.dayOfWeekInMonth(
-                    ModelUtils.randRange(1, 4),
+                    RandomUtils.nextInt(1, 4),
                     eventTemplate.getDayOfWeek()));
             eventTemplate.setNextDate(date);
             bookNextEvent(eventTemplate, date);
@@ -437,7 +438,7 @@ public class PromotionController implements Serializable {
                 1);
         startDate = startDate.with(firstInMonth(eventTemplate.getDayOfWeek()));
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-            startDate = startDate.plusWeeks(ModelUtils.randRange(0, 4));
+            startDate = startDate.plusWeeks(RandomUtils.nextInt(0, 4));
             eventTemplate.setNextDate(startDate);
             bookNextEvent(eventTemplate, startDate);
             eventTemplate.setBookedUntil(startDate);
