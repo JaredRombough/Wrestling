@@ -25,6 +25,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
@@ -38,29 +39,34 @@ import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TitleViewController extends ControllerBase implements Initializable {
-
+    
     private TitleView titleView;
-
+    
     @FXML
     private AnchorPane anchorPane;
-
+    
     @FXML
     private AnchorPane activeTypeAnchorPane;
-
+    
     @FXML
     private AnchorPane nameAnchor;
-
+    
     @FXML
     private Label prestigeLabel;
-
+    
     @FXML
     private ListView listView;
-
+    
+    @FXML
+    private GridPane gridPane;
+    
+    private EditLabel editLabel;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        
         listView.setCellFactory(param -> new ListCell<TitleReign>() {
-
+            
             @Override
             public void updateItem(TitleReign titleReign, boolean empty) {
                 super.updateItem(titleReign, empty);
@@ -75,7 +81,12 @@ public class TitleViewController extends ControllerBase implements Initializable
             }
         });
     }
-
+    
+    public void initializeMore() {
+        GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+        editLabel = (EditLabel) screen.controller;
+    }
+    
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof TitleView) {
@@ -83,14 +94,21 @@ public class TitleViewController extends ControllerBase implements Initializable
         } else {
             this.titleView = null;
         }
-        anchorPane.setVisible(this.titleView != null);
+        gridPane.setVisible(this.titleView != null);
         updateLabels();
     }
-
+    
     @Override
     public void updateLabels() {
+        editLabel.getCreateButton().setOnAction(e -> {
+            Optional<TitleView> optionalResult = createTagTeamDialog().showAndWait();
+            optionalResult.ifPresent((TitleView newTitleView) -> {
+                mainApp.show(ScreenCode.BROWSER, newTitleView);
+            });
+        });
+        editLabel.getEditButton().setVisible(titleView != null);
+        
         if (titleView != null) {
-
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     playerPromotion().equals(titleView.getTitle().getPromotion()),
@@ -102,58 +120,51 @@ public class TitleViewController extends ControllerBase implements Initializable
                     titleView.getTitle().setActiveType(newValue);
                 }
             });
-            nameAnchor.getChildren().clear();
-            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
-
-            EditLabel editLabel = (EditLabel) screen.controller;
+            
             editLabel.setCurrent(titleView.getTitle().getName());
             editLabel.getEditButton().setOnAction(e -> {
                 titleView.getTitle().setName(ViewUtils.editTextDialog(titleView.getTitle().getName()));
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
             });
-            editLabel.getCreateButton().setOnAction(e -> {
-                Optional<TitleView> optionalResult = createTagTeamDialog().showAndWait();
-                optionalResult.ifPresent((TitleView newTitleView) -> {
-                    mainApp.show(ScreenCode.BROWSER, newTitleView);
-                });
-            });
-
+            
             prestigeLabel.setText(String.valueOf(titleView.getTitle().getPrestige()));
-
+            
             Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed();
             ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(titleView.getTitleReigns());
             FXCollections.sort(titleReigns, comparator);
             listView.getItems().clear();
             listView.setItems(titleReigns);
-
+            
+        } else {
+            editLabel.setCurrent(null);
         }
-
+        
     }
-
+    
     private Dialog<TitleView> createTagTeamDialog() {
         Dialog<TitleView> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField titleName = new TextField();
         VBox vBox = new VBox(8);
-
+        
         dialog.setTitle("Create Title");
         dialog.setHeaderText("Title Details");
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
+        
         Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.setDisable(true);
         titleName.textProperty().addListener((observable, oldValue, newValue) -> {
             okButton.setDisable(newValue.trim().isEmpty());
         });
-
+        
         ViewUtils.addRegionWrapperToVBox(titleName, "Title Name:", vBox);
-
+        
         dialogPane.setContent(vBox);
         dialogPane.getStylesheets().add("style.css");
-
+        
         Platform.runLater(titleName::requestFocus);
-
+        
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
                 TitleView newTitleView = gameController.getTitleFactory().createTitle(
@@ -164,5 +175,5 @@ public class TitleViewController extends ControllerBase implements Initializable
         });
         return dialog;
     }
-
+    
 }
