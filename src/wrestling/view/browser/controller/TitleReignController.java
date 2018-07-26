@@ -1,7 +1,6 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
-import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;

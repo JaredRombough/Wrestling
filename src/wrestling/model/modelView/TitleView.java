@@ -2,7 +2,6 @@ package wrestling.model.modelView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.Title;

@@ -1,7 +1,6 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,9 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import wrestling.model.EventTemplate;
-import wrestling.model.Promotion;
-import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.GameScreen;
@@ -22,92 +20,87 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventTemplateController extends ControllerBase implements Initializable {
-    
+
     private EventTemplate eventTemplate;
-    
+
     @FXML
     private AnchorPane nameAnchor;
-    
+
     @FXML
     private Label nextEventLabel;
-    
+
     @FXML
     private Label durationLabel;
-    
+
     @FXML
     private Label frequencyLabel;
-    
+
     @FXML
     private Label broadcastLabel;
-    
+
     @FXML
     private Label remainingLabel;
-    
+
     @FXML
     private AnchorPane venueSizeAnchorPane;
-    
+
+    @FXML
+    private GridPane gridPane;
+
     @FXML
     private Button calendarButton;
-    
+
+    private EditLabel editLabel;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         calendarButton.setOnAction(e -> {
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getNextEvent(eventTemplate));
-            
         });
-        
     }
-    
+
+    @Override
+    public void initializeMore() {
+        GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
+        editLabel = (EditLabel) screen.controller;
+    }
+
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof EventTemplate) {
             this.eventTemplate = (EventTemplate) obj;
-            
             updateLabels();
         }
+        gridPane.setVisible(obj != null);
     }
-    
+
     @Override
     public void updateLabels() {
+        editLabel.setCurrent(eventTemplate);
+
         if (eventTemplate != null) {
-            
+
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     venueSizeAnchorPane,
                     eventTemplate.getPromotion().equals(playerPromotion()),
                     EventVenueSize.values(),
                     eventTemplate.getEventVenueSize());
-            
+
             comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EventVenueSize>() {
                 @Override
                 public void changed(ObservableValue<? extends EventVenueSize> observable, EventVenueSize oldValue, EventVenueSize newValue) {
                     eventTemplate.setEventVenueSize(newValue);
                 }
             });
-            
-            nameAnchor.getChildren().clear();
-            GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
-            
-            EditLabel editLabel = (EditLabel) screen.controller;
-            editLabel.setCurrent(eventTemplate.getName());
-            editLabel.getEditButton().setOnAction(e -> {
-                eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
-                gameController.getEventManager().updateEventName(eventTemplate);
-                updateLabels();
-                mainApp.updateLabels(ScreenCode.BROWSER);
-                
-            });
-            editLabel.getCreateButton().setOnAction(e -> {
-                mainApp.show(ScreenCode.CALENDAR);
-            });
-            
+
             nextEventLabel.setText(ModelUtils.dateString(eventTemplate.getNextDate()));
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
             remainingLabel.setText(Integer.toString(eventTemplate.getEventsLeft()));
         }
-        
+
     }
-    
+
 }

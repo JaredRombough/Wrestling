@@ -7,7 +7,6 @@ import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.Match;
 import wrestling.model.SegmentItem;
-import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.segmentEnum.SegmentType;

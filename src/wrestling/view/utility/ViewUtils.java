@@ -7,20 +7,24 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,12 +48,13 @@ import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
+import wrestling.model.modelView.TitleView;
 import wrestling.view.RegionWrapper;
+import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.comparators.WorkerAgeComparator;
 import wrestling.view.utility.comparators.WorkerBehaviourComparator;
 import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
-import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
 import wrestling.view.utility.comparators.WorkerStrikingComparator;
 import wrestling.view.utility.comparators.WorkerWrestlingComparator;
@@ -226,7 +231,7 @@ public final class ViewUtils {
         alert.setTitle("Confirm");
         alert.setHeaderText(header);
         alert.setContentText(content);
-        
+
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add("style.css");
 
@@ -246,6 +251,42 @@ public final class ViewUtils {
             return string;
         }
     }
+
+    public static Dialog<TitleView> createTitleViewDialog(GameController gameController) {
+        Dialog<TitleView> dialog = new Dialog<>();
+        DialogPane dialogPane = dialog.getDialogPane();
+        TextField titleName = new TextField();
+        VBox vBox = new VBox(8);
+
+        dialog.setTitle("Create Title");
+        dialog.setHeaderText("Title Details");
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDisable(true);
+        titleName.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        ViewUtils.addRegionWrapperToVBox(titleName, "Title Name:", vBox);
+
+        dialogPane.setContent(vBox);
+        dialogPane.getStylesheets().add("style.css");
+
+        Platform.runLater(titleName::requestFocus);
+
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == ButtonType.OK) {
+                TitleView newTitleView = gameController.getTitleFactory().createTitle(
+                        gameController.getPromotionManager().playerPromotion(), titleName.getText());
+                return newTitleView;
+            }
+            return null;
+        });
+        return dialog;
+    }
+    
+    
 
     public static void anchorRegionToParent(AnchorPane parent, Region child) {
 

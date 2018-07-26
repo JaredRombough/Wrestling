@@ -24,7 +24,6 @@ import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.Worker;
 import wrestling.model.interfaces.iBrowseMode;
-import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
@@ -212,10 +211,7 @@ public class SortControl extends ControllerBase implements Initializable {
                 || segmentItem.getActiveType().equals(ActiveType.ALL)) {
             return false;
         }
-        if (activeTypeFilter.equals(segmentItem.getActiveType())) {
-            return false;
-        }
-        return true;
+        return !activeTypeFilter.equals(segmentItem.getActiveType());
     }
 
     private boolean isGenderFiltered(SegmentItem segmentItem) {

@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
-import wrestling.model.Title;
 import wrestling.model.Worker;
 import wrestling.model.manager.EventManager;
 import wrestling.model.modelView.TitleView;

@@ -23,7 +23,6 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.model.segmentEnum.TeamType;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class

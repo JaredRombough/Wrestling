@@ -7,7 +7,6 @@ import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.Worker;
 import wrestling.model.modelView.TagTeamView;
-import wrestling.model.segmentEnum.ActiveType;
 
 public class TagTeamManager {
 

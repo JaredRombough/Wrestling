@@ -222,7 +222,7 @@ public class SegmentManager {
             string += rules.description();
         }
         
-        if(string.lastIndexOf(" ") != string.length() - 1) {
+        if(string.lastIndexOf(' ') != string.length() - 1) {
             string += " ";
         }
         

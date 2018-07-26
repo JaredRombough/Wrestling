@@ -44,9 +44,9 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.TestUtils;
+import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.RefreshSkin;
-import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
@@ -153,7 +153,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                         "Consider the following...",
                         warnings + "\nRun the event anyway?")) {
                     showResults();
-                };
+                }
 
             } else {
                 showResults();
