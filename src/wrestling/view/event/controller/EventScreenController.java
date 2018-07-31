@@ -27,6 +27,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -69,7 +71,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private Label totalCostLabel;
 
     @FXML
-    private ListView<SegmentItem> listView;
+    private ListView<SegmentItem> segmentItemListView;
 
     @FXML
     private AnchorPane segmentPaneHolder;
@@ -274,7 +276,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         }
 
-        updateListView();
+        updateSegmentItemListView();
 
         ((RefreshSkin) segmentListView.getSkin()).refresh();
 
@@ -427,7 +429,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
                 browseMode = newValue;
-                updateListView();
+                updateSegmentItemListView();
             }
         });
 
@@ -444,7 +446,11 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentListView.getSelectionModel().selectFirst();
 
-        //for the workersListView to accept dragged items
+        initializeSegmentItemListView();
+
+    }
+
+    private void initializeSegmentItemListView() {
         final EventHandler<DragEvent> dragOverHandler = (DragEvent dragEvent) -> {
             LocalDragboard ldb = LocalDragboard.getINSTANCE();
 
@@ -453,20 +459,29 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         };
 
-        listView.setOnDragOver(dragOverHandler);
+        segmentItemListView.setOnDragOver(dragOverHandler);
 
         //do this last as it is dependent on currentSegment
-        updateListView();
+        updateSegmentItemListView();
 
-        //add the special DragDropHandlder
-        listView.setOnDragDropped(new WorkersListViewDragDropHandler(this));
+        segmentItemListView.setOnDragDropped(new WorkersListViewDragDropHandler(this));
+
+        segmentItemListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent click) {
+                if (click.getButton() == MouseButton.SECONDARY) {
+                    currentSegmentPaneController().addTeam(
+                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems());
+                }
+            }
+        });
 
     }
 
-    private void updateListView() {
+    private void updateSegmentItemListView() {
         List<SegmentItem> segmentItems = new ArrayList<>();
 
-        int previousIndex = listView.getSelectionModel().getSelectedIndex();
+        int previousIndex = segmentItemListView.getSelectionModel().getSelectedIndex();
 
         for (SegmentItem segmentItem : browseMode.listToBrowse(gameController, playerPromotion())) {
             if (!segmentItemIsBookedForCurrentSegment(segmentItem)) {
@@ -478,15 +493,15 @@ public class EventScreenController extends ControllerBase implements Initializab
         FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), p
                 -> !((SortControl) sortControl.controller).isFiltered(p));
 
-        listView.setItems(new SortedList<>(filteredList, comparator));
+        segmentItemListView.setItems(new SortedList<>(filteredList, comparator));
 
         if (previousIndex > 0) {
-            listView.getSelectionModel().select(previousIndex);
+            segmentItemListView.getSelectionModel().select(previousIndex);
         } else {
-            listView.getSelectionModel().selectFirst();
+            segmentItemListView.getSelectionModel().selectFirst();
         }
 
-        ((RefreshSkin) getListView().getSkin()).refresh();
+        ((RefreshSkin) getSegmentItemListView().getSkin()).refresh();
 
     }
 
@@ -524,11 +539,11 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         initializeSegmentListView();
 
-        setSegmentItemCellFactory(getListView());
+        setSegmentItemCellFactory(getSegmentItemListView());
 
-        RefreshSkin skin = new RefreshSkin(getListView());
+        RefreshSkin skin = new RefreshSkin(getSegmentItemListView());
 
-        getListView().setSkin(skin);
+        getSegmentItemListView().setSkin(skin);
 
     }
 
@@ -568,8 +583,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     /**
      * @return the workersListView
      */
-    public ListView<SegmentItem> getListView() {
-        return listView;
+    public ListView<SegmentItem> getSegmentItemListView() {
+        return segmentItemListView;
     }
 
     /**

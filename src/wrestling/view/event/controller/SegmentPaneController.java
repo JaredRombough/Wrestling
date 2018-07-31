@@ -26,6 +26,7 @@ import wrestling.model.Worker;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.AngleType;
@@ -35,6 +36,7 @@ import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.browser.controller.TitleViewController;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
@@ -81,6 +83,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private List<GameScreen> workerTeamWrappers;
     private List<GameScreen> allWrappers;
     private GameScreen titlesWrapper;
+    private TeamPaneWrapper titlesController;
 
     private EventScreenController eventScreenController;
 
@@ -129,10 +132,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void initializeTitlesWrapper() {
         titlesWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
-        TeamPaneWrapper wrapperController = ((TeamPaneWrapper) titlesWrapper.controller);
-        wrapperController.setTeamType(TeamType.TITLES);
-        wrapperController.setDragDropHandler(this, eventScreenController);
-        wrapperController.setVisible(false);
+        titlesController = ((TeamPaneWrapper) titlesWrapper.controller);
+        titlesController.setTeamType(TeamType.TITLES);
+        titlesController.setDragDropHandler(this, eventScreenController);
+        titlesController.setVisible(false);
 
         titlesPane.getChildren().add(titlesWrapper.pane);
         allWrappers.add(titlesWrapper);
@@ -233,27 +236,35 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return segmentItems;
     }
 
-    public void addTeam(List<Worker> workers) {
-        if (!ModelUtils.teamIsPresent(workers, workerTeamWrappers)) {
+    public void addTeam(List<? extends SegmentItem> segmentItems) {
+
+        if (!segmentItems.isEmpty() && !ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
             boolean emptyFound = false;
 
-            removeSegmentItems(workers);
-            for (GameScreen workerTeamWrapper : workerTeamWrappers) {
-                TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrapper.controller;
-                if (emptyWrapper.getSegmentItems().isEmpty()) {
-                    emptyWrapper.getTeamPaneController().getItems().addAll(workers);
-                    emptyWrapper.updateLabels();
-                    emptyFound = true;
-                    break;
+            removeSegmentItems(segmentItems);
+
+            if (segmentItems.get(0) instanceof Worker || segmentItems.get(0) instanceof TagTeamView) {
+                for (GameScreen workerTeamWrapper : workerTeamWrappers) {
+                    TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrapper.controller;
+                    if (emptyWrapper.getSegmentItems().isEmpty()) {
+                        emptyWrapper.getTeamPaneController().getItems().addAll(segmentItems);
+                        emptyWrapper.updateLabels();
+                        emptyFound = true;
+                        break;
+                    }
                 }
-            }
+                if (!emptyFound) {
+                    GameScreen newTeam = addTeam(TeamType.DEFAULT);
+                    ((TeamPaneWrapper) newTeam.controller).getTeamPaneController().getItems().addAll(segmentItems);
+                    newTeam.controller.updateLabels();
+                }
+            } else if (segmentItems.get(0) instanceof TitleView) {
 
-            if (!emptyFound) {
-                GameScreen newTeam = addTeam(TeamType.DEFAULT);
-                ((TeamPaneWrapper) newTeam.controller).getTeamPaneController().getItems().addAll(workers);
-                newTeam.controller.updateLabels();
+                titlesController.getTeamPaneController().getItems().addAll(segmentItems);
+                titlesController.updateLabels();
+                TitleView titleView = (TitleView) segmentItems.get(0);
+                addTeam(titleView.getChampions());
             }
-
             updateLabels();
         }
 

@@ -25,7 +25,7 @@ public class WorkersListViewDragDropHandler implements EventHandler<DragEvent> {
         if (ldb.hasInterface(SegmentItem.class)) {
             SegmentItem segmentItem = ldb.getValue(SegmentItem.class);
 
-            if (!eventScreenController.getListView().getItems().contains(segmentItem)) {
+            if (!eventScreenController.getSegmentItemListView().getItems().contains(segmentItem)) {
                 eventScreenController.currentSegmentPaneController().removeSegmentItem(segmentItem);
             }
 
