@@ -39,7 +39,7 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
             if (segmentItem instanceof TitleView) {
                 TitleView titleView = (TitleView) segmentItem;
                 if (!titleView.getChampions().isEmpty()) {
-                    segmentPaneController.addTeam(((TitleView) segmentItem).getChampions());
+                    segmentPaneController.addTeam(((TitleView) segmentItem).getChampions(), true);
                 }
             }
 

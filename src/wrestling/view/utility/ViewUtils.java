@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -49,7 +51,9 @@ import wrestling.MainApp;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.RegionWrapper;
+import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.comparators.WorkerAgeComparator;
 import wrestling.view.utility.comparators.WorkerBehaviourComparator;
@@ -285,8 +289,6 @@ public final class ViewUtils {
         });
         return dialog;
     }
-    
-    
 
     public static void anchorRegionToParent(AnchorPane parent, Region child) {
 

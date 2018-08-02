@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -236,38 +238,77 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return segmentItems;
     }
 
-    public void addTeam(List<? extends SegmentItem> segmentItems) {
+    public void addTeam(List<? extends SegmentItem> segmentItems, boolean emptyOnly) {
 
-        if (!segmentItems.isEmpty() && !ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
-            boolean emptyFound = false;
-
-            removeSegmentItems(segmentItems);
-
-            if (segmentItems.get(0) instanceof Worker || segmentItems.get(0) instanceof TagTeamView) {
-                for (GameScreen workerTeamWrapper : workerTeamWrappers) {
-                    TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrapper.controller;
-                    if (emptyWrapper.getSegmentItems().isEmpty()) {
-                        emptyWrapper.getTeamPaneController().getItems().addAll(segmentItems);
-                        emptyWrapper.updateLabels();
-                        emptyFound = true;
-                        break;
-                    }
-                }
-                if (!emptyFound) {
-                    GameScreen newTeam = addTeam(TeamType.DEFAULT);
-                    ((TeamPaneWrapper) newTeam.controller).getTeamPaneController().getItems().addAll(segmentItems);
-                    newTeam.controller.updateLabels();
-                }
-            } else if (segmentItems.get(0) instanceof TitleView) {
-
-                titlesController.getTeamPaneController().getItems().addAll(segmentItems);
-                titlesController.updateLabels();
-                TitleView titleView = (TitleView) segmentItems.get(0);
-                addTeam(titleView.getChampions());
-            }
-            updateLabels();
+        if (segmentItems.isEmpty() || ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
+            return;
         }
 
+        if (segmentItems.get(0) instanceof TitleView) {
+            addTitleView((TitleView) segmentItems.get(0));
+            return;
+        }
+
+        removeSegmentItems(segmentItems);
+
+        if (segmentItems.get(0) instanceof Worker || segmentItems.get(0) instanceof TagTeamView) {
+
+            GameScreen wrapperToInsert = wrapperToInsert(workerTeamWrappers, emptyOnly);
+            if (wrapperToInsert == null) {
+                GameScreen newTeam = addTeam(TeamType.DEFAULT);
+                ((TeamPaneWrapper) newTeam.controller).getTeamPaneController().getItems().addAll(segmentItems);
+                newTeam.controller.updateLabels();
+            } else {
+                TeamPaneWrapper wrapperController = (TeamPaneWrapper) wrapperToInsert.controller;
+                wrapperController.getTeamPaneController().getItems().addAll(segmentItems);
+                wrapperController.updateLabels();
+            }
+        }
+        updateLabels();
+
+    }
+
+    public void addTitleView(TitleView titleView) {
+        titlesController.getTeamPaneController().getItems().add(titleView);
+        titlesController.updateLabels();
+        addTeam(titleView.getChampions(), true);
+    }
+
+    public void addTeam(List<? extends SegmentItem> segmentItems, int index) {
+        if (segmentItems.isEmpty() || ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
+            return;
+        }
+
+        if (segmentItems.get(0) instanceof TitleView) {
+            addTitleView((TitleView) segmentItems.get(0));
+            return;
+        }
+        TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrappers.get(index).controller;
+        emptyWrapper.getTeamPaneController().getItems().addAll(segmentItems);
+        emptyWrapper.updateLabels();
+    }
+
+    private GameScreen wrapperToInsert(List<GameScreen> workerTeamWrappers, boolean onlyEmpty) {
+        GameScreen biggestTeamScreen = Collections.max(workerTeamWrappers,
+                Comparator.comparing(c -> ((TeamPaneWrapper) c.controller).getSegmentItems().size()));
+        int maxSize = ((TeamPaneWrapper) biggestTeamScreen.controller).getSegmentItems().size();
+        if (maxSize == 0 && !workerTeamWrappers.isEmpty()) {
+            return workerTeamWrappers.get(0);
+        }
+
+        if (onlyEmpty) {
+            GameScreen smallest = Collections.min(workerTeamWrappers,
+                    Comparator.comparing(c -> ((TeamPaneWrapper) c.controller).getSegmentItems().size()));
+            int minSize = ((TeamPaneWrapper) smallest.controller).getSegmentItems().size();
+            if (minSize == 0) {
+                return smallest;
+            }
+            return null;
+        }
+        return workerTeamWrappers.stream()
+                .filter(x -> ((TeamPaneWrapper) x.controller).getSegmentItems().size() < maxSize)
+                .findFirst()
+                .orElse(null);
     }
 
     private GameScreen addTeam(TeamType teamType) {

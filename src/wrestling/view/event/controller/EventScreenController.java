@@ -471,8 +471,12 @@ public class EventScreenController extends ControllerBase implements Initializab
             public void handle(MouseEvent click) {
                 if (click.getButton() == MouseButton.SECONDARY) {
                     currentSegmentPaneController().addTeam(
-                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems());
+                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), false);
+                } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
+                    currentSegmentPaneController().addTeam(
+                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
                 }
+                updateLabels();
             }
         });
 
