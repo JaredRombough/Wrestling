@@ -52,11 +52,11 @@ public class WorkerFactory {
         Worker worker = randomWorker();
 
         //set the popularity to be proportionate to the level requested
-        worker.setPopularity((level * 20) + RandomUtils.nextInt(-10, 10));
+        worker.setPopularity((level * 20) - 10 + RandomUtils.nextInt(0, 10));
 
         //prevent too many maxed out workers
         if (worker.getPopularity() > 100) {
-            worker.setPopularity(100 + RandomUtils.nextInt(-10, 0));
+            worker.setPopularity(90 + RandomUtils.nextInt(0, 10));
         }
 
         return worker;

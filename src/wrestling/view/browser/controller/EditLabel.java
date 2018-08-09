@@ -11,6 +11,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -31,17 +32,12 @@ public class EditLabel extends ControllerBase implements Initializable {
         label.setText("");
     }
 
-    /**
-     * @return the button
-     */
-    public Button getEditButton() {
-        return editButton;
-    }
-
     @Override
     public void setCurrent(Object object) {
-        if (object instanceof SegmentItem) {
-            SegmentItem segmentItem = (SegmentItem) object;
+        SegmentItem segmentItem = object instanceof SegmentItem ? (SegmentItem) object : null;
+        BrowseMode browseMode = object instanceof BrowseMode ? (BrowseMode) object : null;
+
+        if (segmentItem != null) {
             label.setText(segmentItem.getLongName());
             editButton.setOnAction(e -> {
                 if (object instanceof TitleView) {
@@ -58,36 +54,30 @@ public class EditLabel extends ControllerBase implements Initializable {
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
             });
-            createButton.setOnAction(e -> {
-                if (segmentItem instanceof EventTemplate) {
-                    mainApp.show(ScreenCode.CALENDAR);
-                } else {
-                    Optional<? extends SegmentItem> optionalResult = Optional.empty();
-                    if (segmentItem instanceof TitleView) {
-                        optionalResult = ViewUtils.createTitleViewDialog(gameController).showAndWait();
-                    } else if (segmentItem instanceof TagTeamView) {
-                        CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
-                        optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
-                    }
-
-                    optionalResult.ifPresent((SegmentItem newSegmentItem) -> {
-                        mainApp.show(ScreenCode.BROWSER, newSegmentItem);
-                    });
-                }
-            });
 
         } else {
             label.setText("");
         }
-        editButton.setVisible(object != null);
+        editButton.setVisible(segmentItem != null);
 
-    }
+        createButton.setOnAction(e -> {
+            if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {
+                mainApp.show(ScreenCode.CALENDAR);
+            } else {
+                Optional<? extends SegmentItem> optionalResult = Optional.empty();
+                if (segmentItem instanceof TitleView || BrowseMode.TITLES.equals(browseMode)) {
+                    optionalResult = ViewUtils.createTitleViewDialog(gameController).showAndWait();
+                } else if (segmentItem instanceof TagTeamView || BrowseMode.TAG_TEAMS.equals(browseMode)) {
+                    CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
+                    optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
+                }
 
-    /**
-     * @return the createButton
-     */
-    public Button getCreateButton() {
-        return createButton;
+                optionalResult.ifPresent((SegmentItem newSegmentItem) -> {
+                    mainApp.show(ScreenCode.BROWSER, newSegmentItem);
+                });
+            }
+        });
+
     }
 
 }

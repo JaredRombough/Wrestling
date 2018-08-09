@@ -83,7 +83,7 @@ public class SegmentView {
 
     public List<SegmentTeam> getTeams(TeamType type) {
         List<SegmentTeam> teamTypeTeams = new ArrayList<>();
-        for (SegmentTeam team : teamTypeTeams) {
+        for (SegmentTeam team : teams) {
             if (team.getType().equals(type)) {
                 teamTypeTeams.add(team);
             }

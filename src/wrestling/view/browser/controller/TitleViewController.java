@@ -19,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.ActiveType;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -106,6 +107,8 @@ public class TitleViewController extends ControllerBase implements Initializable
             FXCollections.sort(titleReigns, comparator);
             listView.getItems().clear();
             listView.setItems(titleReigns);
+        } else {
+            editLabel.setCurrent(BrowseMode.TITLES);
         }
     }
 
