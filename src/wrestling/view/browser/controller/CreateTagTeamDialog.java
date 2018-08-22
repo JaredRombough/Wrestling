@@ -13,7 +13,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.view.utility.ViewUtils;
@@ -27,22 +27,22 @@ public class CreateTagTeamDialog {
         Dialog<TagTeamView> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
-        List<Worker> workers = gameController.getContractManager().getFullRoster(
+        List<WorkerView> workers = gameController.getContractManager().getFullRoster(
                 gameController.getPromotionManager().playerPromotion());
         Collections.sort(workers, new NameComparator());
-        ComboBox<Worker> workerA = new ComboBox(FXCollections.observableArrayList(workers));
-        ComboBox<Worker> workerB = new ComboBox(FXCollections.observableArrayList(workers));
+        ComboBox<WorkerView> workerA = new ComboBox(FXCollections.observableArrayList(workers));
+        ComboBox<WorkerView> workerB = new ComboBox(FXCollections.observableArrayList(workers));
         VBox vBox = new VBox(8);
 
         dialog.setTitle("Create Tag Team");
         dialog.setHeaderText("Team Details");
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        workerA.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) -> {
+        workerA.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends WorkerView> observable, WorkerView oldValue, WorkerView newValue) -> {
             if (newValue != null && newValue != oldValue && workerB.getItems().contains(newValue)) {
                 updateCreateTeamComboBox(newValue, new ArrayList(workers), workerB);
             }
         });
-        workerB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) -> {
+        workerB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends WorkerView> observable, WorkerView oldValue, WorkerView newValue) -> {
             if (newValue != null && newValue != oldValue && workerA.getItems().contains(newValue)) {
                 updateCreateTeamComboBox(newValue, new ArrayList(workers), workerA);
             }
@@ -77,12 +77,12 @@ public class CreateTagTeamDialog {
         return dialog;
     }
 
-    private void updateCreateTeamComboBox(Worker worker, List<Worker> workers, ComboBox<Worker> otherComboBox) {
+    private void updateCreateTeamComboBox(WorkerView worker, List<WorkerView> workers, ComboBox<WorkerView> otherComboBox) {
         if (!createDialogUpdating) {
             createDialogUpdating = true;
-            List<Worker> currentWorkers = workers;
+            List<WorkerView> currentWorkers = workers;
             currentWorkers.remove(worker);
-            Worker selected = otherComboBox.getSelectionModel().getSelectedItem();
+            WorkerView selected = otherComboBox.getSelectionModel().getSelectedItem();
             otherComboBox.setItems(FXCollections.observableArrayList(currentWorkers));
             if (otherComboBox.getItems().contains(selected)) {
                 otherComboBox.getSelectionModel().select(selected);

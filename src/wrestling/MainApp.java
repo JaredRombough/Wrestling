@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.GameController;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.NextDayScreenController;
@@ -216,7 +216,7 @@ public class MainApp extends Application {
         return ViewUtils.loadImage(getClass().getResourceAsStream(imagePath));
     }
 
-    public Image getDefaultWorkerImage(Worker worker) {
+    public Image getDefaultWorkerImage(WorkerView worker) {
         if (worker.getGender().equals(Gender.MALE)) {
             return loadImageFromPath("images/workerDefaultMale.jpg");
         } else {

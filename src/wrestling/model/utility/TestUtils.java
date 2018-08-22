@@ -3,7 +3,7 @@ package wrestling.model.utility;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -12,7 +12,7 @@ import wrestling.model.segmentEnum.SegmentType;
 
 public final class TestUtils {
 
-    public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
+    public static EventView testEventView(Event event, List<WorkerView> roster, boolean addImages) {
 
         if (addImages) {
             String imagePath = "worker%02d.jpg";
@@ -39,7 +39,7 @@ public final class TestUtils {
 
     }
 
-    private static SegmentView testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
+    private static SegmentView testSegment(int numberOfTeams, int teamSize, List<WorkerView> roster) {
         SegmentView segmentView = new SegmentView(SegmentType.MATCH);
         List<SegmentTeam> teams = new ArrayList<>();
 

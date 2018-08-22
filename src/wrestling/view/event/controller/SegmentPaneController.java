@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -226,7 +226,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
-    public List<Worker> getWorkers() {
+    public List<WorkerView> getWorkers() {
         return ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
     }
 
@@ -251,7 +251,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         removeSegmentItems(segmentItems);
 
-        if (segmentItems.get(0) instanceof Worker || segmentItems.get(0) instanceof TagTeamView) {
+        if (segmentItems.get(0) instanceof WorkerView || segmentItems.get(0) instanceof TagTeamView) {
 
             GameScreen wrapperToInsert = wrapperToInsert(workerTeamWrappers, emptyOnly);
             if (wrapperToInsert == null) {

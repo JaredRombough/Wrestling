@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
@@ -294,18 +294,18 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         int currentCost = 0;
 
-        for (Worker worker : allWorkers()) {
+        for (WorkerView worker : allWorkers()) {
             currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
 
         }
         return currentCost;
     }
 
-    private List<Worker> allWorkers() {
-        List<Worker> allWorkers = new ArrayList<>();
+    private List<WorkerView> allWorkers() {
+        List<WorkerView> allWorkers = new ArrayList<>();
         for (SegmentPaneController segmentPaneController : getSegmentPaneControllers()) {
 
-            for (Worker worker : segmentPaneController.getWorkers()) {
+            for (WorkerView worker : segmentPaneController.getWorkers()) {
                 if (!allWorkers.contains(worker)) {
                     allWorkers.add(worker);
                 }

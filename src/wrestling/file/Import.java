@@ -22,7 +22,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
@@ -49,9 +49,9 @@ public class Import {
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
     
-    private final List<Worker> allWorkers = new ArrayList<>();
+    private final List<WorkerView> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
-    private final List<Worker> otherWorkers = new ArrayList<>();
+    private final List<WorkerView> otherWorkers = new ArrayList<>();
     private final List<String> otherWorkerPromotions = new ArrayList<>();
     
     private final List<TagTeam> allTagTeams = new ArrayList<>();
@@ -380,7 +380,7 @@ public class Import {
             
             if (counter == lineLength) {
                 
-                Worker worker = gameController.getWorkerFactory().randomWorker();
+                WorkerView worker = gameController.getWorkerFactory().randomWorker();
                 
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
@@ -458,7 +458,7 @@ public class Import {
         }
     }
     
-    private void checkForContract(Promotion p, Worker w, List<String> currentHexLine) {
+    private void checkForContract(Promotion p, WorkerView w, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
             if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
@@ -601,7 +601,7 @@ public class Import {
                     for (int w = 0; w < workerIDs.size(); w++) {
 
                         //list to hold the title holder(s) we find
-                        List<Worker> titleHolders = new ArrayList<>();
+                        List<WorkerView> titleHolders = new ArrayList<>();
                         
                         if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
                             

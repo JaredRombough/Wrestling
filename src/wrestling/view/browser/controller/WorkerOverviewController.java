@@ -13,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.GameScreen;
@@ -76,13 +76,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private AnchorPane contractPaneAnchor;
     private GameScreen contractPaneScreen;
     
-    private Worker worker;
+    private WorkerView worker;
     private Promotion promotion;
     
     @Override
     public void setCurrent(Object obj) {
         
-        Worker newWorker = (Worker) obj;
+        WorkerView newWorker = (WorkerView) obj;
         
         worker = newWorker;
         contractPaneScreen.controller.setCurrent(newWorker);

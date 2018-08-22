@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -32,7 +32,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
     private int width;
     private int height;
     private int padding;
-    private Worker worker;
+    private WorkerView worker;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,14 +48,14 @@ public class ResultsCardController extends ControllerBase implements Initializab
     @Override
     public void setCurrent(Object obj) {
 
-        if (obj instanceof Worker) {
-            setCurrentWorker((Worker) obj);
+        if (obj instanceof WorkerView) {
+            setCurrentWorker((WorkerView) obj);
         } else if (obj instanceof String) {
             setCurrentString((String) obj);
         }
     }
 
-    private void setCurrentWorker(Worker w) {
+    private void setCurrentWorker(WorkerView w) {
         worker = w;
         String imgString = worker.getImageString();
         nameLabel.setText(worker.getName());

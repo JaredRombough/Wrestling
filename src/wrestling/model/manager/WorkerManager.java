@@ -8,13 +8,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 
 public class WorkerManager implements Serializable {
 
     private final ContractManager contractManager;
-    private final List<Worker> workers;
+    private final List<WorkerView> workers;
 
     private transient Logger log = LogManager.getLogger(this.getClass());
 
@@ -23,15 +23,15 @@ public class WorkerManager implements Serializable {
         this.workers = new ArrayList();
     }
 
-    public void addWorkers(List<Worker> workers) {
-        for (Worker worker : workers) {
+    public void addWorkers(List<WorkerView> workers) {
+        for (WorkerView worker : workers) {
             this.workers.add(worker);
         }
     }
 
-    public List<Worker> freeAgents(Promotion promotion) {
-        List<Worker> freeAgents = new ArrayList();
-        for (Worker worker : workers) {
+    public List<WorkerView> freeAgents(Promotion promotion) {
+        List<WorkerView> freeAgents = new ArrayList();
+        for (WorkerView worker : workers) {
             if (contractManager.canNegotiate(worker, promotion)) {
                 freeAgents.add(worker);
             }
@@ -39,7 +39,7 @@ public class WorkerManager implements Serializable {
         return freeAgents;
     }
 
-    public void gainPopularity(Worker worker) {
+    public void gainPopularity(WorkerView worker) {
 
         int maxPopularity = 0;
 
@@ -72,11 +72,11 @@ public class WorkerManager implements Serializable {
         }
     }
 
-    private void addPopularity(Worker worker, int pop) {
+    private void addPopularity(WorkerView worker, int pop) {
         worker.setPopularity(worker.getPopularity() + pop);
     }
 
-    public void losePopularity(Worker worker) {
+    public void losePopularity(WorkerView worker) {
 
         if (RandomUtils.nextInt(1, 10) == 10
                 && worker.getPopularity() > 0
@@ -85,7 +85,7 @@ public class WorkerManager implements Serializable {
         }
     }
 
-    public List<Worker> allWorkers() {
+    public List<WorkerView> allWorkers() {
         return workers;
     }
 

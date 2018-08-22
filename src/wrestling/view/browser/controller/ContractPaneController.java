@@ -18,7 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class ContractPaneController extends ControllerBase implements Initializable {
@@ -37,16 +37,16 @@ public class ContractPaneController extends ControllerBase implements Initializa
 
     private boolean exclusive;
 
-    private Worker worker;
+    private WorkerView worker;
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof Worker) {
-            setCurrentWorker((Worker) obj);
+        if (obj instanceof WorkerView) {
+            setCurrentWorker((WorkerView) obj);
         }
     }
 
-    private void setCurrentWorker(Worker worker) {
+    private void setCurrentWorker(WorkerView worker) {
         this.worker = worker;
 
         if (worker == null

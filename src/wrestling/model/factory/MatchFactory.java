@@ -2,7 +2,7 @@ package wrestling.model.factory;
 
 import java.io.Serializable;
 import wrestling.model.SegmentWorker;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
@@ -28,7 +28,7 @@ public class MatchFactory implements Serializable {
         segmentView.setDate(dateManager.today());
         matchManager.addSegmentView(segmentView);
         for (SegmentTeam team : segmentView.getTeams()) {
-            for (Worker worker : team.getWorkers()) {
+            for (WorkerView worker : team.getWorkers()) {
                 matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
             }
         }
@@ -52,7 +52,7 @@ public class MatchFactory implements Serializable {
 
             workRatingTotal += getWorkRating(team);
 
-            for (Worker worker : team.getWorkers()) {
+            for (WorkerView worker : team.getWorkers()) {
                 crowdRatingTotal += ModelUtils.getPrioritizedScore(new Integer[]{
                     worker.getPopularity(),
                     worker.getCharisma()
@@ -83,7 +83,7 @@ public class MatchFactory implements Serializable {
 
     private int getWorkRating(SegmentTeam team) {
         int score = 0;
-        for (Worker worker : team.getWorkers()) {
+        for (WorkerView worker : team.getWorkers()) {
             switch (team.getType()) {
                 case OFFERER:
                 case OFFEREE:

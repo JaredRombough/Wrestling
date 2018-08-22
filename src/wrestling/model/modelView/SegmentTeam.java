@@ -2,7 +2,6 @@ package wrestling.model.modelView;
 
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Worker;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SuccessType;
@@ -12,7 +11,7 @@ import wrestling.model.utility.ModelUtils;
 
 public class SegmentTeam {
 
-    private List<Worker> workers;
+    private List<WorkerView> workers;
     private TeamType type;
     private SegmentTeam target;
     private SuccessType success;
@@ -20,7 +19,7 @@ public class SegmentTeam {
     private OutcomeType outcome;
     private PresenceType presence;
 
-    public SegmentTeam(List<Worker> workers, TeamType type) {
+    public SegmentTeam(List<WorkerView> workers, TeamType type) {
         this.workers = workers;
         this.type = type;
     }
@@ -34,14 +33,14 @@ public class SegmentTeam {
     /**
      * @return the workers
      */
-    public List<Worker> getWorkers() {
+    public List<WorkerView> getWorkers() {
         return workers;
     }
 
     /**
      * @param workers the workers to set
      */
-    public void setWorkers(List<Worker> workers) {
+    public void setWorkers(List<WorkerView> workers) {
         this.workers = workers;
     }
 

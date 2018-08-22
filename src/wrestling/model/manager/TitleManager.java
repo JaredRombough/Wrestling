@@ -6,7 +6,7 @@ import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.TitleWorker;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.utility.ModelUtils;
@@ -56,8 +56,8 @@ public class TitleManager {
         return promotionTitleViews;
     }
 
-    public List<Worker> getCurrentChampionWorkers(Title title) {
-        List<Worker> workers = new ArrayList<>();
+    public List<WorkerView> getCurrentChampionWorkers(Title title) {
+        List<WorkerView> workers = new ArrayList<>();
         for (TitleWorker titleWorker : titleWorkers) {
             if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
                 workers.add(titleWorker.getWorker());
@@ -83,7 +83,7 @@ public class TitleManager {
     //check if we have any outstanding titles from expired contracts
     public void stripTitles(Promotion promotion, Contract contract) {
         for (Title title : getTitles(promotion)) {
-            for (Worker worker : getCurrentChampionWorkers(title)) {
+            for (WorkerView worker : getCurrentChampionWorkers(title)) {
                 if (worker.equals(contract.getWorker())) {
                     stripTitle(title);
                 }
@@ -99,19 +99,19 @@ public class TitleManager {
     }
 
     //here we would update the title's tracker of reigns also        
-    public void titleChange(Title title, List<Worker> winner) {
+    public void titleChange(Title title, List<WorkerView> winner) {
         stripTitle(title);
         awardTitle(title, winner);
     }
 
-    public void awardTitle(Title title, Worker winner) {
-        List<Worker> workerAsList = new ArrayList<>();
+    public void awardTitle(Title title, WorkerView winner) {
+        List<WorkerView> workerAsList = new ArrayList<>();
         workerAsList.add(winner);
         awardTitle(title, workerAsList);
     }
 
-    public void awardTitle(Title title, List<Worker> winner) {
-        for (Worker worker : winner) {
+    public void awardTitle(Title title, List<WorkerView> winner) {
+        for (WorkerView worker : winner) {
             TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
             titleWorkers.add(titleWorker);
 
@@ -129,18 +129,18 @@ public class TitleManager {
     }
 
     //returns a list of titles available for an event
-    public List<Title> getEventTitles(Promotion promotion, List<Worker> eventRoster) {
+    public List<Title> getEventTitles(Promotion promotion, List<WorkerView> eventRoster) {
 
         List<Title> eventTitles = new ArrayList<>();
 
         for (Title title : getTitles(promotion)) {
-            List<Worker> champs = getCurrentChampionWorkers(title);
+            List<WorkerView> champs = getCurrentChampionWorkers(title);
             if (champs.isEmpty()) {
                 eventTitles.add(title);
             } else {
                 boolean titleWorkersPresent = true;
 
-                for (Worker worker : champs) {
+                for (WorkerView worker : champs) {
                     if (!eventRoster.contains(worker)) {
                         titleWorkersPresent = false;
                     }
@@ -171,7 +171,7 @@ public class TitleManager {
     public String titleReignString(TitleReign titleReign) {
 
         StringBuilder sb = new StringBuilder();
-        List<Worker> champWorkers = titleReign.getWorkers();
+        List<WorkerView> champWorkers = titleReign.getWorkers();
 
         sb.append(ModelUtils.slashNames(champWorkers));
         sb.append("\t\t\t");

@@ -13,7 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
@@ -134,7 +134,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         List<SegmentTeam> defaultTeams = segmentView.getMatchParticipantTeams();
         for (SegmentTeam team : defaultTeams) {
             List<GameScreen> workerCards = new ArrayList<>();
-            for (Worker worker : team.getWorkers()) {
+            for (WorkerView worker : team.getWorkers()) {
                 GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
@@ -154,7 +154,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         List<SegmentTeam> teams = segmentView.getTeams();
         for (SegmentTeam team : teams) {
             List<GameScreen> workerCards = new ArrayList<>();
-            for (Worker worker : team.getWorkers()) {
+            for (WorkerView worker : team.getWorkers()) {
                 GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);

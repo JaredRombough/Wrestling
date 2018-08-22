@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.Title;
-import wrestling.model.Worker;
 import wrestling.model.segmentEnum.ActiveType;
 
 public class TitleView implements SegmentItem {
@@ -26,7 +25,7 @@ public class TitleView implements SegmentItem {
         return title;
     }
 
-    public void addReign(List<Worker> workers, LocalDate dayWon) {
+    public void addReign(List<WorkerView> workers, LocalDate dayWon) {
         if(champions != null) {
             champions.setDayLost(dayWon);
         }
@@ -61,7 +60,7 @@ public class TitleView implements SegmentItem {
     /**
      * @return the champions
      */
-    public List<Worker> getChampions() {
+    public List<WorkerView> getChampions() {
         return champions.getWorkers();
     }
     

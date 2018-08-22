@@ -1,16 +1,17 @@
 package wrestling.model;
 
+import wrestling.model.modelView.WorkerView;
 import java.time.LocalDate;
 
 public class TitleWorker {
     
     private final Title title;
-    private final Worker worker;
+    private final WorkerView worker;
     
     private final LocalDate dayWon;
     private LocalDate dayLost;
     
-    public TitleWorker(Title title, Worker worker, LocalDate dayWon) {
+    public TitleWorker(Title title, WorkerView worker, LocalDate dayWon) {
         this.title = title;
         this.worker = worker;
         this.dayWon = dayWon;
@@ -26,7 +27,7 @@ public class TitleWorker {
     /**
      * @return the worker
      */
-    public Worker getWorker() {
+    public WorkerView getWorker() {
         return worker;
     }
 

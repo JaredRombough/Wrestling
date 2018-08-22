@@ -16,7 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -91,8 +91,8 @@ public class StartGameScreenController extends ControllerBase implements Initial
                 + "Workers: " + gameController.getContractManager().getFullRoster(newValue).size() + "\n"
                 + "Average Popularity: " + gameController.getContractManager().averageWorkerPopularity(newValue));
 
-        ObservableList<Worker> rosterList = FXCollections.observableArrayList();
-        for (Worker current : gameController.getContractManager().getFullRoster(newValue)) {
+        ObservableList<WorkerView> rosterList = FXCollections.observableArrayList();
+        for (WorkerView current : gameController.getContractManager().getFullRoster(newValue)) {
             rosterList.add(current);
         }
         workersListView.setItems(rosterList);

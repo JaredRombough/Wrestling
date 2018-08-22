@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.Gender;
 
 /**
@@ -20,7 +20,7 @@ public class WorkerFactory {
 
     public List createWorkers(int numberOfWorkers) {
 
-        ArrayList<Worker> workers = new ArrayList<>();
+        ArrayList<WorkerView> workers = new ArrayList<>();
 
         for (int i = 0; i < numberOfWorkers; i++) {
             workers.add(randomWorker());
@@ -32,7 +32,7 @@ public class WorkerFactory {
 
     public List createRoster(int rosterSize, int rosterLevel) {
 
-        ArrayList<Worker> roster = new ArrayList<>();
+        ArrayList<WorkerView> roster = new ArrayList<>();
 
         for (int i = 0; i < rosterSize; i++) {
             roster.add(randomWorker(rosterLevel));
@@ -41,7 +41,7 @@ public class WorkerFactory {
     }
 
     //to generate a random worker at a given popularity level
-    public Worker randomWorker(int level) {
+    public WorkerView randomWorker(int level) {
 
         if (level < 1) {
             level = 1;
@@ -49,7 +49,7 @@ public class WorkerFactory {
             level = 5;
         }
 
-        Worker worker = randomWorker();
+        WorkerView worker = randomWorker();
 
         //set the popularity to be proportionate to the level requested
         worker.setPopularity((level * 20) - 10 + RandomUtils.nextInt(0, 10));
@@ -62,8 +62,8 @@ public class WorkerFactory {
         return worker;
     }
 
-    public Worker randomWorker() {
-        Worker worker = newWorker();
+    public WorkerView randomWorker() {
+        WorkerView worker = newWorker();
 
         worker.setPopularity(RandomUtils.nextInt(0, 100));
         worker.setFlying(RandomUtils.nextInt(0, 100));
@@ -84,7 +84,7 @@ public class WorkerFactory {
         return worker;
     }
 
-    private void setRandomName(Worker worker) {
+    private void setRandomName(WorkerView worker) {
         Random random = new Random();
         String nameString;
 
@@ -105,8 +105,8 @@ public class WorkerFactory {
         worker.setShortName(lastName);
     }
 
-    private Worker newWorker() {
-        Worker worker = new Worker();
+    private WorkerView newWorker() {
+        WorkerView worker = new WorkerView();
         return worker;
     }
 }

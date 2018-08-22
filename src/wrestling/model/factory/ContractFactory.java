@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.manager.ContractManager;
 
 /**
@@ -24,7 +24,7 @@ public class ContractFactory {
     }
 
     //create a contract with predetermined attributes
-    public void createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public void createContract(WorkerView worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = createContract(worker, promotion);
 
@@ -40,7 +40,7 @@ public class ContractFactory {
     }
 
     //create a contract with set exclusivity (only used by import)
-    public void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
+    public void createContract(WorkerView worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
 
         //create the contract
         Contract contract = createContract(worker, promotion);
@@ -69,7 +69,7 @@ public class ContractFactory {
     }
 
     //create a default contract
-    public void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
+    public void createContract(WorkerView worker, Promotion promotion, LocalDate startDate) {
 
         //create the contract
         Contract contract = createContract(worker, promotion);
@@ -97,7 +97,7 @@ public class ContractFactory {
         initializeContract(contract, duration, startDate);
     }
 
-    private Contract createContract(Worker worker, Promotion promotion) {
+    private Contract createContract(WorkerView worker, Promotion promotion) {
         Contract contract = new Contract();
         contract.setWorker(worker);
         contract.setPromotion(promotion);
@@ -110,7 +110,7 @@ public class ContractFactory {
         contract.setStartDate(startDate);
     }
 
-    public int calculateAppearanceCost(Worker worker, boolean exclusive) {
+    public int calculateAppearanceCost(WorkerView worker, boolean exclusive) {
         int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();

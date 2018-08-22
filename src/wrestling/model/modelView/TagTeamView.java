@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.TagTeam;
-import wrestling.model.Worker;
 import wrestling.model.segmentEnum.ActiveType;
 
 public class TagTeamView implements SegmentItem {
 
     private TagTeam tagTeam;
-    private List<Worker> workers = new ArrayList<>();
+    private List<WorkerView> workers = new ArrayList<>();
 
     @Override
-    public List<Worker> getSegmentItems() {
+    public List<WorkerView> getSegmentItems() {
         return getWorkers();
     }
 
@@ -22,7 +21,7 @@ public class TagTeamView implements SegmentItem {
         return tagTeam.getName();
     }
 
-    public void addWorker(Worker worker) {
+    public void addWorker(WorkerView worker) {
         getWorkers().add(worker);
     }
 
@@ -43,7 +42,7 @@ public class TagTeamView implements SegmentItem {
     /**
      * @return the workers
      */
-    public List<Worker> getWorkers() {
+    public List<WorkerView> getWorkers() {
         return workers;
     }
 

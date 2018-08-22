@@ -7,7 +7,6 @@ import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.Match;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
@@ -33,8 +32,8 @@ public class SegmentView {
         titleViews = new ArrayList<>();
     }
 
-    public List<Worker> getWorkers() {
-        List<Worker> workers = new ArrayList<>();
+    public List<WorkerView> getWorkers() {
+        List<WorkerView> workers = new ArrayList<>();
         for (SegmentTeam team : teams) {
             workers.addAll(team.getWorkers());
         }
@@ -69,8 +68,8 @@ public class SegmentView {
         return participants;
     }
 
-    public List<Worker> getMatchParticipants() {
-        List<Worker> participants = new ArrayList<>();
+    public List<WorkerView> getMatchParticipants() {
+        List<WorkerView> participants = new ArrayList<>();
         for (SegmentTeam team : teams) {
             if (team.getType().equals(TeamType.WINNER)
                     || team.getType().equals(TeamType.LOSER)
@@ -99,7 +98,7 @@ public class SegmentView {
         return null;
     }
 
-    public SegmentTeam getTeam(Worker worker) {
+    public SegmentTeam getTeam(WorkerView worker) {
         for (SegmentTeam team : getTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team;
@@ -108,7 +107,7 @@ public class SegmentView {
         return null;
     }
 
-    public TeamType getTeamType(Worker worker) {
+    public TeamType getTeamType(WorkerView worker) {
         for (SegmentTeam team : getTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team.getType();

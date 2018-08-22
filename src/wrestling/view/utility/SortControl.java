@@ -22,7 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -217,8 +217,8 @@ public class SortControl extends ControllerBase implements Initializable {
     private boolean isGenderFiltered(SegmentItem segmentItem) {
         if (!genderFilter.equals(Gender.ALL)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof Worker
-                        && !((Worker) subItem).getGender().equals(genderFilter)) {
+                if (subItem instanceof WorkerView
+                        && !((WorkerView) subItem).getGender().equals(genderFilter)) {
                     return true;
                 }
             }

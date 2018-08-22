@@ -1,11 +1,13 @@
 package wrestling.model;
 
+import wrestling.model.modelView.WorkerView;
+
 public class TagTeamWorker {
 
     private final TagTeam tagTeam;
-    private final Worker worker;
+    private final WorkerView worker;
 
-    public TagTeamWorker(TagTeam tagTeam, Worker worker) {
+    public TagTeamWorker(TagTeam tagTeam, WorkerView worker) {
         this.tagTeam = tagTeam;
         this.worker = worker;
     }
@@ -20,7 +22,7 @@ public class TagTeamWorker {
     /**
      * @return the worker
      */
-    public Worker getWorker() {
+    public WorkerView getWorker() {
         return worker;
     }
 

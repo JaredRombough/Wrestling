@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
@@ -47,7 +47,7 @@ public class PromotionFactory {
     public void preparePromotions() throws IOException {
 
         List<Promotion> promotions = new ArrayList<>();
-        List<Worker> allWorkers = new ArrayList<>();
+        List<WorkerView> allWorkers = new ArrayList<>();
 
         int numberOfPromotions = 20;
         int startingFunds = 10000;
@@ -84,7 +84,7 @@ public class PromotionFactory {
                 //assign workers based on promotion level
                 do {
 
-                    Worker worker = workerFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    WorkerView worker = workerFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
 
                     contractFactory.createContract(worker, promotion, dateManager.today());
 

@@ -16,7 +16,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -75,12 +75,12 @@ public class PromotionController implements Serializable {
 
     private void updatePushed(Promotion promotion) {
 
-        List<Worker> pushList = contractManager.getPushed(promotion);
+        List<WorkerView> pushList = contractManager.getPushed(promotion);
         int diff = maxPushListSize(promotion) - pushList.size();
 
         if (diff > 0) {
             int i = 0;
-            for (Worker worker : contractManager.getFullRoster(promotion)) {
+            for (WorkerView worker : contractManager.getFullRoster(promotion)) {
                 if (!pushList.contains(worker) && !worker.isManager() && worker.isFullTime()) {
                     contractManager.getContract(worker, promotion).setPushed(true);
                 }
@@ -168,15 +168,15 @@ public class PromotionController implements Serializable {
         }
     }
 
-    private void sortByPopularity(List<Worker> workerList) {
+    private void sortByPopularity(List<WorkerView> workerList) {
         //sort roster by popularity
-        Collections.sort(workerList, (Worker w1, Worker w2) -> -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity()));
+        Collections.sort(workerList, (WorkerView w1, WorkerView w2) -> -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity()));
     }
 
     //sign a contract with the first suitable worker found
     private void signContract(Promotion promotion) {
 
-        for (Worker worker : workerManager.freeAgents(promotion)) {
+        for (WorkerView worker : workerManager.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
                 break;
@@ -187,7 +187,7 @@ public class PromotionController implements Serializable {
     //sign a contract with the first suitable worker found
     private void signContract(Promotion promotion, LocalDate date) {
 
-        for (Worker worker : workerManager.freeAgents(promotion)) {
+        for (WorkerView worker : workerManager.freeAgents(promotion)) {
             if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)
                     && !eventManager.isBooked(worker, date)) {
                 contractFactory.createContract(worker, promotion, dateManager.today());
@@ -246,7 +246,7 @@ public class PromotionController implements Serializable {
         eventManager.addEvent(event);
 
         //book the roster for the date
-        for (Worker worker : contractManager.getFullRoster(promotion)) {
+        for (WorkerView worker : contractManager.getFullRoster(promotion)) {
             if (!eventManager.isBooked(worker, eventDate)) {
                 eventManager.addEventWorker(new EventWorker(event, worker));
             }
@@ -268,7 +268,7 @@ public class PromotionController implements Serializable {
         //maximum segments for the event
         int maxSegments = 8;
 
-        List<Worker> pushList = contractManager.getPushed(promotion);
+        List<WorkerView> pushList = contractManager.getPushed(promotion);
 
         //bigger promotions get more segments
         if (promotion.getLevel() > 3) {
@@ -276,10 +276,10 @@ public class PromotionController implements Serializable {
         }
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = getEventRoster(promotion);
+        List<WorkerView> eventRoster = getEventRoster(promotion);
 
         //list to track workers on the pushlist that are still available
-        List<Worker> pushListPresent = new ArrayList<>();
+        List<WorkerView> pushListPresent = new ArrayList<>();
 
         //move pushlist workers present to the pushlistpresent from the event roster
         for (int i = 0; i < pushList.size(); i++) {
@@ -297,7 +297,7 @@ public class PromotionController implements Serializable {
         List<SegmentView> segments = new ArrayList<>();
 
         //list to hold workers who have been booked for this event
-        List<Worker> matchBooked = new ArrayList<>();
+        List<WorkerView> matchBooked = new ArrayList<>();
 
         //get a list of titles available for the event
         List<Title> eventTitles = titleManager.getEventTitles(promotion, eventRoster);
@@ -316,7 +316,7 @@ public class PromotionController implements Serializable {
             }
 
             List<SegmentTeam> matchTeams = new ArrayList<>();
-            List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
+            List<WorkerView> champs = titleManager.getCurrentChampionWorkers(title);
 
             //if the title is not vacant, make the title holders team 1
             if (!champs.isEmpty()) {
@@ -326,7 +326,7 @@ public class PromotionController implements Serializable {
 
             //list to hold the lists we will draw workers from
             //in order of priority
-            List<List<Worker>> workerResources = new ArrayList<>();
+            List<List<WorkerView>> workerResources = new ArrayList<>();
 
             workerResources.add(pushListPresent);
             workerResources.add(eventRoster);
@@ -334,14 +334,14 @@ public class PromotionController implements Serializable {
             //loop for the number of teams we want
             for (int i = 0; i < teamsNeeded; i++) {
 
-                List<Worker> team = new ArrayList<>();
+                List<WorkerView> team = new ArrayList<>();
                 boolean teamMade = false;
 
                 //iterate through resources
-                for (List<Worker> resouce : workerResources) {
+                for (List<WorkerView> resouce : workerResources) {
 
                     //iterate through workers in the resource
-                    for (Worker worker : resouce) {
+                    for (WorkerView worker : resouce) {
 
                         //if the worker isn't in this team or already booked, add them
                         //to the team
@@ -385,8 +385,8 @@ public class PromotionController implements Serializable {
             for (int i = 0; i < eventRoster.size(); i += 2) {
                 if (eventRoster.size() > i + 1) {
                     //move this somewhere else, like a matchFactory
-                    List<Worker> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
-                    List<Worker> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
+                    List<WorkerView> teamA = new ArrayList<>(Arrays.asList(eventRoster.get(i)));
+                    List<WorkerView> teamB = new ArrayList<>(Arrays.asList(eventRoster.get(i + 1)));
                     List<SegmentTeam> teams = new ArrayList<>();
                     teams.add(new SegmentTeam(teamA, TeamType.WINNER));
                     teams.add(new SegmentTeam(teamB, TeamType.LOSER));
@@ -503,14 +503,14 @@ public class PromotionController implements Serializable {
         }
     }
 
-    private List<Worker> getEventRoster(Promotion promotion) {
+    private List<WorkerView> getEventRoster(Promotion promotion) {
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = contractManager.getFullRoster(promotion);
-        List<Worker> unavailable = new ArrayList<>();
+        List<WorkerView> eventRoster = contractManager.getFullRoster(promotion);
+        List<WorkerView> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked
-        for (Worker worker : eventRoster) {
+        for (WorkerView worker : eventRoster) {
 
             //the worker is unavailable if they are booked and the booking isn't with us
             if (!eventManager.isAvailable(worker, dateManager.today(), promotion)) {
@@ -522,10 +522,10 @@ public class PromotionController implements Serializable {
         eventRoster.removeAll(unavailable);
 
         //list to hold noncompetitors (managers, etc)
-        List<Worker> nonCompetitors = new ArrayList<>();
+        List<WorkerView> nonCompetitors = new ArrayList<>();
 
         //go through the event roster and collect noncompetitors
-        for (Worker worker : eventRoster) {
+        for (WorkerView worker : eventRoster) {
             if (worker.isManager() || !worker.isFullTime() || !worker.isMainRoster()) {
 
                 nonCompetitors.add(worker);

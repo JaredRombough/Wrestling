@@ -5,7 +5,7 @@ import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.TagTeamView;
 
 public class TagTeamManager {
@@ -40,15 +40,15 @@ public class TagTeamManager {
         return teamViews;
     }
 
-    public List<Worker> getWorkers(TagTeam tagTeam) {
-        List<Worker> workers = new ArrayList<>();
+    public List<WorkerView> getWorkers(TagTeam tagTeam) {
+        List<WorkerView> workers = new ArrayList<>();
         tagTeamWorkers.stream().filter((tagTeamWorker) -> (tagTeamWorker.getTagTeam().equals(tagTeam))).forEach((tagTeamWorker) -> {
             workers.add(tagTeamWorker.getWorker());
         });
         return workers;
     }
 
-    public TagTeamView createTagTeam(String teamName, Worker workerA, Worker workerB) {
+    public TagTeamView createTagTeam(String teamName, WorkerView workerA, WorkerView workerB) {
         TagTeam tagTeam = new TagTeam();
         tagTeam.setName(teamName);
         tagTeams.add(tagTeam);

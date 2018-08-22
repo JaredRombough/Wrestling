@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import wrestling.model.modelView.WorkerView;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class Contract implements Serializable {
 
     private Promotion promotion;
-    private Worker worker;
+    private WorkerView worker;
 
     private boolean active;
 
@@ -52,14 +53,14 @@ public class Contract implements Serializable {
     /**
      * @return the worker
      */
-    public Worker getWorker() {
+    public WorkerView getWorker() {
         return worker;
     }
 
     /**
      * @param worker the worker to set
      */
-    public void setWorker(Worker worker) {
+    public void setWorker(WorkerView worker) {
         this.worker = worker;
     }
 

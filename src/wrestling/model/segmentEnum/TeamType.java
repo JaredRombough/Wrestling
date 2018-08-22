@@ -1,7 +1,7 @@
 package wrestling.model.segmentEnum;
 
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iTeamType;
 import wrestling.model.modelView.TagTeamView;
@@ -341,7 +341,7 @@ public enum TeamType implements Description, iTeamType {
     }
 
     private static boolean workerDroppable(SegmentItem segmentItem) {
-        return segmentItem instanceof Worker || segmentItem instanceof TagTeamView;
+        return segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView;
     }
 
 }

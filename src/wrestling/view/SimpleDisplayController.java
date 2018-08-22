@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.manager.EventManager;
 import wrestling.model.modelView.TitleView;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -58,8 +58,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = eventManager.generateSummaryString((Event) obj);
         } else if (obj instanceof TitleView) {
             newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
-        } else if (obj instanceof Worker) {
-            newText = gameController.getSegmentManager().getMatchStringForMonths((Worker) obj, 3);
+        } else if (obj instanceof WorkerView) {
+            newText = gameController.getSegmentManager().getMatchStringForMonths((WorkerView) obj, 3);
         } else {
             newText = obj == null ? "" : obj.toString();
         }

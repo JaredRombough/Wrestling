@@ -2,16 +2,15 @@ package wrestling.model.modelView;
 
 import java.time.LocalDate;
 import java.util.List;
-import wrestling.model.Worker;
 
 public class TitleReign {
 
-    private final List<Worker> workers;
+    private final List<WorkerView> workers;
     private final LocalDate dayWon;
     private LocalDate dayLost;
     private final int sequenceNumber;
 
-    public TitleReign(List<Worker> workers, LocalDate dayWon, int sequenceNumber) {
+    public TitleReign(List<WorkerView> workers, LocalDate dayWon, int sequenceNumber) {
         this.workers = workers;
         this.dayWon = dayWon;
         this.sequenceNumber = sequenceNumber;
@@ -20,7 +19,7 @@ public class TitleReign {
     /**
      * @return the workers
      */
-    public List<Worker> getWorkers() {
+    public List<WorkerView> getWorkers() {
         return workers;
     }
 

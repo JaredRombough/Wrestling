@@ -24,7 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
@@ -132,7 +132,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         targetComboBox.getItems().clear();
 
         if (targets.size() > 1) {
-            List<Worker> emptyList = new ArrayList<>();
+            List<WorkerView> emptyList = new ArrayList<>();
             targets.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
         }
 
@@ -310,7 +310,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public SegmentTeam getSegmentTeam() {
-        List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
+        List<WorkerView> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
 
         SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
 

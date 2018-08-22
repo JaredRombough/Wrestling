@@ -9,7 +9,7 @@ import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -72,7 +72,7 @@ public class EventFactory {
         promotionManager.getBankAccount(event.getPromotion()).addFunds(
                 eventManager.calculateGate(event), 'e', eventView.getEvent().getDate());
 
-        for (Worker worker : eventManager.allWorkers(segments)) {
+        for (WorkerView worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
         }
@@ -134,7 +134,7 @@ public class EventFactory {
         Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
-            List<Worker> winners = matchManager.getWinners((Match) segment);
+            List<WorkerView> winners = matchManager.getWinners((Match) segment);
             winners.stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });
@@ -146,7 +146,7 @@ public class EventFactory {
         return segment;
     }
 
-    private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
+    private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {
         for (TitleView titleView : segmentView.getTitleViews()) {
             boolean change = !winners.equals(titleView.getChampions());
             if (change) {

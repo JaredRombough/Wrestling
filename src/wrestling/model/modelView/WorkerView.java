@@ -1,9 +1,10 @@
-package wrestling.model;
+package wrestling.model.modelView;
 
 import java.io.Serializable;
+import wrestling.model.SegmentItem;
 import wrestling.model.segmentEnum.Gender;
 
-public class Worker implements Serializable, SegmentItem {
+public class WorkerView implements Serializable, SegmentItem {
 
     private static int workerID = 0;
 
@@ -34,7 +35,7 @@ public class Worker implements Serializable, SegmentItem {
 
     private int minimumPopularity;
 
-    public Worker() {
+    public WorkerView() {
         minimumPopularity = 0;
         name = "Worker #" + workerID;
         workerID++;

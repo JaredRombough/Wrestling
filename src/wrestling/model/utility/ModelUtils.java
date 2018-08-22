@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.SegmentItem;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.view.event.controller.TeamPaneWrapper;
@@ -27,7 +27,7 @@ public final class ModelUtils {
         return String.format("%d:%02d", hours, minutes);
     }
 
-    public static String slashNames(List<Worker> workers) {
+    public static String slashNames(List<WorkerView> workers) {
         if (workers.isEmpty()) {
             return "?";
         }
@@ -94,7 +94,7 @@ public final class ModelUtils {
         return promotion.getLevel() * 20;
     }
 
-    public static int getMatchWorkRating(Worker worker) {
+    public static int getMatchWorkRating(WorkerView worker) {
         return getWeightedScore(new Integer[]{
             worker.getFlying(),
             worker.getWrestling(),
@@ -121,12 +121,12 @@ public final class ModelUtils {
         return totalScore / denominator;
     }
 
-    public static List<Worker> getWorkersFromSegmentItems(List<SegmentItem> segmentItems) {
-        List<Worker> workers = new ArrayList<>();
+    public static List<WorkerView> getWorkersFromSegmentItems(List<SegmentItem> segmentItems) {
+        List<WorkerView> workers = new ArrayList<>();
 
         segmentItems.forEach((item) -> {
-            if (item instanceof Worker) {
-                workers.add((Worker) item);
+            if (item instanceof WorkerView) {
+                workers.add((WorkerView) item);
             }
         });
         return workers;

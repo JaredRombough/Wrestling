@@ -21,7 +21,7 @@ import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
@@ -314,7 +314,7 @@ public class EventManager {
     //so if a worker is in two different segments he is only on the list
     //one time. useful for cost calculation so we don't pay people
     //twice for the same show
-    public List<Worker> allWorkers(List<Segment> segments) {
+    public List<WorkerView> allWorkers(List<Segment> segments) {
         
         List allWorkers = new ArrayList<>();
         for (Segment currentSegment : segments) {
@@ -325,14 +325,14 @@ public class EventManager {
 
         //this should take the list of workers generated above
         //and convert it to a set, removing duplicates
-        Set<Worker> allWorkersSet = new LinkedHashSet<>(allWorkers);
+        Set<WorkerView> allWorkersSet = new LinkedHashSet<>(allWorkers);
         //convert the set back to a list with no duplicates
         allWorkers = new ArrayList<>(allWorkersSet);
         
         return allWorkers;
     }
     
-    public List<Worker> allWorkers(Event event) {
+    public List<WorkerView> allWorkers(Event event) {
         List allWorkers = new ArrayList<>();
         for (EventWorker eventWorker : eventWorkers) {
             if (eventWorker.getEvent().equals(event)) {
@@ -346,7 +346,7 @@ public class EventManager {
     public int calculateCost(iEvent event) {
         int currentCost = 0;
         
-        for (Worker worker : allWorkers(getMatches(event))) {
+        for (WorkerView worker : allWorkers(getMatches(event))) {
             currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
         }
         return currentCost;
@@ -356,7 +356,7 @@ public class EventManager {
     public int calculateCost(List<Segment> segments, Promotion promotion) {
         int currentCost = 0;
         
-        for (Worker worker : allWorkers(segments)) {
+        for (WorkerView worker : allWorkers(segments)) {
             currentCost += contractManager.getContract(worker, promotion).getAppearanceCost();
         }
         return currentCost;
@@ -443,7 +443,7 @@ public class EventManager {
 
         //how many workers are draws?
         int draws = 0;
-        for (Worker worker : allWorkers(getMatches(event))) {
+        for (WorkerView worker : allWorkers(getMatches(event))) {
             
             if (worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10) {
                 draws++;
@@ -480,7 +480,7 @@ public class EventManager {
 
         //how many workers are draws?
         int draws = 0;
-        for (Worker worker : allWorkers(segments)) {
+        for (WorkerView worker : allWorkers(segments)) {
             
             if (worker.getPopularity() > ModelUtils.maxPopularity(promotion) - 10) {
                 draws++;
@@ -495,8 +495,8 @@ public class EventManager {
     private String futureEventString(Event event) {
         StringBuilder sb = new StringBuilder();
         sb.append("Workers booked:");
-        List<Worker> workers = allWorkers(event);
-        for (Worker worker : workers) {
+        List<WorkerView> workers = allWorkers(event);
+        for (WorkerView worker : workers) {
             sb.append("\n");
             sb.append(worker.getName());
         }
@@ -543,7 +543,7 @@ public class EventManager {
     }
 
     //checks if a worker is booked at all on a given date
-    public boolean isBooked(Worker worker, LocalDate date) {
+    public boolean isBooked(WorkerView worker, LocalDate date) {
         boolean isBooked = false;
         
         for (EventWorker eventWorker : eventWorkers) {
@@ -557,7 +557,7 @@ public class EventManager {
         return isBooked;
     }
     
-    private EventWorker getBooking(Worker worker, LocalDate date) {
+    private EventWorker getBooking(WorkerView worker, LocalDate date) {
         EventWorker workerBooking = null;
         for (EventWorker eventWorker : eventWorkers) {
             if (eventWorker.getEvent().getDate().equals(date)
@@ -571,7 +571,7 @@ public class EventManager {
 
     //checks if a worker is booked on a certain date
     //returns false if the booking is with the given promotion
-    public boolean isAvailable(Worker worker, LocalDate date, Promotion promotion) {
+    public boolean isAvailable(WorkerView worker, LocalDate date, Promotion promotion) {
         boolean isAvailable = true;
         EventWorker eventWorker = getBooking(worker, date);
         if (eventWorker != null && !eventWorker.getEvent().getPromotion().equals(promotion)) {
@@ -580,9 +580,9 @@ public class EventManager {
         return isAvailable;
     }
     
-    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
+    public List<WorkerView> getAvailableRoster(Promotion promotion, LocalDate date) {
         
-        List<Worker> roster = new ArrayList<>();
+        List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {
             if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());
@@ -593,9 +593,9 @@ public class EventManager {
         return roster;
     }
     
-    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
+    public List<WorkerView> getUnavailableRoster(Promotion promotion, LocalDate date) {
         
-        List<Worker> roster = new ArrayList<>();
+        List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {
             if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());

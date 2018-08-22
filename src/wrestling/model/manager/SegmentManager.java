@@ -13,7 +13,7 @@ import wrestling.model.MatchTitle;
 import wrestling.model.SegmentItem;
 import wrestling.model.SegmentWorker;
 import wrestling.model.Title;
-import wrestling.model.Worker;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -71,8 +71,8 @@ public class SegmentManager {
         return title;
     }
 
-    public List<Worker> getWinners(Match match) {
-        List<Worker> winners = new ArrayList<>();
+    public List<WorkerView> getWinners(Match match) {
+        List<WorkerView> winners = new ArrayList<>();
         for (SegmentWorker matchWorker : segmentWorkers) {
             if (matchWorker.getSegment().equals(match)
                     && matchWorker.getTeam() == 0) {
@@ -82,8 +82,8 @@ public class SegmentManager {
         return winners;
     }
 
-    public List<Worker> getWorkers(Segment segment) {
-        List<Worker> workers = new ArrayList<>();
+    public List<WorkerView> getWorkers(Segment segment) {
+        List<WorkerView> workers = new ArrayList<>();
         for (SegmentWorker matchWorker : segmentWorkers) {
             if (matchWorker.getSegment().equals(segment)) {
                 workers.add(matchWorker.getWorker());
@@ -100,7 +100,7 @@ public class SegmentManager {
         return getMatchWorkers;
     }
 
-    public String getMatchStringForMonths(Worker worker, int months) {
+    public String getMatchStringForMonths(WorkerView worker, int months) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -308,7 +308,7 @@ public class SegmentManager {
         if (teamsSize > 1) {
 
             for (int t = 0; t < teamsSize; t++) {
-                List<Worker> team = teams.get(t).getWorkers();
+                List<WorkerView> team = teams.get(t).getWorkers();
 
                 matchString += generateTeamName(team);
 
