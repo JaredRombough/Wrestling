@@ -1,6 +1,7 @@
 package wrestling.model.modelView;
 
 import java.io.Serializable;
+import wrestling.model.Injury;
 import wrestling.model.SegmentItem;
 import wrestling.model.segmentEnum.Gender;
 
@@ -34,6 +35,8 @@ public class WorkerView implements Serializable, SegmentItem {
     private boolean mainRoster;
 
     private int minimumPopularity;
+    
+    private Injury injury;
 
     public WorkerView() {
         minimumPopularity = 0;
@@ -260,5 +263,19 @@ public class WorkerView implements Serializable, SegmentItem {
      */
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    /**
+     * @return the injury
+     */
+    public Injury getInjury() {
+        return injury;
+    }
+
+    /**
+     * @param injury the injury to set
+     */
+    public void setInjury(Injury injury) {
+        this.injury = injury;
     }
 }

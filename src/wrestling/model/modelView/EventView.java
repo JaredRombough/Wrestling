@@ -62,4 +62,16 @@ public class EventView {
         }
 
     }
+    
+    public String getShortEventTitle() {
+
+        if (event.toString().contains(event.getPromotion().getShortName())) {
+            return event.toString();
+        } else {
+            return String.format("%s %s",
+                    event.getPromotion().getShortName(),
+                    event.toString());
+        }
+
+    }
 }

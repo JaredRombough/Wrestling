@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    private static final String VERSION = "0.2.8";
+    private static final String VERSION = "0.3.0";
 
     public static void main(String[] args) {
 
@@ -406,7 +406,6 @@ public class MainApp extends Application {
             NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
             RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
 
-            nextDay.setLoadingMessage("Loading...");
             show(ScreenCode.NEXT_DAY_SCREEN);
             root.setButtonsDisable(true);
             primaryStage.getScene().setCursor(Cursor.WAIT);
@@ -441,7 +440,6 @@ public class MainApp extends Application {
 
         task.setOnSucceeded((WorkerStateEvent t) -> {
 
-            nextDayScreenController.setLoadingMessage("Loading...\nComplete!");
             nextDayScreenController.nextDay();
             updateLabels();
             root.setButtonsDisable(false);

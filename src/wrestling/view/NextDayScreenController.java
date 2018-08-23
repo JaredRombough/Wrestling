@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,17 +17,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.Injury;
 import wrestling.model.modelView.SegmentView;
+import wrestling.view.browser.controller.WorkerOverviewController;
+import wrestling.view.utility.GameScreen;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
 
     @FXML
-    public AnchorPane displayPane;
+    public ScrollPane displayPane;
 
     @FXML
     public ListView rankingsListView;
@@ -39,16 +46,19 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     @FXML
     public Button yearButton;
 
+    @FXML
+    public ListView<Injury> newsListView;
+
     private List<Button> timeButtons;
 
-    private ChronoUnit chornoUnit;
+    private ChronoUnit chronoUnit;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
         timeButtons = Arrays.asList(weekButton, monthButton, yearButton);
         rankingsListView.setPlaceholder(new Label("No matches for selected time period"));
-        chornoUnit = ChronoUnit.WEEKS;
+        chronoUnit = ChronoUnit.WEEKS;
     }
 
     @Override
@@ -56,31 +66,42 @@ public class NextDayScreenController extends ControllerBase implements Initializ
         updateTopMatches(ChronoUnit.WEEKS, 1);
         ViewUtils.updateSelectedButton(weekButton, timeButtons);
 
+        newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Injury>() {
+            @Override
+            public void changed(ObservableValue<? extends Injury> observable, Injury oldValue, Injury newValue) {
+                if (newValue != null) {
+                    Text text = new Text(newValue.getSummary());
+                    text.wrappingWidthProperty().bind(displayPane.widthProperty());
+                    displayPane.setContent(text);
+                }
+            }
+        });
+
     }
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
         Button button = (Button) event.getSource();
         if (button.equals(weekButton)) {
-            chornoUnit = ChronoUnit.WEEKS;
+            chronoUnit = ChronoUnit.WEEKS;
         } else if (button.equals(monthButton)) {
-            chornoUnit = ChronoUnit.MONTHS;
+            chronoUnit = ChronoUnit.MONTHS;
         } else if (button.equals(yearButton)) {
-            chornoUnit = ChronoUnit.YEARS;
+            chronoUnit = ChronoUnit.YEARS;
         }
-        updateTopMatches(chornoUnit, 1);
+        updateTopMatches(chronoUnit, 1);
         ViewUtils.updateSelectedButton(button, timeButtons);
 
     }
 
-    public void setLoadingMessage(String string) {
-        Text text = new Text(string);
-        displayPane.getChildren().clear();
-        displayPane.getChildren().add(text);
-    }
-
     public void nextDay() {
-        updateTopMatches(chornoUnit, 1);
+        updateTopMatches(chronoUnit, 1);
+        gameController.getInjuryManager().getInjuries().stream().forEach((injury) -> {
+            if (injury.getStartDate().equals(gameController.getDateManager().today().minusDays(1))) {
+                newsListView.getItems().add(0, injury);
+            }
+
+        });
     }
 
     public void updateTopMatches(ChronoUnit unit, int units) {

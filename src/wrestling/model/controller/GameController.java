@@ -16,6 +16,7 @@ import wrestling.model.factory.WorkerFactory;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
+import wrestling.model.manager.InjuryManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TagTeamManager;
@@ -44,6 +45,7 @@ public final class GameController implements Serializable {
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final SegmentManager segmentManager;
+    private final InjuryManager injuryManager;
 
     private final PromotionController promotionController;
 
@@ -52,6 +54,8 @@ public final class GameController implements Serializable {
     public GameController(boolean randomGame) throws IOException {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 5));
+
+        
 
         titleManager = new TitleManager(dateManager);
 
@@ -63,6 +67,8 @@ public final class GameController implements Serializable {
         tagTeamManager = new TagTeamManager(contractManager);
 
         segmentManager = new SegmentManager(dateManager, tagTeamManager);
+        
+        injuryManager = new InjuryManager(segmentManager);
 
         eventManager = new EventManager(
                 contractManager,
@@ -82,7 +88,8 @@ public final class GameController implements Serializable {
                 segmentManager,
                 promotionManager,
                 titleManager,
-                workerManager);
+                workerManager,
+                dateManager, getInjuryManager());
 
         promotionFactory = new PromotionFactory(
                 contractFactory,
@@ -120,6 +127,8 @@ public final class GameController implements Serializable {
 
     //only called by MainApp
     public void nextDay() {
+
+        getInjuryManager().dailyUpdate(dateManager.today());
 
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {
@@ -261,6 +270,13 @@ public final class GameController implements Serializable {
      */
     public SegmentManager getSegmentManager() {
         return segmentManager;
+    }
+
+    /**
+     * @return the injuryManager
+     */
+    public InjuryManager getInjuryManager() {
+        return injuryManager;
     }
 
 }
