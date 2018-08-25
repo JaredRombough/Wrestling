@@ -177,8 +177,8 @@ public class SegmentManager {
         if (segmentView.getWorkers().isEmpty()) {
             return "Empty Match";
         }
-        
-        if(!segmentView.getTitleViews().isEmpty()) {
+
+        if (!segmentView.getTitleViews().isEmpty()) {
             string += ModelUtils.andItemsLongName(segmentView.getTitleViews());
             string += " ";
         }
@@ -221,11 +221,11 @@ public class SegmentManager {
         } else if (!rules.equals(MatchRule.DEFAULT)) {
             string += rules.description();
         }
-        
-        if(string.lastIndexOf(' ') != string.length() - 1) {
+
+        if (string.lastIndexOf(' ') != string.length() - 1) {
             string += " ";
         }
-        
+
         string += "Match";
 
         return string;
@@ -244,8 +244,12 @@ public class SegmentManager {
     }
 
     public String getSegmentString(SegmentView segmentView) {
+        return getSegmentString(segmentView, false);
+    }
+
+    public String getSegmentString(SegmentView segmentView, boolean verbose) {
         return segmentView.getSegmentType().equals(SegmentType.MATCH)
-                ? getMatchString(segmentView)
+                ? getMatchString(segmentView, verbose)
                 : getAngleString(segmentView);
     }
 
@@ -277,6 +281,10 @@ public class SegmentManager {
     }
 
     public String generateTeamName(List<? extends SegmentItem> segmentItems) {
+        return generateTeamName(segmentItems, false);
+    }
+
+    public String generateTeamName(List<? extends SegmentItem> segmentItems, boolean verbose) {
         if (!segmentItems.isEmpty()) {
             if (segmentItems.size() == 2) {
                 String tagTeam = getTagTeamName(segmentItems);
@@ -284,7 +292,7 @@ public class SegmentManager {
                     return tagTeam;
                 }
             }
-            return slashShortNames(segmentItems);
+            return verbose ? ModelUtils.slashNames(segmentItems) : slashShortNames(segmentItems);
         } else {
             return "(Empty Team)";
         }
@@ -299,7 +307,7 @@ public class SegmentManager {
         return String.format("");
     }
 
-    public String getMatchString(SegmentView segmentView) {
+    public String getMatchString(SegmentView segmentView, boolean verbose) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
         int teamsSize = segmentView.getMatchParticipantTeams().size();
@@ -310,7 +318,7 @@ public class SegmentManager {
             for (int t = 0; t < teamsSize; t++) {
                 List<WorkerView> team = teams.get(t).getWorkers();
 
-                matchString += generateTeamName(team);
+                matchString += generateTeamName(team, verbose);
 
                 if (t == 0 && !matchString.isEmpty()) {
                     matchString += " def. ";

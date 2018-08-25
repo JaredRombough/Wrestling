@@ -80,6 +80,8 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </AnchorPane>
+            <Label fx:id="injuryLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Injury" GridPane.rowIndex="6" />
+            <Label fx:id="injury" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
          </children>
       </GridPane>
    </children>

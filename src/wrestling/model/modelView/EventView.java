@@ -2,6 +2,7 @@ package wrestling.model.modelView;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import wrestling.model.Event;
 
 public class EventView {
@@ -62,16 +63,9 @@ public class EventView {
         }
 
     }
-    
-    public String getShortEventTitle() {
 
-        if (event.toString().contains(event.getPromotion().getShortName())) {
-            return event.toString();
-        } else {
-            return String.format("%s %s",
-                    event.getPromotion().getShortName(),
-                    event.toString());
-        }
-
+    @Override
+    public String toString() {
+        return event.toString();
     }
 }

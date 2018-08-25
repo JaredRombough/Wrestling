@@ -1,6 +1,7 @@
 package wrestling.model;
 
 import java.time.LocalDate;
+import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.interfaces.iEventDate;
 
@@ -32,7 +33,7 @@ public class Event implements iEvent, iEventDate {
 
     @Override
     public String toString() {
-        return name.contains(promotion.getShortName())
+        return StringUtils.containsIgnoreCase(name, promotion.getShortName())
                 ? name : promotion.getShortName() + " " + name;
     }
 

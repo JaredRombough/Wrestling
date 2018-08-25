@@ -27,14 +27,14 @@ public final class ModelUtils {
         return String.format("%d:%02d", hours, minutes);
     }
 
-    public static String slashNames(List<WorkerView> workers) {
+    public static String slashNames(List<? extends SegmentItem> workers) {
         if (workers.isEmpty()) {
             return "?";
         }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < workers.size(); i++) {
-            sb.append(workers.get(i).getName());
+            sb.append(workers.get(i).toString());
             if (workers.size() - i > 1) {
                 sb.append("/");
             }

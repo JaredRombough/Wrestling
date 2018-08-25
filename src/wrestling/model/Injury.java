@@ -54,7 +54,7 @@ public class Injury {
     public String getSummary() {
         return String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
                 workerView.getLongName(),
-                segmentView.getEventView().getShortEventTitle(),
+                segmentView.getEventView().toString(),
                 startDate.toString(),
                 expiryDate.toString());
     }
