@@ -376,12 +376,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentLengthWrapper.setItems(FXCollections.observableArrayList(type.equals(SegmentType.MATCH)
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
+        eventScreenController.updateSegmentItemListView();
         updateLabels();
 
     }
 
     private boolean getXButtonVisible(int index, TeamType teamType) {
-        int minTeams = segmentType.equals(SegmentType.MATCH)
+        int minTeams = getSegmentType().equals(SegmentType.MATCH)
                 ? 2
                 : angleOptions.getAngleType().minWorkers();
 
@@ -397,7 +398,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         int index = workerTeamWrappers.indexOf(wrapperScreen);
         TeamType teamType;
 
-        if (segmentType.equals(SegmentType.ANGLE)) {
+        if (getSegmentType().equals(SegmentType.ANGLE)) {
             teamType = index == 0 ? angleOptions.getAngleType().mainTeamType()
                     : angleOptions.getAngleType().addTeamType();
         } else if (matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
@@ -478,8 +479,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public SegmentView getSegmentView() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-        SegmentView segmentView = new SegmentView(segmentType);
-        if (segmentType.equals(SegmentType.MATCH)) {
+        SegmentView segmentView = new SegmentView(getSegmentType());
+        if (getSegmentType().equals(SegmentType.MATCH)) {
             MatchParams params = new MatchParams();
             params.setMatchFinish(matchOptions.getMatchFinish());
             params.setMatchRule(matchOptions.getMatchRule());
@@ -534,5 +535,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public List<GameScreen> getWorkerTeamWrappers() {
         return workerTeamWrappers;
+    }
+
+    /**
+     * @return the segmentType
+     */
+    public SegmentType getSegmentType() {
+        return segmentType;
     }
 }

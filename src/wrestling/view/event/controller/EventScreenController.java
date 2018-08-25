@@ -43,6 +43,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.BrowseMode;
+import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.TestUtils;
@@ -482,7 +483,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    private void updateSegmentItemListView() {
+    public void updateSegmentItemListView() {
         List<SegmentItem> segmentItems = new ArrayList<>();
 
         int previousIndex = segmentItemListView.getSelectionModel().getSelectedIndex();
@@ -493,9 +494,13 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
 
+        boolean isMatch = currentSegmentPaneController() != null
+                ? currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH)
+                : true;
+
         Comparator comparator = sortControl != null ? ((SortControl) sortControl.controller).getCurrentComparator() : null;
-        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), p
-                -> !((SortControl) sortControl.controller).isFiltered(p));
+        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), segmentItem
+                -> !(((SortControl) sortControl.controller).isFiltered(segmentItem) || (isMatch && filterInjured(segmentItem))));
 
         segmentItemListView.setItems(new SortedList<>(filteredList, comparator));
 
@@ -584,6 +589,14 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
+    private boolean filterInjured(SegmentItem segmentItem) {
+        if (!(segmentItem instanceof WorkerView)) {
+            return false;
+        }
+        return ((WorkerView) segmentItem).getInjury() != null;
+
+    }
+
     /**
      * @return the workersListView
      */
@@ -599,6 +612,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public SegmentPaneController currentSegmentPaneController() {
+        if (segmentListView == null || segmentPaneControllers.isEmpty()
+                || segmentListView.getSelectionModel().getSelectedIndex() < 0) {
+            return null;
+        }
         return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex());
 
     }

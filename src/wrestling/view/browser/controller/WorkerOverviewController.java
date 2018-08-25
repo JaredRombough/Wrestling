@@ -133,7 +133,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             if (worker.getInjury() != null) {
                 injury.setText(String.format("%s days left",
-                        DAYS.between(gameController.getDateManager().today(), worker.getInjury().getExpiryDate())));
+                        DAYS.between(gameController.getDateManager().today(), worker.getInjury().getExpiryDate()) + 1));
             }
             injury.setVisible(worker.getInjury() != null);
             injuryLabel.setVisible(worker.getInjury() != null);
