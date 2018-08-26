@@ -3,8 +3,9 @@ package wrestling.model;
 import java.time.LocalDate;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.interfaces.iNewsItem;
 
-public class Injury {
+public class Injury implements iNewsItem {
 
     private final LocalDate expiryDate;
     private final LocalDate startDate;
@@ -51,6 +52,7 @@ public class Injury {
         return segmentView;
     }
 
+    @Override
     public String getSummary() {
         return String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
                 workerView.getLongName(),

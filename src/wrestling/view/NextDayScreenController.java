@@ -22,12 +22,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Injury;
+import wrestling.model.NewsItem;
 import wrestling.model.modelView.SegmentView;
 import wrestling.view.browser.controller.WorkerOverviewController;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
+import wrestling.model.interfaces.iNewsItem;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
 
@@ -47,7 +49,7 @@ public class NextDayScreenController extends ControllerBase implements Initializ
     public Button yearButton;
 
     @FXML
-    public ListView<Injury> newsListView;
+    public ListView<iNewsItem> newsListView;
 
     private List<Button> timeButtons;
 
@@ -66,9 +68,9 @@ public class NextDayScreenController extends ControllerBase implements Initializ
         updateTopMatches(ChronoUnit.WEEKS, 1);
         ViewUtils.updateSelectedButton(weekButton, timeButtons);
 
-        newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Injury>() {
+        newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<iNewsItem>() {
             @Override
-            public void changed(ObservableValue<? extends Injury> observable, Injury oldValue, Injury newValue) {
+            public void changed(ObservableValue<? extends iNewsItem> observable, iNewsItem oldValue, iNewsItem newValue) {
                 if (newValue != null) {
                     Text text = new Text(newValue.getSummary());
                     text.wrappingWidthProperty().bind(displayPane.widthProperty());
@@ -76,6 +78,12 @@ public class NextDayScreenController extends ControllerBase implements Initializ
                 }
             }
         });
+
+        NewsItem newsItem = new NewsItem(
+                "Welcome to Open Wrestling",
+                "Have fun!");
+
+        newsListView.getItems().add(0, newsItem);
 
     }
 
@@ -136,6 +144,10 @@ public class NextDayScreenController extends ControllerBase implements Initializ
                 }
             }
         });
+    }
+
+    public void addNews(iNewsItem newsItem) {
+        newsListView.getItems().add(0, newsItem);
     }
 
 }

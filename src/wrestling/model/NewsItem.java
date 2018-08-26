@@ -1,0 +1,39 @@
+package wrestling.model;
+
+import wrestling.model.interfaces.iNewsItem;
+
+public class NewsItem implements iNewsItem {
+
+    private String summary;
+    private String headline;
+
+    public NewsItem(String headline, String summary) {
+        this.summary = summary;
+        this.headline = headline;
+    }
+
+    @Override
+    public String getSummary() {
+        return summary;
+    }
+
+    @Override
+    public String toString() {
+        return headline;
+    }
+
+    /**
+     * @param summary the summary to set
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    /**
+     * @param headline the headline to set
+     */
+    public void setHeadline(String headline) {
+        this.headline = headline;
+    }
+
+}

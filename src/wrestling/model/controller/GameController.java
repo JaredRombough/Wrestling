@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import wrestling.model.EventTemplate;
+import wrestling.model.NewsItem;
 import wrestling.model.Promotion;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
@@ -23,6 +24,7 @@ import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.view.NextDayScreenController;
 
 /**
  *
@@ -55,8 +57,6 @@ public final class GameController implements Serializable {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 5));
 
-        
-
         titleManager = new TitleManager(dateManager);
 
         promotionManager = new PromotionManager();
@@ -67,7 +67,7 @@ public final class GameController implements Serializable {
         tagTeamManager = new TagTeamManager(contractManager);
 
         segmentManager = new SegmentManager(dateManager, tagTeamManager);
-        
+
         injuryManager = new InjuryManager(segmentManager);
 
         eventManager = new EventManager(
@@ -118,7 +118,7 @@ public final class GameController implements Serializable {
 
     public void initializeGameData() {
         for (Promotion promotion : promotionManager.getPromotions()) {
-            if (eventManager.getEventTemplates(promotion).isEmpty()) {
+            if (eventManager.getEventTemplates(promotion).isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
                 eventFactory.createMonthlyEvents(promotion);
             }
         }
