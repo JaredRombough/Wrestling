@@ -8,9 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.manager.EventManager;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 

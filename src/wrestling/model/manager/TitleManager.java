@@ -6,9 +6,9 @@ import wrestling.model.Contract;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
 import wrestling.model.TitleWorker;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.TitleReign;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 
 public class TitleManager {

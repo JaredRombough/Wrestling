@@ -5,8 +5,8 @@ import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.WorkerView;
 
 public class TagTeamManager {
 

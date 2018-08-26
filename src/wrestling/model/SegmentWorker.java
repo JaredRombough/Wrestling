@@ -1,7 +1,7 @@
 package wrestling.model;
 
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.modelView.WorkerView;
 
 public class SegmentWorker {
 

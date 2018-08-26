@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.SegmentItem;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 

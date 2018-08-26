@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Promotion;
 import wrestling.model.Title;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 
 /**
  * called whenever a new title is to be created

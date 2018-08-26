@@ -1,9 +1,9 @@
 package wrestling.model;
 
 import java.time.LocalDate;
+import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
-import wrestling.model.interfaces.iNewsItem;
 
 public class Injury implements iNewsItem {
 

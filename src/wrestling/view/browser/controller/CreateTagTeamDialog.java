@@ -13,9 +13,9 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.NameComparator;
 

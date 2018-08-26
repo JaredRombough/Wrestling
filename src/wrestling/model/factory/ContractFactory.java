@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.manager.ContractManager;
+import wrestling.model.modelView.WorkerView;
 
 /**
  * attached to the gameController, it is called whenever a new contract is to be

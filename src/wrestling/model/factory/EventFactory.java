@@ -11,7 +11,6 @@ import wrestling.model.Injury;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.Promotion;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -26,6 +25,7 @@ import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
 
 /**

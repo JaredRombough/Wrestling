@@ -2,12 +2,12 @@ package wrestling.model.factory;
 
 import java.io.Serializable;
 import wrestling.model.SegmentWorker;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;

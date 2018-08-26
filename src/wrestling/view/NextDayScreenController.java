@@ -18,18 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.Injury;
 import wrestling.model.NewsItem;
+import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.SegmentView;
-import wrestling.view.browser.controller.WorkerOverviewController;
-import wrestling.view.utility.GameScreen;
-import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
-import wrestling.model.interfaces.iNewsItem;
 
 public class NextDayScreenController extends ControllerBase implements Initializable {
 

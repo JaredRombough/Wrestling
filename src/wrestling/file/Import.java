@@ -22,16 +22,15 @@ import wrestling.model.EventTemplate;
 import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.Gender;
-import wrestling.model.utility.ModelUtils;
 
 /**
  *
