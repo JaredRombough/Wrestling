@@ -276,7 +276,7 @@ public class PromotionController implements Serializable {
         }
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<WorkerView> eventRoster = getEventRoster(promotion);
+        List<WorkerView> eventRoster = getEventMatchRoster(promotion);
 
         //list to track workers on the pushlist that are still available
         List<WorkerView> pushListPresent = new ArrayList<>();
@@ -503,7 +503,7 @@ public class PromotionController implements Serializable {
         }
     }
 
-    private List<WorkerView> getEventRoster(Promotion promotion) {
+    private List<WorkerView> getEventMatchRoster(Promotion promotion) {
         //lists to track workers the event roster
         //and workers that are already booked on this date
         List<WorkerView> eventRoster = contractManager.getFullRoster(promotion);
