@@ -106,13 +106,14 @@ public class SegmentManager {
 
         for (SegmentView segmentView : segmentViews) {
             if (segmentView.getWorkers().contains(worker)
-                    && segmentView.getDate().isBefore(dateManager.today().minusMonths(months))) {
-                sb.append(getSegmentString(segmentView));
+                    && segmentView.getDate().isAfter(dateManager.today().minusMonths(months))) {
+                sb.append(getSegmentString(segmentView, true));
                 sb.append("\n");
             }
         }
 
-        return sb.length() > 0 ? sb.toString() : "No recent matches";
+        return sb.length() > 0
+                ? sb.toString() : "No recent matches";
 
     }
 
@@ -248,9 +249,13 @@ public class SegmentManager {
     }
 
     public String getSegmentString(SegmentView segmentView, boolean verbose) {
-        return segmentView.getSegmentType().equals(SegmentType.MATCH)
+        String segmentString = segmentView.getSegmentType().equals(SegmentType.MATCH)
                 ? getMatchString(segmentView, verbose)
                 : getAngleString(segmentView);
+        if (verbose) {
+            segmentString += " @ " + segmentView.getEventView().toString();
+        }
+        return segmentString;
     }
 
     public String getAngleString(SegmentView segmentView) {

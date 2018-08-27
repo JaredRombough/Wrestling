@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wrestling.view.RootLayoutController">
    <top>
@@ -25,12 +26,30 @@
             <RowConstraints minHeight="70.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Button fx:id="newsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="News" />
-            <Button fx:id="browserButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Browser" GridPane.columnIndex="1" />
-            <Button fx:id="financialButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Financial" GridPane.columnIndex="2" />
-            <Button fx:id="calendarButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Calendar" GridPane.columnIndex="3" />
-          <Button fx:id="nextDayButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Next Day" GridPane.columnIndex="4" />
-          <Button fx:id="eventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Book Event" GridPane.columnIndex="5" />
+            <Button fx:id="newsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="News">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
+            <Button fx:id="browserButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Browser" GridPane.columnIndex="1">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
+            <Button fx:id="financialButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Financial" GridPane.columnIndex="2">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
+            <Button fx:id="calendarButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Calendar" GridPane.columnIndex="3">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
+          <Button fx:id="nextDayButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Next Day" GridPane.columnIndex="4">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
+          <Button fx:id="eventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Book Event" GridPane.columnIndex="5">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
          </children>
       </GridPane>
    </top>

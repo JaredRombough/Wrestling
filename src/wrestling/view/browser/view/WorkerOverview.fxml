@@ -48,7 +48,7 @@
             <Label fx:id="strikingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Wrestling" GridPane.rowIndex="3" />
             <Label fx:id="wrestlingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Contracts" GridPane.rowIndex="8" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Contracts" GridPane.rowIndex="9" />
             <Label fx:id="flyingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Flying" GridPane.rowIndex="4" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Popularity" GridPane.columnIndex="2" GridPane.rowIndex="2" />
@@ -59,12 +59,12 @@
             <Label fx:id="mainRosterLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="7" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Charisma" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="charismaLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <ScrollPane fx:id="contractInfo" GridPane.columnSpan="6" GridPane.rowIndex="11" GridPane.rowSpan="2">
+            <ScrollPane fx:id="contractInfo" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.rowSpan="3">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </ScrollPane>
-            <AnchorPane fx:id="feedAnchor" GridPane.columnSpan="3" GridPane.rowIndex="13" GridPane.rowSpan="2147483647">
+            <AnchorPane fx:id="feedAnchor" GridPane.columnSpan="2147483647" GridPane.rowIndex="13" GridPane.rowSpan="2147483647">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>

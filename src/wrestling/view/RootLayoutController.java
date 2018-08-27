@@ -126,6 +126,8 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     public void initializeMore() {
         updateCalendarButton();
         updateSelectedButton(browserButton);
+        newsButton.setText("\uD83D\uDCF0 News");
+        browserButton.setText("\uD83C\uDF0D Browser");
 
     }
 
@@ -181,11 +183,11 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     private void updateCalendarButton() {
-        calendarButton.setText(gameController.getDateManager().todayString());
+        calendarButton.setText(String.format("\uD83D\uDCC6 %s", gameController.getDateManager().todayString()));
     }
 
     private void updateCurrentFundsButton() {
-        financialButton.setText("Funds: $" + gameController.getPromotionManager()
+        financialButton.setText("\uD83D\uDCC8 Funds: $" + gameController.getPromotionManager()
                 .getBankAccount(playerPromotion()).getFunds());
     }
 

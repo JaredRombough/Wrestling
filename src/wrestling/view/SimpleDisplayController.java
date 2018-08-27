@@ -50,6 +50,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
     @Override
     public void updateLabels() {
+        displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
         String newText = "";
 
@@ -59,12 +60,11 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         } else if (obj instanceof TitleView) {
             newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
         } else if (obj instanceof WorkerView) {
+            displayTitle.setText("");
             newText = gameController.getSegmentManager().getMatchStringForMonths((WorkerView) obj, 3);
         } else {
             newText = obj == null ? "" : obj.toString();
         }
-
-        displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
         Text text = new Text();
         text.setText(newText);
