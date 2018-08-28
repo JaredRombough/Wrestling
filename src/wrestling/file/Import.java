@@ -23,6 +23,7 @@ import wrestling.model.Promotion;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -31,48 +32,49 @@ import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.Gender;
+import wrestling.model.segmentEnum.StaffType;
 
 /**
  *
  * for importing roster files etc
  */
 public class Import {
-    
+
     private GameController gameController;
-    
+
     private final transient Logger logger = LogManager.getLogger(getClass());
-    
+
     private File importFolder;
-    
+
     private final List<Promotion> allPromotions = new ArrayList<>();
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
-    
+
     private final List<WorkerView> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
     private final List<WorkerView> otherWorkers = new ArrayList<>();
     private final List<String> otherWorkerPromotions = new ArrayList<>();
-    
+
     private final List<TagTeam> allTagTeams = new ArrayList<>();
     private final List<TagTeamView> allTagTeamViews = new ArrayList<>();
-    
+
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
-    
+
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
             "belt",
             "teams",
             "wrestler"
     ));
-    
+
     public String tryImport(File importFolder) throws Exception {
-        
+
         StringBuilder sb = new StringBuilder();
         this.importFolder = importFolder;
         filesNeeded.stream().map((s) -> new File(importFolder.getPath() + "\\" + s + ".dat")).filter((f) -> (!f.exists() || f.isDirectory())).forEach((f) -> {
             sb.append(f.toString()).append(" not found.").append("\n");
         });
-        
+
         if (sb.length() == 0) {
             try {
                 gameController = new GameController(false);
@@ -82,8 +84,9 @@ public class Import {
                 beltDat();
                 tvDat();
                 eventDat();
+                staffDat();
             } catch (Exception ex) {
-                
+
                 sb.append(ex);
                 logger.log(Level.ERROR, ex);
                 throw ex;
@@ -101,11 +104,11 @@ public class Import {
                 EvaluateData.evaluateData(allPromotions, allWorkers);
             }*/
         }
-        
+
         return sb.toString();
-        
+
     }
-    
+
     private Promotion getPromotionFromKey(int key) {
         for (int i = 0; i < promotionKeys.size(); i++) {
             if (promotionKeys.get(i).equals(key)) {
@@ -114,11 +117,11 @@ public class Import {
         }
         return null;
     }
-    
+
     private int hexStringToInt(String hexValueString) {
         return Integer.parseInt(hexValueString, 16);
     }
-    
+
     private String hexStringToLetter(String hexValueString) {
         //take the characters in two positions, since they combine to make
         //up one hex value that we have to translate
@@ -134,10 +137,10 @@ public class Import {
         } else {
             letter += " ";
         }
-        
+
         return letter;
     }
-    
+
     private void processOther() {
         otherPromotionNames.stream().map((s) -> {
             Promotion p = gameController.getPromotionFactory().newPromotion();
@@ -166,35 +169,35 @@ public class Import {
                 }
             }
         });
-        
+
         updateOtherPromotions(allPromotions, importFolder);
     }
-    
+
     private void tvDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\tv.dat");
         byte[] data = Files.readAllBytes(path);
         int timeSlotIndex = 32;
         int promotionKeyIndex = 21;
-        
+
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         List<String> currentHexLine = new ArrayList<>();
         List<String> currentStringLine = new ArrayList<>();
         int counter = 0;
-        
+
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            
+
             currentLine += hexStringToLetter(hexValueString);
             currentHexLine.add(hexValueString);
             currentStringLine.add(hexStringToLetter(hexValueString));
-            
+
             counter++;
-            
+
             if (counter == 51) {
-                
+
                 EventTemplate eventTemplate = new EventTemplate();
                 eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
                 eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
@@ -217,33 +220,33 @@ public class Import {
                         break;
                 }
                 eventTemplate.setDefaultDuration(duration);
-                
+
                 eventTemplate.setDayOfWeek(DayOfWeek.valueOf(
                         currentLine.substring(22, 32).toUpperCase().trim()));
-                
+
                 int key = hexStringToInt(currentHexLine.get(promotionKeyIndex));
                 for (int x = 0; x < promotionKeys.size(); x++) {
                     if (promotionKeys.get(x) == key) {
                         eventTemplate.setPromotion(allPromotions.get(x));
                     }
                 }
-                
+
                 eventTemplates.add(eventTemplate);
-                
+
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
-                
+
             }
         }
     }
-    
+
     private void promotionsDat() throws IOException {
-        
+
         Path path = Paths.get(importFolder.getPath() + "\\promos.dat");
         byte[] data = Files.readAllBytes(path);
-        
+
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         int counter = 0;
@@ -253,7 +256,7 @@ public class Import {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            
+
             currentLine += hexStringToLetter(hexValueString);
 
             //track the key number for this promotion
@@ -265,13 +268,13 @@ public class Import {
                     level = 5;
                 }
             }
-            
+
             counter++;
-            
+
             if (counter == lineLength) {
-                
+
                 Promotion promotion = gameController.getPromotionFactory().newPromotion();
-                
+
                 counter = 0;
 
                 //trim the line to get the promotion name etc
@@ -285,49 +288,49 @@ public class Import {
                 if (promotion.getLevel() == 0) {
                     promotion.setLevel(1);
                 }
-                
+
                 allPromotions.add(promotion);
 
                 //reset the line for the next loop
                 currentLine = "";
                 level = 0;
-                
+
             }
         }
     }
-    
+
     private void teamsDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\teams.dat");
         byte[] data = Files.readAllBytes(path);
-        
+
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         List<String> currentHexLine = new ArrayList<>();
         List<String> currentStringLine = new ArrayList<>();
         int counter = 0;
         int lineLength = 59;
-        
+
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            
+
             currentLine += hexStringToLetter(hexValueString);
             currentHexLine.add(hexValueString);
             currentStringLine.add(hexStringToLetter(hexValueString));
-            
+
             counter++;
-            
+
             if (counter == lineLength) {
-                
+
                 TagTeam team = new TagTeam();
                 TagTeamView tagTeamView = new TagTeamView();
                 String id1 = currentHexLine.get(26) + currentHexLine.get(27);
                 String id2 = currentHexLine.get(28) + currentHexLine.get(29);
-                
+
                 team.setName(currentLine.substring(1, 18).trim());
                 for (int x = 0; x < allWorkers.size(); x++) {
-                    
+
                     if (workerIDs.get(x).equals(id1)
                             || workerIDs.get(x).equals(id2)) {
                         TagTeamWorker tagTeamWorker = new TagTeamWorker(team, allWorkers.get(x));
@@ -338,26 +341,101 @@ public class Import {
                 team.setExperience(hexStringToInt(currentHexLine.get(55)));
                 team.setActiveType(currentHexLine.get(57).equals("FF")
                         ? ActiveType.ACTIVE : ActiveType.INACTIVE);
-                
+
                 tagTeamView.setTagTeam(team);
-                
+
                 allTagTeamViews.add(tagTeamView);
                 allTagTeams.add(team);
-                
+
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
-                
+
             }
         }
     }
-    
+
+    private void staffDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\staff.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+        List<String> currentHexLine = new ArrayList<>();
+        List<String> currentStringLine = new ArrayList<>();
+        int counter = 0;
+        int lineLength = 79;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            //combine the two characters into one string
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            currentLine += hexStringToLetter(hexValueString);
+            currentHexLine.add(hexValueString);
+            currentStringLine.add(hexStringToLetter(hexValueString));
+
+            counter++;
+
+            if (counter == lineLength) {
+                System.out.println(currentHexLine);
+                System.out.println(currentStringLine);
+
+                StaffView staff = new StaffView();
+                staff.setName(currentLine.substring(3, 27).trim());
+                staff.setImageString(currentLine.substring(34, 53).trim());
+                staff.setGender(
+                        currentStringLine.get(28).equals("ÿ")
+                        ? Gender.MALE : Gender.FEMALE);
+                staff.setAge(hexStringToInt(currentHexLine.get(32)));
+                staff.setSkill(hexStringToInt(currentHexLine.get(67)));
+                staff.setBehaviour(hexStringToInt(currentHexLine.get(71)));
+                switch (hexStringToInt(currentHexLine.get(65))) {
+                    case 1:
+                        staff.setStaffType(StaffType.OWNER);
+                        break;
+                    case 2:
+                        staff.setStaffType(StaffType.COMMENTARY);
+                        break;
+                    case 3:
+                        staff.setStaffType(StaffType.REFEREE);
+                        break;
+                    case 4:
+                        staff.setStaffType(StaffType.PRODUCTION);
+                        break;
+                    case 5:
+                        staff.setStaffType(StaffType.MEDICAL);
+                        break;
+                    case 6:
+                        staff.setStaffType(StaffType.CREATIVE);
+                        break;
+                    case 7:
+                        staff.setStaffType(StaffType.ROAD_AGENT);
+                        break;
+                    case 8:
+                        staff.setStaffType(StaffType.TRAINER);
+                        break;
+                }
+
+                for (Promotion p : allPromotions) {
+                    checkForContract(p, staff, currentHexLine);
+                }
+
+                counter = 0;
+                currentLine = "";
+                currentHexLine = new ArrayList<>();
+                currentStringLine = new ArrayList<>();
+            }
+
+        }
+    }
+
     private void workersDat() throws IOException {
-        
+
         Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
         byte[] data = Files.readAllBytes(path);
-        
+
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         List<String> currentHexLine = new ArrayList<>();
@@ -365,22 +443,22 @@ public class Import {
         int counter = 0;
         int lineLength = 307;
         int rosterPositionIndex = 82;
-        
+
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            
+
             currentLine += hexStringToLetter(hexValueString);
             currentHexLine.add(hexValueString);
             currentStringLine.add(hexStringToLetter(hexValueString));
-            
+
             counter++;
-            
+
             if (counter == lineLength) {
-                
+
                 WorkerView worker = gameController.getWorkerFactory().randomWorker();
-                
+
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
                 worker.setImageString(currentLine.substring(45, 65).trim());
@@ -394,11 +472,11 @@ public class Import {
                 worker.setGender(
                         currentStringLine.get(293).equals("ÿ")
                         ? Gender.FEMALE : Gender.MALE);
-                
+
                 boolean manager;
                 boolean fullTime;
                 boolean mainRoster;
-                
+
                 switch (currentHexLine.get(rosterPositionIndex)) {
                     case "07":
                         //development
@@ -425,11 +503,11 @@ public class Import {
                         mainRoster = true;
                         break;
                 }
-                
+
                 worker.setManager(manager);
                 worker.setFullTime(fullTime);
                 worker.setMainRoster(mainRoster);
-                
+
                 String otherPromotionName = (currentStringLine.get(76) + currentStringLine.get(77)).trim();
                 if (!otherPromotionName.trim().isEmpty()) {
                     otherWorkers.add(worker);
@@ -437,7 +515,7 @@ public class Import {
                     if (!otherPromotionNames.contains(otherPromotionName)) {
                         otherPromotionNames.add(otherPromotionName);
                     }
-                    
+
                 }
 
                 //look for extra promotions
@@ -445,18 +523,18 @@ public class Import {
                 for (Promotion p : allPromotions) {
                     checkForContract(p, worker, currentHexLine);
                 }
-                
+
                 allWorkers.add(worker);
                 workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
-                
+
             }
         }
     }
-    
+
     private void checkForContract(Promotion p, WorkerView w, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
@@ -473,11 +551,22 @@ public class Import {
             gameController.getContractManager().getContract(w, p).setExclusive(false);
         }
     }
-    
+
+    private void checkForContract(Promotion p, StaffView s, List<String> currentHexLine) {
+        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(61)))) {
+            //handle written/open contracts
+            if (hexStringToLetter(currentHexLine.get(58)).equals("W")) {
+                getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today(), true);
+            } else {
+                getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today(), false);
+            }
+        }
+    }
+
     private void eventDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\event.dat");
         byte[] data = Files.readAllBytes(path);
-        
+
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
         Promotion promotion = null;
@@ -486,17 +575,17 @@ public class Import {
         int lineLength = 47;
         int promotionKeyIndex = 34;
         int monthValueIndex = 36;
-        
+
         for (int i = 0; i < fileString.length(); i += 2) {
-            
+
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
             currentLine += hexStringToLetter(hexValueString);
             counter++;
-            
+
             if (counter == promotionKeyIndex) {
                 promotion = getPromotionFromKey(hexStringToInt(hexValueString));
             }
-            
+
             if (counter == monthValueIndex) {
                 int monthInt = hexStringToInt(hexValueString);
                 if (monthInt < 1 || monthInt > 12) {
@@ -505,9 +594,9 @@ public class Import {
                 } else {
                     month = Month.of(monthInt);
                 }
-                
+
             }
-            
+
             if (counter == lineLength) {
                 EventTemplate eventTemplate = new EventTemplate();
                 eventTemplate.setName(currentLine.substring(1, 32).trim());
@@ -518,19 +607,19 @@ public class Import {
                 eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
-                
+
             }
         }
     }
-    
+
     private void beltDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\belt.dat");
         byte[] data = Files.readAllBytes(path);
-        
+
         String workerId = new String();
         String workerId2 = new String();
         String titleName = new String();
-        
+
         List<String> titleNames = new ArrayList<>();
         List<String> beltWorkerIDs = new ArrayList<>();
         List<String> beltWorkerIDs2 = new ArrayList<>();
@@ -538,7 +627,7 @@ public class Import {
         List<Integer> titlePrestigeInts = new ArrayList<>();
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
-        
+
         int counter = 0;
         int lineLength = 457;
         int promotionKeyIndex = 33;
@@ -547,14 +636,14 @@ public class Import {
         int worker1IdIndex2 = 36;
         int worker2IdIndex1 = 37;
         int worker2IdIndex2 = 38;
-        
+
         for (int i = 0; i < fileString.length(); i += 2) {
 
             //combine the two characters into one string
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            
+
             currentLine += hexStringToLetter(hexValueString);
-            
+
             if (counter == promotionKeyIndex) {
                 titlePromotionKeys.add(hexStringToInt(hexValueString));
             } else if (counter == worker1IdIndex1 || counter == worker1IdIndex2) {
@@ -564,26 +653,26 @@ public class Import {
             } else if (counter == prestigeIndex) {
                 titlePrestigeInts.add(hexStringToInt(hexValueString));
             }
-            
+
             counter++;
-            
+
             if (counter == lineLength) {
-                
+
                 counter = 0;
-                
+
                 currentLine = currentLine.substring(1, 31).trim();
                 titleName += currentLine;
 
                 //reset the line for the next loop
                 currentLine = "";
-                
+
                 beltWorkerIDs.add(workerId);
                 beltWorkerIDs2.add(workerId2);
                 titleNames.add(titleName);
                 workerId = "";
                 workerId2 = "";
                 titleName = "";
-                
+
             }
         }
 
@@ -601,15 +690,15 @@ public class Import {
 
                         //list to hold the title holder(s) we find
                         List<WorkerView> titleHolders = new ArrayList<>();
-                        
+
                         if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
-                            
+
                             titleHolders.add(allWorkers.get(w));
 
                             //check for a tag team partner
                             for (int w2 = 0; w2 < workerIDs.size(); w2++) {
                                 if (workerIDs.get(w2).equals(beltWorkerIDs2.get(t))) {
-                                    
+
                                     titleHolders.add(allWorkers.get(w2));
                                     break;
                                 }
@@ -624,12 +713,12 @@ public class Import {
             }
         }
     }
-    
+
     public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {
-        
+
         List<String> advancedImportData = new ArrayList();
         String path = "";
-        
+
         try {
             path = importFolder.getPath() + "\\advancedImport.txt";
             BufferedReader br = new BufferedReader(new FileReader(path));
@@ -646,7 +735,7 @@ public class Import {
             logger.log(Level.ERROR, "Proceding without advanced import");
             advancedImportData = new ArrayList();
         }
-        
+
         for (Promotion promotion : promotions) {
             for (int i = 0; i < advancedImportData.size(); i++) {
                 if (advancedImportData.get(i).equals(promotion.getName())
@@ -666,5 +755,5 @@ public class Import {
     public GameController getGameController() {
         return gameController;
     }
-    
+
 }

@@ -4,24 +4,34 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Promotion;
+import wrestling.model.StaffContract;
+import wrestling.model.interfaces.iContract;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
 public class ContractManager implements Serializable {
 
     private final List<Contract> contracts;
+    private final List<StaffContract> staffContracts;
 
     private final PromotionManager promotionManager;
 
     public ContractManager(PromotionManager promotionManager) {
         contracts = new ArrayList<>();
+        staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
     }
 
     public void addContract(Contract contract) {
         contracts.add(contract);
+    }
+
+    public void addContract(StaffContract contract) {
+        staffContracts.add(contract);
     }
 
     public List<Contract> getContracts(Promotion promotion) {
@@ -33,6 +43,13 @@ public class ContractManager implements Serializable {
         }
 
         return promotionContracts;
+    }
+
+    public List<iContract> allContracts() {
+        List<iContract> allContracts = new ArrayList<>();
+        allContracts.addAll(contracts);
+        allContracts.addAll(staffContracts);
+        return allContracts;
     }
 
     public boolean hasContract(WorkerView worker) {
@@ -49,6 +66,17 @@ public class ContractManager implements Serializable {
         List<Contract> workerContracts = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getWorker().equals(worker)) {
+                workerContracts.add(contract);
+            }
+        }
+
+        return workerContracts;
+    }
+
+    public List<StaffContract> getContracts(StaffView staff) {
+        List<StaffContract> workerContracts = new ArrayList<>();
+        for (StaffContract contract : staffContracts) {
+            if (contract.isActive() && contract.getStaff().equals(staff)) {
                 workerContracts.add(contract);
             }
         }
@@ -150,13 +178,22 @@ public class ContractManager implements Serializable {
 
     //for when a bigger promotion signs a written contract
     //that overrides this open contract
-    public void buyOutContract(Contract contract) {
+    public void buyOutContract(iContract contract) {
         contract.setDuration(0);
     }
 
     public void buyOutContracts(WorkerView worker, Promotion newExclusivePromotion) {
         //'buy out' any the other contracts the worker has
         for (Contract c : getContracts(worker)) {
+            if (!c.getPromotion().equals(newExclusivePromotion)) {
+                buyOutContract(c);
+            }
+        }
+    }
+
+    public void buyOutContracts(StaffView staff, Promotion newExclusivePromotion) {
+        //'buy out' any the other contracts the worker has
+        for (StaffContract c : getContracts(staff)) {
             if (!c.getPromotion().equals(newExclusivePromotion)) {
                 buyOutContract(c);
             }

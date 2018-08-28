@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.WorkerView;
 
 /**
@@ -11,7 +12,7 @@ import wrestling.model.modelView.WorkerView;
  *
  *
  */
-public class Contract implements Serializable {
+public class Contract implements Serializable, iContract {
 
     private Promotion promotion;
     private WorkerView worker;
