@@ -1,11 +1,13 @@
 package wrestling.model;
 
+import java.time.LocalDate;
 import wrestling.model.interfaces.iNewsItem;
 
 public class NewsItem implements iNewsItem {
 
     private String summary;
     private String headline;
+    private LocalDate date;
 
     public NewsItem(String headline, String summary) {
         this.summary = summary;
@@ -34,6 +36,11 @@ public class NewsItem implements iNewsItem {
      */
     public void setHeadline(String headline) {
         this.headline = headline;
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return date;
     }
 
 }

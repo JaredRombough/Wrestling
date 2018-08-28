@@ -99,11 +99,10 @@ public class NextDayScreenController extends ControllerBase implements Initializ
 
     public void nextDay() {
         updateTopMatches(chronoUnit, 1);
-        gameController.getInjuryManager().getInjuries().stream().forEach((injury) -> {
-            if (injury.getStartDate().equals(gameController.getDateManager().today().minusDays(1))) {
-                newsListView.getItems().add(0, injury);
+        gameController.getNewsManager().getNewsItems().stream().forEach((newsItem) -> {
+            if (newsItem.getDate().equals(gameController.getDateManager().today().minusDays(1))) {
+                newsListView.getItems().add(0, newsItem);
             }
-
         });
     }
 

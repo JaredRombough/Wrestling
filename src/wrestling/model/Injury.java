@@ -60,4 +60,9 @@ public class Injury implements iNewsItem {
                 startDate.toString(),
                 expiryDate.toString());
     }
+
+    @Override
+    public LocalDate getDate() {
+        return startDate;
+    }
 }

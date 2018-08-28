@@ -18,6 +18,7 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.InjuryManager;
+import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TitleManager;
@@ -34,7 +35,7 @@ import wrestling.model.segmentEnum.EventVenueSize;
  *
  */
 public class EventFactory {
-    
+
     private final ContractManager contractManager;
     private final EventManager eventManager;
     private final TitleManager titleManager;
@@ -44,7 +45,8 @@ public class EventFactory {
     private final PromotionManager promotionManager;
     private final DateManager dateManager;
     private final InjuryManager injuryManager;
-    
+    private final NewsManager newsManager;
+
     public EventFactory(
             ContractManager contractManager,
             EventManager eventManager,
@@ -54,7 +56,8 @@ public class EventFactory {
             TitleManager titleManager,
             WorkerManager workerManager,
             DateManager dateManager,
-            InjuryManager injuryManager) {
+            InjuryManager injuryManager,
+            NewsManager newsManager) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -64,11 +67,12 @@ public class EventFactory {
         this.workerManager = workerManager;
         this.dateManager = dateManager;
         this.injuryManager = injuryManager;
+        this.newsManager = newsManager;
     }
-    
+
     public void processEventView(EventView eventView, boolean processSegments,
             PromotionController promotionController) {
-        
+
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegmentViews()) {
                 segmentView.setSegment(processSegmentView(eventView, segmentView));
@@ -76,28 +80,28 @@ public class EventFactory {
         }
         Event event = eventView.getEvent();
         List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
-        
+
         setEventStats(event, segments);
-        
+
         promotionManager.getBankAccount(event.getPromotion()).addFunds(
                 eventManager.calculateGate(event), 'e', eventView.getEvent().getDate());
-        
+
         for (WorkerView worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
         }
         processContracts(event, segments);
-        
+
         eventManager.addEventView(eventView);
-        
+
         promotionController.updateEventTemplate(eventView);
     }
-    
+
     public void createMonthlyEvents(Promotion promotion) {
-        
+
         Month month = Month.JANUARY;
         for (int i = 0; i < 12; i++) {
-            
+
             EventTemplate template = new EventTemplate();
             template.setPromotion(promotion);
             template.setMonth(month);
@@ -115,16 +119,16 @@ public class EventFactory {
                 template.setEventVenueSize(EventVenueSize.SMALL);
             }
             eventManager.addEventTemplate(template);
-            
+
         }
     }
-    
+
     private void setEventStats(Event event, List<Segment> segments) {
         event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
     }
-    
+
     private List<Segment> segmentsFromSegmentViews(List<SegmentView> segmentViews) {
         List<Segment> segments = new ArrayList<>();
         for (SegmentView segmentView : segmentViews) {
@@ -132,13 +136,13 @@ public class EventFactory {
         }
         return segments;
     }
-    
+
     private void processContracts(iEvent event, List<Segment> segments) {
         eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
             contractManager.appearance(event.getDate(), contract);
         });
     }
-    
+
     public Segment processSegmentView(EventView eventView, SegmentView segmentView) {
         segmentView.setEventView(eventView);
         Segment segment = matchFactory.saveSegment(segmentView);
@@ -157,14 +161,14 @@ public class EventFactory {
                     injuryManager.addInjury(injury);
                 }
             });
-            
+
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
         }
         return segment;
     }
-    
+
     private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {
         for (TitleView titleView : segmentView.getTitleViews()) {
             boolean change = !winners.equals(titleView.getChampions());
@@ -173,5 +177,5 @@ public class EventFactory {
             }
         }
     }
-    
+
 }

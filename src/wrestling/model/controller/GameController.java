@@ -17,6 +17,7 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.InjuryManager;
+import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TagTeamManager;
@@ -46,6 +47,7 @@ public final class GameController implements Serializable {
     private final TagTeamManager tagTeamManager;
     private final SegmentManager segmentManager;
     private final InjuryManager injuryManager;
+    private final NewsManager newsManager;
 
     private final PromotionController promotionController;
 
@@ -59,6 +61,7 @@ public final class GameController implements Serializable {
 
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
+        newsManager = new NewsManager();
 
         contractManager = new ContractManager(promotionManager);
 
@@ -66,7 +69,7 @@ public final class GameController implements Serializable {
 
         segmentManager = new SegmentManager(dateManager, tagTeamManager);
 
-        injuryManager = new InjuryManager(segmentManager);
+        injuryManager = new InjuryManager(newsManager);
 
         eventManager = new EventManager(
                 contractManager,
@@ -87,7 +90,9 @@ public final class GameController implements Serializable {
                 promotionManager,
                 titleManager,
                 workerManager,
-                dateManager, getInjuryManager());
+                dateManager,
+                injuryManager,
+                newsManager);
 
         promotionFactory = new PromotionFactory(
                 contractFactory,
@@ -275,6 +280,13 @@ public final class GameController implements Serializable {
      */
     public InjuryManager getInjuryManager() {
         return injuryManager;
+    }
+
+    /**
+     * @return the newsManager
+     */
+    public NewsManager getNewsManager() {
+        return newsManager;
     }
 
 }

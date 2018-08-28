@@ -8,11 +8,11 @@ import wrestling.model.modelView.WorkerView;
 
 public class InjuryManager {
 
-    private final SegmentManager segmentManager;
+    private final NewsManager newsManager;
     private final List<Injury> injuries = new ArrayList();
 
-    public InjuryManager(SegmentManager segmentManager) {
-        this.segmentManager = segmentManager;
+    public InjuryManager(NewsManager newsManager) {
+        this.newsManager = newsManager;
     }
 
     public void dailyUpdate(LocalDate date) {
@@ -25,8 +25,6 @@ public class InjuryManager {
         injuries.removeIf(injury -> injury.getExpiryDate().equals(date));
     }
 
-    
-
     /**
      * @return the injuries
      */
@@ -36,6 +34,7 @@ public class InjuryManager {
 
     public void addInjury(Injury injury) {
         injuries.add(injury);
+        newsManager.addNews(injury);
     }
 
 }
