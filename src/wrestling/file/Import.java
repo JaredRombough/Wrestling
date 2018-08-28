@@ -379,9 +379,6 @@ public class Import {
             counter++;
 
             if (counter == lineLength) {
-                System.out.println(currentHexLine);
-                System.out.println(currentStringLine);
-
                 StaffView staff = new StaffView();
                 staff.setName(currentLine.substring(3, 27).trim());
                 staff.setImageString(currentLine.substring(34, 53).trim());
