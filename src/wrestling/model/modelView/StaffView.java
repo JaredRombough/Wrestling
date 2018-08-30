@@ -21,6 +21,11 @@ public class StaffView implements SegmentItem {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * @param name the name to set
      */
@@ -31,6 +36,7 @@ public class StaffView implements SegmentItem {
     /**
      * @return the gender
      */
+    @Override
     public Gender getGender() {
         return gender;
     }

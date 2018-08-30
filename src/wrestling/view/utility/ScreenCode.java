@@ -60,6 +60,17 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    }, STAFF_VIEW {
+
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/StaffView.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     },
     TAG_TEAM_VIEW {
 

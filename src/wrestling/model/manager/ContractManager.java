@@ -122,6 +122,19 @@ public class ContractManager implements Serializable {
 
         return roster;
     }
+    
+    public List<StaffView> getFullStaff(Promotion promotion) {
+
+        List<StaffView> staff = new ArrayList<>();
+        for (StaffContract contract : staffContracts) {
+            if (contract.isActive() && contract.getPromotion().equals(promotion)) {
+                staff.add(contract.getStaff());
+            }
+
+        }
+
+        return staff;
+    }
 
     public List<WorkerView> getPushed(Promotion promotion) {
         List<WorkerView> roster = new ArrayList<>();

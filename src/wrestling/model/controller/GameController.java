@@ -20,6 +20,7 @@ import wrestling.model.manager.InjuryManager;
 import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
+import wrestling.model.manager.StaffManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
@@ -48,6 +49,7 @@ public final class GameController implements Serializable {
     private final SegmentManager segmentManager;
     private final InjuryManager injuryManager;
     private final NewsManager newsManager;
+    private final StaffManager staffManager;
 
     private final PromotionController promotionController;
 
@@ -62,6 +64,7 @@ public final class GameController implements Serializable {
         promotionManager = new PromotionManager();
         workerFactory = new WorkerFactory();
         newsManager = new NewsManager();
+        staffManager = new StaffManager();
 
         contractManager = new ContractManager(promotionManager);
 
@@ -287,6 +290,13 @@ public final class GameController implements Serializable {
      */
     public NewsManager getNewsManager() {
         return newsManager;
+    }
+
+    /**
+     * @return the staffManager
+     */
+    public StaffManager getStaffManager() {
+        return staffManager;
     }
 
 }

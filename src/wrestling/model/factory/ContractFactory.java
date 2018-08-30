@@ -27,7 +27,7 @@ public class ContractFactory {
     }
 
     //create a contract with set exclusivity (only used by import)
-    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate, boolean exclusive) {
+    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate) {
 
         //create the contract
         StaffContract contract = createContract(staff, promotion);
@@ -244,7 +244,6 @@ public class ContractFactory {
             double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
             unitCost += (int) extra;
         }
-
 
         contract.setBiWeeklyCost(unitCost);
     }

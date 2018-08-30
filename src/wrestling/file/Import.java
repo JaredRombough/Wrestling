@@ -357,6 +357,8 @@ public class Import {
     }
 
     private void staffDat() throws IOException {
+        List<StaffView> staffViews = new ArrayList<>();
+
         Path path = Paths.get(importFolder.getPath() + "\\staff.dat");
         byte[] data = Files.readAllBytes(path);
 
@@ -419,6 +421,8 @@ public class Import {
                     checkForContract(p, staff, currentHexLine);
                 }
 
+                staffViews.add(staff);
+
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
@@ -426,6 +430,8 @@ public class Import {
             }
 
         }
+
+        gameController.getStaffManager().addStaff(staffViews);
     }
 
     private void workersDat() throws IOException {
@@ -550,13 +556,8 @@ public class Import {
     }
 
     private void checkForContract(Promotion p, StaffView s, List<String> currentHexLine) {
-        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(61)))) {
-            //handle written/open contracts
-            if (hexStringToLetter(currentHexLine.get(58)).equals("W")) {
-                getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today(), true);
-            } else {
-                getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today(), false);
-            }
+        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
+            getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today());
         }
     }
 
