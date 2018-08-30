@@ -51,8 +51,9 @@ import wrestling.model.controller.GameController;
 import wrestling.model.modelView.TitleView;
 import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.NameComparator;
-import wrestling.view.utility.comparators.WorkerAgeComparator;
-import wrestling.view.utility.comparators.WorkerBehaviourComparator;
+import wrestling.view.utility.comparators.SegmentItemAgeComparator;
+import wrestling.view.utility.comparators.SegmentItemBehaviourComparator;
+import wrestling.view.utility.comparators.StaffSkillComparator;
 import wrestling.view.utility.comparators.WorkerCharismaComparator;
 import wrestling.view.utility.comparators.WorkerFlyingComparator;
 import wrestling.view.utility.comparators.WorkerPopularityComparator;
@@ -412,8 +413,16 @@ public final class ViewUtils {
                 new WorkerWrestlingComparator(),
                 new WorkerFlyingComparator(),
                 new WorkerStrikingComparator(),
-                new WorkerBehaviourComparator(),
-                new WorkerAgeComparator()
+                new SegmentItemBehaviourComparator(),
+                new SegmentItemAgeComparator()
+        );
+    }
+
+    public static ObservableList getStaffComparators() {
+        return FXCollections.observableArrayList(new NameComparator(),
+                new StaffSkillComparator(),
+                new SegmentItemBehaviourComparator(),
+                new SegmentItemAgeComparator()
         );
     }
 

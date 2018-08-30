@@ -16,9 +16,13 @@ public interface SegmentItem {
     default String getShortName() {
         return this.toString();
     }
-    
+
     default String getLongName() {
         return this.toString();
+    }
+
+    default String getImageString() {
+        return "";
     }
 
     default Gender getGender() {
@@ -27,5 +31,13 @@ public interface SegmentItem {
 
     default ActiveType getActiveType() {
         return ActiveType.ALL;
+    }
+
+    default int getBehaviour() {
+        return 100;
+    }
+
+    default int getAge() {
+        return 0;
     }
 }

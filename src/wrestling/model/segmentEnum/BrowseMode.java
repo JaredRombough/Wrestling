@@ -65,7 +65,7 @@ public enum BrowseMode implements iBrowseMode {
     STAFF {
         @Override
         public ObservableList comparators() {
-            return ViewUtils.getWorkerComparators();
+            return ViewUtils.getStaffComparators();
         }
 
         @Override

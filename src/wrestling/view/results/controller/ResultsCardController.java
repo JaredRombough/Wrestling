@@ -6,11 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import wrestling.model.SegmentItem;
 import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -32,7 +34,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
     private int width;
     private int height;
     private int padding;
-    private WorkerView worker;
+    private SegmentItem segmentItem;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,23 +50,23 @@ public class ResultsCardController extends ControllerBase implements Initializab
     @Override
     public void setCurrent(Object obj) {
 
-        if (obj instanceof WorkerView) {
-            setCurrentWorker((WorkerView) obj);
+        if (obj instanceof SegmentItem) {
+            setCurrentWorker((SegmentItem) obj);
         } else if (obj instanceof String) {
             setCurrentString((String) obj);
         }
     }
 
-    private void setCurrentWorker(WorkerView w) {
-        worker = w;
-        String imgString = worker.getImageString();
-        nameLabel.setText(worker.getName());
+    private void setCurrentWorker(SegmentItem segmentItem) {
+        this.segmentItem = segmentItem;
+        String imgString = segmentItem.getImageString();
+        nameLabel.setText(segmentItem.getLongName());
         border.setMinSize(width + padding, height + padding);
         border.setPrefSize(width + padding, height + padding);
         ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
                 border,
                 imageView,
-                mainApp.getDefaultWorkerImage(w));
+                mainApp.getDefaultWorkerImage(segmentItem));
         if (!border.isVisible()) {
             border.setVisible(true);
         }
