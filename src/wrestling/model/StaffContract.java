@@ -35,6 +35,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the promotion
      */
+    @Override
     public Promotion getPromotion() {
         return promotion;
     }
@@ -91,5 +92,20 @@ public class StaffContract implements Serializable, iContract {
      */
     public void setBiWeeklyCost(int biWeeklyCost) {
         this.biWeeklyCost = biWeeklyCost;
+    }
+
+    @Override
+    public int getDuration() {
+        return duration;
+    }
+
+    @Override
+    public boolean isExclusive() {
+        return true;
+    }
+
+    @Override
+    public int getAppearanceCost() {
+        return 0;
     }
 }

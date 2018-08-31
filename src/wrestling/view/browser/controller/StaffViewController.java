@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import wrestling.model.StaffContract;
 import wrestling.model.modelView.StaffView;
 import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.GameScreen;
@@ -20,6 +21,9 @@ public class StaffViewController extends ControllerBase {
     @FXML
     private Label staffTypeLabel;
 
+    @FXML
+    private Label contractText;
+    
     @FXML
     private Label skillLabel;
 
@@ -58,6 +62,11 @@ public class StaffViewController extends ControllerBase {
         behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
         ageLabel.setText(Integer.toString(staffView.getAge()));
         genderLabel.setText(staffView.getGender().toString());
+
+        StaffContract contract = gameController.getContractManager().getContract(staffView);
+        if (contract != null) {
+            contractText.setText(gameController.getContractManager().getTerms(contract));
+        }
 
         imageAnchor.getChildren().clear();
         GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);

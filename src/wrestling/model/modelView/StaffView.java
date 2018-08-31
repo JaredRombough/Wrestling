@@ -1,6 +1,7 @@
 package wrestling.model.modelView;
 
 import wrestling.model.SegmentItem;
+import wrestling.model.StaffContract;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.model.segmentEnum.StaffType;
 
@@ -13,6 +14,7 @@ public class StaffView implements SegmentItem {
     private int behaviour;
     private StaffType staffType;
     private String imageString;
+    private StaffContract staffContract;
 
     /**
      * @return the name
@@ -116,6 +118,20 @@ public class StaffView implements SegmentItem {
      */
     public void setImageString(String imageString) {
         this.imageString = imageString;
+    }
+
+    /**
+     * @return the staffContract
+     */
+    public StaffContract getStaffContract() {
+        return staffContract;
+    }
+
+    /**
+     * @param staffContract the staffContract to set
+     */
+    public void setStaffContract(StaffContract staffContract) {
+        this.staffContract = staffContract;
     }
 
 }

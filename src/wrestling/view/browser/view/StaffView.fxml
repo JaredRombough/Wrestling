@@ -47,6 +47,8 @@
             </Label>
             <AnchorPane fx:id="imageAnchor" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="3" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Position" GridPane.rowIndex="1" />
+            <Label fx:id="contractLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Contract" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label fx:id="contractText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

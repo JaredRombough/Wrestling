@@ -59,9 +59,9 @@
             <Label fx:id="mainRosterLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="7" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Charisma" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="charismaLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <ScrollPane fx:id="contractInfo" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.rowSpan="3">
+            <ScrollPane fx:id="contractInfo" GridPane.columnSpan="6" GridPane.rowIndex="11" GridPane.rowSpan="2">
                <GridPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets />
                </GridPane.margin>
             </ScrollPane>
             <AnchorPane fx:id="feedAnchor" GridPane.columnSpan="2147483647" GridPane.rowIndex="13" GridPane.rowSpan="2147483647">

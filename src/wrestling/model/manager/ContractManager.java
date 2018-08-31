@@ -74,14 +74,26 @@ public class ContractManager implements Serializable {
     }
 
     public List<StaffContract> getContracts(StaffView staff) {
-        List<StaffContract> workerContracts = new ArrayList<>();
+        List<StaffContract> contractsForStaff = new ArrayList<>();
         for (StaffContract contract : staffContracts) {
             if (contract.isActive() && contract.getStaff().equals(staff)) {
-                workerContracts.add(contract);
+                contractsForStaff.add(contract);
             }
         }
 
-        return workerContracts;
+        return contractsForStaff;
+    }
+
+    public StaffContract getContract(StaffView staff) {
+        StaffContract staffContract = null;
+        for (StaffContract contract : staffContracts) {
+            if (contract.isActive() && contract.getStaff().equals(staff)) {
+                staffContract = contract;
+                break;
+            }
+        }
+
+        return staffContract;
     }
 
     public Contract getContract(WorkerView worker, Promotion promotion) {
@@ -122,7 +134,7 @@ public class ContractManager implements Serializable {
 
         return roster;
     }
-    
+
     public List<StaffView> getFullStaff(Promotion promotion) {
 
         List<StaffView> staff = new ArrayList<>();
@@ -217,14 +229,13 @@ public class ContractManager implements Serializable {
         contract.setActive(false);
     }
 
-    public String getTerms(Contract contract) {
-        String string = contract.getPromotion().getName() + " Length: " + contract.getDuration()
-                + " days. ";
+    public String getTerms(iContract contract) {
+        String string = String.format("%s %s days", contract.getPromotion().getShortName(), contract.getDuration());
 
         if (contract.isExclusive()) {
-            string += "$" + contract.getBiWeeklyCost() + " Bi-Weekly.";
+            string += " $" + contract.getBiWeeklyCost() + " Bi-Weekly.";
         } else {
-            string += "$" + contract.getAppearanceCost() + " per appearance.";
+            string += " $" + contract.getAppearanceCost() + " per appearance.";
         }
 
         return string;
