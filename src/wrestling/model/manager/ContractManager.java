@@ -19,11 +19,25 @@ public class ContractManager implements Serializable {
     private final List<StaffContract> staffContracts;
 
     private final PromotionManager promotionManager;
+    private final TitleManager titleManager;
 
-    public ContractManager(PromotionManager promotionManager) {
+    public ContractManager(PromotionManager promotionManager, TitleManager titleManager) {
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
+        this.titleManager = titleManager;
+    }
+
+    public void dailyUpdate() {
+        for (Contract contract : contracts) {
+            if (!nextDay(contract)) {
+                titleManager.stripTitles(contract);
+            }
+        }
+
+        for (StaffContract contract : staffContracts) {
+            nextDay(contract);
+        }
     }
 
     public void addContract(Contract contract) {
@@ -162,7 +176,7 @@ public class ContractManager implements Serializable {
     }
 
     //depreciates monthly contracts
-    public boolean nextDay(Contract contract) {
+    public boolean nextDay(iContract contract) {
         boolean stillExists = true;
         contract.setDuration(contract.getDuration() - 1);
 
@@ -225,7 +239,7 @@ public class ContractManager implements Serializable {
         }
     }
 
-    private void terminateContract(Contract contract) {
+    private void terminateContract(iContract contract) {
         contract.setActive(false);
     }
 

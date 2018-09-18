@@ -120,8 +120,6 @@ public class PromotionController implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate(Promotion promotion) {
 
-        dailyUpdateContracts(promotion);
-
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
             updatePushed(promotion);
         }
@@ -148,16 +146,6 @@ public class PromotionController implements Serializable {
             }
         }
 
-    }
-
-    private void dailyUpdateContracts(Promotion promotion) {
-        //update all the contracts associated with the current promotion
-        List<Contract> tempContractList = new ArrayList<>(contractManager.getContracts(promotion));
-        for (Contract contract : tempContractList) {
-            if (!contractManager.nextDay(contract)) {
-                titleManager.stripTitles(promotion, contract);
-            }
-        }
     }
 
     //pay everyone

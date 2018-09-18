@@ -81,8 +81,8 @@ public class TitleManager {
     }
 
     //check if we have any outstanding titles from expired contracts
-    public void stripTitles(Promotion promotion, Contract contract) {
-        for (Title title : getTitles(promotion)) {
+    public void stripTitles(Contract contract) {
+        for (Title title : getTitles(contract.getPromotion())) {
             for (WorkerView worker : getCurrentChampionWorkers(title)) {
                 if (worker.equals(contract.getWorker())) {
                     stripTitle(title);

@@ -61,9 +61,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label managerLabel;
 
     @FXML
-    private Label mainRosterLabel;
-
-    @FXML
     private Label genderLabel;
 
     @FXML
@@ -105,7 +102,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
-        mainRosterLabel.setText("");
     }
 
     @Override

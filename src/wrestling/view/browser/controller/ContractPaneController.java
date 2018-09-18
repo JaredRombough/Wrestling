@@ -133,7 +133,7 @@ public class ContractPaneController extends ControllerBase implements Initializa
                 worker,
                 playerPromotion(),
                 exclusive,
-                duration(),
+                duration() * 30,
                 gameController.getDateManager().today());
     }
 

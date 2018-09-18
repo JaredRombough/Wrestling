@@ -23,7 +23,7 @@ public class StaffViewController extends ControllerBase {
 
     @FXML
     private Label contractText;
-    
+
     @FXML
     private Label skillLabel;
 
@@ -56,22 +56,24 @@ public class StaffViewController extends ControllerBase {
 
     @Override
     public void updateLabels() {
-        nameLabel.setText(staffView.getName());
-        staffTypeLabel.setText(staffView.getStaffType().toString());
-        skillLabel.setText(Integer.toString(staffView.getSkill()));
-        behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
-        ageLabel.setText(Integer.toString(staffView.getAge()));
-        genderLabel.setText(staffView.getGender().toString());
+        if (staffView != null) {
+            nameLabel.setText(staffView.getName());
+            staffTypeLabel.setText(staffView.getStaffType().toString());
+            skillLabel.setText(Integer.toString(staffView.getSkill()));
+            behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
+            ageLabel.setText(Integer.toString(staffView.getAge()));
+            genderLabel.setText(staffView.getGender().toString());
 
-        StaffContract contract = gameController.getContractManager().getContract(staffView);
-        if (contract != null) {
-            contractText.setText(gameController.getContractManager().getTerms(contract));
+            StaffContract contract = gameController.getContractManager().getContract(staffView);
+            if (contract != null) {
+                contractText.setText(gameController.getContractManager().getTerms(contract));
+            }
+
+            imageAnchor.getChildren().clear();
+            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+            card.controller.setCurrent(staffView);
+            ((ResultsCardController) card.controller).setNameLabelVisibile(false);
         }
-
-        imageAnchor.getChildren().clear();
-        GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
-        card.controller.setCurrent(staffView);
-        ((ResultsCardController) card.controller).setNameLabelVisibile(false);
 
     }
 

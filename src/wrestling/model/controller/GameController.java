@@ -66,7 +66,7 @@ public final class GameController implements Serializable {
         newsManager = new NewsManager();
         staffManager = new StaffManager();
 
-        contractManager = new ContractManager(promotionManager);
+        contractManager = new ContractManager(promotionManager, titleManager);
 
         tagTeamManager = new TagTeamManager(contractManager);
 
@@ -134,7 +134,9 @@ public final class GameController implements Serializable {
     //only called by MainApp
     public void nextDay() {
 
-        getInjuryManager().dailyUpdate(dateManager.today());
+        injuryManager.dailyUpdate(dateManager.today());
+        
+        contractManager.dailyUpdate();
 
         //iterate through all promotions
         for (Promotion promotion : promotionManager.aiPromotions()) {

@@ -23,4 +23,6 @@ public interface iContract {
 
     public int getAppearanceCost();
 
+    public void setActive(boolean active);
+
 }
