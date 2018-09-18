@@ -36,6 +36,27 @@ public enum BrowseMode implements iBrowseMode {
             return Arrays.asList(EnumSet.allOf(Gender.class));
         }
     },
+    HIRE_STAFF {
+        @Override
+        public ObservableList comparators() {
+            return ViewUtils.getStaffComparators();
+        }
+
+        @Override
+        public ScreenCode subScreenCode() {
+            return ScreenCode.STAFF_VIEW;
+        }
+
+        @Override
+        public List listToBrowse(GameController gameController, Promotion promotion) {
+            return gameController.getStaffManager().getAvailableStaff();
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
+        }
+    },
     WORKERS {
         @Override
         public ObservableList comparators() {
