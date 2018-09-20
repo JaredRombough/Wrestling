@@ -3,6 +3,7 @@ package wrestling.view.browser.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import wrestling.model.StaffContract;
@@ -39,11 +40,22 @@ public class StaffViewController extends ControllerBase {
     @FXML
     private AnchorPane imageAnchor;
 
+    @FXML
+    private Button contractButton;
+
     private StaffView staffView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+    }
+
+    @Override
+    public void initializeMore() {
+        contractButton.setOnAction(e -> {
+            ContractDialog contractDialog = new ContractDialog();
+            contractDialog.createDialog(staffView, gameController);
+        });
     }
 
     @Override

@@ -26,28 +26,23 @@ public class ContractFactory {
         this.contractManager = contractManager;
     }
 
-    //create a contract with set exclusivity (only used by import)
     public void createContract(StaffView staff, Promotion promotion, LocalDate startDate) {
-
-        //create the contract
-        StaffContract contract = createContract(staff, promotion);
-
-        setBiWeeklyCost(contract);
-
-        contractManager.buyOutContracts(staff, promotion);
-
         int duration = 30 + RandomUtils.nextInt(0, 30);
-
-        //scale the duration and exclusivity based on promotion level
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 30;
         }
+        createContract(staff, promotion, startDate, duration);
+    }
 
+    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate, int duration) {
+        StaffContract contract = createContract(staff, promotion);
+        contract.setBiWeeklyCost(calculateBiWeeklyCost(staff));
+        contractManager.buyOutContracts(staff, promotion);
         initializeContract(contract, duration, startDate);
     }
 
     //create a contract with predetermined attributes
-    public void createContract(WorkerView worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public iContract createContract(WorkerView worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = createContract(worker, promotion);
 
@@ -60,6 +55,8 @@ public class ContractFactory {
         }
 
         contract.setStartDate(startDate);
+
+        return contract;
     }
 
     //create a contract with set exclusivity (only used by import)
@@ -167,6 +164,29 @@ public class ContractFactory {
         return unitCost;
     }
 
+    public int calculateBiWeeklyCost(StaffView staff) {
+
+        int unitCost;
+
+        List<Integer> pricePoints = new ArrayList<>();
+
+        pricePoints.addAll(Arrays.asList(25, 25, 50, 75, 75, 150, 300, 500, 1000, 5000, 10000));
+
+        double nearest10 = staff.getSkill() / 10 * 10;
+        double multiplier = (staff.getSkill() - nearest10) / 10;
+
+        int ppIndex = (int) nearest10 / 10;
+
+        unitCost = pricePoints.get(ppIndex);
+
+        if (nearest10 != 100) {
+            double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
+            unitCost += (int) extra;
+        }
+
+        return unitCost;
+    }
+
     /*
     calculate the cost for a contract if not explicitly specified
      */
@@ -225,26 +245,4 @@ public class ContractFactory {
         contract.setBiWeeklyCost(unitCost);
     }
 
-    private void setBiWeeklyCost(StaffContract contract) {
-
-        int unitCost;
-
-        List<Integer> pricePoints = new ArrayList<>();
-
-        pricePoints.addAll(Arrays.asList(25, 25, 50, 75, 75, 150, 300, 500, 1000, 5000, 10000));
-
-        double nearest10 = contract.getStaff().getSkill() / 10 * 10;
-        double multiplier = (contract.getStaff().getSkill() - nearest10) / 10;
-
-        int ppIndex = (int) nearest10 / 10;
-
-        unitCost = pricePoints.get(ppIndex);
-
-        if (nearest10 != 100) {
-            double extra = (pricePoints.get(ppIndex + 1) - unitCost) * multiplier;
-            unitCost += (int) extra;
-        }
-
-        contract.setBiWeeklyCost(unitCost);
-    }
 }

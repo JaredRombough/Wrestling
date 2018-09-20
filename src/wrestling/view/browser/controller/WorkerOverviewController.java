@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -70,15 +71,14 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label injuryLabel;
 
     @FXML
+    private Button contractButton;
+
+    @FXML
     private AnchorPane imageAnchor;
 
     @FXML
     private AnchorPane feedAnchor;
     private GameScreen feedPaneScreen;
-
-    @FXML
-    private AnchorPane contractPaneAnchor;
-    private GameScreen contractPaneScreen;
 
     private WorkerView worker;
     private Promotion promotion;
@@ -89,7 +89,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         WorkerView newWorker = (WorkerView) obj;
 
         worker = newWorker;
-        contractPaneScreen.controller.setCurrent(newWorker);
 
         updateLabels();
     }
@@ -106,7 +105,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void initializeMore() {
-        contractPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT_PANE, mainApp, gameController, contractPaneAnchor);
+        contractButton.setOnAction(e -> {
+            ContractDialog contractDialog = new ContractDialog();
+            contractDialog.createDialog(worker, gameController);
+        });
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
         injury.getStyleClass().add("lowStat");
     }
@@ -183,8 +185,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 managerLabel.setText("Development");
             }
 
-            //only show the contract pane if the worker can negotiate with the player
-            contractPaneScreen.pane.setVisible(gameController.getContractManager().canNegotiate(worker, promotion));
+            contractButton.setVisible(gameController.getContractManager().canNegotiate(worker, promotion));
 
         } else if (!gameController.getContractManager().getFullRoster(promotion).contains(worker)) {
             //probably our roster is empty for some reason, should be a rare situation
@@ -197,8 +198,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             strikingLabel.setText("");
             behaviourLabel.setText("");
             popularityLabel.setText("");
-
-            contractPaneScreen.controller.updateLabels();
         }
 
         feedPaneScreen.controller.setCurrent(worker);
