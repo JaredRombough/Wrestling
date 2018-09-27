@@ -15,41 +15,44 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class StaffViewController extends ControllerBase {
-
+    
     @FXML
     private Label nameLabel;
-
+    
     @FXML
     private Label staffTypeLabel;
-
+    
     @FXML
     private Label contractText;
-
+    
     @FXML
     private Label skillLabel;
-
+    
     @FXML
     private Label behaviourLabel;
-
+    
     @FXML
     private Label ageLabel;
-
+    
     @FXML
     private Label genderLabel;
-
+    
     @FXML
     private AnchorPane imageAnchor;
-
+    
     @FXML
     private Button contractButton;
-
+    
+    @FXML
+    private AnchorPane anchorPane;
+    
     private StaffView staffView;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        
     }
-
+    
     @Override
     public void initializeMore() {
         contractButton.setOnAction(e -> {
@@ -57,15 +60,16 @@ public class StaffViewController extends ControllerBase {
             contractDialog.createDialog(staffView, gameController);
         });
     }
-
+    
     @Override
     public void setCurrent(Object object) {
+        anchorPane.setVisible(object != null);
         if (object instanceof StaffView) {
             this.staffView = (StaffView) object;
             updateLabels();
         }
     }
-
+    
     @Override
     public void updateLabels() {
         if (staffView != null) {
@@ -75,18 +79,18 @@ public class StaffViewController extends ControllerBase {
             behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
             ageLabel.setText(Integer.toString(staffView.getAge()));
             genderLabel.setText(staffView.getGender().toString());
-
+            
             StaffContract contract = gameController.getContractManager().getContract(staffView);
             if (contract != null) {
                 contractText.setText(gameController.getContractManager().getTerms(contract));
             }
-
+            
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(staffView);
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
         }
-
+        
     }
-
+    
 }
