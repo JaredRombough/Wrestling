@@ -235,6 +235,7 @@ public class ContractManager implements Serializable {
         for (StaffContract c : getContracts(staff)) {
             if (!c.getPromotion().equals(newExclusivePromotion)) {
                 buyOutContract(c);
+                staff.setStaffContract(null);
             }
         }
     }

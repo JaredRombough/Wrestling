@@ -39,6 +39,7 @@ public class ContractFactory {
         contract.setBiWeeklyCost(calculateBiWeeklyCost(staff));
         contractManager.buyOutContracts(staff, promotion);
         initializeContract(contract, duration, startDate);
+        staff.setStaffContract(contract);
     }
 
     //create a contract with predetermined attributes

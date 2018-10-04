@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import wrestling.model.StaffContract;
 import wrestling.model.modelView.StaffView;
 import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.GameScreen;
@@ -15,44 +14,47 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class StaffViewController extends ControllerBase {
-    
+
     @FXML
     private Label nameLabel;
-    
+
+    @FXML
+    private Label contractLabel;
+
     @FXML
     private Label staffTypeLabel;
-    
+
     @FXML
     private Label contractText;
-    
+
     @FXML
     private Label skillLabel;
-    
+
     @FXML
     private Label behaviourLabel;
-    
+
     @FXML
     private Label ageLabel;
-    
+
     @FXML
     private Label genderLabel;
-    
+
     @FXML
     private AnchorPane imageAnchor;
-    
+
     @FXML
     private Button contractButton;
-    
+
     @FXML
     private AnchorPane anchorPane;
-    
+
     private StaffView staffView;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
+
     }
-    
+
     @Override
     public void initializeMore() {
         contractButton.setOnAction(e -> {
@@ -60,7 +62,7 @@ public class StaffViewController extends ControllerBase {
             contractDialog.createDialog(staffView, gameController);
         });
     }
-    
+
     @Override
     public void setCurrent(Object object) {
         anchorPane.setVisible(object != null);
@@ -69,7 +71,7 @@ public class StaffViewController extends ControllerBase {
             updateLabels();
         }
     }
-    
+
     @Override
     public void updateLabels() {
         if (staffView != null) {
@@ -79,18 +81,21 @@ public class StaffViewController extends ControllerBase {
             behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
             ageLabel.setText(Integer.toString(staffView.getAge()));
             genderLabel.setText(staffView.getGender().toString());
-            
-            StaffContract contract = gameController.getContractManager().getContract(staffView);
-            if (contract != null) {
-                contractText.setText(gameController.getContractManager().getTerms(contract));
+
+            if (staffView.getStaffContract() != null) {
+                contractText.setText(gameController.getContractManager().getTerms(staffView.getStaffContract()));
             }
-            
+            contractText.setVisible(staffView.getStaffContract() != null);
+            contractLabel.setVisible(staffView.getStaffContract() != null);
+
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(staffView);
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
         }
-        
+
+        contractButton.setVisible(staffView.getStaffContract() == null);
+
     }
-    
+
 }
