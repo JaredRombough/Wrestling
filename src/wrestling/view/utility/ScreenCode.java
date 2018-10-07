@@ -136,7 +136,7 @@ public enum ScreenCode implements ScreenCodeInterface {
 
         @Override
         public String resourcePath() {
-            return "view/FinancialScreen.fxml";
+            return "view/financial/FinancialScreen.fxml";
         }
 
         @Override
