@@ -114,7 +114,15 @@ public class ButtonWrapper {
             button.setText(items.get(i).toString());
             ViewUtils.inititializeRegion(button);
             GridPane.setConstraints(button, col, row);
-            GridPane.setMargin(button, new Insets(insets));
+
+            if (i == 0) {
+                GridPane.setMargin(button, new Insets(0, insets, 0, 0));
+            } else if (i == items.size() - 1) {
+                GridPane.setMargin(button, new Insets(0, 0, 0, insets));
+            } else {
+                GridPane.setMargin(button, new Insets(0, insets, 0, insets));
+            }
+
             gridPane.getChildren().addAll(button);
             buttons.add(button);
             col++;

@@ -23,10 +23,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iBrowseMode;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SortControl extends ControllerBase implements Initializable {
@@ -35,7 +37,7 @@ public class SortControl extends ControllerBase implements Initializable {
     private Button reverseButton;
 
     @FXML
-    private ComboBox comboBox;
+    private ComboBox comparatorsComboBox;
 
     @FXML
     private VBox vBox;
@@ -48,9 +50,11 @@ public class SortControl extends ControllerBase implements Initializable {
     private ScreenCode parentScreenCode;
 
     private List<ButtonWrapper> buttonWrappers;
+    private List<ComboBox> filterComboBoxes;
 
     private Gender genderFilter;
     private ActiveType activeTypeFilter;
+    private StaffType staffTypeFilter;
 
     private boolean bookingBrowseMode;
 
@@ -60,8 +64,10 @@ public class SortControl extends ControllerBase implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         reverseButton.setText("▼");
         buttonWrappers = new ArrayList<>();
+        filterComboBoxes = new ArrayList<>();
         genderFilter = Gender.ALL;
         activeTypeFilter = ActiveType.ALL;
+        staffTypeFilter = StaffType.ALL;
         bookingBrowseMode = false;
         bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS, BrowseMode.TITLES));
         bookingBrowseComboBox.getSelectionModel().selectFirst();
@@ -70,42 +76,65 @@ public class SortControl extends ControllerBase implements Initializable {
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
                 setBrowseMode(newValue);
-                //setComparators(newValue.comparators());
             }
         });
         VBox.setMargin(getBookingBrowseComboBox(), new Insets(0, 5, 10, 5));
     }
 
     private List<Enum> getActiveFilters() {
-        return Arrays.asList(genderFilter, activeTypeFilter);
+        return Arrays.asList(genderFilter, activeTypeFilter, staffTypeFilter);
     }
 
     public void clearFilters() {
         for (ButtonWrapper wrapper : buttonWrappers) {
             wrapper.getButtons().get(0).fire();
         }
+        for (ComboBox comboBox : filterComboBoxes) {
+            comboBox.getSelectionModel().selectFirst();
+        }
     }
 
-    private void addButtonWrapper(iBrowseMode browseMode) {
-        for (EnumSet set : browseMode.getSortFilters()) {
-
-            ButtonWrapper wrapper = new ButtonWrapper(FXCollections.observableArrayList(
-                    set));
-            buttonWrappers.add(wrapper);
-            vBox.getChildren().add(wrapper.getGridPane());
-            wrapper.getButtons().stream().forEach((button) -> {
-                button.setOnAction(e -> {
-                    setFilter(wrapper.updateSelected(button));
-                    updateLabels();
-                });
+    private void addButtonWrapper(EnumSet set) {
+        ButtonWrapper wrapper = new ButtonWrapper(FXCollections.observableArrayList(
+                set));
+        buttonWrappers.add(wrapper);
+        vBox.getChildren().add(wrapper.getGridPane());
+        wrapper.getButtons().stream().forEach((button) -> {
+            button.setOnAction(e -> {
+                setFilter(wrapper.updateSelected(button));
+                updateLabels();
             });
-            if (selectedEnum(set) != null) {
-                wrapper.updateSelected(selectedEnum(set));
-            } else {
-                wrapper.updateSelected(0);
-            }
-
+        });
+        if (selectedEnum(set) != null) {
+            wrapper.updateSelected(selectedEnum(set));
+        } else {
+            wrapper.updateSelected(0);
         }
+
+    }
+
+    private void addComboboxFilter(EnumSet set) {
+
+        ComboBox comboBox = new ComboBox(FXCollections.observableArrayList(set));
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        
+        filterComboBoxes.add(comboBox);
+        vBox.getChildren().add(comboBox);
+
+        comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+                setFilter(newValue);
+                updateLabels();
+            }
+        });
+
+        if (selectedEnum(set) != null) {
+            comboBox.getSelectionModel().select(selectedEnum(set));
+        } else {
+            comboBox.getSelectionModel().selectFirst();
+        }
+
     }
 
     private Enum selectedEnum(EnumSet set) {
@@ -141,6 +170,8 @@ public class SortControl extends ControllerBase implements Initializable {
             genderFilter = (Gender) obj;
         } else if (obj instanceof ActiveType) {
             activeTypeFilter = (ActiveType) obj;
+        } else if (obj instanceof StaffType) {
+            staffTypeFilter = (StaffType) obj;
         }
     }
 
@@ -151,8 +182,16 @@ public class SortControl extends ControllerBase implements Initializable {
         }
         vBox.getChildren().retainAll(toRetain);
         buttonWrappers.clear();
+        filterComboBoxes.clear();
         setComparators(browseMode.comparators());
-        addButtonWrapper(browseMode);
+        for (EnumSet set : browseMode.getSortFilters()) {
+            if (set.size() > 5) {
+                addComboboxFilter(set);
+            } else {
+                addButtonWrapper(set);
+            }
+        }
+
     }
 
     private void addBookingBrowseComboBox() {
@@ -173,15 +212,15 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private void setComparators(ObservableList<Comparator> comparators) {
-        comboBox.setItems(comparators);
+        comparatorsComboBox.setItems(comparators);
 
-        comboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
+        comparatorsComboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null) {
                 setCurrentComparator((Comparator) newItem);
             }
         });
 
-        comboBox.getSelectionModel().selectFirst();
+        comparatorsComboBox.getSelectionModel().selectFirst();
     }
 
     /**
@@ -201,7 +240,7 @@ public class SortControl extends ControllerBase implements Initializable {
     public boolean isFiltered(Object object) {
         if (object instanceof SegmentItem) {
             SegmentItem segmentItem = (SegmentItem) object;
-            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem);
+            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || istStaffTypeFiltered(segmentItem);
         }
         return true;
     }
@@ -219,6 +258,18 @@ public class SortControl extends ControllerBase implements Initializable {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (subItem instanceof WorkerView
                         && !((WorkerView) subItem).getGender().equals(genderFilter)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean istStaffTypeFiltered(SegmentItem segmentItem) {
+        if (!staffTypeFilter.equals(StaffType.ALL)) {
+            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
+                if (subItem instanceof StaffView
+                        && !((StaffView) subItem).getStaffType().equals(staffTypeFilter)) {
                     return true;
                 }
             }

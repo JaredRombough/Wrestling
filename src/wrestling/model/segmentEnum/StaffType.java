@@ -2,6 +2,12 @@ package wrestling.model.segmentEnum;
 
 public enum StaffType {
 
+    ALL {
+        @Override
+        public String toString() {
+            return "All";
+        }
+    },
     OWNER {
         @Override
         public String toString() {

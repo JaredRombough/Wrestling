@@ -29,7 +29,6 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 import wrestling.file.Import;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
@@ -45,7 +44,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    private static final String VERSION = "0.3.1";
+    private static final String VERSION = "0.3.2";
 
     public static void main(String[] args) {
 
