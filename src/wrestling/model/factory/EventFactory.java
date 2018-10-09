@@ -28,6 +28,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.utility.ModelUtils;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -154,8 +155,9 @@ public class EventFactory {
             });
             List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
             matchWorkers.stream().forEach((w) -> {
-                if (RandomUtils.nextInt(0, 100) == 99) {
-                    int duration = RandomUtils.nextInt(7, 180);
+                PromotionView promotion = eventView.getEvent().getPromotion();
+                if (RandomUtils.nextInt(0, ModelUtils.getInjuryRange(promotion)) == 1) {
+                    int duration = ModelUtils.getInjuryDuration(promotion);
                     Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
                     w.setInjury(injury);
                     injuryManager.addInjury(injury);

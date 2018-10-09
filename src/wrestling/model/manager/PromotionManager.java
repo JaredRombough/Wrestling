@@ -2,8 +2,10 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.financial.BankAccount;
+import wrestling.model.segmentEnum.StaffType;
 
 public class PromotionManager {
 
@@ -59,5 +61,7 @@ public class PromotionManager {
     public List<PromotionView> getPromotions() {
         return promotions;
     }
+
+
 
 }

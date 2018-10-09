@@ -7,15 +7,19 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 
 public final class ModelUtils {
+
+    private static final int medicManages = 30;
 
     public static String dateString(LocalDate localDate) {
         return localDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)"));
@@ -151,6 +155,33 @@ public final class ModelUtils {
             }
         }
         return false;
+    }
+
+    public static int getInjuryRange(PromotionView promotion) {
+        int range = 100;
+        int remainder = getMedicsRemainder(promotion);
+
+        if (remainder < medicManages) {
+            return range - (medicManages - remainder);
+        }
+        return range + (3 * remainder - medicManages);
+    }
+
+    public static int getInjuryDuration(PromotionView promotion) {
+        int min = 7;
+        int max = 160;
+        int remainder = getMedicsRemainder(promotion);
+        if (remainder < medicManages) {
+            return RandomUtils.nextInt(min, max) - medicManages - remainder;
+        }
+
+        return RandomUtils.nextInt(min, max) + (2 * remainder - medicManages);
+    }
+
+    private static int getMedicsRemainder(PromotionView promotion) {
+        int medicsCount = promotion.getStaff(StaffType.MEDICAL).size();
+        int rosterSize = promotion.getFullRoster().size();
+        return medicsCount % rosterSize;
     }
 
 }

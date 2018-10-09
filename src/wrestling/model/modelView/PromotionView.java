@@ -3,6 +3,8 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import wrestling.model.segmentEnum.StaffType;
 
 public class PromotionView implements Serializable {
 
@@ -130,6 +132,10 @@ public class PromotionView implements Serializable {
      */
     public List<StaffView> getAllStaff() {
         return allStaff;
+    }
+
+    public List<StaffView> getStaff(StaffType staffType) {
+        return allStaff.stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
 
     public void addToStaff(StaffView staff) {
