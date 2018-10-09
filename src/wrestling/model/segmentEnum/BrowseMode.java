@@ -96,7 +96,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, PromotionView promotion) {
-            return gameController.getContractManager().getFullStaff(promotion);
+            return promotion.getAllStaff();
         }
 
         @Override

@@ -136,31 +136,6 @@ public class ContractManager implements Serializable {
         return roster;
     }
 
-//    public List<WorkerView> getFullRoster(Promotion promotion) {
-//
-//        List<WorkerView> roster = new ArrayList<>();
-//        for (Contract contract : contracts) {
-//            if (contract.isActive() && contract.getPromotion().equals(promotion)) {
-//                roster.add(contract.getWorker());
-//            }
-//
-//        }
-//
-//        return roster;
-//    }
-    public List<StaffView> getFullStaff(PromotionView promotion) {
-
-        List<StaffView> staff = new ArrayList<>();
-        for (StaffContract contract : staffContracts) {
-            if (contract.isActive() && contract.getPromotion().equals(promotion)) {
-                staff.add(contract.getStaff());
-            }
-
-        }
-
-        return staff;
-    }
-
     public List<WorkerView> getPushed(PromotionView promotion) {
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contracts) {
@@ -241,6 +216,7 @@ public class ContractManager implements Serializable {
 
     private void terminateContract(iContract contract) {
         contract.getPromotion().removeFromRoster(contract.getWorker());
+        contract.getPromotion().removeFromStaff(contract.getStaff());
         contract.setActive(false);
     }
 

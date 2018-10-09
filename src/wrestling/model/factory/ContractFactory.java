@@ -132,6 +132,7 @@ public class ContractFactory {
         contract.setStaff(staff);
         contract.setPromotion(promotion);
         contractManager.addContract(contract);
+        promotion.addToStaff(staff);
         return contract;
     }
 

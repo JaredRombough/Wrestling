@@ -3,7 +3,6 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.SegmentItem;
 
 public class PromotionView implements Serializable {
 
@@ -16,11 +15,13 @@ public class PromotionView implements Serializable {
     private int popularity;
     private int level;
 
-    private List<WorkerView> fullRoster;
+    private final List<WorkerView> fullRoster;
+    private final List<StaffView> allStaff;
 
     public PromotionView() {
 
         fullRoster = new ArrayList<>();
+        allStaff = new ArrayList<>();
 
         name = "Promotion #" + serialNumber;
         shortName = "PRO" + serialNumber;
@@ -121,6 +122,23 @@ public class PromotionView implements Serializable {
     public void removeFromRoster(WorkerView worker) {
         if (fullRoster.contains(worker)) {
             fullRoster.remove(worker);
+        }
+    }
+
+    /**
+     * @return the allStaff
+     */
+    public List<StaffView> getAllStaff() {
+        return allStaff;
+    }
+
+    public void addToStaff(StaffView staff) {
+        allStaff.add(staff);
+    }
+
+    public void removeFromStaff(StaffView staff) {
+        if (allStaff.contains(staff)) {
+            allStaff.remove(staff);
         }
     }
 }
