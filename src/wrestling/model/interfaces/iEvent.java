@@ -1,11 +1,11 @@
 package wrestling.model.interfaces;
 
 import java.time.LocalDate;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 
 public interface iEvent {
 
-    public Promotion getPromotion();
+    public PromotionView getPromotion();
 
     public LocalDate getDate();
 }

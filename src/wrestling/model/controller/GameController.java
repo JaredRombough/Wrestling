@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import wrestling.model.EventTemplate;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -123,7 +123,7 @@ public final class GameController implements Serializable {
     }
 
     public void initializeGameData() {
-        for (Promotion promotion : promotionManager.getPromotions()) {
+        for (PromotionView promotion : promotionManager.getPromotions()) {
             if (eventManager.getEventTemplates(promotion).isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
                 eventFactory.createMonthlyEvents(promotion);
             }
@@ -139,7 +139,7 @@ public final class GameController implements Serializable {
         contractManager.dailyUpdate();
 
         //iterate through all promotions
-        for (Promotion promotion : promotionManager.aiPromotions()) {
+        for (PromotionView promotion : promotionManager.aiPromotions()) {
             getPromotionController().dailyUpdate(promotion);
 
         }

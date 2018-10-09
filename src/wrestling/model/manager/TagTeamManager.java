@@ -2,7 +2,7 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.modelView.TagTeamView;
@@ -22,18 +22,18 @@ public class TagTeamManager {
         this.contractManager = contractManager;
     }
 
-    public List<TagTeam> getTagTeams(Promotion promotion) {
+    public List<TagTeam> getTagTeams(PromotionView promotion) {
         List<TagTeam> teams = new ArrayList<>();
-        tagTeams.stream().filter((tt) -> (contractManager.getFullRoster(promotion)
+        tagTeams.stream().filter((tt) -> (promotion.getFullRoster()
                 .containsAll(getWorkers(tt)))).forEach((tt) -> {
             teams.add(tt);
         });
         return teams;
     }
 
-    public List<TagTeamView> getTagTeamViews(Promotion promotion) {
+    public List<TagTeamView> getTagTeamViews(PromotionView promotion) {
         List<TagTeamView> teamViews = new ArrayList<>();
-        getTagTeamViews().stream().filter((tagTeamView) -> (contractManager.getFullRoster(promotion)
+        getTagTeamViews().stream().filter((tagTeamView) -> (promotion.getFullRoster()
                 .containsAll(tagTeamView.getWorkers()))).forEach((tagTeamView) -> {
             teamViews.add(tagTeamView);
         });

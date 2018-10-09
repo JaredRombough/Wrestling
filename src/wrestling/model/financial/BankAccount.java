@@ -3,15 +3,15 @@ package wrestling.model.financial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 
 public class BankAccount {
 
-    private final Promotion promotion;
+    private final PromotionView promotion;
     private Integer funds;
 
     private List<Transaction> transactions = new ArrayList<>();
-    public BankAccount(Promotion promotion) {
+    public BankAccount(PromotionView promotion) {
         this.promotion = promotion;
         funds = 0;
     }
@@ -71,7 +71,7 @@ public class BankAccount {
     /**
      * @return the promotion
      */
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 }

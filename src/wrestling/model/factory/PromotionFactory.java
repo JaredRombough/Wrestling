@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
@@ -46,7 +46,7 @@ public class PromotionFactory {
 
     public void preparePromotions() throws IOException {
 
-        List<Promotion> promotions = new ArrayList<>();
+        List<PromotionView> promotions = new ArrayList<>();
         List<WorkerView> allWorkers = new ArrayList<>();
 
         int numberOfPromotions = 20;
@@ -61,11 +61,11 @@ public class PromotionFactory {
             //levels are 1 to 5
             int currentLevel = 5 - i;
 
-            List<Promotion> currentLevelPromotions = new ArrayList<>();
+            List<PromotionView> currentLevelPromotions = new ArrayList<>();
 
             while (currentPromotions < target) {
 
-                Promotion newPromotion = newPromotion();
+                PromotionView newPromotion = newPromotion();
 
                 newPromotion.setLevel(currentLevel);
 
@@ -77,7 +77,7 @@ public class PromotionFactory {
 
             int rosterSize = 10 + (currentLevel * 10);
 
-            for (Promotion promotion : currentLevelPromotions) {
+            for (PromotionView promotion : currentLevelPromotions) {
 
                 //add funds (this could be based on promotion level)
                 promotionManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
@@ -88,9 +88,9 @@ public class PromotionFactory {
 
                     contractFactory.createContract(worker, promotion, dateManager.today());
 
-                } while (contractManager.getFullRoster(promotion).size() < rosterSize);
+                } while (promotion.getFullRoster().size() < rosterSize);
 
-                allWorkers.addAll(contractManager.getFullRoster(promotion));
+                allWorkers.addAll(promotion.getFullRoster());
             }
 
             //add all the workers and promotions we have generated for this
@@ -103,8 +103,8 @@ public class PromotionFactory {
 
     }
 
-    public Promotion newPromotion() {
-        Promotion promotion = new Promotion();
+    public PromotionView newPromotion() {
+        PromotionView promotion = new PromotionView();
         BankAccount bankAccount = new BankAccount(promotion);
         bankAccount.addFunds(10000);
         promotionManager.addBankAccount(bankAccount);

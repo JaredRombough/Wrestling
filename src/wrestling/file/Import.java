@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.EventTemplate;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
@@ -46,7 +46,7 @@ public class Import {
 
     private File importFolder;
 
-    private final List<Promotion> allPromotions = new ArrayList<>();
+    private final List<PromotionView> allPromotions = new ArrayList<>();
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class Import {
 
     }
 
-    private Promotion getPromotionFromKey(int key) {
+    private PromotionView getPromotionFromKey(int key) {
         for (int i = 0; i < promotionKeys.size(); i++) {
             if (promotionKeys.get(i).equals(key)) {
                 return allPromotions.get(i);
@@ -143,7 +143,7 @@ public class Import {
 
     private void processOther() {
         otherPromotionNames.stream().map((s) -> {
-            Promotion p = gameController.getPromotionFactory().newPromotion();
+            PromotionView p = gameController.getPromotionFactory().newPromotion();
             p.setName(s);
             p.setShortName(s);
             return p;
@@ -273,7 +273,7 @@ public class Import {
 
             if (counter == lineLength) {
 
-                Promotion promotion = gameController.getPromotionFactory().newPromotion();
+                PromotionView promotion = gameController.getPromotionFactory().newPromotion();
 
                 counter = 0;
 
@@ -417,7 +417,7 @@ public class Import {
                         break;
                 }
 
-                for (Promotion p : allPromotions) {
+                for (PromotionView p : allPromotions) {
                     checkForContract(p, staff, currentHexLine);
                 }
 
@@ -523,7 +523,7 @@ public class Import {
 
                 //look for extra promotions
                 //sign contracts for workers that match with promotion keys
-                for (Promotion p : allPromotions) {
+                for (PromotionView p : allPromotions) {
                     checkForContract(p, worker, currentHexLine);
                 }
 
@@ -538,7 +538,7 @@ public class Import {
         }
     }
 
-    private void checkForContract(Promotion p, WorkerView w, List<String> currentHexLine) {
+    private void checkForContract(PromotionView p, WorkerView w, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
             //handle written/open contracts
             if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
@@ -555,7 +555,7 @@ public class Import {
         }
     }
 
-    private void checkForContract(Promotion p, StaffView s, List<String> currentHexLine) {
+    private void checkForContract(PromotionView p, StaffView s, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
             getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today());
         }
@@ -567,7 +567,7 @@ public class Import {
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
-        Promotion promotion = null;
+        PromotionView promotion = null;
         Month month = null;
         int counter = 0;
         int lineLength = 47;
@@ -712,7 +712,7 @@ public class Import {
         }
     }
 
-    public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {
+    public void updateOtherPromotions(List<PromotionView> promotions, File importFolder) {
 
         List<String> advancedImportData = new ArrayList();
         String path = "";
@@ -734,7 +734,7 @@ public class Import {
             advancedImportData = new ArrayList();
         }
 
-        for (Promotion promotion : promotions) {
+        for (PromotionView promotion : promotions) {
             for (int i = 0; i < advancedImportData.size(); i++) {
                 if (advancedImportData.get(i).equals(promotion.getName())
                         && advancedImportData.size() >= i + 3) {

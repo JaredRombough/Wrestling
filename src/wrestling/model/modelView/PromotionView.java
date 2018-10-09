@@ -1,8 +1,11 @@
-package wrestling.model;
+package wrestling.model.modelView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import wrestling.model.SegmentItem;
 
-public class Promotion implements Serializable {
+public class PromotionView implements Serializable {
 
     private static int serialNumber = 0;
 
@@ -13,7 +16,11 @@ public class Promotion implements Serializable {
     private int popularity;
     private int level;
 
-    public Promotion() {
+    private List<WorkerView> fullRoster;
+
+    public PromotionView() {
+
+        fullRoster = new ArrayList<>();
 
         name = "Promotion #" + serialNumber;
         shortName = "PRO" + serialNumber;
@@ -98,5 +105,22 @@ public class Promotion implements Serializable {
      */
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    /**
+     * @return the fullRoster
+     */
+    public List<WorkerView> getFullRoster() {
+        return fullRoster;
+    }
+
+    public void addToRoster(WorkerView worker) {
+        fullRoster.add(worker);
+    }
+
+    public void removeFromRoster(WorkerView worker) {
+        if (fullRoster.contains(worker)) {
+            fullRoster.remove(worker);
+        }
     }
 }

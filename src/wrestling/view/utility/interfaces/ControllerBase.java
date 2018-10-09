@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.controller.GameController;
 
 public abstract class ControllerBase implements Initializable {
@@ -29,7 +29,7 @@ public abstract class ControllerBase implements Initializable {
     
     public void focusLost() {};
     
-    public Promotion playerPromotion() {
+    public PromotionView playerPromotion() {
         return gameController.getPromotionManager().playerPromotion();
     }
 

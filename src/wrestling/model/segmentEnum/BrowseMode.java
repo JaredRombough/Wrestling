@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.view.utility.ScreenCode;
@@ -27,7 +27,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getWorkerManager().freeAgents(promotion);
         }
 
@@ -48,7 +48,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getStaffManager().getAvailableStaff();
         }
 
@@ -69,8 +69,8 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getContractManager().getFullRoster(promotion);
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
+            return promotion.getFullRoster();
         }
 
         @Override
@@ -95,7 +95,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getContractManager().getFullStaff(promotion);
         }
 
@@ -123,7 +123,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getTitleManager().getTitleViews(promotion);
         }
 
@@ -150,7 +150,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getTagTeamManager().getTagTeamViews(promotion);
         }
 
@@ -176,7 +176,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, Promotion promotion) {
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
             return gameController.getEventManager().getEventTemplates(promotion);
         }
 

@@ -1,11 +1,12 @@
 package wrestling.model;
 
+import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
 import wrestling.model.segmentEnum.ActiveType;
 
 public class Title implements Serializable {
 
-    private Promotion promotion;
+    private PromotionView promotion;
 
     private final int teamSize;
     private String name;
@@ -13,7 +14,7 @@ public class Title implements Serializable {
     private int prestige;
 
     //vacant title
-    public Title(Promotion promotion, int teamSize, String name) {
+    public Title(PromotionView promotion, int teamSize, String name) {
         this.promotion = promotion;
         this.teamSize = teamSize;
         this.name = name;
@@ -28,14 +29,14 @@ public class Title implements Serializable {
     /**
      * @return the promotion
      */
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(Promotion promotion) {
+    public void setPromotion(PromotionView promotion) {
         this.promotion = promotion;
     }
 

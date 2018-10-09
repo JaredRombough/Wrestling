@@ -15,7 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -43,7 +43,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
     @FXML
     private ImageView imageView;
 
-    private Promotion selectedPromotion;
+    private PromotionView selectedPromotion;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -53,9 +53,9 @@ public class StartGameScreenController extends ControllerBase implements Initial
     @Override
     public void initializeMore() {
         //now that we have the game controller we can set the promotions to the listview
-        ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
+        ObservableList<PromotionView> promotionsObservableList = FXCollections.observableArrayList();
 
-        for (Promotion current : gameController.getPromotionManager().getPromotions()) {
+        for (PromotionView current : gameController.getPromotionManager().getPromotions()) {
             //dont' want the player to pick the free agents. probably want a cleaner solution though.
             if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
@@ -65,15 +65,14 @@ public class StartGameScreenController extends ControllerBase implements Initial
         promotionListView.setItems(promotionsObservableList);
 
         initializePromotionsListView();
-        updateWorkersListView(
-                (Promotion) promotionListView.getSelectionModel().getSelectedItem());
+        updateWorkersListView((PromotionView) promotionListView.getSelectionModel().getSelectedItem());
     }
 
     private void initializePromotionsListView() {
-        promotionListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
+        promotionListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PromotionView>() {
 
             @Override
-            public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
+            public void changed(ObservableValue<? extends PromotionView> observable, PromotionView oldValue, PromotionView newValue) {
                 updateWorkersListView(newValue);
                 ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
                         promotionImageBorder,
@@ -85,14 +84,14 @@ public class StartGameScreenController extends ControllerBase implements Initial
         promotionListView.getSelectionModel().selectFirst();
     }
 
-    private void updateWorkersListView(Promotion newValue) {
+    private void updateWorkersListView(PromotionView newValue) {
         currentPromotionName.setText(newValue.toString().trim());
         currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
-                + "Workers: " + gameController.getContractManager().getFullRoster(newValue).size() + "\n"
+                + "Workers: " + newValue.getFullRoster().size() + "\n"
                 + "Average Popularity: " + gameController.getContractManager().averageWorkerPopularity(newValue));
 
         ObservableList<WorkerView> rosterList = FXCollections.observableArrayList();
-        for (WorkerView current : gameController.getContractManager().getFullRoster(newValue)) {
+        for (WorkerView current : newValue.getFullRoster()) {
             rosterList.add(current);
         }
         workersListView.setItems(rosterList);

@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import wrestling.model.modelView.PromotionView;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
@@ -13,7 +14,7 @@ import wrestling.model.segmentEnum.EventVenueSize;
 
 public class EventTemplate implements iEventDate, SegmentItem {
 
-    private Promotion promotion;
+    private PromotionView promotion;
     private LocalDate nextDate;
     private LocalDate bookedUntil;
     private int defaultDuration;
@@ -48,14 +49,14 @@ public class EventTemplate implements iEventDate, SegmentItem {
     /**
      * @return the promotion
      */
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(Promotion promotion) {
+    public void setPromotion(PromotionView promotion) {
         this.promotion = promotion;
     }
 

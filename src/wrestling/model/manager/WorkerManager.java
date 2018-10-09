@@ -7,7 +7,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.model.Contract;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 
@@ -29,7 +29,7 @@ public class WorkerManager implements Serializable {
         }
     }
 
-    public List<WorkerView> freeAgents(Promotion promotion) {
+    public List<WorkerView> freeAgents(PromotionView promotion) {
         List<WorkerView> freeAgents = new ArrayList();
         for (WorkerView worker : workers) {
             if (contractManager.canNegotiate(worker, promotion)) {

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.manager.ContractManager;
@@ -26,7 +26,7 @@ public class ContractFactory {
         this.contractManager = contractManager;
     }
 
-    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate) {
+    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate) {
         int duration = 30 + RandomUtils.nextInt(0, 30);
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 30;
@@ -34,7 +34,7 @@ public class ContractFactory {
         createContract(staff, promotion, startDate, duration);
     }
 
-    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate, int duration) {
+    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, int duration) {
         StaffContract contract = createContract(staff, promotion);
         contract.setBiWeeklyCost(calculateBiWeeklyCost(staff));
         contractManager.buyOutContracts(staff, promotion);
@@ -43,7 +43,7 @@ public class ContractFactory {
     }
 
     //create a contract with predetermined attributes
-    public iContract createContract(WorkerView worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public iContract createContract(WorkerView worker, PromotionView promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = createContract(worker, promotion);
 
@@ -61,7 +61,7 @@ public class ContractFactory {
     }
 
     //create a contract with set exclusivity (only used by import)
-    public void createContract(WorkerView worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
+    public void createContract(WorkerView worker, PromotionView promotion, LocalDate startDate, boolean exclusive) {
 
         //create the contract
         Contract contract = createContract(worker, promotion);
@@ -90,7 +90,7 @@ public class ContractFactory {
     }
 
     //create a default contract
-    public void createContract(WorkerView worker, Promotion promotion, LocalDate startDate) {
+    public void createContract(WorkerView worker, PromotionView promotion, LocalDate startDate) {
 
         //create the contract
         Contract contract = createContract(worker, promotion);
@@ -118,15 +118,16 @@ public class ContractFactory {
         initializeContract(contract, duration, startDate);
     }
 
-    private Contract createContract(WorkerView worker, Promotion promotion) {
+    private Contract createContract(WorkerView worker, PromotionView promotion) {
         Contract contract = new Contract();
         contract.setWorker(worker);
         contract.setPromotion(promotion);
         contractManager.addContract(contract);
+        promotion.addToRoster(worker);
         return contract;
     }
 
-    private StaffContract createContract(StaffView staff, Promotion promotion) {
+    private StaffContract createContract(StaffView staff, PromotionView promotion) {
         StaffContract contract = new StaffContract();
         contract.setStaff(staff);
         contract.setPromotion(promotion);

@@ -20,7 +20,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
@@ -147,7 +147,7 @@ public class EventManager {
 
     }
 
-    public List<Event> getEvents(Promotion promotion) {
+    public List<Event> getEvents(PromotionView promotion) {
         List<Event> promotionEvents = new ArrayList();
         events.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
             promotionEvents.add(event);
@@ -198,7 +198,7 @@ public class EventManager {
                 ? null : templateEvents.get(templateEvents.size() - 1);
     }
 
-    public List<EventTemplate> getEventTemplates(Promotion promotion) {
+    public List<EventTemplate> getEventTemplates(PromotionView promotion) {
         List<EventTemplate> promotionEvents = new ArrayList();
         eventTemplates.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
             promotionEvents.add(event);
@@ -240,7 +240,7 @@ public class EventManager {
                         ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
-    public List<EventView> getEventViews(Promotion promotion) {
+    public List<EventView> getEventViews(PromotionView promotion) {
         List<EventView> promotionEvents = new ArrayList();
         eventViews.stream().filter((eventView)
                 -> (eventView.getEvent().getPromotion().equals(promotion))).forEach((event) -> {
@@ -249,7 +249,7 @@ public class EventManager {
         return promotionEvents;
     }
 
-    public Event getNextEvent(Promotion promotion, LocalDate startDate) {
+    public Event getNextEvent(PromotionView promotion, LocalDate startDate) {
         Event event = null;
         int futureDaysToSearch = 180;
         LocalDate currentDate = startDate;
@@ -263,7 +263,7 @@ public class EventManager {
         return event;
     }
 
-    public Event getEventOnDate(Promotion promotion, LocalDate date) {
+    public Event getEventOnDate(PromotionView promotion, LocalDate date) {
         for (Event event : events) {
             if (event.getDate().equals(date)
                     && event.getPromotion().equals(promotion)) {
@@ -292,7 +292,7 @@ public class EventManager {
         return eventsOnDate;
     }
 
-    public int eventsAfterDate(Promotion promotion, LocalDate date) {
+    public int eventsAfterDate(PromotionView promotion, LocalDate date) {
         int futureEvents = 0;
         futureEvents = events.stream().filter((Event event) -> {
             return event.getPromotion().equals(promotion)
@@ -353,7 +353,7 @@ public class EventManager {
     }
 
     //dynamic current cost calculation to be called while the player is booking
-    public int calculateCost(List<Segment> segments, Promotion promotion) {
+    public int calculateCost(List<Segment> segments, PromotionView promotion) {
         int currentCost = 0;
 
         for (WorkerView worker : allWorkers(segments)) {
@@ -391,7 +391,7 @@ public class EventManager {
     }
 
     //gross profit for the event
-    public int calculateGate(List<Segment> segments, Promotion promotion) {
+    public int calculateGate(List<Segment> segments, PromotionView promotion) {
 
         int ticketPrice = 0;
 
@@ -455,7 +455,7 @@ public class EventManager {
         return attendance;
     }
 
-    public int calculateAttendance(List<Segment> segments, Promotion promotion) {
+    public int calculateAttendance(List<Segment> segments, PromotionView promotion) {
         int attendance = 0;
 
         switch (promotion.getLevel()) {
@@ -571,7 +571,7 @@ public class EventManager {
 
     //checks if a worker is booked on a certain date
     //returns false if the booking is with the given promotion
-    public boolean isAvailable(WorkerView worker, LocalDate date, Promotion promotion) {
+    public boolean isAvailable(WorkerView worker, LocalDate date, PromotionView promotion) {
         EventWorker eventWorker = getBooking(worker, date);
         if (eventWorker == null) {
             return false;
@@ -585,7 +585,7 @@ public class EventManager {
         return true;
     }
 
-    public List<WorkerView> getAvailableRoster(Promotion promotion, LocalDate date) {
+    public List<WorkerView> getAvailableRoster(PromotionView promotion, LocalDate date) {
 
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {
@@ -598,7 +598,7 @@ public class EventManager {
         return roster;
     }
 
-    public List<WorkerView> getUnavailableRoster(Promotion promotion, LocalDate date) {
+    public List<WorkerView> getUnavailableRoster(PromotionView promotion, LocalDate date) {
 
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {

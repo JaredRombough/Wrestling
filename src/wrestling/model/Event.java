@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import wrestling.model.modelView.PromotionView;
 import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iEvent;
@@ -7,7 +8,7 @@ import wrestling.model.interfaces.iEventDate;
 
 public class Event implements iEvent, iEventDate {
 
-    private final Promotion promotion;
+    private final PromotionView promotion;
 
     private LocalDate date;
     private EventType eventType;
@@ -26,7 +27,7 @@ public class Event implements iEvent, iEventDate {
         this.defaultDuration = eventTemplate.getDefaultDuration();
     }
 
-    public Event(Promotion promotion, LocalDate date) {
+    public Event(PromotionView promotion, LocalDate date) {
         this.promotion = promotion;
         this.date = date;
     }
@@ -47,7 +48,7 @@ public class Event implements iEvent, iEventDate {
     }
 
     @Override
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 

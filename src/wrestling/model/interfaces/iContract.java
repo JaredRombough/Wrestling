@@ -1,7 +1,10 @@
 package wrestling.model.interfaces;
 
 import java.time.LocalDate;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
+import wrestling.model.SegmentItem;
+import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.WorkerView;
 
 /**
  *
@@ -13,7 +16,7 @@ public interface iContract {
 
     public void setStartDate(LocalDate date);
 
-    public Promotion getPromotion();
+    public PromotionView getPromotion();
 
     public int getDuration();
 
@@ -24,5 +27,9 @@ public interface iContract {
     public int getAppearanceCost();
 
     public void setActive(boolean active);
+
+    public WorkerView getWorker();
+
+    public StaffView getStaff();
 
 }

@@ -3,7 +3,7 @@ package wrestling.model.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.Title;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.modelView.TitleView;
@@ -21,17 +21,17 @@ public class TitleFactory {
         this.titleManager = titleManager;
     }
 
-    public TitleView createTitle(Promotion promotion, String name) {
+    public TitleView createTitle(PromotionView promotion, String name) {
         return intitializeTitle(new Title(promotion, 1, name), new ArrayList<>());
     }
 
     //create a title with predetermined attributes
-    public TitleView createTitle(Promotion promotion, WorkerView worker, String name) {
+    public TitleView createTitle(PromotionView promotion, WorkerView worker, String name) {
         return intitializeTitle(new Title(promotion, 1, name), Arrays.asList(worker));
     }
 
     //create a title with predetermined attributes
-    public TitleView createTitle(Promotion promotion, List<WorkerView> workers, String name) {
+    public TitleView createTitle(PromotionView promotion, List<WorkerView> workers, String name) {
         return intitializeTitle(new Title(promotion, workers.size(), name), workers);
     }
 

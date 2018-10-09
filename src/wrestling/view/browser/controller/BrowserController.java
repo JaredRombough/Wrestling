@@ -26,7 +26,7 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.EventTemplate;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -95,7 +95,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private Label categoryButton;
 
-    private Promotion currentPromotion;
+    private PromotionView currentPromotion;
 
     private BrowseMode currentBrowseMode;
 
@@ -104,7 +104,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     updates relevant labels
     fires the last button to update the list
      */
-    private void setCurrentPromotion(Promotion newPromotion) {
+    private void setCurrentPromotion(PromotionView newPromotion) {
         this.currentPromotion = newPromotion;
 
         if (currentPromotion != null) {
@@ -187,7 +187,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     }
 
     private List currentListToBrowse() {
-        Promotion promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
+        PromotionView promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
                 ? playerPromotion() : currentPromotion;
         return currentBrowseMode.listToBrowse(gameController, promotion);
     }
@@ -226,10 +226,10 @@ public class BrowserController extends ControllerBase implements Initializable {
         promotionComboBox.getItems().addAll(gameController.getPromotionManager().getPromotions());
 
         // show the promotion acronym
-        Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
+        Callback cellFactory = (Callback<ListView<PromotionView>, ListCell<PromotionView>>) (ListView<PromotionView> p) -> new ListCell<PromotionView>() {
 
             @Override
-            protected void updateItem(Promotion item, boolean empty) {
+            protected void updateItem(PromotionView item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (item == null || empty) {
@@ -243,9 +243,9 @@ public class BrowserController extends ControllerBase implements Initializable {
         promotionComboBox.setCellFactory(cellFactory);
         promotionComboBox.setButtonCell((ListCell) cellFactory.call(null));
 
-        promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
+        promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PromotionView>() {
             @Override
-            public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
+            public void changed(ObservableValue<? extends PromotionView> observable, PromotionView oldValue, PromotionView newValue) {
                 setCurrentPromotion(newValue);
 
             }
@@ -297,7 +297,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             if (gameController.getTagTeamManager().getTagTeamViews(playerPromotion()).contains(tagTeamView)) {
                 setCurrentPromotion(playerPromotion());
             } else {
-                for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
+                for (PromotionView promotion : gameController.getPromotionManager().getPromotions()) {
                     if (gameController.getTagTeamManager().getTagTeamViews(promotion).contains(tagTeamView)) {
                         setCurrentPromotion(playerPromotion());
                         break;

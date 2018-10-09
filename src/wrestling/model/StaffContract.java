@@ -1,14 +1,16 @@
 package wrestling.model;
 
+import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.WorkerView;
 
 public class StaffContract implements Serializable, iContract {
 
     private StaffView staff;
-    private Promotion promotion;
+    private PromotionView promotion;
     private LocalDate startDate;
     private boolean active;
     private int duration;
@@ -21,6 +23,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the staff
      */
+    @Override
     public StaffView getStaff() {
         return staff;
     }
@@ -36,14 +39,14 @@ public class StaffContract implements Serializable, iContract {
      * @return the promotion
      */
     @Override
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(Promotion promotion) {
+    public void setPromotion(PromotionView promotion) {
         this.promotion = promotion;
     }
 
@@ -108,4 +111,10 @@ public class StaffContract implements Serializable, iContract {
     public int getAppearanceCost() {
         return 0;
     }
+
+    @Override
+    public WorkerView getWorker() {
+        return null;
+    }
+
 }

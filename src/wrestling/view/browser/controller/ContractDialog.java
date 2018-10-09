@@ -18,7 +18,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iContract;
@@ -37,7 +37,7 @@ public class ContractDialog {
         this.segmentItem = item;
         Dialog dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
-        Promotion playerPromotion = gameController.getPromotionManager().playerPromotion();
+        PromotionView playerPromotion = gameController.getPromotionManager().playerPromotion();
 
         Label costLabel = new Label();
 

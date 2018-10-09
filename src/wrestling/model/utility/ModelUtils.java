@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
@@ -90,7 +90,7 @@ public final class ModelUtils {
     }
 
     //the maximum popularity worker the promotion can hire
-    public static int maxPopularity(Promotion promotion) {
+    public static int maxPopularity(PromotionView promotion) {
         return promotion.getLevel() * 20;
     }
 

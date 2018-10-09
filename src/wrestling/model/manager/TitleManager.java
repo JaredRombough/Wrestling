@@ -3,7 +3,7 @@ package wrestling.model.manager;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Contract;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.Title;
 import wrestling.model.TitleWorker;
 import wrestling.model.modelView.TitleReign;
@@ -34,7 +34,7 @@ public class TitleManager {
         titleViews.add(titleView);
     }
 
-    public List<Title> getTitles(Promotion promotion) {
+    public List<Title> getTitles(PromotionView promotion) {
         List<Title> promotionTitles = new ArrayList();
         for (Title title : titles) {
             if (title.getPromotion().equals(promotion)) {
@@ -45,7 +45,7 @@ public class TitleManager {
         return promotionTitles;
     }
 
-    public List<TitleView> getTitleViews(Promotion promotion) {
+    public List<TitleView> getTitleViews(PromotionView promotion) {
         List<TitleView> promotionTitleViews = new ArrayList();
         for (TitleView titleView : titleViews) {
             if (titleView.getTitle().getPromotion().equals(promotion)) {
@@ -129,7 +129,7 @@ public class TitleManager {
     }
 
     //returns a list of titles available for an event
-    public List<Title> getEventTitles(Promotion promotion, List<WorkerView> eventRoster) {
+    public List<Title> getEventTitles(PromotionView promotion, List<WorkerView> eventRoster) {
 
         List<Title> eventTitles = new ArrayList<>();
 

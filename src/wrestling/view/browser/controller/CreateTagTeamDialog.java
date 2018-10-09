@@ -27,8 +27,7 @@ public class CreateTagTeamDialog {
         Dialog<TagTeamView> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
-        List<WorkerView> workers = gameController.getContractManager().getFullRoster(
-                gameController.getPromotionManager().playerPromotion());
+        List<WorkerView> workers = gameController.getPromotionManager().playerPromotion().getFullRoster();
         Collections.sort(workers, new NameComparator());
         ComboBox<WorkerView> workerA = new ComboBox(FXCollections.observableArrayList(workers));
         ComboBox<WorkerView> workerB = new ComboBox(FXCollections.observableArrayList(workers));

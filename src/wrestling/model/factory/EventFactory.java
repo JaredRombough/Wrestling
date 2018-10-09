@@ -10,7 +10,7 @@ import wrestling.model.EventWorker;
 import wrestling.model.Injury;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -97,7 +97,7 @@ public class EventFactory {
         promotionController.updateEventTemplate(eventView);
     }
 
-    public void createMonthlyEvents(Promotion promotion) {
+    public void createMonthlyEvents(PromotionView promotion) {
 
         Month month = Month.JANUARY;
         for (int i = 0; i < 12; i++) {

@@ -14,7 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.Promotion;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.results.controller.ResultsCardController;
@@ -81,7 +81,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private GameScreen feedPaneScreen;
 
     private WorkerView worker;
-    private Promotion promotion;
+    private PromotionView promotion;
 
     @Override
     public void setCurrent(Object obj) {
@@ -93,7 +93,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         updateLabels();
     }
 
-    public void setPromotion(Promotion promotion) {
+    public void setPromotion(PromotionView promotion) {
         this.promotion = promotion;
         updateLabels();
     }
@@ -116,7 +116,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     @Override
     public void updateLabels() {
 
-        if (gameController.getContractManager().getFullRoster(promotion).contains(worker)
+        if (promotion.getFullRoster().contains(worker)
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
             nameLabel.setText(worker.getName());
             wrestlingLabel.setText(Integer.toString(worker.getWrestling()));
@@ -187,7 +187,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             contractButton.setVisible(gameController.getContractManager().canNegotiate(worker, promotion));
 
-        } else if (!gameController.getContractManager().getFullRoster(promotion).contains(worker)) {
+        } else if (!promotion.getFullRoster().contains(worker)) {
             //probably our roster is empty for some reason, should be a rare situation
             //try to eliminate this possibility if we haven't already
             worker = null;

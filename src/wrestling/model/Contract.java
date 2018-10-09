@@ -1,8 +1,10 @@
 package wrestling.model;
 
+import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
 /**
@@ -14,7 +16,7 @@ import wrestling.model.modelView.WorkerView;
  */
 public class Contract implements Serializable, iContract {
 
-    private Promotion promotion;
+    private PromotionView promotion;
     private WorkerView worker;
 
     private boolean active;
@@ -40,20 +42,21 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the promotion
      */
-    public Promotion getPromotion() {
+    public PromotionView getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(Promotion promotion) {
+    public void setPromotion(PromotionView promotion) {
         this.promotion = promotion;
     }
 
     /**
      * @return the worker
      */
+    @Override
     public WorkerView getWorker() {
         return worker;
     }
@@ -162,5 +165,10 @@ public class Contract implements Serializable, iContract {
      */
     public void setPushed(boolean pushed) {
         this.pushed = pushed;
+    }
+
+    @Override
+    public StaffView getStaff() {
+        return null;
     }
 }
