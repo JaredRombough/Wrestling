@@ -345,7 +345,7 @@ public class MainApp extends Application {
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(screen.pane);
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
 
-        screen.controller.updateLabels();
+        //screen.controller.updateLabels();
 
         if (code.equals(ScreenCode.CALENDAR)) {
             ((CalendarController) screen.controller).setCurrent(gameController.getDateManager().today());

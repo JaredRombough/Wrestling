@@ -324,5 +324,16 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    },
+    DEPARTMENT {
+        @Override
+        public String resourcePath() {
+            return "view/financial/Department.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }

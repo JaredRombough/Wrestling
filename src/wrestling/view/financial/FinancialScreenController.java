@@ -9,6 +9,11 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import wrestling.model.segmentEnum.StaffType;
+import wrestling.view.utility.GameScreen;
+import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class FinancialScreenController extends ControllerBase implements Initializable {
@@ -35,7 +40,12 @@ public class FinancialScreenController extends ControllerBase implements Initial
     @FXML
     private Label workerExpense3;
 
+    @FXML
+    private AnchorPane medicalBase;
+
     private List<Label> workerExpenseLabels;
+
+    private List<GameScreen> departmentScreens;
 
     private String sheetCell(char type, int monthsAgo) {
 
@@ -64,15 +74,28 @@ public class FinancialScreenController extends ControllerBase implements Initial
             gateLabels.get(i).setText(sheetCell('e', i));
             workerExpenseLabels.get(i).setText(sheetCell('w', i));
         }
+
+        for (GameScreen screen : departmentScreens) {
+            screen.controller.updateLabels();
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gateLabels = new ArrayList<>();
+        departmentScreens = new ArrayList<>();
         gateLabels.addAll(Arrays.asList(gate1, gate2, gate3));
 
         workerExpenseLabels = new ArrayList<>();
         workerExpenseLabels.addAll(Arrays.asList(workerExpense1, workerExpense2, workerExpense3));
+
+    }
+
+    @Override
+    public void initializeMore() {
+        GameScreen medical = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, medicalBase);
+        medical.controller.setCurrent(StaffType.MEDICAL);
+        departmentScreens.add(medical);
 
     }
 

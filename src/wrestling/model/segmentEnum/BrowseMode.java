@@ -54,7 +54,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
+            return Arrays.asList(EnumSet.allOf(StaffType.class));
         }
     },
     WORKERS {

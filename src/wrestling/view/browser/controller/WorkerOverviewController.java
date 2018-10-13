@@ -108,6 +108,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         contractButton.setOnAction(e -> {
             ContractDialog contractDialog = new ContractDialog();
             contractDialog.createDialog(worker, gameController);
+            updateLabels();
         });
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
         injury.getStyleClass().add("lowStat");

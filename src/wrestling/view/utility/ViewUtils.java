@@ -187,6 +187,10 @@ public final class ViewUtils {
                     screen.pane = (BorderPane) loader.load();
                     break;
                 }
+                case DEPARTMENT: {
+                    screen.pane = (GridPane) loader.load();
+                    break;
+                }
                 default:
                     screen.pane = (AnchorPane) loader.load();
                     break;
