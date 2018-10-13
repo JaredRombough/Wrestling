@@ -1,4 +1,4 @@
-package wrestling.view.financial;
+package wrestling.view.financial.controller;
 
 import java.net.URL;
 import java.time.LocalDate;
