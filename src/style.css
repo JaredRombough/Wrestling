@@ -281,3 +281,7 @@ GREY
     -fx-text-alignment: center;
 
 }
+
+.progress-bar { 
+    -fx-accent: #424242;
+}

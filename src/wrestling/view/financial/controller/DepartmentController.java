@@ -2,9 +2,14 @@ package wrestling.view.financial.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class DepartmentController extends ControllerBase {
@@ -13,7 +18,10 @@ public class DepartmentController extends ControllerBase {
     private Label departmentNameLabel;
 
     @FXML
-    private Label idealLabel;
+    private ProgressBar progressBar;
+
+    @FXML
+    private Label ratioLabel;
 
     @FXML
     private Label actualLabel;
@@ -25,7 +33,6 @@ public class DepartmentController extends ControllerBase {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 
     /**
@@ -41,11 +48,35 @@ public class DepartmentController extends ControllerBase {
 
     @Override
     public void updateLabels() {
-        switch (staffType) {
-            case MEDICAL:
-                actualLabel.setText(Integer.toString(playerPromotion().getStaff(StaffType.MEDICAL).size()));
-                break;
+        if (staffType != null) {
+            switch (staffType) {
+                case MEDICAL:
+                    double progress = (double) playerPromotion().getStaff(staffType).size()
+                            / ModelUtils.getMedicsRequired(playerPromotion());
+                    progressBar.setProgress(progress);
+
+                    ratioLabel.setText(String.format("%d/%d",
+                            playerPromotion().getStaff(staffType).size(),
+                            ModelUtils.getMedicsRequired(playerPromotion())));
+
+                    StringBuilder sb = new StringBuilder();
+                    int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
+                    sb.append(String.format("%d avg skill", avgSkill));
+                    int diff = ModelUtils.getSkillDifferential(playerPromotion(), staffType);
+                    if (diff > 0) {
+                        sb.append(String.format(" (+%d)", diff));
+                    } else if (diff < 0) {
+                        sb.append(String.format(" (-%d)", Math.abs(diff)));
+                    }
+                    sb.append("\n");
+                    sb.append(String.format("%%%.3f injury rate", ModelUtils.getInjuryRate(playerPromotion()) * 100));
+                    effectsLabel.setText(sb.toString());
+                    break;
+            }
+
+            departmentNameLabel.setText(staffType.toString());
         }
+
     }
 
 }

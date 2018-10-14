@@ -138,6 +138,16 @@ public class PromotionView implements Serializable {
         return allStaff.stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
 
+    public int getStaffSkillAverage(StaffType staffType) {
+        double total = 0;
+        List<StaffView> staffOfType = getStaff(staffType);
+        for (StaffView staff : staffOfType) {
+            total += staff.getSkill();
+        }
+        return (int) Math.ceil(total / staffOfType.size());
+
+    }
+
     public void addToStaff(StaffView staff) {
         allStaff.add(staff);
     }

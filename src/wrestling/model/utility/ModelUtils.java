@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
+import wrestling.model.constants.GameConstants;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -167,6 +168,28 @@ public final class ModelUtils {
         return range + (3 * remainder - medicManages);
     }
 
+    public static double getInjuryRate(PromotionView promotion) {
+        int staffDifferential = getMedicDifferential(promotion);
+
+        int range = 100;
+        if (staffDifferential < 0) {
+            range = range - 20 * Math.abs(staffDifferential);
+            range = range - (int) Math.pow(2, 2 + staffDifferential);
+        } else if (staffDifferential > 0) {
+            range = range + staffDifferential * 2;
+        }
+
+        int skillDifferential = getSkillDifferential(promotion, StaffType.MEDICAL);
+
+        if (skillDifferential < 0) {
+            range = range - (int) Math.pow(2, 2 + Math.abs(skillDifferential));
+        } else if (skillDifferential > 0) {
+            range = range + skillDifferential;
+        }
+
+        return (double) 1 / range;
+    }
+
     public static int getInjuryDuration(PromotionView promotion) {
         int min = 7;
         int max = 160;
@@ -178,10 +201,26 @@ public final class ModelUtils {
         return RandomUtils.nextInt(min, max) + (2 * remainder - medicManages);
     }
 
-    private static int getMedicsRemainder(PromotionView promotion) {
+    public static int getMedicsRemainder(PromotionView promotion) {
         int medicsCount = promotion.getStaff(StaffType.MEDICAL).size();
         int rosterSize = promotion.getFullRoster().size();
-        return medicsCount % rosterSize;
+        return (medicsCount * GameConstants.WORKERS_PER_MEDIC) % rosterSize;
+    }
+
+    public static int getMedicsRequired(PromotionView promotion) {
+        double roster = promotion.getFullRoster().size();
+        double medicsNeeded = roster / GameConstants.WORKERS_PER_MEDIC;
+        return (int) Math.ceil(medicsNeeded);
+    }
+
+    public static int getMedicDifferential(PromotionView promotion) {
+        return promotion.getStaff(StaffType.MEDICAL).size() - getMedicsRequired(promotion);
+    }
+
+    public static int getSkillDifferential(PromotionView promotion, StaffType staffType) {
+        int skillRequired = promotion.getLevel() * 20 - 20;
+        int avgSkill = promotion.getStaffSkillAverage(staffType);
+        return avgSkill - skillRequired;
     }
 
 }
