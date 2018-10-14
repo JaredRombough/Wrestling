@@ -193,12 +193,28 @@ public final class ModelUtils {
     public static int getInjuryDuration(PromotionView promotion) {
         int min = 7;
         int max = 160;
-        int remainder = getMedicsRemainder(promotion);
-        if (remainder < medicManages) {
-            return RandomUtils.nextInt(min, max) - medicManages - remainder;
+        return RandomUtils.nextInt(min, max) + getInjuryDurationModifier(promotion);
+    }
+
+    public static int getInjuryDurationModifier(PromotionView promotion) {
+        int staffDifferential = getMedicDifferential(promotion);
+        int skillDifferential = getSkillDifferential(promotion, StaffType.MEDICAL);
+        int modifyDuration = 0;
+
+        if (staffDifferential < 0) {
+            modifyDuration = modifyDuration + 5 * Math.abs(staffDifferential);
+            modifyDuration = modifyDuration + (int) Math.pow(2, 2 + staffDifferential);
+        } else if (staffDifferential > 0) {
+            modifyDuration = modifyDuration - staffDifferential * 2;
         }
 
-        return RandomUtils.nextInt(min, max) + (2 * remainder - medicManages);
+        if (skillDifferential < 0) {
+            modifyDuration = modifyDuration + (int) Math.pow(2, 2 + Math.abs(skillDifferential));
+        } else if (skillDifferential > 0) {
+            modifyDuration = modifyDuration - skillDifferential;
+        }
+
+        return modifyDuration;
     }
 
     public static int getMedicsRemainder(PromotionView promotion) {

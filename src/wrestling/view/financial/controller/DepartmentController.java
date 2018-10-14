@@ -18,6 +18,9 @@ public class DepartmentController extends ControllerBase {
     private Label departmentNameLabel;
 
     @FXML
+    private Label skillDifferentialLabel;
+
+    @FXML
     private ProgressBar progressBar;
 
     @FXML
@@ -61,15 +64,26 @@ public class DepartmentController extends ControllerBase {
 
                     StringBuilder sb = new StringBuilder();
                     int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
-                    sb.append(String.format("%d avg skill", avgSkill));
+                    sb.append(String.format("%d", avgSkill));
                     int diff = ModelUtils.getSkillDifferential(playerPromotion(), staffType);
                     if (diff > 0) {
                         sb.append(String.format(" (+%d)", diff));
                     } else if (diff < 0) {
                         sb.append(String.format(" (-%d)", Math.abs(diff)));
                     }
+
+                    skillDifferentialLabel.setText(sb.toString());
+
+                    sb = new StringBuilder();
+                    sb.append(String.format("%%%.2f injury rate", ModelUtils.getInjuryRate(playerPromotion()) * 100));
                     sb.append("\n");
-                    sb.append(String.format("%%%.3f injury rate", ModelUtils.getInjuryRate(playerPromotion()) * 100));
+                    int durationModifier = ModelUtils.getInjuryDurationModifier(playerPromotion());
+                    if (durationModifier > 0) {
+                        sb.append("+");
+                    }
+                    sb.append(String.format("%d day%s to injuries",
+                            durationModifier,
+                            Math.abs(durationModifier) > 1 ? "s" : ""));
                     effectsLabel.setText(sb.toString());
                     break;
             }
