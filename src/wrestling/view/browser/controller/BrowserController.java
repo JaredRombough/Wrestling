@@ -98,6 +98,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private PromotionView currentPromotion;
 
     private BrowseMode currentBrowseMode;
+    private SortControl sortControlController;
 
     /*
     sets the current promotion
@@ -260,6 +261,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
             ((SortControl) sortControl.controller).setParentScreenCode(ScreenCode.BROWSER);
+            sortControlController = (SortControl) sortControl.controller;
 
             mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
                 @Override
@@ -291,7 +293,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         if (obj instanceof EventTemplate) {
             EventTemplate template = (EventTemplate) obj;
             setCurrentPromotion(template.getPromotion());
-            selectSegmentItem(BrowseMode.EVENTS, eventsButton, template);
+            selectSegmentItem(BrowseMode.EVENTS, template);
         } else if (obj instanceof TagTeamView) {
             TagTeamView tagTeamView = (TagTeamView) obj;
             if (gameController.getTagTeamManager().getTagTeamViews(playerPromotion()).contains(tagTeamView)) {
@@ -304,15 +306,26 @@ public class BrowserController extends ControllerBase implements Initializable {
                     }
                 }
             }
-            selectSegmentItem(BrowseMode.TAG_TEAMS, teamsButton, tagTeamView);
+            selectSegmentItem(BrowseMode.TAG_TEAMS, tagTeamView);
+        } else if (obj instanceof BrowseParams) {
+            BrowseParams params = (BrowseParams) obj;
+            setCurrentPromotion(params.promotion);
+            setBrowseMode(params.broseMode);
+            sortControlController.setFilter(params.filter);
         }
     }
 
-    private void selectSegmentItem(BrowseMode browseMode, Button button, SegmentItem segmentItem) {
+    private void setBrowseMode(BrowseMode browseMode) {
         currentBrowseMode = browseMode;
-        ViewUtils.updateSelectedButton(button, browseButtons);
+        ViewUtils.updateSelectedButton(
+                browseButtons.stream().filter(button -> button.getId().equals(browseMode.name())).findFirst().get(),
+                browseButtons);
         browse();
-        ((SortControl) sortControl.controller).clearFilters();
+        sortControlController.clearFilters();
+    }
+
+    private void selectSegmentItem(BrowseMode browseMode, SegmentItem segmentItem) {
+        setBrowseMode(browseMode);
         mainListView.scrollTo(segmentItem);
         mainListView.getSelectionModel().select(segmentItem);
     }

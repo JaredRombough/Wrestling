@@ -1,6 +1,8 @@
 package wrestling.model.segmentEnum;
 
-public enum StaffType {
+import wrestling.model.interfaces.iSortFilter;
+
+public enum StaffType implements iSortFilter {
 
     ALL {
         @Override

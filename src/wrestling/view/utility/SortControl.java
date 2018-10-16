@@ -94,6 +94,30 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     }
 
+    @Override
+    public void setCurrent(Object obj) {
+        if (obj instanceof BrowseMode) {
+            setBrowseMode((BrowseMode) obj);
+        }
+    }
+
+    public void setFilter(Object obj) {
+        if (obj instanceof Gender) {
+            genderFilter = (Gender) obj;
+        } else if (obj instanceof ActiveType) {
+            activeTypeFilter = (ActiveType) obj;
+        } else if (obj instanceof StaffType) {
+            staffTypeFilter = (StaffType) obj;
+        }
+
+        filterComboBoxes.stream().forEach(comboBox -> {
+            if (comboBox.getItems().contains(obj)
+                    && !comboBox.getSelectionModel().getSelectedItem().equals(obj)) {
+                comboBox.getSelectionModel().select(obj);
+            }
+        });
+    }
+
     private void addButtonWrapper(EnumSet set) {
         ButtonWrapper wrapper = new ButtonWrapper(FXCollections.observableArrayList(
                 set));
@@ -117,7 +141,7 @@ public class SortControl extends ControllerBase implements Initializable {
 
         ComboBox comboBox = new ComboBox(FXCollections.observableArrayList(set));
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        
+
         filterComboBoxes.add(comboBox);
         vBox.getChildren().add(comboBox);
 
@@ -155,23 +179,6 @@ public class SortControl extends ControllerBase implements Initializable {
                     ? "▼" : "▲");
 
             setCurrentComparator(currentComparator.reversed());
-        }
-    }
-
-    @Override
-    public void setCurrent(Object obj) {
-        if (obj instanceof BrowseMode) {
-            setBrowseMode((BrowseMode) obj);
-        }
-    }
-
-    private void setFilter(Object obj) {
-        if (obj instanceof Gender) {
-            genderFilter = (Gender) obj;
-        } else if (obj instanceof ActiveType) {
-            activeTypeFilter = (ActiveType) obj;
-        } else if (obj instanceof StaffType) {
-            staffTypeFilter = (StaffType) obj;
         }
     }
 

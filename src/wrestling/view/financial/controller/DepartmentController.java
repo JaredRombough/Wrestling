@@ -6,10 +6,14 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.browser.controller.BrowseParams;
+import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class DepartmentController extends ControllerBase {
@@ -32,10 +36,17 @@ public class DepartmentController extends ControllerBase {
     @FXML
     private Label effectsLabel;
 
+    @FXML
+    private Button viewButton;
+
+    @FXML
+    private Button addButton;
+
     private StaffType staffType;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        viewButton.setText("\uD83D\uDC41");
     }
 
     /**
@@ -45,6 +56,7 @@ public class DepartmentController extends ControllerBase {
     public void setCurrent(Object object) {
         if (object instanceof StaffType) {
             this.staffType = (StaffType) object;
+            setButtonActions();
         }
 
     }
@@ -91,6 +103,22 @@ public class DepartmentController extends ControllerBase {
             departmentNameLabel.setText(staffType.toString());
         }
 
+    }
+
+    private void setButtonActions() {
+        BrowseParams params = new BrowseParams();
+        params.filter = staffType;
+        params.promotion = playerPromotion();
+
+        viewButton.setOnAction(e -> {
+            params.broseMode = BrowseMode.STAFF;
+            mainApp.show(ScreenCode.BROWSER, params);
+        });
+
+        addButton.setOnAction(e -> {
+            params.broseMode = BrowseMode.HIRE_STAFF;
+            mainApp.show(ScreenCode.BROWSER, params);
+        });
     }
 
 }
