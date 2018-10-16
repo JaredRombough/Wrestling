@@ -20,10 +20,10 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventRecurrence;
@@ -579,10 +579,7 @@ public class EventManager {
         if (!eventWorker.getEvent().getPromotion().equals(promotion)) {
             return false;
         }
-        if (eventWorker.getWorker().getInjury() != null) {
-            return false;
-        }
-        return true;
+        return eventWorker.getWorker().getInjury() == null;
     }
 
     public List<WorkerView> getAvailableRoster(PromotionView promotion, LocalDate date) {

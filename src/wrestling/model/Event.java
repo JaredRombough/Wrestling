@@ -1,10 +1,10 @@
 package wrestling.model;
 
-import wrestling.model.modelView.PromotionView;
 import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.interfaces.iEventDate;
+import wrestling.model.modelView.PromotionView;
 
 public class Event implements iEvent, iEventDate {
 

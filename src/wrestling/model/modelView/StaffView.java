@@ -53,6 +53,7 @@ public class StaffView implements SegmentItem {
     /**
      * @return the age
      */
+    @Override
     public int getAge() {
         return age;
     }
@@ -81,6 +82,7 @@ public class StaffView implements SegmentItem {
     /**
      * @return the behaviour
      */
+    @Override
     public int getBehaviour() {
         return behaviour;
     }
@@ -109,6 +111,7 @@ public class StaffView implements SegmentItem {
     /**
      * @return the imageString
      */
+    @Override
     public String getImageString() {
         return imageString;
     }

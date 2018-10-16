@@ -122,6 +122,7 @@ public class WorkerView implements Serializable, SegmentItem {
     /**
      * @return the reputation
      */
+    @Override
     public int getBehaviour() {
         return behaviour;
     }
@@ -211,6 +212,7 @@ public class WorkerView implements Serializable, SegmentItem {
     /**
      * @return the imageString
      */
+    @Override
     public String getImageString() {
         return imageString;
     }
@@ -239,6 +241,7 @@ public class WorkerView implements Serializable, SegmentItem {
     /**
      * @return the age
      */
+    @Override
     public int getAge() {
         return age;
     }

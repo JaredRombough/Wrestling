@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 
 /*

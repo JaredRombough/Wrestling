@@ -3,9 +3,9 @@ package wrestling.model.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.Title;
 import wrestling.model.manager.TitleManager;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 

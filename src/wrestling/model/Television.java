@@ -1,7 +1,7 @@
 package wrestling.model;
 
-import wrestling.model.modelView.PromotionView;
 import java.time.DayOfWeek;
+import wrestling.model.modelView.PromotionView;
 
 public class Television {
 

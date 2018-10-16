@@ -8,9 +8,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.SegmentItem;
 import wrestling.model.constants.GameConstants;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -173,18 +173,18 @@ public final class ModelUtils {
 
         int range = 100;
         if (staffDifferential < 0) {
-            range = range - 20 * Math.abs(staffDifferential);
-            range = range - (int) Math.pow(2, 2 + staffDifferential);
+            range -= 20 * Math.abs(staffDifferential);
+            range -= (int) Math.pow(2, 2 + staffDifferential);
         } else if (staffDifferential > 0) {
-            range = range + staffDifferential * 2;
+            range += staffDifferential * 2;
         }
 
         int skillDifferential = getSkillDifferential(promotion, StaffType.MEDICAL);
 
         if (skillDifferential < 0) {
-            range = range - (int) Math.pow(2, 2 + Math.abs(skillDifferential));
+            range -= (int) Math.pow(2, 2 + Math.abs(skillDifferential));
         } else if (skillDifferential > 0) {
-            range = range + skillDifferential;
+            range += skillDifferential;
         }
 
         return (double) 1 / range;
@@ -202,16 +202,16 @@ public final class ModelUtils {
         int modifyDuration = 0;
 
         if (staffDifferential < 0) {
-            modifyDuration = modifyDuration + 5 * Math.abs(staffDifferential);
-            modifyDuration = modifyDuration + (int) Math.pow(2, 2 + staffDifferential);
+            modifyDuration += 5 * Math.abs(staffDifferential);
+            modifyDuration += (int) Math.pow(2, 2 + staffDifferential);
         } else if (staffDifferential > 0) {
-            modifyDuration = modifyDuration - staffDifferential * 2;
+            modifyDuration -= staffDifferential * 2;
         }
 
         if (skillDifferential < 0) {
-            modifyDuration = modifyDuration + (int) Math.pow(2, 2 + Math.abs(skillDifferential));
+            modifyDuration += (int) Math.pow(2, 2 + Math.abs(skillDifferential));
         } else if (skillDifferential > 0) {
-            modifyDuration = modifyDuration - skillDifferential;
+            modifyDuration -= skillDifferential;
         }
 
         return modifyDuration;

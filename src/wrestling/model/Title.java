@@ -1,7 +1,7 @@
 package wrestling.model;
 
-import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.ActiveType;
 
 public class Title implements Serializable {

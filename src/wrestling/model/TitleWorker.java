@@ -1,7 +1,7 @@
 package wrestling.model;
 
-import wrestling.model.modelView.WorkerView;
 import java.time.LocalDate;
+import wrestling.model.modelView.WorkerView;
 
 public class TitleWorker {
     

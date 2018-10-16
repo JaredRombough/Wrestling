@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Contract;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 

@@ -1,9 +1,9 @@
 package wrestling.model;
 
-import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
@@ -42,6 +42,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the promotion
      */
+    @Override
     public PromotionView getPromotion() {
         return promotion;
     }
@@ -71,6 +72,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the length
      */
+    @Override
     public int getDuration() {
         return duration;
     }
@@ -78,6 +80,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @param duration the length to set
      */
+    @Override
     public void setDuration(int duration) {
 
         this.duration = duration;
@@ -86,6 +89,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the exclusive
      */
+    @Override
     public boolean isExclusive() {
         return exclusive;
     }
@@ -100,6 +104,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the appearanceCost
      */
+    @Override
     public int getAppearanceCost() {
         return appearanceCost;
     }
@@ -121,6 +126,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @param startDate the startDate to set
      */
+    @Override
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
@@ -128,6 +134,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the biWeeklyCost
      */
+    @Override
     public int getBiWeeklyCost() {
         return biWeeklyCost;
     }
@@ -149,6 +156,7 @@ public class Contract implements Serializable, iContract {
     /**
      * @param active the active to set
      */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }

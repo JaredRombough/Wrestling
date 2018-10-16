@@ -2,11 +2,7 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.Contract;
-import wrestling.model.modelView.PromotionView;
-import wrestling.model.StaffContract;
 import wrestling.model.modelView.StaffView;
-import wrestling.model.modelView.WorkerView;
 
 public class StaffManager {
 

@@ -1,9 +1,9 @@
 package wrestling.model;
 
-import wrestling.model.modelView.PromotionView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
@@ -60,6 +60,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @param active the active to set
      */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -79,6 +80,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @param startDate the startDate to set
      */
+    @Override
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
@@ -86,6 +88,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the biWeeklyCost
      */
+    @Override
     public int getBiWeeklyCost() {
         return biWeeklyCost;
     }

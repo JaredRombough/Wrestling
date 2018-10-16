@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.manager.ContractManager;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 

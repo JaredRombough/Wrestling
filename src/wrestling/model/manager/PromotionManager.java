@@ -2,10 +2,8 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.financial.BankAccount;
-import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.modelView.PromotionView;
 
 public class PromotionManager {
 

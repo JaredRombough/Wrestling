@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import wrestling.model.EventTemplate;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -24,6 +23,7 @@ import wrestling.model.manager.StaffManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.EventFrequency;
 
 /**

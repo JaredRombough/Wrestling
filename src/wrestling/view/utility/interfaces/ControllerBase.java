@@ -4,8 +4,8 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.controller.GameController;
+import wrestling.model.modelView.PromotionView;
 
 public abstract class ControllerBase implements Initializable {
 
