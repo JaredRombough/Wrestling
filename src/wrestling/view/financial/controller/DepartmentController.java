@@ -28,9 +28,6 @@ public class DepartmentController extends ControllerBase {
     private Label ratioLabel;
 
     @FXML
-    private Label actualLabel;
-
-    @FXML
     private Label effectsLabel;
 
     @FXML
