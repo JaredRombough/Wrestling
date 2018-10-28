@@ -59,10 +59,10 @@ public class DepartmentController extends ControllerBase {
     @Override
     public void updateLabels() {
         if (staffType != null) {
-            int coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
-            progressBar.setProgress(coverage);
+            double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
+            progressBar.setProgress(coverage / 100);
 
-            ratioLabel.setText(String.format("%d%%", coverage));
+            ratioLabel.setText(String.format("%.0f%%", coverage));
 
             int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
             skillDifferentialLabel.setText(String.format("%d", avgSkill));
