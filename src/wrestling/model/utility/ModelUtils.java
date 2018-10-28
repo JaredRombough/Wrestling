@@ -20,8 +20,6 @@ import wrestling.view.utility.GameScreen;
 
 public final class ModelUtils {
 
-    private static final int medicManages = 30;
-
     public static String dateString(LocalDate localDate) {
         return localDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)"));
     }
@@ -122,7 +120,6 @@ public final class ModelUtils {
         }
 
         int denominator = (attributes.length * (attributes.length + 1)) / 2;
-
         return totalScore / denominator;
     }
 
@@ -156,87 +153,6 @@ public final class ModelUtils {
             }
         }
         return false;
-    }
-
-    public static int getInjuryRange(PromotionView promotion) {
-        int range = 100;
-        int remainder = getMedicsRemainder(promotion);
-
-        if (remainder < medicManages) {
-            return range - (medicManages - remainder);
-        }
-        return range + (3 * remainder - medicManages);
-    }
-
-    public static double getInjuryRate(PromotionView promotion) {
-        int staffDifferential = getMedicDifferential(promotion);
-
-        int range = 100;
-        if (staffDifferential < 0) {
-            range -= 20 * Math.abs(staffDifferential);
-            range -= (int) Math.pow(2, 2 + staffDifferential);
-        } else if (staffDifferential > 0) {
-            range += staffDifferential * 2;
-        }
-
-        int skillDifferential = getSkillDifferential(promotion, StaffType.MEDICAL);
-
-        if (skillDifferential < 0) {
-            range -= (int) Math.pow(2, 2 + Math.abs(skillDifferential));
-        } else if (skillDifferential > 0) {
-            range += skillDifferential;
-        }
-
-        return (double) 1 / range;
-    }
-
-    public static int getInjuryDuration(PromotionView promotion) {
-        int min = 7;
-        int max = 160;
-        return RandomUtils.nextInt(min, max) + getInjuryDurationModifier(promotion);
-    }
-
-    public static int getInjuryDurationModifier(PromotionView promotion) {
-        int staffDifferential = getMedicDifferential(promotion);
-        int skillDifferential = getSkillDifferential(promotion, StaffType.MEDICAL);
-        int modifyDuration = 0;
-
-        if (staffDifferential < 0) {
-            modifyDuration += 5 * Math.abs(staffDifferential);
-            modifyDuration += (int) Math.pow(2, 2 + staffDifferential);
-        } else if (staffDifferential > 0) {
-            modifyDuration -= staffDifferential * 2;
-        }
-
-        if (skillDifferential < 0) {
-            modifyDuration += (int) Math.pow(2, 2 + Math.abs(skillDifferential));
-        } else if (skillDifferential > 0) {
-            modifyDuration -= skillDifferential;
-        }
-
-        return modifyDuration;
-    }
-
-    public static int getMedicsRemainder(PromotionView promotion) {
-        int medicsCount = promotion.getStaff(StaffType.MEDICAL).size();
-        int rosterSize = promotion.getFullRoster().size();
-        return (medicsCount * GameConstants.WORKERS_PER_MEDIC) % rosterSize;
-    }
-
-    public static int getMedicsRequired(PromotionView promotion) {
-        double roster = promotion.getFullRoster().size();
-        double medicsNeeded = roster / GameConstants.WORKERS_PER_MEDIC;
-        return (int) Math.ceil(medicsNeeded);
-    }
-
-    public static int getMedicDifferential(PromotionView promotion) {
-        return promotion.getStaff(StaffType.MEDICAL).size() - getMedicsRequired(promotion);
-    }
-
-    public static int getSkillDifferential(PromotionView promotion, StaffType staffType) {
-        int skillRequired = promotion.getLevel() * 20 - 20;
-        int avgSkill = promotion.getStaffSkillAverage(staffType);
-        return avgSkill - skillRequired;
     }
 
 }

@@ -197,6 +197,10 @@ public class SegmentView {
         return eventView;
     }
 
+    public PromotionView getPromotion() {
+        return eventView.getEvent().getPromotion();
+    }
+
     /**
      * @param eventView the eventView to set
      */

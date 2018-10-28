@@ -12,6 +12,7 @@ import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 
 public class MatchFactory implements Serializable {
 
@@ -60,7 +61,7 @@ public class MatchFactory implements Serializable {
             }
 
         }
-
+        int finalMatchRating;
         if (interferenceTotal > 0) {
             int intRating = interferenceTotal
                     / segmentView.getTeams(TeamType.INTERFERENCE).size();
@@ -68,14 +69,16 @@ public class MatchFactory implements Serializable {
                     / (segmentView.getTeams().size()
                     - segmentView.getTeams(TeamType.INTERFERENCE).size());
 
-            segmentView.getSegment().setWorkRating(ModelUtils.getPrioritizedScore(new Integer[]{
+            finalMatchRating = ModelUtils.getPrioritizedScore(new Integer[]{
                 intRating,
                 workRating
-            }));
+            });
         } else {
-            segmentView.getSegment().setWorkRating(Math.round(
-                    workRatingTotal / segmentView.getTeams().size()));
+            finalMatchRating = Math.round(workRatingTotal / segmentView.getTeams().size());
         }
+
+        finalMatchRating = StaffUtils.getModifiedMatchRating(segmentView.getPromotion(), finalMatchRating);
+        segmentView.getSegment().setWorkRating(finalMatchRating);
 
         segmentView.getSegment().setCrowdRating(Math.round(
                 crowdRatingTotal / segmentView.getWorkers().size()));

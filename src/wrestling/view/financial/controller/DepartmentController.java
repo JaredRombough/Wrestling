@@ -9,6 +9,7 @@ import javafx.scene.control.ProgressBar;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.browser.controller.BrowseParams;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
@@ -58,42 +59,40 @@ public class DepartmentController extends ControllerBase {
     @Override
     public void updateLabels() {
         if (staffType != null) {
+            int coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
+            progressBar.setProgress(coverage);
+
+            ratioLabel.setText(String.format("%d%%", coverage));
+
+            int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
+            skillDifferentialLabel.setText(String.format("%d", avgSkill));
+
+            StringBuilder sb = new StringBuilder();
             switch (staffType) {
                 case MEDICAL:
-                    double progress = (double) playerPromotion().getStaff(staffType).size()
-                            / ModelUtils.getMedicsRequired(playerPromotion());
-                    progressBar.setProgress(progress);
-
-                    ratioLabel.setText(String.format("%d/%d",
-                            playerPromotion().getStaff(staffType).size(),
-                            ModelUtils.getMedicsRequired(playerPromotion())));
-
-                    StringBuilder sb = new StringBuilder();
-                    int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
-                    sb.append(String.format("%d", avgSkill));
-                    int diff = ModelUtils.getSkillDifferential(playerPromotion(), staffType);
-                    if (diff > 0) {
-                        sb.append(String.format(" (+%d)", diff));
-                    } else if (diff < 0) {
-                        sb.append(String.format(" (-%d)", Math.abs(diff)));
-                    }
-
-                    skillDifferentialLabel.setText(sb.toString());
-
-                    sb = new StringBuilder();
-                    sb.append(String.format("%%%.2f injury rate", ModelUtils.getInjuryRate(playerPromotion()) * 100));
+                    sb.append(String.format("%.2f%% injury rate (coverage)", StaffUtils.getInjuryRate(playerPromotion()) * 100));
                     sb.append("\n");
-                    int durationModifier = ModelUtils.getInjuryDurationModifier(playerPromotion());
-                    if (durationModifier > 0) {
-                        sb.append("+");
-                    }
-                    sb.append(String.format("%d day%s to injuries",
-                            durationModifier,
-                            Math.abs(durationModifier) > 1 ? "s" : ""));
-                    effectsLabel.setText(sb.toString());
+                    int bonusDays = StaffUtils.getInjuryDurationBonusDays(playerPromotion());
+                    sb.append(String.format("-%d day%s to injuries (skill)",
+                            bonusDays,
+                            bonusDays == 0 || Math.abs(bonusDays) > 1 ? "s" : ""));
+                    break;
+                case ROAD_AGENT:
+                    double coverageModifer = StaffUtils.getCoverageMatchRatingModifier(playerPromotion());
+                    sb.append(String.format("%.0f%% match rating %s (coverage)",
+                            coverageModifer * 100,
+                            coverageModifer >= 0 ? "bonus" : "penalty"
+                    ));
+                    sb.append("\n");
+                    double skillModifier = StaffUtils.getSkillMatchRatingModifier(playerPromotion());
+                    sb.append(String.format("%.0f%% match rating %s (skill)",
+                            skillModifier * 100,
+                            skillModifier >= 0 ? "bonus" : "penalty"
+                    ));
+                    sb.append("\n");
                     break;
             }
-
+            effectsLabel.setText(sb.toString());
             departmentNameLabel.setText(staffType.toString());
         }
 

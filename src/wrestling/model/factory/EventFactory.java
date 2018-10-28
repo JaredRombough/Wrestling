@@ -29,6 +29,7 @@ import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 
 /**
  * an Event has a date, promotion, a list of segments (matches etc.) this class
@@ -153,22 +154,29 @@ public class EventFactory {
             winners.stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
             });
-            List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
-            matchWorkers.stream().forEach((w) -> {
-                PromotionView promotion = eventView.getEvent().getPromotion();
-                if (RandomUtils.nextInt(0, ModelUtils.getInjuryRange(promotion)) == 1) {
-                    int duration = ModelUtils.getInjuryDuration(promotion);
-                    Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
-                    w.setInjury(injury);
-                    injuryManager.addInjury(injury);
-                }
-            });
+
+            processInjuries(eventView, segmentView);
 
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
         }
         return segment;
+    }
+
+    private void processInjuries(EventView eventView, SegmentView segmentView) {
+        List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
+        matchWorkers.stream().forEach((w) -> {
+            PromotionView promotion = eventView.getEvent().getPromotion();
+            if (RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getInjuryRate(promotion))) {
+                int duration = StaffUtils.getInjuryDuration(promotion);
+                if (duration > 0) {
+                    Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
+                    w.setInjury(injury);
+                    injuryManager.addInjury(injury);
+                }
+            }
+        });
     }
 
     private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {

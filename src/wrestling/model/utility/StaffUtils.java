@@ -1,0 +1,62 @@
+package wrestling.model.utility;
+
+import org.apache.commons.lang3.RandomUtils;
+import wrestling.model.constants.GameConstants;
+import wrestling.model.modelView.PromotionView;
+import wrestling.model.segmentEnum.StaffType;
+
+public final class StaffUtils {
+
+    public static double getInjuryRate(PromotionView promotion) {
+        int coverage = getStaffCoverage(promotion, StaffType.MEDICAL);
+        double rate = 0.01;
+        if (coverage <= 100) {
+            rate += 0.01 * (100 - coverage) * 0.01;
+        } else if (coverage - 100 > 100) {
+            rate = .005;
+        } else {
+            rate -= 0.005 * (coverage - 100) * 0.01;
+        }
+        return rate;
+    }
+
+    public static int getInjuryDurationBonusDays(PromotionView promotion) {
+        int averageSkill = promotion.getStaffSkillAverage(StaffType.MEDICAL);
+        return (int) Math.round(averageSkill * 0.01 * 15);
+    }
+
+    public static double getCoverageMatchRatingModifier(PromotionView promotion) {
+        int coverage = getStaffCoverage(promotion, StaffType.ROAD_AGENT);
+        double rate = 0;
+        if (coverage <= 100) {
+            rate -= 0.2 * (100 - coverage) * 0.01;
+        } else if (coverage - 100 > 100) {
+            rate = .1;
+        } else {
+            rate += 0.1 * (coverage - 100) * 0.01;
+        }
+        return rate;
+    }
+
+    public static double getSkillMatchRatingModifier(PromotionView promotion) {
+        int averageSkill = promotion.getStaffSkillAverage(StaffType.ROAD_AGENT);
+        return 0.1 * averageSkill * 0.01;
+    }
+
+    public static int getModifiedMatchRating(PromotionView promotion, int rating) {
+        return (int) (rating + (rating * getCoverageMatchRatingModifier(promotion)) + (rating * getSkillMatchRatingModifier(promotion)));
+    }
+
+    public static int getInjuryDuration(PromotionView promotion) {
+        int min = 7;
+        int max = 160;
+        return RandomUtils.nextInt(min, max) - getInjuryDurationBonusDays(promotion);
+    }
+
+    public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {
+        float staffCount = promotion.getStaff(staffType).size();
+        float staffCoverage = staffCount * staffType.workerRatio();
+        float ratio = staffCoverage / promotion.getFullRoster().size();
+        return Math.round(ratio * 100);
+    }
+}
