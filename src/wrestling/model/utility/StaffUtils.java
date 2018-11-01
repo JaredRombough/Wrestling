@@ -38,13 +38,41 @@ public final class StaffUtils {
         return rate;
     }
 
-    public static double getSkillMatchRatingModifier(PromotionView promotion) {
+    public static double getCrowdReactionModifer(PromotionView promotion) {
+        int coverage = getStaffCoverage(promotion, StaffType.CREATIVE);
+        double rate;
+        double minimum = -0.2;
+        double maximum = 0.1;
+        if (coverage <= 100) {
+            rate = minimum * (100 - coverage) * 0.01;
+        } else if (coverage - 100 > 100) {
+            rate = maximum;
+        } else {
+            rate = maximum * (coverage - 100) * 0.01;
+        }
+        return rate;
+    }
+
+    public static double getMatchRatingModifier(PromotionView promotion) {
         int averageSkill = promotion.getStaffSkillAverage(StaffType.ROAD_AGENT);
         return 0.1 * averageSkill * 0.01;
     }
 
+    public static double getAngleRatingModifier(PromotionView promotion) {
+        int averageSkill = promotion.getStaffSkillAverage(StaffType.CREATIVE);
+        return 0.1 * averageSkill * 0.01;
+    }
+
     public static int getModifiedMatchRating(PromotionView promotion, int rating) {
-        return (int) (rating + (rating * getCoverageMatchRatingModifier(promotion)) + (rating * getSkillMatchRatingModifier(promotion)));
+        return (int) (rating + (rating * getCoverageMatchRatingModifier(promotion)) + (rating * getMatchRatingModifier(promotion)));
+    }
+
+    public static int getModifiedCrowdRating(PromotionView promotion, int rating) {
+        return (int) (rating + (rating * getCrowdReactionModifer(promotion)));
+    }
+
+    public static int getModifiedAngleRating(PromotionView promotion, int rating) {
+        return (int) (rating + (rating * getAngleRatingModifier(promotion)));
     }
 
     public static int getInjuryDuration(PromotionView promotion) {

@@ -44,34 +44,25 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    private static final String VERSION = "0.3.3";
-
-    public static void main(String[] args) {
-
-        launch(args);
-
-    }
-
+    private static final String VERSION = "0.3.4";
     private final transient Logger logger;
-
     private Stage primaryStage;
     private GameController gameController;
     private final List<GameScreen> screens;
-
     private File picsFolder;
     private File logosFolder;
     private File dataFolder;
-
     private boolean preRun = false;
     private boolean randomGame;
     private final boolean cssEnabled;
-
     private final ResourceBundle resx;
-
     private GameScreen currentScreen;
-
     private double currentStageWidth;
     private double currentStageHeight;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     public MainApp() {
         this.screens = new ArrayList<>();
@@ -346,7 +337,6 @@ public class MainApp extends Application {
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).updateSelectedButton(code);
 
         //screen.controller.updateLabels();
-
         if (code.equals(ScreenCode.CALENDAR)) {
             ((CalendarController) screen.controller).setCurrent(gameController.getDateManager().today());
         }

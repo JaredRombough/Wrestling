@@ -59,10 +59,18 @@ public class DepartmentController extends ControllerBase {
     @Override
     public void updateLabels() {
         if (staffType != null) {
+            progressBar.getStyleClass().remove(".progress-bar-level-2");
             double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
             progressBar.setProgress(coverage / 100);
 
-            ratioLabel.setText(String.format("%.0f%%", coverage));
+            ratioLabel.setText(coverage > 200 ? "200%+" : String.format("%.0f%%", coverage));
+            if (coverage > 100) {
+                progressBar.getStyleClass().add("progress-bar-level-2");
+            }
+            if (coverage > 100 && coverage < 200) {
+
+                progressBar.setProgress((coverage - 100) / 100);
+            }
 
             int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
             skillDifferentialLabel.setText(String.format("%d", avgSkill));
@@ -84,10 +92,25 @@ public class DepartmentController extends ControllerBase {
                             coverageModifer >= 0 ? "bonus" : "penalty"
                     ));
                     sb.append("\n");
-                    double skillModifier = StaffUtils.getSkillMatchRatingModifier(playerPromotion());
+                    double skillModifier = StaffUtils.getMatchRatingModifier(playerPromotion());
                     sb.append(String.format("%.0f%% match rating %s (skill)",
                             skillModifier * 100,
                             skillModifier >= 0 ? "bonus" : "penalty"
+                    ));
+                    sb.append("\n");
+                    break;
+
+                case CREATIVE:
+                    double crowdModifier = StaffUtils.getCrowdReactionModifer(playerPromotion());
+                    sb.append(String.format("%.0f%% crowd reaction %s (coverage)",
+                            crowdModifier * 100,
+                            crowdModifier >= 0 ? "bonus" : "penalty"
+                    ));
+                    sb.append("\n");
+                    double angleModifier = StaffUtils.getAngleRatingModifier(playerPromotion());
+                    sb.append(String.format("%.0f%% angle rating %s (skill)",
+                            angleModifier * 100,
+                            angleModifier >= 0 ? "bonus" : "penalty"
                     ));
                     sb.append("\n");
                     break;

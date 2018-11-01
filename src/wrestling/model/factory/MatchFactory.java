@@ -5,6 +5,7 @@ import wrestling.model.SegmentWorker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
@@ -48,10 +49,10 @@ public class MatchFactory implements Serializable {
 
             if (segmentView.getSegmentType().equals(SegmentType.MATCH)
                     && team.getType().equals(TeamType.INTERFERENCE)) {
-                interferenceTotal += getWorkRating(team);
+                interferenceTotal += getWorkRating(segmentView.getPromotion(), team);
             }
 
-            workRatingTotal += getWorkRating(team);
+            workRatingTotal += getWorkRating(segmentView.getPromotion(), team);
 
             for (WorkerView worker : team.getWorkers()) {
                 crowdRatingTotal += ModelUtils.getPrioritizedScore(new Integer[]{
@@ -80,11 +81,13 @@ public class MatchFactory implements Serializable {
         finalMatchRating = StaffUtils.getModifiedMatchRating(segmentView.getPromotion(), finalMatchRating);
         segmentView.getSegment().setWorkRating(finalMatchRating);
 
-        segmentView.getSegment().setCrowdRating(Math.round(
-                crowdRatingTotal / segmentView.getWorkers().size()));
+        int crowdRating = StaffUtils.getModifiedCrowdRating(segmentView.getPromotion(),
+                Math.round(crowdRatingTotal / segmentView.getWorkers().size()));
+
+        segmentView.getSegment().setCrowdRating(crowdRating);
     }
 
-    private int getWorkRating(SegmentTeam team) {
+    private int getWorkRating(PromotionView promotion, SegmentTeam team) {
         int score = 0;
         for (WorkerView worker : team.getWorkers()) {
             switch (team.getType()) {
@@ -96,20 +99,14 @@ public class MatchFactory implements Serializable {
                 case AUDIENCE:
                 case PROMO: {
                     if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += ModelUtils.getWeightedScore(new Integer[]{
-                            worker.getCharisma()
-                        });
+                        score += getAngleRatingModified(promotion, worker.getCharisma());
                     }
                 }
                 case PROMO_TARGET: {
                     if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += ModelUtils.getWeightedScore(new Integer[]{
-                            worker.getCharisma()
-                        });
+                        score += getAngleRatingModified(promotion, worker.getCharisma());
                     } else {
-                        score += ModelUtils.getWeightedScore(new Integer[]{
-                            worker.getPopularity()
-                        });
+                        score += getAngleRatingModified(promotion, worker.getPopularity());
                     }
                 }
                 break;
@@ -120,6 +117,13 @@ public class MatchFactory implements Serializable {
         }
 
         return (Math.round(score / team.getWorkers().size()));
+    }
+
+    private int getAngleRatingModified(PromotionView promotion, int rating) {
+        int baseScore = ModelUtils.getWeightedScore(new Integer[]{
+            rating
+        });
+        return baseScore + StaffUtils.getModifiedAngleRating(promotion, rating);
     }
 
 }

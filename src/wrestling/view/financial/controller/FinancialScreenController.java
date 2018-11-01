@@ -44,6 +44,9 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private AnchorPane medicalBase;
 
     @FXML
+    private AnchorPane creativeBase;
+
+    @FXML
     private AnchorPane roadAgentBase;
 
     private List<Label> workerExpenseLabels;
@@ -103,6 +106,10 @@ public class FinancialScreenController extends ControllerBase implements Initial
         GameScreen roadAgents = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, roadAgentBase);
         roadAgents.controller.setCurrent(StaffType.ROAD_AGENT);
         departmentScreens.add(roadAgents);
+
+        GameScreen creative = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, creativeBase);
+        creative.controller.setCurrent(StaffType.CREATIVE);
+        departmentScreens.add(creative);
 
     }
 

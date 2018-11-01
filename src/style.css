@@ -285,3 +285,11 @@ GREY
 .progress-bar { 
     -fx-accent: #424242;
 }
+
+.progress-bar-level-2 .track{ 
+    -fx-background-color: #424242;
+}
+
+.progress-bar-level-2 { 
+    -fx-accent: #F5F5F5;
+}
