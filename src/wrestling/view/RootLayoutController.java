@@ -61,7 +61,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             mainApp.show(ScreenCode.CALENDAR);
         } else if (event.getSource() == newsButton) {
             updateSelectedButton(newsButton);
-            mainApp.show(ScreenCode.NEXT_DAY_SCREEN);
+            mainApp.show(ScreenCode.NEWS);
         }
 
     }
@@ -80,7 +80,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
             case CALENDAR:
                 updateSelectedButton(calendarButton);
                 break;
-            case NEXT_DAY_SCREEN:
+            case NEWS:
                 updateSelectedButton(newsButton);
                 break;
             default:

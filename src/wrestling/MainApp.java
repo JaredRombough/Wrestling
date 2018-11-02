@@ -30,9 +30,9 @@ import wrestling.file.Import;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
 import wrestling.model.segmentEnum.Gender;
-import wrestling.view.NextDayScreenController;
 import wrestling.view.RootLayoutController;
 import wrestling.view.calendar.controller.CalendarController;
+import wrestling.view.news.controller.NewsScreenController;
 import wrestling.view.start.controller.TitleScreenController;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
@@ -301,7 +301,7 @@ public class MainApp extends Application {
                 ScreenCode.BROWSER,
                 ScreenCode.EVENT,
                 ScreenCode.WORKER_OVERVIEW,
-                ScreenCode.NEXT_DAY_SCREEN,
+                ScreenCode.NEWS,
                 ScreenCode.RESULTS
         ));
 
@@ -393,10 +393,10 @@ public class MainApp extends Application {
             gameController.nextDay();
             saveGame();
         } else {
-            NextDayScreenController nextDay = (NextDayScreenController) ViewUtils.getByCode(screens, ScreenCode.NEXT_DAY_SCREEN).controller;
+            NewsScreenController nextDay = (NewsScreenController) ViewUtils.getByCode(screens, ScreenCode.NEWS).controller;
             RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
 
-            show(ScreenCode.NEXT_DAY_SCREEN);
+            show(ScreenCode.NEWS);
             root.setButtonsDisable(true);
             primaryStage.getScene().setCursor(Cursor.WAIT);
 
@@ -409,7 +409,7 @@ public class MainApp extends Application {
         logger.log(Level.INFO, "day: " + gameController.getDateManager().today());
     }
 
-    private Task<Void> nextDayTask(NextDayScreenController nextDayScreenController, RootLayoutController root) {
+    private Task<Void> nextDayTask(NewsScreenController nextDayScreenController, RootLayoutController root) {
 
         Task<Void> task = new Task<Void>() {
 

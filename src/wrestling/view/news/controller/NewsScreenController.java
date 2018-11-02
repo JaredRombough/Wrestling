@@ -1,4 +1,4 @@
-package wrestling.view;
+package wrestling.view.news.controller;
 
 import java.net.URL;
 import java.time.DayOfWeek;
@@ -26,7 +26,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
-public class NextDayScreenController extends ControllerBase implements Initializable {
+public class NewsScreenController extends ControllerBase implements Initializable {
 
     @FXML
     public ScrollPane displayPane;

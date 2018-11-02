@@ -192,11 +192,11 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
-    NEXT_DAY_SCREEN {
+    NEWS {
 
         @Override
         public String resourcePath() {
-            return "view/NextDayScreen.fxml";
+            return "view/news/view/NewsScreen.fxml";
         }
 
         @Override
