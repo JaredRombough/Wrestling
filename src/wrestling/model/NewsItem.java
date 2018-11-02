@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.time.LocalDate;
 import wrestling.model.interfaces.iNewsItem;
+import wrestling.model.modelView.PromotionView;
 
 public class NewsItem implements iNewsItem {
 
@@ -41,6 +42,11 @@ public class NewsItem implements iNewsItem {
     @Override
     public LocalDate getDate() {
         return date;
+    }
+
+    @Override
+    public PromotionView getPromotion() {
+        return null;
     }
 
 }

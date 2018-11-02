@@ -101,7 +101,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 40;
         }
     }
 

@@ -114,6 +114,11 @@ public class DepartmentController extends ControllerBase {
                     ));
                     sb.append("\n");
                     break;
+                case TRAINER:
+                    double trainerRate = StaffUtils.getTrainerSuccessRate(playerPromotion());
+                    sb.append(String.format("%.0f%% trainer success daily (coverage)",
+                            trainerRate * 100));
+                    break;
             }
             effectsLabel.setText(sb.toString());
             departmentNameLabel.setText(staffType.toString());

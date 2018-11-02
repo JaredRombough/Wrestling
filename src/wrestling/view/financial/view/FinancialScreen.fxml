@@ -80,6 +80,7 @@
                   <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Effects" GridPane.columnIndex="4" GridPane.columnSpan="2" />
                   <AnchorPane fx:id="roadAgentBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
                   <AnchorPane fx:id="creativeBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+                  <AnchorPane fx:id="trainerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
                </children>
             </GridPane>
          </children>

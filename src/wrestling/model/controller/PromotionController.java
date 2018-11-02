@@ -8,31 +8,38 @@ import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Title;
+import wrestling.model.TrainerEvent;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
+import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 
 public class PromotionController implements Serializable {
 
@@ -45,6 +52,7 @@ public class PromotionController implements Serializable {
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
+    private final NewsManager newsManager;
 
     public PromotionController(
             ContractFactory contractFactory,
@@ -54,7 +62,8 @@ public class PromotionController implements Serializable {
             DateManager dateManager,
             EventManager eventManager,
             TitleManager titleManager,
-            WorkerManager workerManager) {
+            WorkerManager workerManager,
+            NewsManager newsManager) {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
         this.matchFactory = matchFactory;
@@ -63,6 +72,7 @@ public class PromotionController implements Serializable {
         this.eventManager = eventManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
+        this.newsManager = newsManager;
     }
 
     private int idealRosterSize(PromotionView promotion) {
@@ -120,6 +130,8 @@ public class PromotionController implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate(PromotionView promotion) {
 
+        trainerUpdate(promotion);
+
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
             updatePushed(promotion);
         }
@@ -134,7 +146,6 @@ public class PromotionController implements Serializable {
             activeRosterSize++;
         }
 
-//        eventCheck(promotion);
         //book a show if we have one scheduled today
         Event eventToday = eventManager.getEventOnDate(promotion, dateManager.today());
         if (eventToday != null) {
@@ -153,6 +164,52 @@ public class PromotionController implements Serializable {
 
         for (Contract c : contractManager.getContracts(promotion)) {
             contractManager.payDay(date, c);
+        }
+    }
+
+    private void trainerUpdate(PromotionView promotion) {
+        for (StaffView trainer : promotion.getStaff(StaffType.TRAINER)) {
+            if (StaffUtils.trainerSuccess(promotion)) {
+                WorkerView worker = promotion.getFullRoster().get(RandomUtils.nextInt(0, promotion.getFullRoster().size() - 1));
+                Map<String, Integer> properties = new HashMap<>();
+                properties.put("striking", worker.getStriking());
+                properties.put("flying", worker.getFlying());
+                properties.put("wrestling", worker.getWrestling());
+                properties.put("charisma", worker.getCharisma());
+                List keys = new ArrayList(properties.keySet());
+                Collections.shuffle(keys);
+                boolean success = false;
+                String stat = "";
+                for (Object o : keys) {
+                    int value = properties.get(o.toString());
+                    if (value < trainer.getSkill()) {
+                        stat = o.toString();
+                        switch (o.toString()) {
+                            case "striking":
+                                worker.setStriking(value + 1);
+                                break;
+                            case "flying":
+                                worker.setStriking(value + 1);
+                                break;
+                            case "wrestling":
+                                worker.setStriking(value + 1);
+                                break;
+                            case "charisma":
+                                worker.setStriking(value + 1);
+                                break;
+                        }
+                        success = true;
+                        break;
+                    }
+
+                }
+                if (success) {
+                    TrainerEvent trainerEvent = new TrainerEvent(worker, trainer, dateManager.today(),
+                            stat, promotion);
+                    newsManager.addNews(trainerEvent);
+                }
+
+            }
         }
     }
 

@@ -114,7 +114,8 @@ public final class GameController implements Serializable {
                 dateManager,
                 eventManager,
                 titleManager,
-                workerManager);
+                workerManager,
+                newsManager);
 
         if (randomGame) {
             promotionFactory.preparePromotions();
@@ -135,7 +136,7 @@ public final class GameController implements Serializable {
     public void nextDay() {
 
         injuryManager.dailyUpdate(dateManager.today());
-        
+
         contractManager.dailyUpdate();
 
         //iterate through all promotions

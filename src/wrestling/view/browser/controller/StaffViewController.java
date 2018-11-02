@@ -95,7 +95,7 @@ public class StaffViewController extends ControllerBase {
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
         }
 
-        contractButton.setVisible(staffView.getStaffContract() == null);
+        contractButton.setVisible(staffView == null || staffView.getStaffContract() == null);
 
     }
 

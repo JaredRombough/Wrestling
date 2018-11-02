@@ -26,23 +26,31 @@ public final class StaffUtils {
     }
 
     public static double getCoverageMatchRatingModifier(PromotionView promotion) {
-        int coverage = getStaffCoverage(promotion, StaffType.ROAD_AGENT);
-        double rate = 0;
-        if (coverage <= 100) {
-            rate -= 0.2 * (100 - coverage) * 0.01;
-        } else if (coverage - 100 > 100) {
-            rate = .1;
-        } else {
-            rate += 0.1 * (coverage - 100) * 0.01;
-        }
-        return rate;
+        return getModifer(getStaffCoverage(promotion, StaffType.ROAD_AGENT),
+                -0.2,
+                0.1);
     }
 
     public static double getCrowdReactionModifer(PromotionView promotion) {
-        int coverage = getStaffCoverage(promotion, StaffType.CREATIVE);
+        return getModifer(getStaffCoverage(promotion, StaffType.CREATIVE),
+                -0.2,
+                0.1);
+    }
+
+    public static double getTrainerSuccessRate(PromotionView promotion) {
+        double modifier = getModifer(getStaffCoverage(promotion, StaffType.TRAINER),
+                -0.3,
+                0.1);
+        double baseRate = 0.05;
+        return baseRate + (baseRate * modifier);
+    }
+
+    public static boolean trainerSuccess(PromotionView promotion) {
+        return RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getTrainerSuccessRate(promotion));
+    }
+
+    private static double getModifer(int coverage, double minimum, double maximum) {
         double rate;
-        double minimum = -0.2;
-        double maximum = 0.1;
         if (coverage <= 100) {
             rate = minimum * (100 - coverage) * 0.01;
         } else if (coverage - 100 > 100) {

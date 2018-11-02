@@ -2,6 +2,7 @@ package wrestling.model;
 
 import java.time.LocalDate;
 import wrestling.model.interfaces.iNewsItem;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
 
@@ -64,5 +65,10 @@ public class Injury implements iNewsItem {
     @Override
     public LocalDate getDate() {
         return startDate;
+    }
+
+    @Override
+    public PromotionView getPromotion() {
+        return segmentView.getPromotion();
     }
 }
