@@ -5,14 +5,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.interfaces.iEventDate;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.interfaces.iDate;
 
-public class EventTemplate implements iEventDate, SegmentItem {
+public class EventTemplate implements iDate, SegmentItem {
 
     private PromotionView promotion;
     private LocalDate nextDate;

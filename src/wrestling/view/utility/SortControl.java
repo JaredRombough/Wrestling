@@ -23,11 +23,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iBrowseMode;
+import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.Gender;
+import wrestling.model.segmentEnum.NewsFilter;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -55,6 +57,7 @@ public class SortControl extends ControllerBase implements Initializable {
     private Gender genderFilter;
     private ActiveType activeTypeFilter;
     private StaffType staffTypeFilter;
+    private NewsFilter newsFilter;
 
     private boolean bookingBrowseMode;
 
@@ -108,6 +111,8 @@ public class SortControl extends ControllerBase implements Initializable {
             activeTypeFilter = (ActiveType) obj;
         } else if (obj instanceof StaffType) {
             staffTypeFilter = (StaffType) obj;
+        } else if (obj instanceof NewsFilter) {
+            newsFilter = (NewsFilter) obj;
         }
 
         filterComboBoxes.stream().forEach(comboBox -> {
@@ -116,6 +121,11 @@ public class SortControl extends ControllerBase implements Initializable {
                 comboBox.getSelectionModel().select(obj);
             }
         });
+    }
+
+    public void setNewsMode() {
+        addButtonWrapper(EnumSet.allOf(NewsFilter.class));
+        gridPane.setVisible(false);
     }
 
     private void addButtonWrapper(EnumSet set) {
@@ -250,6 +260,13 @@ public class SortControl extends ControllerBase implements Initializable {
             return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || istStaffTypeFiltered(segmentItem);
         }
         return true;
+    }
+
+    public boolean isNewsItemFiltered(iNewsItem newsItem) {
+        if (newsFilter.equals(NewsFilter.ALL)) {
+            return false;
+        }
+        return !playerPromotion().equals(newsItem.getPromotion());
     }
 
     private boolean isActiveFiltered(SegmentItem segmentItem) {

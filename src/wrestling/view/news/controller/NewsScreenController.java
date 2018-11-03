@@ -2,14 +2,19 @@ package wrestling.view.news.controller;
 
 import java.net.URL;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,12 +23,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.NewsItem;
 import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.segmentEnum.NewsFilter;
+import wrestling.view.utility.GameScreen;
+import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.comparators.NewsItemComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class NewsScreenController extends ControllerBase implements Initializable {
@@ -44,11 +55,15 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public Button yearButton;
 
     @FXML
+    private AnchorPane sortControlPane;
+
+    @FXML
     public ListView<iNewsItem> newsListView;
 
     private List<Button> timeButtons;
-
     private ChronoUnit chronoUnit;
+    private GameScreen sortControl;
+    private SortControl sortControlController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,6 +78,11 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         updateTopMatches(ChronoUnit.WEEKS, 1);
         ViewUtils.updateSelectedButton(weekButton, timeButtons);
 
+        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
+        ((SortControl) sortControl.controller).setParentScreenCode(ScreenCode.NEWS);
+        sortControlController = (SortControl) sortControl.controller;
+        sortControlController.setFilter(NewsFilter.ALL);
+        sortControlController.setNewsMode();
         newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<iNewsItem>() {
             @Override
             public void changed(ObservableValue<? extends iNewsItem> observable, iNewsItem oldValue, iNewsItem newValue) {
@@ -77,33 +97,41 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         NewsItem newsItem = new NewsItem(
                 "Welcome to Open Wrestling",
                 "Have fun!");
-
-        newsListView.getItems().add(0, newsItem);
-
+        newsItem.setDate(LocalDate.MIN);
+        newsItem.setPromotion(playerPromotion());
+        gameController.getNewsManager().addNews(newsItem);
     }
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
         Button button = (Button) event.getSource();
-        if (button.equals(weekButton)) {
-            chronoUnit = ChronoUnit.WEEKS;
-        } else if (button.equals(monthButton)) {
-            chronoUnit = ChronoUnit.MONTHS;
-        } else if (button.equals(yearButton)) {
-            chronoUnit = ChronoUnit.YEARS;
+        if (timeButtons.contains(button)) {
+            if (button.equals(weekButton)) {
+                chronoUnit = ChronoUnit.WEEKS;
+            } else if (button.equals(monthButton)) {
+                chronoUnit = ChronoUnit.MONTHS;
+            } else if (button.equals(yearButton)) {
+                chronoUnit = ChronoUnit.YEARS;
+            }
+            updateTopMatches(chronoUnit, 1);
+            ViewUtils.updateSelectedButton(button, timeButtons);
         }
-        updateTopMatches(chronoUnit, 1);
-        ViewUtils.updateSelectedButton(button, timeButtons);
+
+        updateLabels();
+    }
+
+    @Override
+    public void updateLabels() {
+        FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(gameController.getNewsManager().getNewsItems()),
+                p -> !((SortControl) sortControl.controller).isNewsItemFiltered(p));
+
+        newsListView.setItems(new SortedList<>(filteredList, new NewsItemComparator()));
+        newsListView.getSelectionModel().selectFirst();
 
     }
 
     public void nextDay() {
         updateTopMatches(chronoUnit, 1);
-        gameController.getNewsManager().getNewsItems().stream().forEach((newsItem) -> {
-            if (newsItem.getDate().equals(gameController.getDateManager().today().minusDays(1))) {
-                newsListView.getItems().add(0, newsItem);
-            }
-        });
     }
 
     public void updateTopMatches(ChronoUnit unit, int units) {

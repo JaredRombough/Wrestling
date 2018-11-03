@@ -1,12 +1,12 @@
 package wrestling.view.utility.comparators;
 
 import java.util.Comparator;
-import wrestling.model.interfaces.iDate;
+import wrestling.model.interfaces.iNewsItem;
 
-public class DateComparator implements Comparator<iDate> {
+public class NewsItemComparator implements Comparator<iNewsItem> {
 
     @Override
-    public int compare(iDate e1, iDate e2) {
+    public int compare(iNewsItem e2, iNewsItem e1) {
 
         if (e1 != null && e2 != null) {
 
@@ -21,10 +21,4 @@ public class DateComparator implements Comparator<iDate> {
 
         return 0;
     }
-
-    @Override
-    public String toString() {
-        return "Date";
-    }
-
 }

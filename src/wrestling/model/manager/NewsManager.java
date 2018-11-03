@@ -9,7 +9,7 @@ public class NewsManager {
     private final List<iNewsItem> newsItems = new ArrayList<>();
 
     public void addNews(iNewsItem newsItem) {
-        getNewsItems().add(newsItem);
+        newsItems.add(newsItem);
     }
 
     /**

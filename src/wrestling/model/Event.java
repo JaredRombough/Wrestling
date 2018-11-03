@@ -3,10 +3,10 @@ package wrestling.model;
 import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iEvent;
-import wrestling.model.interfaces.iEventDate;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.interfaces.iDate;
 
-public class Event implements iEvent, iEventDate {
+public class Event implements iEvent, iDate {
 
     private final PromotionView promotion;
 

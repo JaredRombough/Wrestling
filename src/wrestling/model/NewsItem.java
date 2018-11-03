@@ -9,6 +9,7 @@ public class NewsItem implements iNewsItem {
     private String summary;
     private String headline;
     private LocalDate date;
+    private PromotionView promotion;
 
     public NewsItem(String headline, String summary) {
         this.summary = summary;
@@ -46,7 +47,21 @@ public class NewsItem implements iNewsItem {
 
     @Override
     public PromotionView getPromotion() {
-        return null;
+        return promotion;
+    }
+
+    /**
+     * @param date the date to set
+     */
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    /**
+     * @param promotion the promotion to set
+     */
+    public void setPromotion(PromotionView promotion) {
+        this.promotion = promotion;
     }
 
 }

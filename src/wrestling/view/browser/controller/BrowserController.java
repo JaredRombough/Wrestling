@@ -260,8 +260,8 @@ public class BrowserController extends ControllerBase implements Initializable {
             initializePromotionCombobox();
 
             sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-            ((SortControl) sortControl.controller).setParentScreenCode(ScreenCode.BROWSER);
             sortControlController = (SortControl) sortControl.controller;
+            sortControlController.setParentScreenCode(ScreenCode.BROWSER);
 
             mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
                 @Override
