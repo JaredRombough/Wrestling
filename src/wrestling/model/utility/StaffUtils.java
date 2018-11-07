@@ -25,6 +25,12 @@ public final class StaffUtils {
         return (int) Math.round(averageSkill * 0.01 * 15);
     }
 
+    public static double getCoverageAttendanceModifier(PromotionView promotion) {
+        return getModifer(getStaffCoverage(promotion, StaffType.PRODUCTION),
+                -0.2,
+                0.1);
+    }
+
     public static double getCoverageMatchRatingModifier(PromotionView promotion) {
         return getModifer(getStaffCoverage(promotion, StaffType.ROAD_AGENT),
                 -0.2,
@@ -71,6 +77,11 @@ public final class StaffUtils {
         return 0.1 * averageSkill * 0.01;
     }
 
+    public static double getProductionCrowdRatingModifier(PromotionView promotion) {
+        int averageSkill = promotion.getStaffSkillAverage(StaffType.PRODUCTION);
+        return 0.1 * averageSkill * 0.01;
+    }
+
     public static int getModifiedMatchRating(PromotionView promotion, int rating) {
         return (int) (rating + (rating * getCoverageMatchRatingModifier(promotion)) + (rating * getMatchRatingModifier(promotion)));
     }
@@ -90,9 +101,15 @@ public final class StaffUtils {
     }
 
     public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {
+
         float staffCount = promotion.getStaff(staffType).size();
-        float staffCoverage = staffCount * staffType.workerRatio();
-        float ratio = staffCoverage / promotion.getFullRoster().size();
+        float ratio;
+        if (staffType.equals(StaffType.PRODUCTION)) {
+            ratio = staffCount / (promotion.getLevel() * 2);
+        } else {
+            float staffCoverage = staffCount * staffType.workerRatio();
+            ratio = staffCoverage / promotion.getFullRoster().size();
+        }
         return Math.round(ratio * 100);
     }
 }

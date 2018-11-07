@@ -48,9 +48,12 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
     @FXML
     private AnchorPane roadAgentBase;
-    
+
     @FXML
     private AnchorPane trainerBase;
+
+    @FXML
+    private AnchorPane productionBase;
 
     private List<Label> workerExpenseLabels;
 
@@ -60,7 +63,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
         LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
-        LocalDate endDate = gameController.getDateManager().today();
+        LocalDate endDate;
 
         if (monthsAgo == 0) {
             endDate = gameController.getDateManager().today();
@@ -117,6 +120,10 @@ public class FinancialScreenController extends ControllerBase implements Initial
         GameScreen trainers = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, trainerBase);
         trainers.controller.setCurrent(StaffType.TRAINER);
         departmentScreens.add(trainers);
+
+        GameScreen production = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, productionBase);
+        production.controller.setCurrent(StaffType.PRODUCTION);
+        departmentScreens.add(production);
 
     }
 

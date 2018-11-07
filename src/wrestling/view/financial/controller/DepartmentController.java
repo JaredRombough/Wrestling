@@ -59,6 +59,7 @@ public class DepartmentController extends ControllerBase {
     @Override
     public void updateLabels() {
         if (staffType != null) {
+            departmentNameLabel.setText(staffType.toString());
             progressBar.getStyleClass().remove(".progress-bar-level-2");
             double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
             progressBar.setProgress(coverage / 100);
@@ -76,6 +77,7 @@ public class DepartmentController extends ControllerBase {
             skillDifferentialLabel.setText(String.format("%d", avgSkill));
 
             StringBuilder sb = new StringBuilder();
+
             switch (staffType) {
                 case MEDICAL:
                     sb.append(String.format("%.2f%% injury rate (coverage)", StaffUtils.getInjuryRate(playerPromotion()) * 100));
@@ -119,9 +121,22 @@ public class DepartmentController extends ControllerBase {
                     sb.append(String.format("%.0f%% trainer success daily (coverage)",
                             trainerRate * 100));
                     break;
+                case PRODUCTION:
+                    double attendanceModifier = StaffUtils.getCoverageAttendanceModifier(playerPromotion());
+                    sb.append(String.format("%.0f%% event attendance %s (coverage)",
+                            attendanceModifier * 100,
+                            attendanceModifier >= 0 ? "bonus" : "penalty"
+                    ));
+                    sb.append("\n");
+                    double productionCrowdModifier = StaffUtils.getProductionCrowdRatingModifier(playerPromotion());
+                    sb.append(String.format("%.0f%% crowd reaction %s (skill)",
+                            productionCrowdModifier * 100,
+                            productionCrowdModifier >= 0 ? "bonus" : "penalty"
+                    ));
+                    break;
             }
             effectsLabel.setText(sb.toString());
-            departmentNameLabel.setText(staffType.toString());
+
         }
 
     }
