@@ -30,8 +30,8 @@ public class TrainerEvent implements iNewsItem {
 
     @Override
     public String getSummary() {
-        return String.format("%s increased %s while training with %s.",
-                worker.toString(), stat, trainer.toString());
+        return String.format("%s increased %s working with %s trainer %s.",
+                worker.toString(), stat, promotion.getShortName(), trainer.toString());
     }
 
     @Override

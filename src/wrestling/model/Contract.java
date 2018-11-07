@@ -122,6 +122,10 @@ public class Contract implements Serializable, iContract {
     public LocalDate getStartDate() {
         return startDate;
     }
+    
+    public LocalDate getEndDate() {
+        return startDate.plusDays(duration);
+    }
 
     /**
      * @param startDate the startDate to set

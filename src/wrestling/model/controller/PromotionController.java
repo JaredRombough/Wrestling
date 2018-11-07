@@ -130,8 +130,6 @@ public class PromotionController implements Serializable {
     //put the general decision making sequence here
     public void dailyUpdate(PromotionView promotion) {
 
-        trainerUpdate(promotion);
-
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
             updatePushed(promotion);
         }
@@ -167,7 +165,7 @@ public class PromotionController implements Serializable {
         }
     }
 
-    private void trainerUpdate(PromotionView promotion) {
+    public void trainerUpdate(PromotionView promotion) {
         for (StaffView trainer : promotion.getStaff(StaffType.TRAINER)) {
             if (StaffUtils.trainerSuccess(promotion)) {
                 WorkerView worker = promotion.getFullRoster().get(RandomUtils.nextInt(0, promotion.getFullRoster().size() - 1));
@@ -208,7 +206,6 @@ public class PromotionController implements Serializable {
                             stat, promotion);
                     newsManager.addNews(trainerEvent);
                 }
-
             }
         }
     }

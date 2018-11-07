@@ -140,9 +140,11 @@ public final class GameController implements Serializable {
         contractManager.dailyUpdate();
 
         //iterate through all promotions
-        for (PromotionView promotion : promotionManager.aiPromotions()) {
-            getPromotionController().dailyUpdate(promotion);
-
+        for (PromotionView promotion : promotionManager.getPromotions()) {
+            promotionController.trainerUpdate(promotion);
+            if (!promotionManager.playerPromotion().equals(promotion)) {
+                promotionController.dailyUpdate(promotion);
+            }
         }
 
         if (dateManager.today().getDayOfMonth() == 1) {
