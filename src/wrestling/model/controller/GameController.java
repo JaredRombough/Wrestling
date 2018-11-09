@@ -137,7 +137,7 @@ public final class GameController implements Serializable {
 
         injuryManager.dailyUpdate(dateManager.today());
 
-        contractManager.dailyUpdate();
+        contractManager.dailyUpdate(dateManager.today());
 
         //iterate through all promotions
         for (PromotionView promotion : promotionManager.getPromotions()) {

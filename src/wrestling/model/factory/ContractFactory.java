@@ -27,18 +27,18 @@ public class ContractFactory {
     }
 
     public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate) {
-        int duration = 30 + RandomUtils.nextInt(0, 30);
+        int duration = 1 + RandomUtils.nextInt(0, 2);
         for (int i = 0; i < promotion.getLevel(); i++) {
-            duration += 30;
+            duration += 1;
         }
-        createContract(staff, promotion, startDate, duration);
+        createContract(staff, promotion, startDate, getEndDate(startDate, duration));
     }
 
-    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, int duration) {
+    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, LocalDate endDate) {
         StaffContract contract = createContract(staff, promotion);
-        contract.setBiWeeklyCost(calculateBiWeeklyCost(staff));
-        contractManager.buyOutContracts(staff, promotion);
-        initializeContract(contract, duration, startDate);
+        contract.setMonthlyCost(calculateMonthlyCost(staff));
+        contractManager.buyOutContracts(staff, promotion, startDate);
+        initializeContract(contract, endDate, startDate);
         staff.setStaffContract(contract);
     }
 
@@ -46,8 +46,6 @@ public class ContractFactory {
     public iContract createContract(WorkerView worker, PromotionView promotion, boolean exclusive, int duration, LocalDate startDate) {
         //create the contract
         Contract contract = createContract(worker, promotion);
-
-        contract.setDuration(duration);
 
         if (exclusive) {
             setBiWeeklyCost(contract);
@@ -72,21 +70,21 @@ public class ContractFactory {
             contract.setExclusive(true);
             setBiWeeklyCost(contract);
 
-            contractManager.buyOutContracts(worker, promotion);
+            contractManager.buyOutContracts(worker, promotion, startDate);
 
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
         }
 
-        int duration = 30 + RandomUtils.nextInt(0, 30);
+        int duration = 1 + RandomUtils.nextInt(0, 2);
 
         //scale the duration and exclusivity based on promotion level
         for (int i = 0; i < promotion.getLevel(); i++) {
-            duration += 30;
+            duration += 1;
         }
 
-        initializeContract(contract, duration, startDate);
+        initializeContract(contract, getEndDate(startDate, duration), startDate);
     }
 
     //create a default contract
@@ -101,21 +99,28 @@ public class ContractFactory {
             contract.setExclusive(true);
             setBiWeeklyCost(contract);
 
-            contractManager.buyOutContracts(worker, promotion);
+            contractManager.buyOutContracts(worker, promotion, startDate);
 
         } else {
             contract.setExclusive(false);
             setAppearanceCost(contract);
         }
 
-        int duration = 30;
+        int duration = duration(promotion.getLevel(), false);
 
-        //scale the duration and exclusivity based on promotion level
-        for (int i = 0; i < promotion.getLevel(); i++) {
-            duration += 30;
+        initializeContract(contract, getEndDate(startDate, duration), startDate);
+    }
+
+    private LocalDate getEndDate(LocalDate startDate, int months) {
+        return startDate.plusMonths(months + 1).withDayOfMonth(1);
+    }
+
+    private int duration(int promotionLevel, boolean randomPlusOne) {
+        int duration = randomPlusOne ? 1 + RandomUtils.nextInt(0, 2) : 0;
+        for (int i = 0; i < promotionLevel; i++) {
+            duration += 1;
         }
-
-        initializeContract(contract, duration, startDate);
+        return duration;
     }
 
     private Contract createContract(WorkerView worker, PromotionView promotion) {
@@ -136,8 +141,8 @@ public class ContractFactory {
         return contract;
     }
 
-    private void initializeContract(iContract contract, int duration, LocalDate startDate) {
-        contract.setDuration(duration);
+    private void initializeContract(iContract contract, LocalDate endDate, LocalDate startDate) {
+        contract.setEndDate(endDate);
         contract.setStartDate(startDate);
     }
 
@@ -167,13 +172,13 @@ public class ContractFactory {
         return unitCost;
     }
 
-    public int calculateBiWeeklyCost(StaffView staff) {
+    public int calculateMonthlyCost(StaffView staff) {
 
         int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();
 
-        pricePoints.addAll(Arrays.asList(25, 25, 50, 75, 75, 150, 300, 500, 1000, 5000, 10000));
+        pricePoints.addAll(Arrays.asList(50, 50, 100, 150, 150, 300, 600, 1000, 2000, 10000, 20000));
 
         double nearest10 = staff.getSkill() / 10 * 10;
         double multiplier = (staff.getSkill() - nearest10) / 10;

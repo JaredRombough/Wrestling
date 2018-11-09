@@ -27,15 +27,15 @@ public class ContractManager implements Serializable {
         this.titleManager = titleManager;
     }
 
-    public void dailyUpdate() {
+    public void dailyUpdate(LocalDate date) {
         for (Contract contract : contracts) {
-            if (!nextDay(contract)) {
+            if (!nextDay(contract, date)) {
                 titleManager.stripTitles(contract);
             }
         }
 
         for (StaffContract contract : staffContracts) {
-            nextDay(contract);
+            nextDay(contract, date);
         }
     }
 
@@ -149,65 +149,43 @@ public class ContractManager implements Serializable {
     }
 
     //depreciates monthly contracts
-    public boolean nextDay(iContract contract) {
-        boolean stillExists = true;
-        contract.setDuration(contract.getDuration() - 1);
-
-        if (contract.getDuration() <= 0) {
+    public boolean nextDay(iContract contract, LocalDate today) {
+        if (contract.getEndDate().isBefore(today)) {
             terminateContract(contract);
-            stillExists = false;
+            return false;
         }
 
-        return stillExists;
+        return true;
     }
 
     //handles appearance-based contracts
     public void appearance(LocalDate date, Contract contract) {
         //make the promotion 'pay' the worker for the appearance
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), 'w', date);
-        if (contract.getDuration() <= 0) {
-            terminateContract(contract);
-        }
     }
 
     public void payDay(LocalDate date, Contract contract) {
 
-        if (contract.getBiWeeklyCost() != 0) {
-
-            long daysBetween = DAYS.between(contract.getStartDate(), date);
-            long payment = 0;
-            if (daysBetween < 14) {
-                payment += contract.getBiWeeklyCost() * (daysBetween / 14);
-            } else {
-                payment = contract.getBiWeeklyCost();
-            }
-
-            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(payment), 'w', date);
-
+        if (contract.getMonthlyCost() != 0) {
+            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()), 'w', date);
         }
 
     }
 
-    //for when a bigger promotion signs a written contract
-    //that overrides this open contract
-    public void buyOutContract(iContract contract) {
-        contract.setDuration(0);
-    }
-
-    public void buyOutContracts(WorkerView worker, PromotionView newExclusivePromotion) {
+    public void buyOutContracts(WorkerView worker, PromotionView newExclusivePromotion, LocalDate buyOutDate) {
         //'buy out' any the other contracts the worker has
         for (Contract c : getContracts(worker)) {
             if (!c.getPromotion().equals(newExclusivePromotion)) {
-                buyOutContract(c);
+                c.setEndDate(buyOutDate);
             }
         }
     }
 
-    public void buyOutContracts(StaffView staff, PromotionView newExclusivePromotion) {
+    public void buyOutContracts(StaffView staff, PromotionView newExclusivePromotion, LocalDate buyOutDate) {
         //'buy out' any the other contracts the worker has
         for (StaffContract c : getContracts(staff)) {
             if (!c.getPromotion().equals(newExclusivePromotion)) {
-                buyOutContract(c);
+                c.setEndDate(buyOutDate);
                 staff.setStaffContract(null);
             }
         }
@@ -220,10 +198,10 @@ public class ContractManager implements Serializable {
     }
 
     public String getTerms(iContract contract) {
-        String string = String.format("%s %s days", contract.getPromotion().getShortName(), contract.getDuration());
+        String string = String.format("%s ending %s", contract.getPromotion().getShortName(), contract.getEndDate());
 
         if (contract.isExclusive()) {
-            string += " $" + contract.getBiWeeklyCost() + " Bi-Weekly.";
+            string += " $" + contract.getMonthlyCost() + " Monthly.";
         } else {
             string += " $" + contract.getAppearanceCost() + " per appearance.";
         }

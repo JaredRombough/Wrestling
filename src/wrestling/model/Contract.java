@@ -26,6 +26,8 @@ public class Contract implements Serializable, iContract {
 
     private LocalDate startDate;
 
+    private LocalDate endDate;
+
     private boolean exclusive;
 
     private boolean pushed;
@@ -70,23 +72,6 @@ public class Contract implements Serializable, iContract {
     }
 
     /**
-     * @return the length
-     */
-    @Override
-    public int getDuration() {
-        return duration;
-    }
-
-    /**
-     * @param duration the length to set
-     */
-    @Override
-    public void setDuration(int duration) {
-
-        this.duration = duration;
-    }
-
-    /**
      * @return the exclusive
      */
     @Override
@@ -122,9 +107,9 @@ public class Contract implements Serializable, iContract {
     public LocalDate getStartDate() {
         return startDate;
     }
-    
+
     public LocalDate getEndDate() {
-        return startDate.plusDays(duration);
+        return endDate;
     }
 
     /**
@@ -139,7 +124,7 @@ public class Contract implements Serializable, iContract {
      * @return the biWeeklyCost
      */
     @Override
-    public int getBiWeeklyCost() {
+    public int getMonthlyCost() {
         return biWeeklyCost;
     }
 
@@ -182,5 +167,10 @@ public class Contract implements Serializable, iContract {
     @Override
     public StaffView getStaff() {
         return null;
+    }
+
+    @Override
+    public void setEndDate(LocalDate date) {
+        this.endDate = date;
     }
 }

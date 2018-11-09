@@ -1,5 +1,6 @@
 package wrestling.view.browser.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,13 +85,13 @@ public class ContractDialog {
                         (WorkerView) segmentItem,
                         playerPromotion,
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
-                        duration(lengthComboBox),
+                        lengthComboBox.getSelectionModel().getSelectedIndex(),
                         gameController.getDateManager().today());
             } else if (segmentItem instanceof StaffView) {
                 gameController.getContractFactory().createContract((StaffView) segmentItem,
                         playerPromotion,
                         gameController.getDateManager().today(),
-                        duration(lengthComboBox));
+                        gameController.getDateManager().today());
 
             }
         }
@@ -102,20 +103,16 @@ public class ContractDialog {
         if (segmentItem instanceof WorkerView) {
             terms += gameController.getContractFactory().calculateAppearanceCost((WorkerView) segmentItem, exclusive);
         } else {
-            terms += gameController.getContractFactory().calculateBiWeeklyCost((StaffView) segmentItem);
+            terms += gameController.getContractFactory().calculateMonthlyCost((StaffView) segmentItem);
         }
 
         if (exclusive) {
-            terms += " Bi-Weekly";
+            terms += " Monthly";
         } else {
             terms += " per Apperance";
         }
 
         label.setText(terms);
-    }
-
-    private int duration(ComboBox lengthComboBox) {
-        return (lengthComboBox.getSelectionModel().getSelectedIndex() + 1) * 30;
     }
 
 }

@@ -12,8 +12,8 @@ public class StaffContract implements Serializable, iContract {
     private StaffView staff;
     private PromotionView promotion;
     private LocalDate startDate;
+    private LocalDate endDate;
     private boolean active;
-    private int duration;
     private int biWeeklyCost;
 
     public StaffContract() {
@@ -65,11 +65,6 @@ public class StaffContract implements Serializable, iContract {
         this.active = active;
     }
 
-    @Override
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     /**
      * @return the startDate
      */
@@ -89,20 +84,15 @@ public class StaffContract implements Serializable, iContract {
      * @return the biWeeklyCost
      */
     @Override
-    public int getBiWeeklyCost() {
+    public int getMonthlyCost() {
         return biWeeklyCost;
     }
 
     /**
      * @param biWeeklyCost the biWeeklyCost to set
      */
-    public void setBiWeeklyCost(int biWeeklyCost) {
+    public void setMonthlyCost(int biWeeklyCost) {
         this.biWeeklyCost = biWeeklyCost;
-    }
-
-    @Override
-    public int getDuration() {
-        return duration;
     }
 
     @Override
@@ -118,6 +108,21 @@ public class StaffContract implements Serializable, iContract {
     @Override
     public WorkerView getWorker() {
         return null;
+    }
+
+    /**
+     * @return the endDate
+     */
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * @param endDate the endDate to set
+     */
+    @Override
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
 }

@@ -11,17 +11,19 @@ import wrestling.model.modelView.WorkerView;
  */
 public interface iContract {
 
-    public void setDuration(int duration);
+    public void setEndDate(LocalDate date);
+
+    public LocalDate getEndDate();
 
     public void setStartDate(LocalDate date);
 
-    public PromotionView getPromotion();
+    public LocalDate getStartDate();
 
-    public int getDuration();
+    public PromotionView getPromotion();
 
     public boolean isExclusive();
 
-    public int getBiWeeklyCost();
+    public int getMonthlyCost();
 
     public int getAppearanceCost();
 
