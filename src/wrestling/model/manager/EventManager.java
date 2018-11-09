@@ -28,6 +28,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ViewUtils;
 
 public class EventManager {
@@ -488,6 +489,8 @@ public class EventManager {
         }
 
         attendance += RandomUtils.nextInt(promotion.getLevel(), promotion.getLevel() * 15) * draws;
+        
+        attendance *= StaffUtils.getCoverageAttendanceModifier(promotion);
 
         return attendance;
     }

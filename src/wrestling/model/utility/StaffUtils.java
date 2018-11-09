@@ -37,7 +37,7 @@ public final class StaffUtils {
                 0.1);
     }
 
-    public static double getCrowdReactionModifer(PromotionView promotion) {
+    public static double getCreativeCrowdReactionModifer(PromotionView promotion) {
         return getModifer(getStaffCoverage(promotion, StaffType.CREATIVE),
                 -0.2,
                 0.1);
@@ -82,16 +82,8 @@ public final class StaffUtils {
         return 0.1 * averageSkill * 0.01;
     }
 
-    public static int getModifiedMatchRating(PromotionView promotion, int rating) {
-        return (int) (rating + (rating * getCoverageMatchRatingModifier(promotion)) + (rating * getMatchRatingModifier(promotion)));
-    }
-
-    public static int getModifiedCrowdRating(PromotionView promotion, int rating) {
-        return (int) (rating + (rating * getCrowdReactionModifer(promotion)));
-    }
-
-    public static int getModifiedAngleRating(PromotionView promotion, int rating) {
-        return (int) (rating + (rating * getAngleRatingModifier(promotion)));
+    public static double getCombinedCrowdRatingModifier(PromotionView promotion) {
+        return getCreativeCrowdReactionModifer(promotion) + getProductionCrowdRatingModifier(promotion);
     }
 
     public static int getInjuryDuration(PromotionView promotion) {

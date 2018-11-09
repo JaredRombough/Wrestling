@@ -103,7 +103,7 @@ public class DepartmentController extends ControllerBase {
                     break;
 
                 case CREATIVE:
-                    double crowdModifier = StaffUtils.getCrowdReactionModifer(playerPromotion());
+                    double crowdModifier = StaffUtils.getCreativeCrowdReactionModifer(playerPromotion());
                     sb.append(String.format("%.0f%% crowd reaction %s (coverage)",
                             crowdModifier * 100,
                             crowdModifier >= 0 ? "bonus" : "penalty"
