@@ -16,6 +16,7 @@ import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
+import wrestling.model.StaffContract;
 import wrestling.model.Title;
 import wrestling.model.TrainerEvent;
 import wrestling.model.factory.ContractFactory;
@@ -134,10 +135,6 @@ public class PromotionController implements Serializable {
             updatePushed(promotion);
         }
 
-        if (dateManager.isPayDay()) {
-            payDay(promotion, dateManager.today());
-        }
-
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
         while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
             signContract(promotion);
@@ -162,6 +159,10 @@ public class PromotionController implements Serializable {
 
         for (Contract c : contractManager.getContracts(promotion)) {
             contractManager.payDay(date, c);
+        }
+
+        for (StaffView staff : promotion.getAllStaff()) {
+            contractManager.payDay(date, staff.getStaffContract());
         }
     }
 
