@@ -142,6 +142,9 @@ public final class GameController implements Serializable {
         //iterate through all promotions
         for (PromotionView promotion : promotionManager.getPromotions()) {
             promotionController.trainerUpdate(promotion);
+            if (dateManager.isPayDay()) {
+                promotionController.payDay(promotion, dateManager.today());
+            }
             if (!promotionManager.playerPromotion().equals(promotion)) {
                 promotionController.dailyUpdate(promotion);
             }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.segmentEnum.TransactionType;
 
 public class BankAccount {
 
@@ -11,12 +12,13 @@ public class BankAccount {
     private Integer funds;
 
     private List<Transaction> transactions = new ArrayList<>();
+
     public BankAccount(PromotionView promotion) {
         this.promotion = promotion;
         funds = 0;
     }
 
-    public int getTransactionTotal(char type, LocalDate startDate, LocalDate endDate) {
+    public int getTransactionTotal(TransactionType type, LocalDate startDate, LocalDate endDate) {
 
         int total = 0;
 
@@ -29,21 +31,22 @@ public class BankAccount {
         return total;
     }
 
-    public List<Transaction> getTransactions(char type, LocalDate startDate, LocalDate endDate) {
+    public List<Transaction> getTransactions(TransactionType type, LocalDate startDate, LocalDate endDate) {
 
         List<Transaction> transactionSet = new ArrayList<>();
 
-        for (Transaction t : transactions) {
+        for (Transaction transaction : transactions) {
 
-            if (t.getType() == type && t.getDate().isAfter(startDate.minusDays(1)) && t.getDate().isBefore(endDate)) {
-                transactionSet.add(t);
+            if (transaction.getType().equals(type) && transaction.getDate().isAfter(startDate.minusDays(1))
+                    && transaction.getDate().isBefore(endDate)) {
+                transactionSet.add(transaction);
             }
         }
 
         return transactionSet;
     }
 
-    private void addTransaction(int amount, char type, LocalDate date) {
+    private void addTransaction(int amount, TransactionType type, LocalDate date) {
         Transaction transaction = new Transaction(amount, type, date);
         transactions.add(transaction);
     }
@@ -53,12 +56,12 @@ public class BankAccount {
         funds += income;
     }
 
-    public void addFunds(Integer income, char type, LocalDate date) {
+    public void addFunds(Integer income, TransactionType type, LocalDate date) {
         funds += income;
         addTransaction(income, type, date);
     }
 
-    public void removeFunds(Integer expense, char type, LocalDate date) {
+    public void removeFunds(Integer expense, TransactionType type, LocalDate date) {
         funds -= expense;
         addTransaction(expense, type, date);
 

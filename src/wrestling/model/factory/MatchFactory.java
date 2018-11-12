@@ -78,12 +78,12 @@ public class MatchFactory implements Serializable {
             finalMatchRating = Math.round(workRatingTotal / segmentView.getTeams().size());
         }
 
-        finalMatchRating *= StaffUtils.getMatchRatingModifier(segmentView.getPromotion());
+        finalMatchRating += finalMatchRating * StaffUtils.getMatchRatingModifier(segmentView.getPromotion());
         segmentView.getSegment().setWorkRating(finalMatchRating);
 
         int crowdRating = Math.round(crowdRatingTotal / segmentView.getWorkers().size());
 
-        crowdRating *= StaffUtils.getCombinedCrowdRatingModifier(segmentView.getPromotion());
+        crowdRating += crowdRating * StaffUtils.getCombinedCrowdRatingModifier(segmentView.getPromotion());
 
         segmentView.getSegment().setCrowdRating(crowdRating);
     }
@@ -124,7 +124,7 @@ public class MatchFactory implements Serializable {
         int baseScore = ModelUtils.getWeightedScore(new Integer[]{
             rating
         });
-        return baseScore *= StaffUtils.getAngleRatingModifier(promotion);
+        return baseScore += baseScore + StaffUtils.getAngleRatingModifier(promotion);
     }
 
 }

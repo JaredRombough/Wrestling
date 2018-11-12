@@ -12,6 +12,7 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.utility.StaffUtils;
 
 /**
  * attached to the gameController, it is called whenever a new contract is to be
@@ -31,7 +32,15 @@ public class ContractFactory {
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 1;
         }
-        createContract(staff, promotion, startDate, getEndDate(startDate, duration));
+        createContract(staff, promotion, startDate, StaffUtils.contractEndDate(startDate, duration));
+    }
+    
+    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, int duration) {
+        StaffContract contract = createContract(staff, promotion);
+        contract.setMonthlyCost(calculateMonthlyCost(staff));
+        contractManager.buyOutContracts(staff, promotion, startDate);
+        initializeContract(contract, StaffUtils.contractEndDate(startDate, duration), startDate);
+        staff.setStaffContract(contract);
     }
 
     public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, LocalDate endDate) {
@@ -84,7 +93,7 @@ public class ContractFactory {
             duration += 1;
         }
 
-        initializeContract(contract, getEndDate(startDate, duration), startDate);
+        initializeContract(contract, StaffUtils.contractEndDate(startDate, duration), startDate);
     }
 
     //create a default contract
@@ -108,11 +117,7 @@ public class ContractFactory {
 
         int duration = duration(promotion.getLevel(), false);
 
-        initializeContract(contract, getEndDate(startDate, duration), startDate);
-    }
-
-    private LocalDate getEndDate(LocalDate startDate, int months) {
-        return startDate.plusMonths(months + 1).withDayOfMonth(1);
+        initializeContract(contract, StaffUtils.contractEndDate(startDate, duration), startDate);
     }
 
     private int duration(int promotionLevel, boolean randomPlusOne) {

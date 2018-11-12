@@ -490,7 +490,7 @@ public class EventManager {
 
         attendance += RandomUtils.nextInt(promotion.getLevel(), promotion.getLevel() * 15) * draws;
         
-        attendance *= StaffUtils.getCoverageAttendanceModifier(promotion);
+        attendance += attendance * StaffUtils.getCoverageAttendanceModifier(promotion);
 
         return attendance;
     }

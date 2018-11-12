@@ -1,6 +1,5 @@
 package wrestling.view.browser.controller;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +16,7 @@ import wrestling.model.controller.GameController;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ViewUtils;
 
 public class ContractDialog {
@@ -31,6 +31,7 @@ public class ContractDialog {
         PromotionView playerPromotion = gameController.getPromotionManager().playerPromotion();
 
         Label costLabel = new Label();
+        Label endDate = new Label();
 
         ComboBox lengthComboBox = new ComboBox();
         List<String> lengthList = new ArrayList<>();
@@ -61,6 +62,7 @@ public class ContractDialog {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 updateCostLabel(costLabel, gameController);
+                endDate.setText(StaffUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex()).toString());
             }
         });
 
@@ -70,8 +72,11 @@ public class ContractDialog {
         dialog.setHeaderText("Terms");
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+        endDate.setText(StaffUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex()).toString());
+
         ViewUtils.addRegionWrapperToVBox(typeComboBox, "Type:", vBox);
         ViewUtils.addRegionWrapperToVBox(lengthComboBox, "Months:", vBox);
+        ViewUtils.addRegionWrapperToVBox(endDate, "Ends:", vBox);
         ViewUtils.addRegionWrapperToVBox(costLabel, "Cost:", vBox);
 
         dialogPane.setContent(vBox);
@@ -91,7 +96,7 @@ public class ContractDialog {
                 gameController.getContractFactory().createContract((StaffView) segmentItem,
                         playerPromotion,
                         gameController.getDateManager().today(),
-                        gameController.getDateManager().today());
+                        lengthComboBox.getSelectionModel().getSelectedIndex());
 
             }
         }

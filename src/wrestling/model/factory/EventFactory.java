@@ -28,6 +28,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
 
@@ -86,7 +87,7 @@ public class EventFactory {
         setEventStats(event, segments);
 
         promotionManager.getBankAccount(event.getPromotion()).addFunds(
-                eventManager.calculateGate(event), 'e', eventView.getEvent().getDate());
+                eventManager.calculateGate(event), TransactionType.GATE, eventView.getEvent().getDate());
 
         for (WorkerView worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);

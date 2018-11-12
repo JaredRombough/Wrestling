@@ -1,14 +1,15 @@
 package wrestling.model.financial;
 
 import java.time.LocalDate;
+import wrestling.model.segmentEnum.TransactionType;
 
 public class Transaction {
 
-
     private final int amount;
-    private final char type;
+    private final TransactionType type;
     private final LocalDate date;
-    public Transaction(int amount, char type, LocalDate date) {
+
+    public Transaction(int amount, TransactionType type, LocalDate date) {
         this.amount = amount;
         this.type = type;
         this.date = date;
@@ -24,7 +25,7 @@ public class Transaction {
     /**
      * @return the type
      */
-    public char getType() {
+    public TransactionType getType() {
         return type;
     }
 

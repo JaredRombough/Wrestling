@@ -1,7 +1,7 @@
 package wrestling.model.utility;
 
+import java.time.LocalDate;
 import org.apache.commons.lang3.RandomUtils;
-import wrestling.model.constants.GameConstants;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.StaffType;
 
@@ -53,6 +53,10 @@ public final class StaffUtils {
 
     public static boolean trainerSuccess(PromotionView promotion) {
         return RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getTrainerSuccessRate(promotion));
+    }
+
+    public static LocalDate contractEndDate(LocalDate startDate, int months) {
+        return startDate.plusMonths(months + 1).withDayOfMonth(1);
     }
 
     private static double getModifer(int coverage, double minimum, double maximum) {

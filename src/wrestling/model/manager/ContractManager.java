@@ -11,6 +11,7 @@ import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.TransactionType;
 
 public class ContractManager implements Serializable {
 
@@ -56,6 +57,16 @@ public class ContractManager implements Serializable {
         }
 
         return promotionContracts;
+    }
+
+    public List<StaffContract> getStaffContracts(PromotionView promotion) {
+        List<StaffContract> promotionStaffContracts = new ArrayList<>();
+        for (StaffContract contract : staffContracts) {
+            if (contract.isActive() && contract.getPromotion().equals(promotion)) {
+                promotionStaffContracts.add(contract);
+            }
+        }
+        return promotionStaffContracts;
     }
 
     public List<iContract> allContracts() {
@@ -161,15 +172,21 @@ public class ContractManager implements Serializable {
     //handles appearance-based contracts
     public void appearance(LocalDate date, Contract contract) {
         //make the promotion 'pay' the worker for the appearance
-        promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), 'w', date);
+        promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }
 
     public void payDay(LocalDate date, Contract contract) {
-
         if (contract.getMonthlyCost() != 0) {
-            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()), 'w', date);
+            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()),
+                    TransactionType.WORKER, date);
         }
+    }
 
+    public void payDay(LocalDate date, StaffContract contract) {
+        if (contract.getMonthlyCost() != 0) {
+            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()),
+                    TransactionType.STAFF, date);
+        }
     }
 
     public void buyOutContracts(WorkerView worker, PromotionView newExclusivePromotion, LocalDate buyOutDate) {
