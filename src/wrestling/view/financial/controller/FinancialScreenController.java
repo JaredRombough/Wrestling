@@ -45,19 +45,10 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
         LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
-        LocalDate endDate;
-
-        if (monthsAgo == 0) {
-            endDate = gameController.getDateManager().today();
-        } else {
-            endDate = gameController.getDateManager().today().withDayOfMonth(monthsAgo).minusDays(1);
-        }
-
         int amount = gameController.getPromotionManager().getBankAccount(playerPromotion())
                 .getTransactionTotal(
                         type,
-                        startDate,
-                        endDate);
+                        startDate);
 
         return "$" + amount;
     }
