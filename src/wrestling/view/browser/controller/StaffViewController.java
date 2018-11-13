@@ -60,7 +60,7 @@ public class StaffViewController extends ControllerBase {
         contractButton.setOnAction(e -> {
             ContractDialog contractDialog = new ContractDialog();
             contractDialog.createDialog(staffView, gameController);
-            updateLabels();
+            mainApp.updateLabels(ScreenCode.BROWSER);
         });
     }
 

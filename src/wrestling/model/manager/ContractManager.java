@@ -12,6 +12,7 @@ import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.TransactionType;
+import wrestling.model.utility.ContractUtils;
 
 public class ContractManager implements Serializable {
 
@@ -184,9 +185,16 @@ public class ContractManager implements Serializable {
 
     public void payDay(LocalDate date, StaffContract contract) {
         if (contract.getMonthlyCost() != 0) {
-            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()),
+            promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getMonthlyCost(),
                     TransactionType.STAFF, date);
         }
+    }
+
+    public void paySigningFee(LocalDate date, iContract contract) {
+        promotionManager.getBankAccount(contract.getPromotion()).removeFunds(
+                ContractUtils.calculateSigningFee(contract.getSegmentItem(), date),
+                contract.getSegmentItem() instanceof WorkerView ? TransactionType.WORKER : TransactionType.STAFF,
+                date);
     }
 
     public void buyOutContracts(WorkerView worker, PromotionView newExclusivePromotion, LocalDate buyOutDate) {

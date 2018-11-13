@@ -173,4 +173,9 @@ public class Contract implements Serializable, iContract {
     public void setEndDate(LocalDate date) {
         this.endDate = date;
     }
+
+    @Override
+    public SegmentItem getSegmentItem() {
+        return worker;
+    }
 }

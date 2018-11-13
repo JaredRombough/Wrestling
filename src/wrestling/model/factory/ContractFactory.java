@@ -10,7 +10,6 @@ import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ContractUtils;
-import wrestling.model.utility.StaffUtils;
 
 public class ContractFactory {
 
@@ -52,6 +51,7 @@ public class ContractFactory {
         if (exclusive) {
             contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));
             contractManager.buyOutContracts(worker, promotion, startDate);
+            contractManager.paySigningFee(startDate, contract);
         } else {
             contract.setAppearanceCost(ContractUtils.calculateWorkerContractCost(worker, false));
         }
@@ -72,6 +72,7 @@ public class ContractFactory {
         promotion.addToStaff(staff);
         contractManager.addContract(contract);
         contractManager.buyOutContracts(staff, promotion, startDate);
+        contractManager.paySigningFee(startDate, contract);
         staff.setStaffContract(contract);
     }
 }

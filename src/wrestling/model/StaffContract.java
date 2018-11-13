@@ -125,4 +125,9 @@ public class StaffContract implements Serializable, iContract {
         this.endDate = endDate;
     }
 
+    @Override
+    public SegmentItem getSegmentItem() {
+        return staff;
+    }
+
 }
