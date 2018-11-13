@@ -34,7 +34,7 @@ public class Contract implements Serializable, iContract {
 
     private int appearanceCost;
 
-    private int biWeeklyCost;
+    private int monthlyCost;
 
     //default constructor is empty, values must be set by contractFactory
     public Contract() {
@@ -125,14 +125,14 @@ public class Contract implements Serializable, iContract {
      */
     @Override
     public int getMonthlyCost() {
-        return biWeeklyCost;
+        return monthlyCost;
     }
 
     /**
-     * @param biWeeklyCost the biWeeklyCost to set
+     * @param monthlyCost the monthlyCost to set
      */
-    public void setBiWeeklyCost(int biWeeklyCost) {
-        this.biWeeklyCost = biWeeklyCost;
+    public void setMonthlyCost(int monthlyCost) {
+        this.monthlyCost = monthlyCost;
     }
 
     /**

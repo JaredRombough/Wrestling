@@ -55,10 +55,6 @@ public final class StaffUtils {
         return RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getTrainerSuccessRate(promotion));
     }
 
-    public static LocalDate contractEndDate(LocalDate startDate, int months) {
-        return startDate.plusMonths(months + 1).withDayOfMonth(1);
-    }
-
     private static double getModifer(int coverage, double minimum, double maximum) {
         double rate;
         if (coverage <= 100) {
