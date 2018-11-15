@@ -31,15 +31,28 @@ public class BankAccount {
         return total;
     }
 
+    public int getMonthlyNet(LocalDate startDate) {
+        int total = 0;
+
+        for (Transaction transaction : transactions) {
+            if (sameMonth(transaction.getDate(), startDate)) {
+                if (transaction.getType().isExpense()) {
+                    total -= transaction.getAmount();
+                } else {
+                    total += transaction.getAmount();
+                }
+            }
+        }
+        return total;
+    }
+
     public List<Transaction> getTransactions(TransactionType type, LocalDate startDate) {
 
         List<Transaction> transactionSet = new ArrayList<>();
 
         for (Transaction transaction : transactions) {
 
-            if (transaction.getType().equals(type) && (transaction.getDate().isEqual(startDate.withDayOfMonth(1))
-                    || transaction.getDate().isAfter(startDate.withDayOfMonth(1))
-                    && transaction.getDate().isBefore(startDate.plusMonths(1).withDayOfMonth(1)))) {
+            if (transaction.getType().equals(type) && sameMonth(transaction.getDate(), startDate)) {
                 transactionSet.add(transaction);
             }
         }
@@ -77,5 +90,11 @@ public class BankAccount {
      */
     public PromotionView getPromotion() {
         return promotion;
+    }
+
+    private boolean sameMonth(LocalDate transactionDate, LocalDate date) {
+        return transactionDate.isEqual(date.withDayOfMonth(1))
+                || transactionDate.isAfter(date.withDayOfMonth(1))
+                && transactionDate.isBefore(date.plusMonths(1).withDayOfMonth(1));
     }
 }

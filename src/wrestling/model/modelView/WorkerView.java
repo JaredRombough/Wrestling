@@ -1,6 +1,9 @@
 package wrestling.model.modelView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import wrestling.model.Contract;
 import wrestling.model.Injury;
 import wrestling.model.SegmentItem;
 import wrestling.model.segmentEnum.Gender;
@@ -35,13 +38,33 @@ public class WorkerView implements Serializable, SegmentItem {
     private boolean mainRoster;
 
     private int minimumPopularity;
-    
+
+    private List<Contract> contracts;
+
     private Injury injury;
 
     public WorkerView() {
         minimumPopularity = 0;
         name = "Worker #" + workerID;
         workerID++;
+        contracts = new ArrayList<>();
+    }
+
+    public void addContract(Contract contract) {
+        contracts.add(contract);
+    }
+
+    public void removeContract(Contract contract) {
+        contracts.remove(contract);
+    }
+
+    public Contract getContract(PromotionView promotion) {
+        for (Contract contract : contracts) {
+            if (contract.getPromotion().equals(promotion)) {
+                return contract;
+            }
+        }
+        return null;
     }
 
     @Override

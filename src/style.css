@@ -238,6 +238,11 @@ GREY
     -fx-text-fill: red;
 }
 
+.grey-text
+{
+    -fx-text-fill: #757575;
+}
+
 .imageBorder {
     -fx-padding: 10;
     -fx-background-color: #424242;

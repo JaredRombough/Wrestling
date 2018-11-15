@@ -58,6 +58,7 @@ public class ContractFactory {
 
         contractManager.addContract(contract);
         promotion.addToRoster(worker);
+        worker.addContract(contract);
 
         return contract;
     }

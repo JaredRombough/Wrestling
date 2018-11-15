@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import wrestling.model.Contract;
 import wrestling.model.SegmentItem;
+import wrestling.model.StaffContract;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
@@ -72,5 +75,29 @@ public final class ContractUtils {
 
     public static LocalDate contractEndDate(LocalDate startDate, int months) {
         return startDate.plusMonths(months + 1).withDayOfMonth(1);
+    }
+
+    public static int getWorkerPayrollForMonth(LocalDate date, PromotionView promotion) {
+        int total = 0;
+
+        for (WorkerView worker : promotion.getFullRoster()) {
+            Contract contract = worker.getContract(promotion);
+            if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
+                total += contract.getMonthlyCost();
+            }
+        }
+        return total;
+    }
+
+    public static int getStaffPayrollForMonth(LocalDate date, PromotionView promotion) {
+        int total = 0;
+
+        for (StaffView staff : promotion.getAllStaff()) {
+            StaffContract contract = staff.getStaffContract();
+            if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
+                total += contract.getMonthlyCost();
+            }
+        }
+        return total;
     }
 }
