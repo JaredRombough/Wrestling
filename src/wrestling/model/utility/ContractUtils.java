@@ -18,7 +18,7 @@ public final class ContractUtils {
 
         List<Integer> pricePoints = new ArrayList<>();
 
-        pricePoints.addAll(Arrays.asList(0, 10, 20, 50, 75, 100, 250, 500, 1000, 10000, 100000));
+        pricePoints.addAll(Arrays.asList(0, 15, 30, 50, 75, 100, 250, 500, 1000, 10000, 100000));
 
         double nearest10 = worker.getPopularity() / 10 * 10;
         double multiplier = (worker.getPopularity() - nearest10) / 10;
@@ -33,10 +33,10 @@ public final class ContractUtils {
         }
 
         if (exclusive) {
-            unitCost *= 1.5;
+            unitCost *= 2;
         }
 
-        return unitCost;
+        return roundMoney(unitCost);
     }
 
     public static int calculateStaffContractCost(StaffView staff) {
@@ -59,6 +59,19 @@ public final class ContractUtils {
             unitCost += (int) extra;
         }
 
+        return roundMoney(unitCost);
+    }
+
+    public static int roundMoney(int unitCost) {
+        if (unitCost > 100000) {
+            unitCost = unitCost / 10000 * 10000;
+        } else if (unitCost > 10000) {
+            unitCost = unitCost / 1000 * 1000;
+        } else if (unitCost > 1000) {
+            unitCost = unitCost / 100 * 100;
+        } else {
+            unitCost = unitCost / 10 * 10;
+        }
         return unitCost;
     }
 
@@ -70,7 +83,9 @@ public final class ContractUtils {
             monthlyCost = calculateWorkerContractCost((WorkerView) segmentItem, true);
         }
 
-        return monthlyCost * (startDate.lengthOfMonth() - startDate.getDayOfMonth()) / startDate.lengthOfMonth();
+        int fee = monthlyCost * (startDate.lengthOfMonth() - startDate.getDayOfMonth()) / startDate.lengthOfMonth();
+
+        return roundMoney(fee);
     }
 
     public static LocalDate contractEndDate(LocalDate startDate, int months) {
