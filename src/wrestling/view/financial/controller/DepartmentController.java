@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
 import wrestling.view.browser.controller.BrowseParams;
 import wrestling.view.utility.ScreenCode;
@@ -60,7 +59,7 @@ public class DepartmentController extends ControllerBase {
     public void updateLabels() {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
-            progressBar.getStyleClass().remove(".progress-bar-level-2");
+            progressBar.getStyleClass().remove("progress-bar-level-2");
             double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
             progressBar.setProgress(coverage / 100);
 
