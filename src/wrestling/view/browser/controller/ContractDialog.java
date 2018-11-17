@@ -65,22 +65,22 @@ public class ContractDialog {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 updateCostLabel(costLabel);
-                endDate.setText(ContractUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex()).toString());
+                endDate.setText(ContractUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex() + 1).toString());
             }
         });
-
+        lengthComboBox.getSelectionModel().selectFirst();
         VBox vBox = new VBox(8);
 
         dialog.setTitle(String.format("Sign Contract"));
         dialog.setHeaderText("Terms");
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        endDate.setText(ContractUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex()).toString());
+        endDate.setText(ContractUtils.contractEndDate(gameController.getDateManager().today(), lengthComboBox.getSelectionModel().getSelectedIndex() + 1).toString());
 
         ViewUtils.addRegionWrapperToVBox(typeComboBox, "Type:", vBox);
         ViewUtils.addRegionWrapperToVBox(lengthComboBox, "Months:", vBox);
         ViewUtils.addRegionWrapperToVBox(endDate, "Ends:", vBox);
-        ViewUtils.addRegionWrapperToVBox(costLabel, "Monthly Cost:", vBox);
+        ViewUtils.addRegionWrapperToVBox(costLabel, "Cost:", vBox);
         ViewUtils.addRegionWrapperToVBox(signingFee, "Signing Fee:", vBox);
 
         dialogPane.setContent(vBox);
@@ -95,13 +95,13 @@ public class ContractDialog {
                         (WorkerView) segmentItem,
                         playerPromotion,
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
-                        lengthComboBox.getSelectionModel().getSelectedIndex(),
+                        lengthComboBox.getSelectionModel().getSelectedIndex() + 1,
                         gameController.getDateManager().today());
             } else if (segmentItem instanceof StaffView) {
                 gameController.getContractFactory().createContract((StaffView) segmentItem,
                         playerPromotion,
                         gameController.getDateManager().today(),
-                        lengthComboBox.getSelectionModel().getSelectedIndex());
+                        lengthComboBox.getSelectionModel().getSelectedIndex() + 1);
 
             }
         }

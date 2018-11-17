@@ -106,7 +106,7 @@ public class PromotionFactory {
     public PromotionView newPromotion() {
         PromotionView promotion = new PromotionView();
         BankAccount bankAccount = new BankAccount(promotion);
-        bankAccount.addFunds(10000);
+        bankAccount.addFunds(1000000);
         promotionManager.addBankAccount(bankAccount);
         return promotion;
     }
