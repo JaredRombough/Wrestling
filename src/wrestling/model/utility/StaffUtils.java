@@ -104,4 +104,15 @@ public final class StaffUtils {
         }
         return Math.round(ratio * 100);
     }
+
+    public static int idealStaffCount(PromotionView promotion, StaffType staffType) {
+        if (staffType.equals(StaffType.PRODUCTION)) {
+            return promotion.getLevel() * 2;
+        }
+        if (staffType.workerRatio() == 0) {
+            return 0;
+        }
+        float ideal = promotion.getFullRoster().size() / staffType.workerRatio();
+        return (int) Math.ceil(ideal);
+    }
 }

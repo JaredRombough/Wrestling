@@ -13,7 +13,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 0;
         }
     },
     OWNER {
@@ -24,7 +24,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 0;
         }
     },
     COMMENTARY {
@@ -35,7 +35,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 0;
         }
     },
     REFEREE {
@@ -46,7 +46,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 0;
         }
     },
     PRODUCTION {
@@ -57,7 +57,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int workerRatio() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return 0;
         }
     },
     MEDICAL {

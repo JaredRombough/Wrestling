@@ -20,7 +20,6 @@ public class ContractFactory {
     }
 
     public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate) {
-        System.out.println("createContract(StaffView staff, PromotionView promotion, LocalDate startDate) {");
         int duration = 1 + RandomUtils.nextInt(0, 2);
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 1;

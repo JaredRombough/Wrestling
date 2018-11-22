@@ -2,10 +2,12 @@ package wrestling.model.modelView;
 
 import wrestling.model.SegmentItem;
 import wrestling.model.StaffContract;
+import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.model.segmentEnum.StaffType;
 
-public class StaffView implements SegmentItem {
+public class StaffView implements SegmentItem, iPerson {
 
     private String name;
     private Gender gender;
@@ -135,6 +137,16 @@ public class StaffView implements SegmentItem {
      */
     public void setStaffContract(StaffContract staffContract) {
         this.staffContract = staffContract;
+    }
+
+    @Override
+    public iContract getContract() {
+        return staffContract;
+    }
+
+    @Override
+    public void setShortName(String name) {
+        // no short name
     }
 
 }

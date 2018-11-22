@@ -1,6 +1,7 @@
 package wrestling.model.factory;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,10 +11,13 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.StaffManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.utility.StaffUtils;
 
 /*
 for generating promotions in a random game
@@ -21,29 +25,23 @@ for generating promotions in a random game
 public class PromotionFactory {
 
     private final ContractFactory contractFactory;
-    private final WorkerFactory workerFactory;
 
-    private final ContractManager contractManager;
     private final DateManager dateManager;
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
-    private final EventManager eventManager;
+    private final StaffManager staffManager;
 
     public PromotionFactory(
             ContractFactory contractFactory,
-            WorkerFactory workerFactory,
-            ContractManager contractManager,
             DateManager dateManager,
             PromotionManager promotionManager,
             WorkerManager workerManager,
-            EventManager eventManager) {
+            StaffManager staffManager) {
         this.contractFactory = contractFactory;
-        this.workerFactory = workerFactory;
-        this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.promotionManager = promotionManager;
         this.workerManager = workerManager;
-        this.eventManager = eventManager;
+        this.staffManager = staffManager;
     }
 
     public void preparePromotions() throws IOException {
@@ -58,7 +56,6 @@ public class PromotionFactory {
 
             for (int i = 0; i < target; i++) {
                 PromotionView promotion = newPromotion();
-
                 promotion.setLevel(currentLevel);
 
                 int rosterSize = 10 + (currentLevel * 10);
@@ -68,9 +65,24 @@ public class PromotionFactory {
 
                 //assign workers based on promotion level
                 for (int j = 0; j < rosterSize; j++) {
-                    WorkerView worker = workerFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    WorkerView worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
                     contractFactory.createContract(worker, promotion, dateManager.today());
                 }
+
+                for (StaffType staffType : StaffType.values()) {
+                    int ideal = StaffUtils.idealStaffCount(promotion, staffType);
+                    int rand = RandomUtils.nextInt(0, 6);
+                    if (rand == 1) {
+                        ideal += 1;
+                    } else if (rand == 2) {
+                        ideal -= 1;
+                    }
+                    for (int j = 0; j < ideal; j++) {
+                        StaffView staff = PersonFactory.randomStaff(promotion.getLevel(), staffType);
+                        contractFactory.createContract(staff, promotion, dateManager.today());
+                    }
+                }
+                staffManager.addStaff(promotion.getAllStaff());
                 workerManager.addWorkers(promotion.getFullRoster());
                 promotionManager.addPromotion(promotion);
             }

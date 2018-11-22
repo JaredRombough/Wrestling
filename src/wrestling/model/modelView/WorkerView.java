@@ -6,9 +6,11 @@ import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.Injury;
 import wrestling.model.SegmentItem;
+import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.segmentEnum.Gender;
 
-public class WorkerView implements Serializable, SegmentItem {
+public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private static int workerID = 0;
 
@@ -303,5 +305,10 @@ public class WorkerView implements Serializable, SegmentItem {
      */
     public void setInjury(Injury injury) {
         this.injury = injury;
+    }
+
+    @Override
+    public iContract getContract() {
+        return contracts.get(0);
     }
 }
