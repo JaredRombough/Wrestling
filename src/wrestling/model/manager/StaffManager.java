@@ -12,6 +12,10 @@ public class StaffManager {
         getStaffViews().addAll(staff);
     }
 
+    public void addStaff(StaffView staff) {
+        staffViews.add(staff);
+    }
+
     /**
      * @return the staffViews
      */

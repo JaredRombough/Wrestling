@@ -1,20 +1,14 @@
 package wrestling.model.factory;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.financial.BankAccount;
-import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
-import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.StaffManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.PromotionView;
-import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.StaffUtils;
@@ -67,6 +61,9 @@ public class PromotionFactory {
                 for (int j = 0; j < rosterSize; j++) {
                     WorkerView worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
                     contractFactory.createContract(worker, promotion, dateManager.today());
+                    if (j < rosterSize / 2) {
+                        workerManager.addWorker(PersonFactory.randomWorker(promotion.getLevel()));
+                    }
                 }
 
                 for (StaffType staffType : StaffType.values()) {
@@ -78,8 +75,8 @@ public class PromotionFactory {
                         ideal -= 1;
                     }
                     for (int j = 0; j < ideal; j++) {
-                        StaffView staff = PersonFactory.randomStaff(promotion.getLevel(), staffType);
-                        contractFactory.createContract(staff, promotion, dateManager.today());
+                        contractFactory.createContract(PersonFactory.randomStaff(promotion.getLevel(), staffType), promotion, dateManager.today());
+                        staffManager.addStaff(PersonFactory.randomStaff(promotion.getLevel(), staffType));
                     }
                 }
                 staffManager.addStaff(promotion.getAllStaff());

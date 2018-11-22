@@ -29,6 +29,10 @@ public class WorkerManager implements Serializable {
         }
     }
 
+    public void addWorker(WorkerView worker) {
+        workers.add(worker);
+    }
+
     public List<WorkerView> freeAgents(PromotionView promotion) {
         List<WorkerView> freeAgents = new ArrayList();
         for (WorkerView worker : workers) {
