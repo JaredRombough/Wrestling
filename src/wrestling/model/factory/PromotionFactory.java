@@ -1,8 +1,14 @@
 package wrestling.model.factory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.PromotionManager;
@@ -24,6 +30,7 @@ public class PromotionFactory {
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
     private final StaffManager staffManager;
+    private final static List<String> PROMOTION_NAMES = Arrays.asList(("Superb Wrestling Alliance, International Combat Order, Big Boss Pro Wrestling, Shocking Wrestle Union, Advanced Incorrigible Wrestling, Excellent Organization Of Wrestling, Extremely International Wrestling Organization, Big Fat Wrestling, Unparalleled Wrestling Execution, Regional Wrestling Superalliance, Desperate Wrestling Coalition, Confederation Of Absolute Wrestling Masters, Splendid Wrestling Pact, Impressive Allies Of Wrestling, Tremendous Combat Federation, Glorious Fighting Series, Sterling Wrestling Battlefield, Fabulous Warfare Association, Amzaing Wrestling Artistic Exhibition, Great Wrestling Group, Perpetual Wrestling Struggle, Competitive Pro Wrestling, Pro Wrestling Crusade, War Of Wrestlers International, Exquisite Wrestling Confrontation, Supreme Pro Wrestling Engagement, Fundamental Wrestling Experience").split(","));
 
     public PromotionFactory(
             ContractFactory contractFactory,
@@ -42,7 +49,10 @@ public class PromotionFactory {
         int numberOfPromotions = 20;
         int startingFunds = 10000;
         double[] levelRatios = {0.3, 0.2, 0.2, 0.2, 0.1};
-
+        List<String> promotionNames = new ArrayList<>();
+        promotionNames.addAll(PROMOTION_NAMES);
+        Collections.shuffle(promotionNames);
+        int name = 0;
         for (double ratio : levelRatios) {
             double target = numberOfPromotions * ratio;
             //levels are 1 to 5
@@ -51,6 +61,14 @@ public class PromotionFactory {
             for (int i = 0; i < target; i++) {
                 PromotionView promotion = newPromotion();
                 promotion.setLevel(currentLevel);
+                promotion.setName(promotionNames.get(name).trim());
+                String[] words = promotion.getName().split(" ");
+                String shortName = "";
+                for (String word : words) {
+                    shortName += StringUtils.upperCase(word.substring(0, 1));
+                }
+                promotion.setShortName(shortName);
+                name++;
 
                 int rosterSize = 10 + (currentLevel * 10);
 
