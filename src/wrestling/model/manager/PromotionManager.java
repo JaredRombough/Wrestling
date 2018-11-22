@@ -40,6 +40,10 @@ public class PromotionManager {
         }
     }
 
+    public void addPromotion(PromotionView promotion) {
+        promotions.add(promotion);
+    }
+
     public void addBankAccount(BankAccount bankAccount) {
         this.bankAccounts.add(bankAccount);
     }
@@ -59,7 +63,5 @@ public class PromotionManager {
     public List<PromotionView> getPromotions() {
         return promotions;
     }
-
-
 
 }

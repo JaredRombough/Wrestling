@@ -3,6 +3,7 @@ package wrestling.model.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.manager.ContractManager;
@@ -11,6 +12,7 @@ import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 
 /*
@@ -45,62 +47,34 @@ public class PromotionFactory {
     }
 
     public void preparePromotions() throws IOException {
-
-        List<PromotionView> promotions = new ArrayList<>();
-        List<WorkerView> allWorkers = new ArrayList<>();
-
         int numberOfPromotions = 20;
         int startingFunds = 10000;
         double[] levelRatios = {0.3, 0.2, 0.2, 0.2, 0.1};
 
-        for (int i = 0; i < levelRatios.length; i++) {
-
-            double target = numberOfPromotions * levelRatios[i];
-            double currentPromotions = 0;
-
+        for (double ratio : levelRatios) {
+            double target = numberOfPromotions * ratio;
             //levels are 1 to 5
-            int currentLevel = 5 - i;
+            int currentLevel = 5 - ArrayUtils.indexOf(levelRatios, ratio);
 
-            List<PromotionView> currentLevelPromotions = new ArrayList<>();
+            for (int i = 0; i < target; i++) {
+                PromotionView promotion = newPromotion();
 
-            while (currentPromotions < target) {
+                promotion.setLevel(currentLevel);
 
-                PromotionView newPromotion = newPromotion();
-
-                newPromotion.setLevel(currentLevel);
-
-                currentLevelPromotions.add(newPromotion);
-
-                currentPromotions++;
-
-            }
-
-            int rosterSize = 10 + (currentLevel * 10);
-
-            for (PromotionView promotion : currentLevelPromotions) {
+                int rosterSize = 10 + (currentLevel * 10);
 
                 //add funds (this could be based on promotion level)
                 promotionManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
+
                 //assign workers based on promotion level
-                do {
-
+                for (int j = 0; j < rosterSize; j++) {
                     WorkerView worker = workerFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
-
                     contractFactory.createContract(worker, promotion, dateManager.today());
-
-                } while (promotion.getFullRoster().size() < rosterSize);
-
-                allWorkers.addAll(promotion.getFullRoster());
+                }
+                workerManager.addWorkers(promotion.getFullRoster());
+                promotionManager.addPromotion(promotion);
             }
-
-            //add all the workers and promotions we have generated for this
-            //level to the main lists
-            promotions.addAll(currentLevelPromotions);
-
         }
-        promotionManager.addPromotions(promotions);
-        workerManager.addWorkers(allWorkers);
-
     }
 
     public PromotionView newPromotion() {
