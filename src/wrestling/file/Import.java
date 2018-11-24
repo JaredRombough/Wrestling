@@ -22,6 +22,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
+import wrestling.model.factory.PersonFactory;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
@@ -395,7 +396,7 @@ public class Import {
                         staff.setStaffType(StaffType.OWNER);
                         break;
                     case 2:
-                        staff.setStaffType(StaffType.COMMENTARY);
+                        staff.setStaffType(StaffType.BROADCAST);
                         break;
                     case 3:
                         staff.setStaffType(StaffType.REFEREE);
@@ -460,7 +461,7 @@ public class Import {
 
             if (counter == lineLength) {
 
-                WorkerView worker = gameController.getWorkerFactory().randomWorker();
+                WorkerView worker = PersonFactory.randomWorker();
 
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());

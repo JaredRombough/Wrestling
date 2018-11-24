@@ -38,6 +38,15 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private AnchorPane productionBase;
 
     @FXML
+    private AnchorPane refereeBase;
+
+    @FXML
+    private AnchorPane broadcastBase;
+
+    @FXML
+    private AnchorPane ownerBase;
+
+    @FXML
     private GridPane balanceSheetGrid;
 
     private List<GameScreen> departmentScreens;
@@ -124,6 +133,18 @@ public class FinancialScreenController extends ControllerBase implements Initial
         GameScreen production = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, productionBase);
         production.controller.setCurrent(StaffType.PRODUCTION);
         departmentScreens.add(production);
+
+        GameScreen referee = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, refereeBase);
+        referee.controller.setCurrent(StaffType.REFEREE);
+        departmentScreens.add(referee);
+
+        GameScreen broadcast = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, broadcastBase);
+        broadcast.controller.setCurrent(StaffType.BROADCAST);
+        departmentScreens.add(broadcast);
+
+        GameScreen owner = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, ownerBase);
+        owner.controller.setCurrent(StaffType.OWNER);
+        departmentScreens.add(owner);
 
     }
 

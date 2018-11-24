@@ -36,7 +36,6 @@ public final class GameController implements Serializable {
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
     private final TitleFactory titleFactory;
-    private final PersonFactory workerFactory;
     private final MatchFactory matchFactory;
 
     private final DateManager dateManager;
@@ -62,7 +61,6 @@ public final class GameController implements Serializable {
         titleManager = new TitleManager(dateManager);
 
         promotionManager = new PromotionManager();
-        workerFactory = new PersonFactory();
         newsManager = new NewsManager();
         staffManager = new StaffManager();
 
@@ -198,13 +196,6 @@ public final class GameController implements Serializable {
      */
     public TitleFactory getTitleFactory() {
         return titleFactory;
-    }
-
-    /**
-     * @return the workerFactory
-     */
-    public PersonFactory getWorkerFactory() {
-        return workerFactory;
     }
 
     /**

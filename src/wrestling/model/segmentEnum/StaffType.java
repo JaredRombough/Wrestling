@@ -27,10 +27,10 @@ public enum StaffType implements iSortFilter, iStaffType {
             return 0;
         }
     },
-    COMMENTARY {
+    BROADCAST {
         @Override
         public String toString() {
-            return "Commentary";
+            return "Broadcast";
         }
 
         @Override

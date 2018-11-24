@@ -335,5 +335,16 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
+    },
+    RINGSIDE {
+        @Override
+        public String resourcePath() {
+            return "view/financial/view/Ringside.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
     }
 }
