@@ -15,40 +15,40 @@ import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
 
 public class ContractManager implements Serializable {
-    
+
     private final List<Contract> contracts;
     private final List<StaffContract> staffContracts;
-    
+
     private final PromotionManager promotionManager;
     private final TitleManager titleManager;
-    
+
     public ContractManager(PromotionManager promotionManager, TitleManager titleManager) {
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
     }
-    
+
     public void dailyUpdate(LocalDate date) {
         for (Contract contract : contracts) {
             if (!nextDay(contract, date)) {
                 titleManager.stripTitles(contract);
             }
         }
-        
+
         for (StaffContract contract : staffContracts) {
             nextDay(contract, date);
         }
     }
-    
+
     public void addContract(Contract contract) {
         contracts.add(contract);
     }
-    
+
     public void addContract(StaffContract contract) {
         staffContracts.add(contract);
     }
-    
+
     public List<Contract> getContracts(PromotionView promotion) {
         List<Contract> promotionContracts = new ArrayList<>();
         for (Contract contract : contracts) {
@@ -56,10 +56,10 @@ public class ContractManager implements Serializable {
                 promotionContracts.add(contract);
             }
         }
-        
+
         return promotionContracts;
     }
-    
+
     public List<StaffContract> getStaffContracts(PromotionView promotion) {
         List<StaffContract> promotionStaffContracts = new ArrayList<>();
         for (StaffContract contract : staffContracts) {
@@ -69,14 +69,14 @@ public class ContractManager implements Serializable {
         }
         return promotionStaffContracts;
     }
-    
+
     public List<iContract> allContracts() {
         List<iContract> allContracts = new ArrayList<>();
         allContracts.addAll(contracts);
         allContracts.addAll(staffContracts);
         return allContracts;
     }
-    
+
     public boolean hasContract(WorkerView worker) {
         boolean hasContract = false;
         for (Contract contract : contracts) {
@@ -86,7 +86,7 @@ public class ContractManager implements Serializable {
         }
         return hasContract;
     }
-    
+
     public List<Contract> getContracts(WorkerView worker) {
         List<Contract> workerContracts = new ArrayList<>();
         for (Contract contract : contracts) {
@@ -94,10 +94,10 @@ public class ContractManager implements Serializable {
                 workerContracts.add(contract);
             }
         }
-        
+
         return workerContracts;
     }
-    
+
     public List<StaffContract> getContracts(StaffView staff) {
         List<StaffContract> contractsForStaff = new ArrayList<>();
         for (StaffContract contract : staffContracts) {
@@ -105,10 +105,10 @@ public class ContractManager implements Serializable {
                 contractsForStaff.add(contract);
             }
         }
-        
+
         return contractsForStaff;
     }
-    
+
     public StaffContract getContract(StaffView staff) {
         StaffContract staffContract = null;
         for (StaffContract contract : staffContracts) {
@@ -117,10 +117,10 @@ public class ContractManager implements Serializable {
                 break;
             }
         }
-        
+
         return staffContract;
     }
-    
+
     public Contract getContract(WorkerView worker, PromotionView promotion) {
         Contract workerContract = null;
         for (Contract contract : contracts) {
@@ -130,12 +130,12 @@ public class ContractManager implements Serializable {
                 break;
             }
         }
-        
+
         return workerContract;
     }
-    
+
     public List<WorkerView> getActiveRoster(PromotionView promotion) {
-        
+
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getPromotion().equals(promotion)
@@ -143,10 +143,10 @@ public class ContractManager implements Serializable {
                 roster.add(contract.getWorker());
             }
         }
-        
+
         return roster;
     }
-    
+
     public List<WorkerView> getPushed(PromotionView promotion) {
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contracts) {
@@ -154,9 +154,9 @@ public class ContractManager implements Serializable {
                     && contract.isPushed()) {
                 roster.add(contract.getWorker());
             }
-            
+
         }
-        
+
         return roster;
     }
 
@@ -166,7 +166,7 @@ public class ContractManager implements Serializable {
             terminateContract(contract);
             return false;
         }
-        
+
         return true;
     }
 
@@ -175,28 +175,28 @@ public class ContractManager implements Serializable {
         //make the promotion 'pay' the worker for the appearance
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }
-    
+
     public void payDay(LocalDate date, Contract contract) {
         if (contract.getMonthlyCost() != 0) {
             promotionManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()),
                     TransactionType.WORKER, date);
         }
     }
-    
+
     public void payDay(LocalDate date, StaffContract contract) {
         if (contract.getMonthlyCost() != 0) {
             promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getMonthlyCost(),
                     TransactionType.STAFF, date);
         }
     }
-    
+
     public void paySigningFee(LocalDate date, iContract contract) {
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(
                 ContractUtils.calculateSigningFee(contract.getSegmentItem(), date),
                 contract.getSegmentItem() instanceof WorkerView ? TransactionType.WORKER : TransactionType.STAFF,
                 date);
     }
-    
+
     public void buyOutContracts(WorkerView worker, PromotionView newExclusivePromotion, LocalDate buyOutDate) {
         //'buy out' any the other contracts the worker has
         for (Contract c : getContracts(worker)) {
@@ -205,7 +205,7 @@ public class ContractManager implements Serializable {
             }
         }
     }
-    
+
     public void buyOutContracts(StaffView staff, PromotionView newExclusivePromotion, LocalDate buyOutDate) {
         //'buy out' any the other contracts the worker has
         for (StaffContract c : getContracts(staff)) {
@@ -214,7 +214,7 @@ public class ContractManager implements Serializable {
             }
         }
     }
-    
+
     private void terminateContract(iContract contract) {
         contract.getPromotion().removeFromRoster(contract.getWorker());
         contract.getPromotion().removeFromStaff(contract.getStaff());
@@ -225,24 +225,24 @@ public class ContractManager implements Serializable {
         }
         contract.setActive(false);
     }
-    
+
     public String getTerms(iContract contract) {
         String string = String.format("%s ending %s", contract.getPromotion().getShortName(), contract.getEndDate());
-        
+
         if (contract.isExclusive()) {
             string += " $" + contract.getMonthlyCost() + " Monthly.";
         } else {
             string += " $" + contract.getAppearanceCost() + " per appearance.";
         }
-        
+
         return string;
     }
-    
+
     public boolean canNegotiate(WorkerView worker, PromotionView promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
-        
+
         if (canNegotiate && hasContract(worker)) {
             for (Contract contract : getContracts(worker)) {
                 if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
@@ -250,32 +250,50 @@ public class ContractManager implements Serializable {
                 }
             }
         }
-        
+
         return canNegotiate;
     }
-    
+
     public String contractString(WorkerView worker) {
-        
+
         StringBuilder bld = new StringBuilder();
         for (Contract current : getContracts(worker)) {
-            
+
             bld.append(getTerms(current));
             bld.append("\n");
         }
         return bld.toString();
     }
-    
+
+    public String contractPromotionsString(WorkerView worker, LocalDate date) {
+        StringBuilder bld = new StringBuilder();
+        for (Contract current : getContracts(worker)) {
+            if (!bld.toString().isEmpty()) {
+                bld.append("/");
+            }
+            if (current.isExclusive()) {
+                bld.append(String.format("%s (%d day%s)",
+                        current.getPromotion().getShortName(),
+                        DAYS.between(date, current.getEndDate()),
+                        DAYS.between(date, current.getEndDate()) > 1 ? "s" : ""));
+            } else {
+                bld.append(current.getPromotion().getShortName());
+            }
+        }
+        return bld.toString();
+    }
+
     public int averageWorkerPopularity(PromotionView promotion) {
         int totalPop = 0;
         int averagePop = 0;
-        
+
         if (!promotion.getFullRoster().isEmpty()) {
             for (WorkerView worker : promotion.getFullRoster()) {
                 totalPop += worker.getPopularity();
             }
             averagePop = totalPop / promotion.getFullRoster().size();
         }
-        
+
         return averagePop;
     }
 }
