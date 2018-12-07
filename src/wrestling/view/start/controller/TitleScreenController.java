@@ -101,6 +101,8 @@ public class TitleScreenController extends ControllerBase implements Initializab
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
+        newRandomGameButton.setText("New Game\n(Random Data)");
+        newImportGameButton.setText("New Game\n(Import Data)");
+        continueGameButton.setText("Continue");
     }
 }
