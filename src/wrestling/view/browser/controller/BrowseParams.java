@@ -6,7 +6,7 @@ import wrestling.model.segmentEnum.BrowseMode;
 
 public class BrowseParams {
 
-    public BrowseMode broseMode;
+    public BrowseMode browseMode;
     public iSortFilter filter;
     public PromotionView promotion;
 }

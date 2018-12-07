@@ -40,7 +40,7 @@ public class DepartmentController extends ControllerBase {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        viewButton.setText("\uD83D\uDC41");
+
     }
 
     /**
@@ -141,17 +141,18 @@ public class DepartmentController extends ControllerBase {
     }
 
     private void setButtonActions() {
+        viewButton.setText("\uD83D\uDC41");
         BrowseParams params = new BrowseParams();
         params.filter = staffType;
         params.promotion = playerPromotion();
 
         viewButton.setOnAction(e -> {
-            params.broseMode = BrowseMode.STAFF;
+            params.browseMode = BrowseMode.STAFF;
             mainApp.show(ScreenCode.BROWSER, params);
         });
 
         addButton.setOnAction(e -> {
-            params.broseMode = BrowseMode.HIRE_STAFF;
+            params.browseMode = BrowseMode.HIRE_STAFF;
             mainApp.show(ScreenCode.BROWSER, params);
         });
     }

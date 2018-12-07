@@ -310,7 +310,7 @@ public class BrowserController extends ControllerBase implements Initializable {
         } else if (obj instanceof BrowseParams) {
             BrowseParams params = (BrowseParams) obj;
             setCurrentPromotion(params.promotion);
-            setBrowseMode(params.broseMode);
+            setBrowseMode(params.browseMode);
             sortControlController.setFilter(params.filter);
         }
     }
