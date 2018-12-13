@@ -28,112 +28,112 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
-
+    
     @FXML
     private GridPane gridPane;
-
+    
     @FXML
     private Label nameLabel;
-
+    
     @FXML
     private Label strikingLabel;
-
+    
     @FXML
     private Label wrestlingLabel;
-
+    
     @FXML
     private Label flyingLabel;
-
+    
     @FXML
     private Label contractLabel;
-
+    
     @FXML
     private Label contractText;
-
+    
     @FXML
     private Label contractTypeLabel;
-
+    
     @FXML
     private Label contractTypeText;
-
+    
     @FXML
     private Label contractDurationLabel;
-
+    
     @FXML
     private Label contractDurationText;
-
+    
     @FXML
     private Label popularityLabel;
-
+    
     @FXML
     private Label behaviourLabel;
-
+    
     @FXML
     private Label charismaLabel;
-
+    
     @FXML
     private Label workrate;
-
+    
     @FXML
     private Label ageLabel;
-
+    
     @FXML
     private Label managerLabel;
-
+    
     @FXML
     private Label genderLabel;
-
+    
     @FXML
     private Label injury;
-
+    
     @FXML
     private Label injuryLabel;
-
+    
     @FXML
     private Button contractButton;
-
+    
     @FXML
     private AnchorPane imageAnchor;
-
+    
     @FXML
     private AnchorPane feedAnchor;
     private GameScreen feedPaneScreen;
-
+    
     private WorkerView worker;
     private PromotionView promotion;
-
+    
     @Override
     public void setCurrent(Object obj) {
-
+        
         WorkerView newWorker = (WorkerView) obj;
-
+        
         worker = newWorker;
-
+        
         updateLabels();
     }
-
+    
     public void setPromotion(PromotionView promotion) {
         if (!Objects.equals(this.promotion, promotion)) {
             this.promotion = promotion;
             updateLabels();
         }
     }
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
     }
-
+    
     @Override
     public void initializeMore() {
-
+        
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
         injury.getStyleClass().add("lowStat");
     }
-
+    
     @Override
     public void updateLabels() {
-
+        
         if (promotion.getFullRoster().contains(worker)
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
             nameLabel.setText(worker.getName());
@@ -146,19 +146,19 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
-
+            
             if (worker.getInjury() != null) {
                 injury.setText(String.format("%s days left",
                         DAYS.between(gameController.getDateManager().today(), worker.getInjury().getExpiryDate()) + 1));
             }
             injury.setVisible(worker.getInjury() != null);
             injuryLabel.setVisible(worker.getInjury() != null);
-
+            
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(worker);
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
-
+            
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,
                     flyingLabel,
@@ -166,9 +166,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     behaviourLabel,
                     charismaLabel,
                     popularityLabel);
-
+            
             List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
-
+            
             for (Label l : statLabels) {
                 //strip previous styles
                 for (String s : styleList) {
@@ -176,7 +176,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                         l.getStyleClass().remove(s);
                     }
                 }
-
+                
                 String style;
                 if (Integer.parseInt(l.getText()) < 50) {
                     style = "lowStat";
@@ -186,21 +186,21 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 } else {
                     style = "highStat";
                 }
-
+                
                 l.getStyleClass().add(style);
             }
-
+            
             boolean hasContract = worker.getContract() != null;
-
+            
             contractText.setVisible(hasContract);
             contractLabel.setVisible(hasContract);
-
+            
             if (hasContract) {
                 contractLabel.setText(worker.getContract().isExclusive() ? "Exclusive Contract" : "Open Contract");
             }
-
+            
             Contract contract = worker.getContract(playerPromotion());
-
+            
             if (contract != null) {
                 contractTypeLabel.setVisible(true);
                 contractTypeLabel.setText(contract.isExclusive() ? "Monthly" : "Appearance");
@@ -213,9 +213,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 contractDurationText.setVisible(false);
                 contractDurationLabel.setVisible(false);
             }
-
+            
             contractText.setText(gameController.getContractManager().contractPromotionsString(worker, gameController.getDateManager().today()));
-
+            
             if (worker.isManager()) {
                 managerLabel.setText("Manager");
             } else {
@@ -224,7 +224,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             if (!worker.isMainRoster()) {
                 managerLabel.setText("Development");
             }
-
+            
             if (gameController.getContractManager().canNegotiate(worker, promotion)) {
                 contractButton.setVisible(true);
                 contractButton.setText("Sign Contract");
@@ -240,7 +240,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     String prompt;
                     if (!worker.getContract(playerPromotion()).isExclusive()) {
                         prompt = String.format(""
-                                + "%s has an open contract with %s, and can be released at no cost.", worker.getName(), playerPromotion().getShortName());
+                                + "%s is being paid per appearance by %s, and can be released at no cost.", worker.getName(), playerPromotion().getShortName());
                     } else {
                         prompt = String.format("%s has a written contract with %s, and will cost $%d to release.",
                                 worker.getName(),
@@ -248,19 +248,20 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                                 ContractUtils.calculateTerminationFee(contract, gameController.getDateManager().today()));
                     }
                     if (ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt)) {
-
+                        gameController.getContractManager().terminateContract(contract);
+                        mainApp.updateLabels(ScreenCode.BROWSER);
                     }
                 });
-
+                
             } else {
                 contractButton.setVisible(false);
             }
-
+            
         } else if (!promotion.getFullRoster().contains(worker)) {
             //probably our roster is empty for some reason, should be a rare situation
             //try to eliminate this possibility if we haven't already
             worker = null;
-
+            
             nameLabel.setText("");
             wrestlingLabel.setText("");
             flyingLabel.setText("");
@@ -268,9 +269,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             behaviourLabel.setText("");
             popularityLabel.setText("");
         }
-
+        
         feedPaneScreen.controller.setCurrent(worker);
-
+        
     }
-
+    
 }

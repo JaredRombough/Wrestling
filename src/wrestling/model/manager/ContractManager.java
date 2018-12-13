@@ -215,7 +215,7 @@ public class ContractManager implements Serializable {
         }
     }
 
-    private void terminateContract(iContract contract) {
+    public void terminateContract(iContract contract) {
         contract.getPromotion().removeFromRoster(contract.getWorker());
         contract.getPromotion().removeFromStaff(contract.getStaff());
         if (contract.getWorker() != null) {
