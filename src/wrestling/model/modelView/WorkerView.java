@@ -41,7 +41,7 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private int minimumPopularity;
 
-    private List<Contract> contracts;
+    private final List<Contract> contracts;
 
     private Injury injury;
 
@@ -309,6 +309,6 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     @Override
     public iContract getContract() {
-        return contracts.get(0);
+        return contracts.isEmpty() ? null : contracts.get(0);
     }
 }

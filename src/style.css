@@ -298,3 +298,7 @@ GREY
 .progress-bar-level-2 { 
     -fx-accent: #F5F5F5;
 }
+
+.dialog-pane {
+    -fx-max-width: 500px;
+}

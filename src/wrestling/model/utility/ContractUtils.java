@@ -1,12 +1,15 @@
 package wrestling.model.utility;
 
 import java.time.LocalDate;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.MONTHS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.SegmentItem;
 import wrestling.model.StaffContract;
+import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
@@ -88,8 +91,15 @@ public final class ContractUtils {
         return roundMoney(fee);
     }
 
+    public static int calculateTerminationFee(iContract contract, LocalDate terminationDate) {
+        if (!contract.isExclusive()) {
+            return 0;
+        }
+        return Math.round(MONTHS.between(terminationDate, contract.getEndDate()) * contract.getMonthlyCost() / 2);
+    }
+
     public static LocalDate contractEndDate(LocalDate startDate, int months) {
-        return startDate.plusMonths(months + 1).withDayOfMonth(1);
+        return startDate.plusMonths(months + 1).withDayOfMonth(1).minusDays(1);
     }
 
     public static int getWorkerPayrollForMonth(LocalDate date, PromotionView promotion) {
@@ -114,5 +124,19 @@ public final class ContractUtils {
             }
         }
         return total;
+    }
+
+    public static String getTermsString(WorkerView worker, PromotionView promotion) {
+        Contract contract = worker.getContract(promotion);
+        if (contract.isExclusive()) {
+            return String.format("$%d monthly", contract.getMonthlyCost());
+        }
+        return String.format("$%d / appearance", contract.getAppearanceCost());
+    }
+
+    public static String contractDurationString(iContract contract, LocalDate today) {
+        return String.format("%d day%s",
+                DAYS.between(today, contract.getEndDate()),
+                DAYS.between(today, contract.getEndDate()) > 1 ? "s" : "");
     }
 }

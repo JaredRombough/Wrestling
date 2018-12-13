@@ -271,6 +271,17 @@ public class ContractManager implements Serializable {
             if (!bld.toString().isEmpty()) {
                 bld.append("/");
             }
+            bld.append(current.getPromotion().getShortName());
+        }
+        return bld.toString();
+    }
+
+    public String contractTermsString(WorkerView worker, LocalDate date) {
+        StringBuilder bld = new StringBuilder();
+        for (Contract current : getContracts(worker)) {
+            if (!bld.toString().isEmpty()) {
+                bld.append("/");
+            }
             if (current.isExclusive()) {
                 bld.append(String.format("%s (%d day%s)",
                         current.getPromotion().getShortName(),
