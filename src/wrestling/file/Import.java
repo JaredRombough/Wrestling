@@ -540,19 +540,11 @@ public class Import {
     }
 
     private void checkForContract(PromotionView p, WorkerView w, List<String> currentHexLine) {
-        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(65)))) {
-            //handle written/open contracts
-            if (hexStringToLetter(currentHexLine.get(71)).equals("W")) {
-                getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), true);
-            } else {
-                getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), false);
-            }
-        } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(67)))) {
-            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
-            gameController.getContractManager().getContract(w, p).setExclusive(false);
-        } else if (p.indexNumber() == (hexStringToInt(currentHexLine.get(69)))) {
-            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today());
-            gameController.getContractManager().getContract(w, p).setExclusive(false);
+        boolean exclusive = hexStringToLetter(currentHexLine.get(71)).equals("W");
+        if (p.indexNumber() == hexStringToInt(currentHexLine.get(65))
+                || p.indexNumber() == hexStringToInt(currentHexLine.get(67))
+                || p.indexNumber() == hexStringToInt(currentHexLine.get(69))) {
+            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), exclusive);
         }
     }
 
