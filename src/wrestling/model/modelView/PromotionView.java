@@ -7,53 +7,53 @@ import java.util.stream.Collectors;
 import wrestling.model.segmentEnum.StaffType;
 
 public class PromotionView implements Serializable {
-
+    
     private static int serialNumber = 0;
-
+    
     private String name;
     private String shortName;
     private String imagePath;
     private int promotionID;
     private int popularity;
     private int level;
-
+    
     private final List<WorkerView> fullRoster;
     private final List<StaffView> allStaff;
-
+    
     public PromotionView() {
-
+        
         fullRoster = new ArrayList<>();
         allStaff = new ArrayList<>();
-
+        
         name = "Promotion #" + serialNumber;
         shortName = "PRO" + serialNumber;
 
         //default popularity of 50 for now
         popularity = 50;
-
+        
         serialNumber++;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public void setPromotionID(int promotionID) {
         this.promotionID = promotionID;
     }
-
+    
     public int indexNumber() {
         return promotionID;
     }
-
+    
     public int getPopulatirty() {
         return popularity;
     }
-
+    
     public void setPopularity(int popularity) {
         if (popularity > 100) {
             popularity = 100;
@@ -62,11 +62,11 @@ public class PromotionView implements Serializable {
         }
         this.popularity = popularity;
     }
-
+    
     public int getLevel() {
         return level;
     }
-
+    
     public void setLevel(int level) {
         if (level > 5) {
             level = 5;
@@ -76,7 +76,7 @@ public class PromotionView implements Serializable {
         }
         this.level = level;
     }
-
+    
     @Override
     public String toString() {
         return name;
@@ -116,11 +116,11 @@ public class PromotionView implements Serializable {
     public List<WorkerView> getFullRoster() {
         return fullRoster;
     }
-
+    
     public void addToRoster(WorkerView worker) {
         fullRoster.add(worker);
     }
-
+    
     public void removeFromRoster(WorkerView worker) {
         if (fullRoster.contains(worker)) {
             fullRoster.remove(worker);
@@ -133,11 +133,16 @@ public class PromotionView implements Serializable {
     public List<StaffView> getAllStaff() {
         return allStaff;
     }
-
+    
     public List<StaffView> getStaff(StaffType staffType) {
         return allStaff.stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
-
+    
+    public StaffView getOwner() {
+        List<StaffView> owner = getStaff(StaffType.OWNER);
+        return owner.isEmpty() ? null : owner.get(0);
+    }
+    
     public int getStaffSkillAverage(StaffType staffType) {
         double total = 0;
         List<StaffView> staffOfType = getStaff(staffType);
@@ -145,13 +150,13 @@ public class PromotionView implements Serializable {
             total += staff.getSkill();
         }
         return (int) Math.ceil(total / staffOfType.size());
-
+        
     }
-
+    
     public void addToStaff(StaffView staff) {
         allStaff.add(staff);
     }
-
+    
     public void removeFromStaff(StaffView staff) {
         if (allStaff.contains(staff)) {
             allStaff.remove(staff);

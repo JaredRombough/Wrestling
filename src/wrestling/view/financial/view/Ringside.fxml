@@ -26,7 +26,7 @@
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin></Label>
-            <Label fx:id="staffCount" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="2" GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
+            <Label fx:id="staffCount" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="2" wrapText="true" GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
                <font>
                   <Font size="24.0" />
                </font>

@@ -48,7 +48,11 @@ public class RingsideController extends ControllerBase {
     public void updateLabels() {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
-            staffCount.setText(Integer.toString(playerPromotion().getStaff(staffType).size()));
+            if (staffType.equals(staffType.OWNER)) {
+                staffCount.setText(playerPromotion().getOwner().getName());
+            } else {
+                staffCount.setText(Integer.toString(playerPromotion().getStaff(staffType).size()));
+            }
         }
     }
 
