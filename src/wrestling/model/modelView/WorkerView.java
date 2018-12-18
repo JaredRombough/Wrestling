@@ -60,7 +60,8 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
         contracts.remove(contract);
     }
 
-    public Contract getContract(PromotionView promotion) {
+    @Override
+    public iContract getContract(PromotionView promotion) {
         for (Contract contract : contracts) {
             if (contract.getPromotion().equals(promotion)) {
                 return contract;
@@ -310,5 +311,10 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     @Override
     public iContract getContract() {
         return contracts.isEmpty() ? null : contracts.get(0);
+    }
+
+    @Override
+    public List<? extends iContract> getContracts() {
+        return contracts;
     }
 }

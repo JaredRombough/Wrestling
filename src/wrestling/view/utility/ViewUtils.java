@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +47,15 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
+import wrestling.model.Contract;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
+import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
+import wrestling.model.utility.ContractUtils;
 import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.comparators.SegmentItemAgeComparator;
@@ -187,7 +194,8 @@ public final class ViewUtils {
                     screen.pane = (BorderPane) loader.load();
                     break;
                 }
-                case DEPARTMENT: {
+                case DEPARTMENT:
+                case CONTRACT: {
                     screen.pane = (GridPane) loader.load();
                     break;
                 }
@@ -430,4 +438,21 @@ public final class ViewUtils {
         );
     }
 
+    public static boolean releaseWorkerDialog(iPerson person, PromotionView promotion, LocalDate date) {
+        String prompt;
+        iContract contract = person.getContract(promotion);
+        if (!person.getContract(promotion).isExclusive()) {
+            prompt = String.format("%s has an open contract with %s, and can be released at no cost.",
+                    person.getName(),
+                    promotion.getShortName());
+        } else {
+            prompt = String.format("%s has an exclusive contract with %s, and can be released for %s.",
+                    person.getName(),
+                    promotion.getShortName(),
+                    ContractUtils.calculateTerminationFee(contract, date) > 0
+                    ? "$" + ContractUtils.calculateTerminationFee(contract, date)
+                    : "no additional cost");
+        }
+        return ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt);
+    }
 }

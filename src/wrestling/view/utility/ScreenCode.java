@@ -259,10 +259,10 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
-    CONTRACT_PANE {
+    CONTRACT {
         @Override
         public String resourcePath() {
-            return "view/browser/view/ContractPane.fxml";
+            return "view/browser/view/Contract.fxml";
         }
 
         @Override

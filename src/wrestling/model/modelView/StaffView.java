@@ -1,5 +1,7 @@
 package wrestling.model.modelView;
 
+import java.util.Collections;
+import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
@@ -147,6 +149,17 @@ public class StaffView implements SegmentItem, iPerson {
     @Override
     public void setShortName(String name) {
         // no short name
+    }
+
+    @Override
+    public iContract getContract(PromotionView promotion) {
+        return staffContract != null && staffContract.getPromotion().equals(promotion)
+                ? staffContract : null;
+    }
+
+    @Override
+    public List<? extends iContract> getContracts() {
+        return Collections.singletonList(staffContract);
     }
 
 }

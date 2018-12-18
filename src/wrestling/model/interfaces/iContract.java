@@ -14,7 +14,7 @@ public interface iContract {
 
     public void setEndDate(LocalDate date);
 
-    public SegmentItem getSegmentItem();
+    public iPerson getPerson();
 
     public LocalDate getEndDate();
 

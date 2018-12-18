@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
@@ -22,11 +23,11 @@ import wrestling.view.utility.ViewUtils;
 
 public class ContractDialog {
 
-    private SegmentItem segmentItem;
+    private iPerson person;
     private boolean exclusive;
 
-    public void createDialog(SegmentItem item, GameController gameController) {
-        this.segmentItem = item;
+    public void createDialog(iPerson person, GameController gameController) {
+        this.person = person;
         Dialog dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         PromotionView playerPromotion = gameController.getPromotionManager().playerPromotion();
@@ -45,10 +46,10 @@ public class ContractDialog {
 
         ComboBox typeComboBox = new ComboBox();
         List<String> exclusiveOpen = new ArrayList<>();
-        if (segmentItem instanceof WorkerView) {
+        if (person instanceof WorkerView) {
             exclusiveOpen.add("Open");
         }
-        if (playerPromotion.getLevel() == 5 || segmentItem instanceof StaffView) {
+        if (playerPromotion.getLevel() == 5 || person instanceof StaffView) {
             exclusiveOpen.add("Exclusive");
         }
         typeComboBox.getItems().addAll(exclusiveOpen);
@@ -90,15 +91,15 @@ public class ContractDialog {
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.get() == ButtonType.OK) {
-            if (segmentItem instanceof WorkerView) {
+            if (person instanceof WorkerView) {
                 gameController.getContractFactory().createContract(
-                        (WorkerView) segmentItem,
+                        (WorkerView) person,
                         playerPromotion,
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1,
                         gameController.getDateManager().today());
-            } else if (segmentItem instanceof StaffView) {
-                gameController.getContractFactory().createContract((StaffView) segmentItem,
+            } else if (person instanceof StaffView) {
+                gameController.getContractFactory().createContract((StaffView) person,
                         playerPromotion,
                         gameController.getDateManager().today(),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1);
@@ -109,14 +110,14 @@ public class ContractDialog {
 
     private void updateCostLabel(Label label) {
         label.setText(String.format("$%d %s",
-                segmentItem instanceof WorkerView ? ContractUtils.calculateWorkerContractCost((WorkerView) segmentItem, exclusive)
-                        : ContractUtils.calculateStaffContractCost((StaffView) segmentItem),
+                person instanceof WorkerView ? ContractUtils.calculateWorkerContractCost((WorkerView) person, exclusive)
+                        : ContractUtils.calculateStaffContractCost((StaffView) person),
                 exclusive ? "Monthly" : "per Apperance"));
     }
 
     private void updateSigningFeeLabel(Label label, LocalDate startDate) {
         label.setText(String.format("$%d",
-                exclusive ? ContractUtils.calculateSigningFee(segmentItem, startDate) : 0));
+                exclusive ? ContractUtils.calculateSigningFee(person, startDate) : 0));
     }
 
 }

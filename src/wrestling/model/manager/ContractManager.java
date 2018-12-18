@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
@@ -77,14 +80,10 @@ public class ContractManager implements Serializable {
         return allContracts;
     }
 
-    public boolean hasContract(WorkerView worker) {
-        boolean hasContract = false;
-        for (Contract contract : contracts) {
-            if (contract.isActive() && contract.getWorker().equals(worker));
-            hasContract = true;
-            break;
-        }
-        return hasContract;
+    public List<? extends iContract> getContracts(iPerson person) {
+        return person instanceof WorkerView
+                ? getContracts((WorkerView) person)
+                : getContracts((StaffView) person);
     }
 
     public List<Contract> getContracts(WorkerView worker) {
@@ -192,8 +191,8 @@ public class ContractManager implements Serializable {
 
     public void paySigningFee(LocalDate date, iContract contract) {
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(
-                ContractUtils.calculateSigningFee(contract.getSegmentItem(), date),
-                contract.getSegmentItem() instanceof WorkerView ? TransactionType.WORKER : TransactionType.STAFF,
+                ContractUtils.calculateSigningFee(contract.getPerson(), date),
+                contract.getPerson() instanceof WorkerView ? TransactionType.WORKER : TransactionType.STAFF,
                 date);
     }
 
@@ -238,16 +237,14 @@ public class ContractManager implements Serializable {
         return string;
     }
 
-    public boolean canNegotiate(WorkerView worker, PromotionView promotion) {
+    public boolean canNegotiate(iPerson person, PromotionView promotion) {
         //this would have to be more robust
         //such as checking how much time is left on our contract
         boolean canNegotiate = true;
 
-        if (canNegotiate && hasContract(worker)) {
-            for (Contract contract : getContracts(worker)) {
-                if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
-                    canNegotiate = false;
-                }
+        for (iContract contract : person.getContracts()) {
+            if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                canNegotiate = false;
             }
         }
 
@@ -265,9 +262,9 @@ public class ContractManager implements Serializable {
         return bld.toString();
     }
 
-    public String contractPromotionsString(WorkerView worker, LocalDate date) {
+    public String contractPromotionsString(iPerson person, LocalDate date) {
         StringBuilder bld = new StringBuilder();
-        for (Contract current : getContracts(worker)) {
+        for (iContract current : getContracts(person)) {
             if (!bld.toString().isEmpty()) {
                 bld.append("/");
             }

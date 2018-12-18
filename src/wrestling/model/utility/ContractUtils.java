@@ -10,6 +10,7 @@ import wrestling.model.Contract;
 import wrestling.model.SegmentItem;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
@@ -78,12 +79,12 @@ public final class ContractUtils {
         return unitCost;
     }
 
-    public static int calculateSigningFee(SegmentItem segmentItem, LocalDate startDate) {
+    public static int calculateSigningFee(iPerson person, LocalDate startDate) {
         int monthlyCost = 0;
-        if (segmentItem instanceof StaffView) {
-            monthlyCost = calculateStaffContractCost((StaffView) segmentItem);
-        } else if (segmentItem instanceof WorkerView) {
-            monthlyCost = calculateWorkerContractCost((WorkerView) segmentItem, true);
+        if (person instanceof StaffView) {
+            monthlyCost = calculateStaffContractCost((StaffView) person);
+        } else if (person instanceof WorkerView) {
+            monthlyCost = calculateWorkerContractCost((WorkerView) person, true);
         }
 
         int fee = monthlyCost * (startDate.lengthOfMonth() - startDate.getDayOfMonth()) / startDate.lengthOfMonth();
@@ -106,7 +107,7 @@ public final class ContractUtils {
         int total = 0;
 
         for (WorkerView worker : promotion.getFullRoster()) {
-            Contract contract = worker.getContract(promotion);
+            iContract contract = worker.getContract(promotion);
             if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
                 total += contract.getMonthlyCost();
             }
@@ -127,7 +128,7 @@ public final class ContractUtils {
     }
 
     public static String getTermsString(WorkerView worker, PromotionView promotion) {
-        Contract contract = worker.getContract(promotion);
+        iContract contract = worker.getContract(promotion);
         if (contract.isExclusive()) {
             return String.format("$%d monthly", contract.getMonthlyCost());
         }

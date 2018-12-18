@@ -3,6 +3,7 @@ package wrestling.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.interfaces.iContract;
+import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
@@ -126,7 +127,7 @@ public class StaffContract implements Serializable, iContract {
     }
 
     @Override
-    public SegmentItem getSegmentItem() {
+    public iPerson getPerson() {
         return staff;
     }
 

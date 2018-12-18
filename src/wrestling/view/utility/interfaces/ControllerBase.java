@@ -1,5 +1,6 @@
 package wrestling.view.utility.interfaces;
 
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,10 @@ public abstract class ControllerBase implements Initializable {
     
     public PromotionView playerPromotion() {
         return gameController.getPromotionManager().playerPromotion();
+    }
+    
+    public LocalDate today() {
+        return gameController.getDateManager().today();
     }
 
 }

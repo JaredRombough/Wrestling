@@ -45,24 +45,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label flyingLabel;
     
     @FXML
-    private Label contractLabel;
-    
-    @FXML
-    private Label contractText;
-    
-    @FXML
-    private Label contractTypeLabel;
-    
-    @FXML
-    private Label contractTypeText;
-    
-    @FXML
-    private Label contractDurationLabel;
-    
-    @FXML
-    private Label contractDurationText;
-    
-    @FXML
     private Label popularityLabel;
     
     @FXML
@@ -90,10 +72,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label injuryLabel;
     
     @FXML
-    private Button contractButton;
+    private AnchorPane imageAnchor;
     
     @FXML
-    private AnchorPane imageAnchor;
+    private AnchorPane contractAnchor;
+    private GameScreen contractScreen;
     
     @FXML
     private AnchorPane feedAnchor;
@@ -128,6 +111,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     public void initializeMore() {
         
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
+        contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
     }
     
@@ -190,32 +174,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 l.getStyleClass().add(style);
             }
             
-            boolean hasContract = worker.getContract() != null;
-            
-            contractText.setVisible(hasContract);
-            contractLabel.setVisible(hasContract);
-            
-            if (hasContract) {
-                contractLabel.setText(worker.getContract().isExclusive() ? "Exclusive Contract" : "Open Contract");
-            }
-            
-            Contract contract = worker.getContract(playerPromotion());
-            
-            if (contract != null) {
-                contractTypeLabel.setVisible(true);
-                contractTypeLabel.setText(contract.isExclusive() ? "Monthly" : "Appearance");
-                contractTypeText.setVisible(true);
-                contractTypeText.setText(String.format("$%d", contract.isExclusive() ? contract.getMonthlyCost() : contract.getAppearanceCost()));
-                contractDurationText.setText(ContractUtils.contractDurationString(contract, gameController.getDateManager().today()));
-            } else {
-                contractTypeText.setVisible(false);
-                contractTypeLabel.setVisible(false);
-                contractDurationText.setVisible(false);
-                contractDurationLabel.setVisible(false);
-            }
-            
-            contractText.setText(gameController.getContractManager().contractPromotionsString(worker, gameController.getDateManager().today()));
-            
             if (worker.isManager()) {
                 managerLabel.setText("Manager");
             } else {
@@ -223,38 +181,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
             if (!worker.isMainRoster()) {
                 managerLabel.setText("Development");
-            }
-            
-            if (gameController.getContractManager().canNegotiate(worker, promotion)) {
-                contractButton.setVisible(true);
-                contractButton.setText("Sign Contract");
-                contractButton.setOnAction(e -> {
-                    ContractDialog contractDialog = new ContractDialog();
-                    contractDialog.createDialog(worker, gameController);
-                    mainApp.updateLabels(ScreenCode.BROWSER);
-                });
-            } else if (playerPromotion().getFullRoster().contains(worker)) {
-                contractButton.setVisible(true);
-                contractButton.setText("Release Worker");
-                contractButton.setOnAction(e -> {
-                    String prompt;
-                    if (!worker.getContract(playerPromotion()).isExclusive()) {
-                        prompt = String.format(""
-                                + "%s is being paid per appearance by %s, and can be released at no cost.", worker.getName(), playerPromotion().getShortName());
-                    } else {
-                        prompt = String.format("%s has a written contract with %s, and will cost $%d to release.",
-                                worker.getName(),
-                                playerPromotion().getShortName(),
-                                ContractUtils.calculateTerminationFee(contract, gameController.getDateManager().today()));
-                    }
-                    if (ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt)) {
-                        gameController.getContractManager().terminateContract(contract);
-                        mainApp.updateLabels(ScreenCode.BROWSER);
-                    }
-                });
-                
-            } else {
-                contractButton.setVisible(false);
             }
             
         } else if (!promotion.getFullRoster().contains(worker)) {
@@ -271,6 +197,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         }
         
         feedPaneScreen.controller.setCurrent(worker);
+        contractScreen.controller.setCurrent(worker);
         
     }
     
