@@ -25,9 +25,6 @@ public class StaffViewController extends ControllerBase {
     private Label staffTypeLabel;
 
     @FXML
-    private Label contractText;
-
-    @FXML
     private Label skillLabel;
 
     @FXML
@@ -43,10 +40,11 @@ public class StaffViewController extends ControllerBase {
     private AnchorPane imageAnchor;
 
     @FXML
-    private Button contractButton;
+    private AnchorPane anchorPane;
 
     @FXML
-    private AnchorPane anchorPane;
+    private AnchorPane contractAnchor;
+    private GameScreen contractScreen;
 
     private StaffView staffView;
 
@@ -57,11 +55,7 @@ public class StaffViewController extends ControllerBase {
 
     @Override
     public void initializeMore() {
-        contractButton.setOnAction(e -> {
-            ContractDialog contractDialog = new ContractDialog();
-            contractDialog.createDialog(staffView, gameController);
-            mainApp.updateLabels(ScreenCode.BROWSER);
-        });
+        contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
     }
 
     @Override
@@ -69,6 +63,7 @@ public class StaffViewController extends ControllerBase {
         anchorPane.setVisible(object != null);
         if (object instanceof StaffView) {
             this.staffView = (StaffView) object;
+            contractScreen.controller.setCurrent(staffView);
             updateLabels();
         }
     }
@@ -83,20 +78,13 @@ public class StaffViewController extends ControllerBase {
             ageLabel.setText(Integer.toString(staffView.getAge()));
             genderLabel.setText(staffView.getGender().toString());
 
-            if (staffView.getStaffContract() != null) {
-                contractText.setText(gameController.getContractManager().getTerms(staffView.getStaffContract()));
-            }
-            contractText.setVisible(staffView.getStaffContract() != null);
-            contractLabel.setVisible(staffView.getStaffContract() != null);
-
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(staffView);
             ((ResultsCardController) card.controller).setNameLabelVisibile(false);
+
+            contractScreen.controller.updateLabels();
         }
-
-        contractButton.setVisible(staffView == null || staffView.getStaffContract() == null);
-
     }
 
 }

@@ -5,8 +5,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import org.apache.commons.lang3.ArrayUtils;
-import wrestling.model.Contract;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.StaffView;

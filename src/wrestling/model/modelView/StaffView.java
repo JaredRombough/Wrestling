@@ -159,7 +159,7 @@ public class StaffView implements SegmentItem, iPerson {
 
     @Override
     public List<? extends iContract> getContracts() {
-        return Collections.singletonList(staffContract);
+        return staffContract != null ? Collections.singletonList(staffContract) : Collections.emptyList();
     }
 
 }
