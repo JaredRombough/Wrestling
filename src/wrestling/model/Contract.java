@@ -105,10 +105,12 @@ public class Contract implements Serializable, iContract {
     /**
      * @return the startDate
      */
+    @Override
     public LocalDate getStartDate() {
         return startDate;
     }
 
+    @Override
     public LocalDate getEndDate() {
         return endDate;
     }

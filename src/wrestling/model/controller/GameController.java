@@ -11,7 +11,6 @@ import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
 import wrestling.model.factory.PromotionFactory;
 import wrestling.model.factory.TitleFactory;
-import wrestling.model.factory.PersonFactory;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;

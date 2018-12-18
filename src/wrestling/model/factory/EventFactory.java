@@ -29,7 +29,6 @@ import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.segmentEnum.TransactionType;
-import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
 
 /**

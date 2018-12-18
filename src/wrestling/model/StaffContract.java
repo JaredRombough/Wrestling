@@ -69,6 +69,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the startDate
      */
+    @Override
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -114,6 +115,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the endDate
      */
+    @Override
     public LocalDate getEndDate() {
         return endDate;
     }

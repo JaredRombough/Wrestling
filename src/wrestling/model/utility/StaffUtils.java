@@ -1,6 +1,5 @@
 package wrestling.model.utility;
 
-import java.time.LocalDate;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.StaffType;

@@ -23,6 +23,7 @@ public class StaffView implements SegmentItem, iPerson {
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -35,6 +36,7 @@ public class StaffView implements SegmentItem, iPerson {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }

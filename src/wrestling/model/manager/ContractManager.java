@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import wrestling.model.Contract;
 import wrestling.model.StaffContract;

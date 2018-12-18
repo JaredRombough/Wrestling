@@ -1,7 +1,6 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
-import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.Arrays;
 import java.util.List;
@@ -9,17 +8,12 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.Contract;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
-import wrestling.model.utility.ContractUtils;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.results.controller.ResultsCardController;
 import wrestling.view.utility.GameScreen;

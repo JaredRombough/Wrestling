@@ -1,7 +1,6 @@
 package wrestling.model.interfaces;
 
 import java.time.LocalDate;
-import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;

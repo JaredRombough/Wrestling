@@ -6,8 +6,6 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import wrestling.model.Contract;
-import wrestling.model.SegmentItem;
 import wrestling.model.StaffContract;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.interfaces.iPerson;

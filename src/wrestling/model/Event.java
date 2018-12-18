@@ -2,9 +2,9 @@ package wrestling.model;
 
 import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
+import wrestling.model.interfaces.iDate;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.PromotionView;
-import wrestling.model.interfaces.iDate;
 
 public class Event implements iEvent, iDate {
 

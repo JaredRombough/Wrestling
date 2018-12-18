@@ -16,7 +16,6 @@ import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
-import wrestling.model.StaffContract;
 import wrestling.model.Title;
 import wrestling.model.TrainerEvent;
 import wrestling.model.factory.ContractFactory;

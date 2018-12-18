@@ -8,7 +8,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.StaffView;
-
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.model.segmentEnum.StaffType;

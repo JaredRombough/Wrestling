@@ -78,6 +78,7 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -85,6 +86,7 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -189,6 +191,7 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     /**
      * @param shortName the shortName to set
      */
+    @Override
     public void setShortName(String shortName) {
         this.shortName = shortName;
     }

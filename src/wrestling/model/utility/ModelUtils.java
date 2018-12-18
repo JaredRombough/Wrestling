@@ -7,14 +7,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.SegmentItem;
-import wrestling.model.constants.GameConstants;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
-import wrestling.model.segmentEnum.StaffType;
 import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 

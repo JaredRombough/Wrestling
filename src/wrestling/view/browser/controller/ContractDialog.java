@@ -12,7 +12,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import wrestling.model.SegmentItem;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
