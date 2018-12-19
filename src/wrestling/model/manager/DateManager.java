@@ -1,9 +1,10 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import wrestling.model.utility.ModelUtils;
 
-public class DateManager {
+public class DateManager implements Serializable {
 
     private LocalDate gameDate;
 

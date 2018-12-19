@@ -491,7 +491,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
         segmentView.getSegment().setSegmentLength(segmentLength.value());
         segmentView.setTeams(getSegmentTeams());
-        segmentView.setTitleViews(getTitles());
+        segmentView.addTitles(getTitles());
         return segmentView;
     }
 

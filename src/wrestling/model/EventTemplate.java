@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
@@ -12,7 +13,7 @@ import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
 
-public class EventTemplate implements iDate, SegmentItem {
+public class EventTemplate implements Serializable, iDate, SegmentItem {
 
     private PromotionView promotion;
     private LocalDate nextDate;

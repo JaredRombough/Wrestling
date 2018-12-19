@@ -1,5 +1,6 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Contract;
@@ -11,7 +12,7 @@ import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
 
-public class TitleManager {
+public class TitleManager implements Serializable {
 
     private final List<Title> titles;
     private final List<TitleWorker> titleWorkers;

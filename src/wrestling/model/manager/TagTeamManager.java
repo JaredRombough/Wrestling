@@ -1,5 +1,6 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.TagTeam;
@@ -8,7 +9,7 @@ import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 
-public class TagTeamManager {
+public class TagTeamManager implements Serializable {
 
     private final List<TagTeam> tagTeams;
     private final List<TagTeamWorker> tagTeamWorkers;

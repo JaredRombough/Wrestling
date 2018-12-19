@@ -1,5 +1,6 @@
 package wrestling.model;
 
+import java.io.Serializable;
 import wrestling.model.interfaces.SegmentParams;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;
@@ -7,7 +8,7 @@ import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.PromoType;
 import wrestling.model.segmentEnum.ShowType;
 
-public class AngleParams implements SegmentParams {
+public class AngleParams implements Serializable, SegmentParams {
 
     private AngleType angleType;
     private JoinTeamType joinTeamType;

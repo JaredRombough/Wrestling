@@ -1,12 +1,13 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.TagTeam;
 import wrestling.model.segmentEnum.ActiveType;
 
-public class TagTeamView implements SegmentItem {
+public class TagTeamView implements Serializable, SegmentItem {
 
     private TagTeam tagTeam;
     private List<WorkerView> workers = new ArrayList<>();

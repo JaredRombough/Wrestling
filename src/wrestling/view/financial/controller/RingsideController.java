@@ -49,7 +49,8 @@ public class RingsideController extends ControllerBase {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
             if (staffType.equals(staffType.OWNER)) {
-                staffCount.setText(playerPromotion().getOwner().getName());
+
+                staffCount.setText(playerPromotion().getOwner() != null ? playerPromotion().getOwner().getName() : "None");
             } else {
                 staffCount.setText(Integer.toString(playerPromotion().getStaff(staffType).size()));
             }

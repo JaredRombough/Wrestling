@@ -1,5 +1,6 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -27,7 +28,7 @@ import wrestling.model.utility.ModelUtils;
 import static wrestling.model.utility.ModelUtils.slashShortNames;
 import wrestling.view.utility.ViewUtils;
 
-public class SegmentManager {
+public class SegmentManager implements Serializable{
 
     private final List<Segment> segments;
     private final List<SegmentWorker> segmentWorkers;

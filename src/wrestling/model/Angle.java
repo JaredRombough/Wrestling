@@ -1,10 +1,11 @@
 package wrestling.model;
 
+import java.io.Serializable;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.SegmentParams;
 import wrestling.model.segmentEnum.SegmentType;
 
-public class Angle implements Segment {
+public class Angle implements Segment, Serializable {
 
     private int workRating;
     private int crowdRating;

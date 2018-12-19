@@ -1,5 +1,6 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.segmentEnum.OutcomeType;
@@ -9,7 +10,7 @@ import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
 import wrestling.model.utility.ModelUtils;
 
-public class SegmentTeam {
+public class SegmentTeam implements Serializable {
 
     private List<WorkerView> workers;
     private TeamType type;

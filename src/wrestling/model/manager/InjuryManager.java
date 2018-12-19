@@ -1,12 +1,13 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Injury;
 import wrestling.model.modelView.WorkerView;
 
-public class InjuryManager {
+public class InjuryManager implements Serializable {
 
     private final NewsManager newsManager;
     private final List<Injury> injuries = new ArrayList();

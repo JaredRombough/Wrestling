@@ -55,52 +55,55 @@ public class ContractController extends ControllerBase {
     @Override
     public void updateLabels() {
 
-        boolean hasContract = person.getContract() != null;
+        if (person != null) {
 
-        contractText.setVisible(hasContract);
-        contractLabel.setVisible(hasContract);
+            boolean hasContract = person.getContract() != null;
 
-        if (hasContract) {
-            contractLabel.setText(person.getContract().isExclusive() ? "Exclusive Contract" : "Open Contract");
-        }
+            contractText.setVisible(hasContract);
+            contractLabel.setVisible(hasContract);
 
-        iContract contract = person.getContract(playerPromotion());
+            if (hasContract) {
+                contractLabel.setText(person.getContract().isExclusive() ? "Exclusive Contract" : "Open Contract");
+            }
 
-        if (contract != null) {
-            contractTypeLabel.setVisible(true);
-            contractTypeLabel.setText(contract.isExclusive() ? "Monthly" : "Appearance");
-            contractTypeText.setVisible(true);
-            contractTypeText.setText(String.format("$%d", contract.isExclusive() ? contract.getMonthlyCost() : contract.getAppearanceCost()));
-            contractDurationText.setText(ContractUtils.contractDurationString(contract, gameController.getDateManager().today()));
-        } else {
-            contractTypeText.setVisible(false);
-            contractTypeLabel.setVisible(false);
-            contractDurationText.setVisible(false);
-            contractDurationLabel.setVisible(false);
-        }
+            iContract contract = person.getContract(playerPromotion());
 
-        contractText.setText(gameController.getContractManager().contractPromotionsString(person, gameController.getDateManager().today()));
+            if (contract != null) {
+                contractTypeLabel.setVisible(true);
+                contractTypeLabel.setText(contract.isExclusive() ? "Monthly" : "Appearance");
+                contractTypeText.setVisible(true);
+                contractTypeText.setText(String.format("$%d", contract.isExclusive() ? contract.getMonthlyCost() : contract.getAppearanceCost()));
+                contractDurationText.setText(ContractUtils.contractDurationString(contract, gameController.getDateManager().today()));
+            } else {
+                contractTypeText.setVisible(false);
+                contractTypeLabel.setVisible(false);
+                contractDurationText.setVisible(false);
+                contractDurationLabel.setVisible(false);
+            }
 
-        if (gameController.getContractManager().canNegotiate(person, playerPromotion())) {
-            contractButton.setVisible(true);
-            contractButton.setText("Sign Contract");
-            contractButton.setOnAction(e -> {
-                ContractDialog contractDialog = new ContractDialog();
-                contractDialog.createDialog(person, gameController);
-                mainApp.updateLabels(ScreenCode.BROWSER);
-            });
-        } else if (person.getContract(playerPromotion()) != null) {
-            contractButton.setVisible(true);
-            contractButton.setText("Release Worker");
-            contractButton.setOnAction(e -> {
-                if (ViewUtils.releaseWorkerDialog(person, playerPromotion(), today())) {
-                    gameController.getContractManager().terminateContract(contract);
+            contractText.setText(gameController.getContractManager().contractPromotionsString(person, gameController.getDateManager().today()));
+
+            if (gameController.getContractManager().canNegotiate(person, playerPromotion())) {
+                contractButton.setVisible(true);
+                contractButton.setText("Sign Contract");
+                contractButton.setOnAction(e -> {
+                    ContractDialog contractDialog = new ContractDialog();
+                    contractDialog.createDialog(person, gameController);
                     mainApp.updateLabels(ScreenCode.BROWSER);
-                }
-            });
+                });
+            } else if (person.getContract(playerPromotion()) != null) {
+                contractButton.setVisible(true);
+                contractButton.setText("Release Worker");
+                contractButton.setOnAction(e -> {
+                    if (ViewUtils.releaseWorkerDialog(person, playerPromotion(), today())) {
+                        gameController.getContractManager().terminateContract(contract);
+                        mainApp.updateLabels(ScreenCode.BROWSER);
+                    }
+                });
 
-        } else {
-            contractButton.setVisible(false);
+            } else {
+                contractButton.setVisible(false);
+            }
         }
 
     }

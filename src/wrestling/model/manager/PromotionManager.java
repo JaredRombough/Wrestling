@@ -1,11 +1,12 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.financial.BankAccount;
 import wrestling.model.modelView.PromotionView;
 
-public class PromotionManager {
+public class PromotionManager implements Serializable {
 
     private final List<PromotionView> promotions;
     private final List<BankAccount> bankAccounts;

@@ -1,9 +1,10 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-public class TitleReign {
+public class TitleReign implements Serializable{
 
     private final List<WorkerView> workers;
     private final LocalDate dayWon;

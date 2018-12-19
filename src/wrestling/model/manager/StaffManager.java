@@ -1,10 +1,11 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.modelView.StaffView;
 
-public class StaffManager {
+public class StaffManager implements Serializable {
 
     private final List<StaffView> staffViews = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +32,7 @@ import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ViewUtils;
 
-public class EventManager {
+public class EventManager implements Serializable {
 
     private final List<Event> events;
     private final List<EventWorker> eventWorkers;

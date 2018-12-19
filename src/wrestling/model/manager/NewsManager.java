@@ -1,10 +1,11 @@
 package wrestling.model.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.interfaces.iNewsItem;
 
-public class NewsManager {
+public class NewsManager implements Serializable {
 
     private final List<iNewsItem> newsItems = new ArrayList<>();
 

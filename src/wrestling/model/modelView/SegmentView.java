@@ -1,5 +1,6 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,12 +13,12 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.TeamType;
 
-public class SegmentView {
+public class SegmentView implements Serializable {
 
     private List<SegmentTeam> teams;
     private LocalDate date;
     private Segment segment;
-    private List<TitleView> titleViews;
+    private final List<TitleView> titleViews;
     private final SegmentType segmentType;
     private EventView eventView;
 
@@ -175,12 +176,12 @@ public class SegmentView {
     /**
      * @param title the title to set
      */
-    public void setTitle(TitleView title) {
-        this.titleViews = Arrays.asList(title);
+    public void addTitle(TitleView title) {
+        this.titleViews.add(title);
     }
 
-    public void setTitleViews(List<TitleView> titleViews) {
-        this.titleViews = titleViews;
+    public void addTitles(List<TitleView> titleViews) {
+        this.titleViews.addAll(titleViews);
     }
 
     /**

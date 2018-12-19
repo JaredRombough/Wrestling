@@ -1,5 +1,6 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,7 @@ import wrestling.model.SegmentItem;
 import wrestling.model.Title;
 import wrestling.model.segmentEnum.ActiveType;
 
-public class TitleView implements SegmentItem {
+public class TitleView implements SegmentItem, Serializable {
 
     private final Title title;
     private final List<TitleReign> titleReigns;
@@ -26,7 +27,7 @@ public class TitleView implements SegmentItem {
     }
 
     public void addReign(List<WorkerView> workers, LocalDate dayWon) {
-        if(champions != null) {
+        if (champions != null) {
             champions.setDayLost(dayWon);
         }
         int sequenceNumber = titleReigns.size() + 1;
@@ -63,7 +64,7 @@ public class TitleView implements SegmentItem {
     public List<WorkerView> getChampions() {
         return champions.getWorkers();
     }
-    
+
     public int getPrestige() {
         return title.getPrestige();
     }

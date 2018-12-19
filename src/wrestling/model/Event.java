@@ -1,12 +1,14 @@
 package wrestling.model;
 
+import wrestling.model.segmentEnum.EventType;
+import java.io.Serializable;
 import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.interfaces.iDate;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.modelView.PromotionView;
 
-public class Event implements iEvent, iDate {
+public class Event implements Serializable, iEvent, iDate {
 
     private final PromotionView promotion;
 

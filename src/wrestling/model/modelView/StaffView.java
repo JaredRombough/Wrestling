@@ -1,5 +1,6 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import wrestling.model.SegmentItem;
@@ -9,7 +10,7 @@ import wrestling.model.interfaces.iPerson;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.model.segmentEnum.StaffType;
 
-public class StaffView implements SegmentItem, iPerson {
+public class StaffView implements Serializable, SegmentItem, iPerson {
 
     private String name;
     private Gender gender;

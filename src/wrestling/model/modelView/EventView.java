@@ -1,10 +1,11 @@
 package wrestling.model.modelView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Event;
 
-public class EventView {
+public class EventView implements Serializable {
 
     private List<SegmentView> segmentViews;
     private final Event event;

@@ -1,5 +1,5 @@
 
-package wrestling.model;
+package wrestling.model.segmentEnum;
 
 
 public enum EventType {

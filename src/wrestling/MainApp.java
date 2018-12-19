@@ -281,13 +281,16 @@ public class MainApp extends Application {
         Kryo kryo = new Kryo();
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
 
-        GameController gc = null;
+        GameController gc;
 
         try (Input input = new Input(new FileInputStream("saveGame.bin"))) {
             gc = kryo.readObject(input, GameController.class);
         } catch (IOException ex) {
             logger.log(Level.ERROR, "IOException in loadGame(), returning null gameController", ex);
             gc = null;
+        } catch (Exception ex) {
+            logger.log(Level.ERROR, "Error loading game", ex);
+            throw ex;
         }
 
         return gc;
