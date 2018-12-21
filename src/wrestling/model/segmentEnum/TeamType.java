@@ -3,6 +3,7 @@ package wrestling.model.segmentEnum;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iTeamType;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -328,6 +329,22 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return segmentItem instanceof TitleView;
+        }
+    },
+    REF {
+        @Override
+        public String description() {
+            return "Refs";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.REFEREE);
         }
     };
 

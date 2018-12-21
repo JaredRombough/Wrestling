@@ -21,6 +21,7 @@ public class SegmentView implements Serializable {
     private final List<TitleView> titleViews;
     private final SegmentType segmentType;
     private EventView eventView;
+    private StaffView referee;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -207,6 +208,20 @@ public class SegmentView implements Serializable {
      */
     public void setEventView(EventView eventView) {
         this.eventView = eventView;
+    }
+
+    /**
+     * @return the referee
+     */
+    public StaffView getReferee() {
+        return referee;
+    }
+
+    /**
+     * @param referee the referee to set
+     */
+    public void setReferee(StaffView referee) {
+        this.referee = referee;
     }
 
 }

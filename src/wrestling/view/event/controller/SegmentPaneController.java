@@ -27,6 +27,7 @@ import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -72,6 +73,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @FXML
     private Button interferenceButton;
 
+    @FXML
+    private AnchorPane refAnchor;
+
     private List<Button> segmentTypeButtons;
 
     private GameScreen angleOptionsScreen;
@@ -85,10 +89,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private List<GameScreen> allWrappers;
     private GameScreen titlesWrapper;
     private TeamPaneWrapper titlesController;
+    private TeamPaneWrapper refsController;
 
     private EventScreenController eventScreenController;
 
     private SegmentType segmentType;
+
+    private StaffView ref;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -124,6 +131,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         initializeTitlesWrapper();
         initializeMatchOptions();
         initializeAngleOptions();
+        initializeRef();
 
         addTeamButton.setOnAction(e -> addTeam(
                 angleOptions.getAngleType().addTeamType()
@@ -140,6 +148,16 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         titlesPane.getChildren().add(titlesWrapper.pane);
         allWrappers.add(titlesWrapper);
+    }
+
+    private void initializeRef() {
+        GameScreen refScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController, refAnchor);
+        refsController = ((TeamPaneWrapper) refScreen.controller);
+        refsController.setTeamType(TeamType.REF);
+        refsController.setDragDropHandler(this, eventScreenController);
+        refsController.setVisible(false);
+
+        allWrappers.add(refScreen);
     }
 
     private void initializeMatchOptions() {
@@ -541,5 +559,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public SegmentType getSegmentType() {
         return segmentType;
+    }
+
+    /**
+     * @param ref the ref to set
+     */
+    public void setRef(StaffView ref) {
+        refsController.getTeamPaneController().setSegmentItems(Collections.singletonList(ref));
     }
 }

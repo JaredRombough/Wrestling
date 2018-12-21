@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,11 +41,13 @@ import wrestling.model.Event;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.GameScreen;
@@ -346,6 +349,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentListView.getItems().add(item);
             segmentListView.getSelectionModel().select(item);
 
+            segmentsChanged();
+
             updateLabels();
 
         } catch (IOException ex) {
@@ -376,6 +381,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             } else {
                 segmentListView.getSelectionModel().select(selectedIndex - 1);
             }
+
+            segmentsChanged();
 
             updateLabels();
         }
@@ -620,7 +627,23 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    // update the listview according to whatever browse mode we are in
+    public void segmentsChanged() {
+        updateRefs();
+    }
+
+    private void updateRefs() {
+        List<StaffView> refs = playerPromotion().getStaff(StaffType.REFEREE);
+        Collections.sort(refs, Comparator.comparingInt(StaffView::getSkill));
+        if (!refs.isEmpty()) {
+            for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
+                segmentPaneControllers.get(i).setRef(refs.remove(refs.size() - 1));
+                if (refs.isEmpty()) {
+                    refs.addAll(playerPromotion().getStaff(StaffType.REFEREE));
+                }
+            }
+        }
+    }
+
     public static class SegmentNameItem {
 
         public static Callback<SegmentNameItem, Observable[]> extractor() {

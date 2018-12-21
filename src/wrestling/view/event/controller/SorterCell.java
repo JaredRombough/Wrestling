@@ -110,6 +110,8 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
                 Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
                 Collections.swap(segments, thisIdx, draggedIdx);
 
+                eventScreenController.segmentsChanged();
+
                 segmentListView.getSelectionModel().select(segmentNameItem);
                 success = true;
             }
