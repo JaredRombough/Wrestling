@@ -10,6 +10,7 @@ About the structure as of 2019-01-14
 /model/controller
 
 GameController - The main game loop and high level game functions
+
 PromotionController - Most AI goes here
 
 /model/manager
