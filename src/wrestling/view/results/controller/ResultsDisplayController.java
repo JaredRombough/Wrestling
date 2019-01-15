@@ -101,7 +101,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     ? ViewUtils.intToStars(segment.getWorkRating())
                     : String.format("%d%%", segment.getWorkRating())));
             sb.append("\n")
-                    .append(String.format(" crowd reaction: %d%%", segment.getCrowdRating()));
+                    .append(String.format("Crowd reaction: %d%%", segment.getCrowdRating()));
+            sb.append("\n");
+            sb.append((String.format("Referee: %s", segmentView.getReferee() != null ? segmentView.getReferee().toString() : " None")));
             summaryText.setText(sb.toString());
             populateView();
         }
