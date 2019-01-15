@@ -95,8 +95,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private SegmentType segmentType;
 
-    private StaffView ref;
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
@@ -510,6 +508,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentView.getSegment().setSegmentLength(segmentLength.value());
         segmentView.setTeams(getSegmentTeams());
         segmentView.addTitles(getTitles());
+        segmentView.setReferee(getRef());
         return segmentView;
     }
 
@@ -559,6 +558,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public SegmentType getSegmentType() {
         return segmentType;
+    }
+
+    private StaffView getRef() {
+        return refsController != null && !refsController.getTeamPaneController().getSegmentItems().isEmpty()
+                ? (StaffView) refsController.getTeamPaneController().getSegmentItems().get(0)
+                : null;
     }
 
     /**

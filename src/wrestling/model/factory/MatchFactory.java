@@ -62,7 +62,17 @@ public class MatchFactory implements Serializable {
             }
 
         }
+
+        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            if (segmentView.getReferee() == null) {
+                workRatingTotal *= .5;
+            } else {
+                workRatingTotal += segmentView.getReferee().getSkill() / 10;
+            }
+        }
+
         int finalMatchRating;
+
         if (interferenceTotal > 0) {
             int intRating = interferenceTotal
                     / segmentView.getTeams(TeamType.INTERFERENCE).size();
