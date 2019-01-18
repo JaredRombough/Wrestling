@@ -1,12 +1,13 @@
 # Wrestling
 Wrestling booking simulation
 
-
+<br />
 
 
 HOW TO BUILD WITH NETBEANS
 
 (tested with Netbeans 8.1, use default settings unless otherwise noted)
+<br /><br />
 
 Team -> Remote -> Clone
 
@@ -18,13 +19,13 @@ Select JavaFX -> JavaFX Project with Existing Sources
 
 Source Package Folders -> Add Folder -> wrestling\src
 
-
+<br />
 At this point you should have the project files visible in the "Projects" pane
 
-
+<br /><br />
 Download the following JAR files:
 
-
+<br />
 Kryo
 
 https://oss.sonatype.org/content/repositories/snapshots/com/esotericsoftware/kryo/
@@ -37,7 +38,7 @@ objenesis-2.6
 
 reflectasm-1.11.6
 
-
+<br />
 Apache Log4j 2
 
 https://logging.apache.org/log4j/2.0/download.html
@@ -46,22 +47,19 @@ log4j-api-2.11.1
 
 log4j-core-2.11.1
 
-
+<br />
 Appache Commons Lang
 
 https://commons.apache.org/proper/commons-lang/download_lang.cgi
 
 commons-lang3-3.8.1
+<br />
 
 Add the above JAR files to the project by right clicking Libraries -> Add JAR/Folder
 
 That's it, you should now be able to compile and run the project.
 
-
-
-
-
-
+<br /><br />
 FILE STRUCTURE
 
 as of 2019-01-14
