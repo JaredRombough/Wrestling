@@ -191,7 +191,11 @@ public class EventScreenController extends ControllerBase implements Initializab
     private String getWarnings() {
         StringBuilder warnings = new StringBuilder();
         for (int i = 0; i < getSegmentViews().size(); i++) {
-            for (TitleView titleView : getSegmentViews().get(i).getTitleViews()) {
+            SegmentView segmentView = getSegmentViews().get(i);
+            if (segmentView.getSegmentType().equals(SegmentType.MATCH) && segmentView.getReferee() == null) {
+                warnings.append(String.format("Segment #%d has no referee.\n", i + 1));
+            }
+            for (TitleView titleView : segmentView.getTitleViews()) {
                 if (!titleView.getChampions().isEmpty()
                         && !ModelUtils.teamIsPresent(titleView.getChampions(),
                                 segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
