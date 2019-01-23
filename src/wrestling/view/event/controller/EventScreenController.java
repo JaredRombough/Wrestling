@@ -628,17 +628,19 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void segmentsChanged() {
-        updateRefs();
+        autoUpdateRefs();
     }
 
-    private void updateRefs() {
+    public void autoUpdateRefs() {
         List<StaffView> refs = playerPromotion().getStaff(StaffType.REFEREE);
         Collections.sort(refs, Comparator.comparingInt(StaffView::getSkill));
         if (!refs.isEmpty()) {
             for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
-                segmentPaneControllers.get(i).setRef(refs.remove(refs.size() - 1));
-                if (refs.isEmpty()) {
-                    refs.addAll(playerPromotion().getStaff(StaffType.REFEREE));
+                if (segmentPaneControllers.get(i).isAutoSetRef()) {
+                    segmentPaneControllers.get(i).setRefAuto(refs.remove(refs.size() - 1));
+                    if (refs.isEmpty()) {
+                        refs.addAll(playerPromotion().getStaff(StaffType.REFEREE));
+                    }
                 }
             }
         }

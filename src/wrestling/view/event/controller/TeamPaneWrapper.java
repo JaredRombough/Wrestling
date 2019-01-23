@@ -72,6 +72,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private TeamType teamType;
     private OutcomeType outcomeType;
 
+    private boolean autoSet;
+
     public void setTeamType(TeamType newTeamType) {
         if (teamType != newTeamType) {
             vBox.getChildren().retainAll(teamPane.pane, header);
@@ -264,6 +266,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         presenceType = PresenceType.ABSENT;
         successType = SuccessType.WIN;
         timingType = TimingType.DURING;
+        autoSet = true;
     }
 
     @Override
@@ -342,6 +345,20 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
      */
     public TeamPaneController getTeamPaneController() {
         return teamPaneController;
+    }
+
+    /**
+     * @return the autoSet
+     */
+    public boolean isAutoSet() {
+        return autoSet;
+    }
+
+    /**
+     * @param autoSet the autoSet to set
+     */
+    public void setAutoSet(boolean autoSet) {
+        this.autoSet = autoSet;
     }
 
 }

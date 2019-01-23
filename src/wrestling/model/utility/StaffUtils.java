@@ -1,7 +1,9 @@
 package wrestling.model.utility;
 
 import org.apache.commons.lang3.RandomUtils;
+import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.StaffType;
 
 public final class StaffUtils {
@@ -113,5 +115,9 @@ public final class StaffUtils {
         }
         float ideal = promotion.getFullRoster().size() / staffType.workerRatio();
         return (int) Math.ceil(ideal);
+    }
+
+    public static boolean isRef(SegmentItem segmentItem) {
+        return segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.REFEREE);
     }
 }

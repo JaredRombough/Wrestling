@@ -37,8 +37,10 @@ import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
@@ -254,19 +256,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     public void addTeam(List<? extends SegmentItem> segmentItems, boolean emptyOnly) {
-
-        if (segmentItems.isEmpty() || ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
+        if (addTeam(segmentItems)) {
             return;
         }
-
-        if (segmentItems.get(0) instanceof TitleView) {
-            addTitleView((TitleView) segmentItems.get(0));
-            return;
-        }
-
         removeSegmentItems(segmentItems);
 
-        if (segmentItems.get(0) instanceof WorkerView || segmentItems.get(0) instanceof TagTeamView) {
+        SegmentItem item = segmentItems.get(0);
+
+        if (item instanceof WorkerView || item instanceof TagTeamView) {
 
             GameScreen wrapperToInsert = wrapperToInsert(workerTeamWrappers, emptyOnly);
             if (wrapperToInsert == null) {
@@ -283,24 +280,41 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     }
 
+    public void addTeam(List<? extends SegmentItem> segmentItems, int index) {
+        if (addTeam(segmentItems)) {
+            return;
+        }
+
+        TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrappers.get(index).controller;
+        emptyWrapper.getTeamPaneController().getItems().addAll(segmentItems);
+        emptyWrapper.updateLabels();
+    }
+
+    private boolean addTeam(List<? extends SegmentItem> segmentItems) {
+
+        if (segmentItems.isEmpty() || ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
+            return true;
+        }
+
+        SegmentItem item = segmentItems.get(0);
+
+        if (item instanceof TitleView) {
+            addTitleView((TitleView) segmentItems.get(0));
+            return true;
+        }
+
+        if (StaffUtils.isRef(item)) {
+            setRef((StaffView) item);
+            return true;
+        }
+
+        return false;
+    }
+
     public void addTitleView(TitleView titleView) {
         titlesController.getTeamPaneController().getItems().add(titleView);
         titlesController.updateLabels();
         addTeam(titleView.getChampions(), true);
-    }
-
-    public void addTeam(List<? extends SegmentItem> segmentItems, int index) {
-        if (segmentItems.isEmpty() || ModelUtils.teamIsPresent(segmentItems, workerTeamWrappers)) {
-            return;
-        }
-
-        if (segmentItems.get(0) instanceof TitleView) {
-            addTitleView((TitleView) segmentItems.get(0));
-            return;
-        }
-        TeamPaneWrapper emptyWrapper = (TeamPaneWrapper) workerTeamWrappers.get(index).controller;
-        emptyWrapper.getTeamPaneController().getItems().addAll(segmentItems);
-        emptyWrapper.updateLabels();
     }
 
     private GameScreen wrapperToInsert(List<GameScreen> workerTeamWrappers, boolean onlyEmpty) {
@@ -566,10 +580,24 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 : null;
     }
 
+    public boolean isAutoSetRef() {
+        return refsController.isAutoSet();
+    }
+
+    /**
+     * @param ref the ref to set
+     */
+    public void setRefAuto(StaffView ref) {
+        refsController.getTeamPaneController().setSegmentItems(Collections.singletonList(ref));
+    }
+
     /**
      * @param ref the ref to set
      */
     public void setRef(StaffView ref) {
+        refsController.setAutoSet(false);
+        refsController.getTeamPaneController().getSegmentItems().clear();
         refsController.getTeamPaneController().setSegmentItems(Collections.singletonList(ref));
+        eventScreenController.autoUpdateRefs();
     }
 }
