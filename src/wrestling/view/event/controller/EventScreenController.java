@@ -633,6 +633,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     public void segmentsChanged() {
         autoUpdateRefs();
+        updateSegmentItemListView();
     }
 
     public void autoUpdateRefs() {
@@ -640,8 +641,11 @@ public class EventScreenController extends ControllerBase implements Initializab
         Collections.sort(refs, Comparator.comparingInt(StaffView::getSkill));
         if (!refs.isEmpty()) {
             for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
-                if (segmentPaneControllers.get(i).isAutoSetRef()) {
-                    segmentPaneControllers.get(i).setRefAuto(refs.remove(refs.size() - 1));
+                SegmentPaneController controller = segmentPaneControllers.get(i);
+                if (controller.getSegmentType().equals(SegmentType.ANGLE)) {
+                    controller.clearRef();
+                } else if (controller.isAutoSetRef()) {
+                    controller.setRefAuto(refs.remove(refs.size() - 1));
                     if (refs.isEmpty()) {
                         refs.addAll(playerPromotion().getStaff(StaffType.REFEREE));
                     }

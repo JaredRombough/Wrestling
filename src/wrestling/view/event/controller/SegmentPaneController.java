@@ -37,7 +37,6 @@ import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
-import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
@@ -405,7 +404,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentLengthWrapper.setItems(FXCollections.observableArrayList(type.equals(SegmentType.MATCH)
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
-        eventScreenController.updateSegmentItemListView();
+        refAnchor.setVisible(type.equals(SegmentType.MATCH));
+        eventScreenController.segmentsChanged();
         updateLabels();
 
     }
@@ -596,8 +596,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public void setRef(StaffView ref) {
         refsController.setAutoSet(false);
-        refsController.getTeamPaneController().getSegmentItems().clear();
         refsController.getTeamPaneController().setSegmentItems(Collections.singletonList(ref));
         eventScreenController.autoUpdateRefs();
+    }
+
+    public void clearRef() {
+        refsController.getTeamPaneController().setSegmentItems(Collections.emptyList());
+        refsController.setAutoSet(true);
     }
 }
