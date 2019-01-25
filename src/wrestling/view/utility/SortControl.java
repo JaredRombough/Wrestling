@@ -72,7 +72,13 @@ public class SortControl extends ControllerBase implements Initializable {
         activeTypeFilter = ActiveType.ALL;
         staffTypeFilter = StaffType.ALL;
         bookingBrowseMode = false;
-        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(BrowseMode.WORKERS, BrowseMode.TAG_TEAMS, BrowseMode.TITLES, BrowseMode.REFS));
+        bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(
+                BrowseMode.WORKERS,
+                BrowseMode.TAG_TEAMS,
+                BrowseMode.TITLES,
+                BrowseMode.REFS,
+                BrowseMode.BROADCAST
+        ));
         bookingBrowseComboBox.getSelectionModel().selectFirst();
         bookingBrowseComboBox.setMaxWidth(Double.MAX_VALUE);
         bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BrowseMode>() {
