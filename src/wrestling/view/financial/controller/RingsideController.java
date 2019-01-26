@@ -1,13 +1,19 @@
 package wrestling.view.financial.controller;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import wrestling.model.SegmentItem;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.view.browser.controller.BrowseParams;
+import wrestling.view.browser.controller.CreateTagTeamDialog;
+import wrestling.view.browser.controller.EditBroadcastTeamDialog;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -26,6 +32,9 @@ public class RingsideController extends ControllerBase {
 
     @FXML
     private Button addButton;
+
+    @FXML
+    private Button editButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,6 +68,7 @@ public class RingsideController extends ControllerBase {
 
     private void setButtonActions() {
         viewButton.setText("\uD83D\uDC41");
+
         BrowseParams params = new BrowseParams();
         params.filter = staffType;
         params.promotion = playerPromotion();
@@ -75,6 +85,17 @@ public class RingsideController extends ControllerBase {
                 params.browseMode = BrowseMode.HIRE_STAFF;
                 mainApp.show(ScreenCode.BROWSER, params);
             });
+        }
+
+        editButton.setText("\uD83D\uDD89");
+
+        if (staffType.equals(StaffType.BROADCAST)) {
+            editButton.setOnAction(e -> {
+                EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
+                Optional<List<StaffView>> optionalResult = dialog.getDialog(gameController).showAndWait();
+            });
+        } else {
+            editButton.setVisible(false);
         }
 
     }
