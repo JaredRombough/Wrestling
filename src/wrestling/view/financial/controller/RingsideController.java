@@ -11,10 +11,12 @@ import wrestling.model.SegmentItem;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.utility.ModelUtils;
 import wrestling.view.browser.controller.BrowseParams;
 import wrestling.view.browser.controller.CreateTagTeamDialog;
 import wrestling.view.browser.controller.EditBroadcastTeamDialog;
 import wrestling.view.utility.ScreenCode;
+import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class RingsideController extends ControllerBase {
@@ -35,6 +37,12 @@ public class RingsideController extends ControllerBase {
 
     @FXML
     private Button editButton;
+
+    @FXML
+    private Label defaultBroadcastTeamLabel;
+
+    @FXML
+    private Label defaultBroadcastTeam;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,8 +69,10 @@ public class RingsideController extends ControllerBase {
 
                 staffCount.setText(playerPromotion().getOwner() != null ? playerPromotion().getOwner().getName() : "None");
             } else {
-                staffCount.setText(Integer.toString(playerPromotion().getStaff(staffType).size()));
+                staffCount.setText(String.format("Count: %d", playerPromotion().getStaff(staffType).size()));
             }
+
+            defaultBroadcastTeam.setText(ModelUtils.slashShortNames(playerPromotion().getDefaultBroadcastTeam()));
         }
     }
 
@@ -92,9 +102,16 @@ public class RingsideController extends ControllerBase {
         if (staffType.equals(StaffType.BROADCAST)) {
             editButton.setOnAction(e -> {
                 EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-                Optional<List<StaffView>> optionalResult = dialog.getDialog(gameController).showAndWait();
+                Optional<List<StaffView>> optionalResult = dialog.getDialog(gameController, playerPromotion()).showAndWait();
+                optionalResult.ifPresent((List<StaffView> broadcastTeam) -> {
+                    playerPromotion().setDefaultBroadcastTeam(broadcastTeam);
+                    updateLabels();
+                });
+
             });
         } else {
+            defaultBroadcastTeamLabel.setVisible(false);
+            defaultBroadcastTeam.setVisible(false);
             editButton.setVisible(false);
         }
 

@@ -155,6 +155,12 @@ public class StaffView implements Serializable, SegmentItem, iPerson {
     }
 
     @Override
+    public String getShortName() {
+        String[] splitName = name.split(" ");
+        return splitName[splitName.length - 1];
+    }
+
+    @Override
     public iContract getContract(PromotionView promotion) {
         return staffContract != null && staffContract.getPromotion().equals(promotion)
                 ? staffContract : null;
