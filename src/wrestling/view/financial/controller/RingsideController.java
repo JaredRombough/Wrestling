@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import wrestling.model.SegmentItem;
+import wrestling.model.constants.GameConstants;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
@@ -97,17 +98,20 @@ public class RingsideController extends ControllerBase {
             });
         }
 
-        editButton.setText("\uD83D\uDD89");
+        editButton.setText(GameConstants.EDIT_ICON);
 
         if (staffType.equals(StaffType.BROADCAST)) {
             editButton.setOnAction(e -> {
                 EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-                Optional<List<StaffView>> optionalResult = dialog.getDialog(gameController, playerPromotion()).showAndWait();
+                Optional<List<StaffView>> optionalResult = dialog.getDialog(
+                        gameController,
+                        playerPromotion(),
+                        playerPromotion().getDefaultBroadcastTeam()
+                ).showAndWait();
                 optionalResult.ifPresent((List<StaffView> broadcastTeam) -> {
                     playerPromotion().setDefaultBroadcastTeam(broadcastTeam);
                     updateLabels();
                 });
-
             });
         } else {
             defaultBroadcastTeamLabel.setVisible(false);

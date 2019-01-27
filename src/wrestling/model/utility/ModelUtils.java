@@ -27,15 +27,19 @@ public final class ModelUtils {
         return String.format("%d:%02d", hours, minutes);
     }
 
-    public static String slashNames(List<? extends SegmentItem> workers) {
-        if (workers.isEmpty()) {
-            return "?";
+    public static String slashNames(List<? extends SegmentItem> segmentItems) {
+        return slashNames(segmentItems, "?");
+    }
+
+    public static String slashNames(List<? extends SegmentItem> segmentItems, String placeholder) {
+        if (segmentItems.isEmpty()) {
+            return placeholder;
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < workers.size(); i++) {
-            sb.append(workers.get(i).toString());
-            if (workers.size() - i > 1) {
+        for (int i = 0; i < segmentItems.size(); i++) {
+            sb.append(segmentItems.get(i).toString());
+            if (segmentItems.size() - i > 1) {
                 sb.append("/");
             }
         }

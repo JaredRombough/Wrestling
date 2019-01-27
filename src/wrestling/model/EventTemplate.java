@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.interfaces.iDate;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
@@ -27,6 +30,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
     private int eventsLeft;
     private DayOfWeek dayOfWeek;
     private Month month;
+    private List<StaffView> defaultBroadcastTeam;
 
     public EventTemplate() {
         bookedUntil = LocalDate.MIN;
@@ -40,6 +44,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
                         RandomUtils.nextInt(0, 2));
         month = Month.JANUARY;
+        defaultBroadcastTeam = new ArrayList<>();
     }
 
     @Override
@@ -218,6 +223,20 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
      */
     public void setEventVenueSize(EventVenueSize eventVenueSize) {
         this.eventVenueSize = eventVenueSize;
+    }
+
+    /**
+     * @return the defaultBroadcastTeam
+     */
+    public List<StaffView> getDefaultBroadcastTeam() {
+        return defaultBroadcastTeam;
+    }
+
+    /**
+     * @param defaultBroadcastTeam the defaultBroadcastTeam to set
+     */
+    public void setDefaultBroadcastTeam(List<StaffView> defaultBroadcastTeam) {
+        this.defaultBroadcastTeam = defaultBroadcastTeam;
     }
 
 }
