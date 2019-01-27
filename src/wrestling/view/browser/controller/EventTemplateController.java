@@ -37,6 +37,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
     private Label frequencyLabel;
     
     @FXML
+    private Label broadcastTeamLabel;
+    
+    @FXML
     private Label broadcastLabel;
     
     @FXML
@@ -100,6 +103,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
             remainingLabel.setText(Integer.toString(eventTemplate.getEventsLeft()));
+            broadcastTeamLabel.setText(ModelUtils.slashNames(eventTemplate.getPromotion().getDefaultBroadcastTeam()));
         } else {
             editLabel.setCurrent(BrowseMode.EVENTS);
         }
