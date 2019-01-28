@@ -14,29 +14,29 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Challenger";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
-
+        
     },
     CHALLENGED {
         @Override
         public String description() {
             return "Challenged";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -47,29 +47,29 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Attacker";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
-
+        
     },
     VICTIM {
         @Override
         public String description() {
             return "Victim";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -80,12 +80,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Promo";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -96,12 +96,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Brawler";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -112,12 +112,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Brawler";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -128,12 +128,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Promo Target";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -144,12 +144,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Offerer";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -160,12 +160,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Offeree";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -176,12 +176,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Interference";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -192,12 +192,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Interviewer";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -208,12 +208,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Announcer";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -224,12 +224,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Audience";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -240,12 +240,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Default";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -256,12 +256,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Winner";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -272,12 +272,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Loser";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -288,12 +288,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Draw";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
@@ -304,12 +304,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Everyone";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return false;
@@ -320,12 +320,12 @@ public enum TeamType implements Description, iTeamType {
         public String description() {
             return "Titles";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return segmentItem instanceof TitleView;
@@ -334,31 +334,47 @@ public enum TeamType implements Description, iTeamType {
     REF {
         @Override
         public String description() {
-            return "Refs";
+            return "Referee";
         }
-
+        
         @Override
         public String result() {
             return "";
         }
-
+        
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.REFEREE);
         }
+    },
+    BROADCAST {
+        @Override
+        public String description() {
+            return "Broadcast Team";
+        }
+        
+        @Override
+        public String result() {
+            return "";
+        }
+        
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem) || (segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.BROADCAST));
+        }
     };
-
+    
     @Override
     public String toString() {
         return description();
     }
-
+    
     public boolean isMatch() {
         return this.equals(WINNER) || this.equals(LOSER) || this.equals(DRAW);
     }
-
+    
     private static boolean workerDroppable(SegmentItem segmentItem) {
         return segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView;
     }
-
+    
 }

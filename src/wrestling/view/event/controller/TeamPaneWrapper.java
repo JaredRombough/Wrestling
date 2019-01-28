@@ -162,7 +162,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return xButton;
     }
 
-    public void setVisible(boolean visible) {
+    public void setHeaderVisible(boolean visible) {
         vBox.getChildren().remove(header);
     }
 

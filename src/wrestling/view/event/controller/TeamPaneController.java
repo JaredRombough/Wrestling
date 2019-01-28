@@ -70,10 +70,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
             if (teamType != null) {
                 switch (teamType) {
                     case TITLES:
-                        teamNameLabel.setText("Titles");
-                        break;
                     case REF:
-                        teamNameLabel.setText("Referee");
+                    case BROADCAST:
+                        teamNameLabel.setText(teamType.description());
                         break;
                     default:
                         teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
@@ -146,7 +145,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     }
 
-    public void setSegmentItems(List<SegmentItem> segmentItems) {
+    public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
         teamListView.getItems().clear();
         teamListView.getItems().addAll(segmentItems);
         updateLabels();

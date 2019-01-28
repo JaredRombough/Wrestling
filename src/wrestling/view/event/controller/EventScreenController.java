@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -108,13 +109,12 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
-
-            if (currentEvent != null && !currentEvent.equals(obj)) {
+            System.out.println("setCurrent");
+            if (!Objects.equals(currentEvent, obj)) {
+                currentEvent = (Event) obj;
+                eventTitleLabel.setText("Now booking: " + getCurrentEvent().toString());
                 resetSegments();
             }
-            currentEvent = (Event) obj;
-            eventTitleLabel.setText("Now booking: " + currentEvent.toString());
-
             updateLabels();
         } else {
             logger.log(Level.ERROR, "Invalid object passed to EventScreen");
@@ -213,9 +213,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         mainApp.setRootLayoutButtonDisable(true);
         boolean testing = false;
         if (testing) {
-            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(currentEvent, playerPromotion().getFullRoster(), mainApp.isRandomGame()));
+            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), playerPromotion().getFullRoster(), mainApp.isRandomGame()));
         } else {
-            mainApp.show(ScreenCode.RESULTS, new EventView(currentEvent, removeEmpty(getSegmentViews())));
+            mainApp.show(ScreenCode.RESULTS, new EventView(getCurrentEvent(), removeEmpty(getSegmentViews())));
         }
 
     }
@@ -256,7 +256,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));
         }
 
-        if (currentEvent != null) {
+        if (getCurrentEvent() != null) {
 
             int duration = getDuration();
 
@@ -291,7 +291,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private int getDuration() {
-        return currentEvent.getDefaultDuration();
+        return getCurrentEvent().getDefaultDuration();
     }
 
     private boolean validateDuration() {
@@ -346,6 +346,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             controller.setEventScreenController(this);
             controller.setDependencies(mainApp, gameController);
+            controller.setBroadcastTeam(currentEvent.getEventTemplate().getDefaultBroadcastTeam().isEmpty()
+                    ? playerPromotion().getDefaultBroadcastTeam()
+                    : currentEvent.getEventTemplate().getDefaultBroadcastTeam());
 
             //update the segment listview
             SegmentNameItem item = new SegmentNameItem();
@@ -448,15 +451,16 @@ public class EventScreenController extends ControllerBase implements Initializab
         //here we set a blank event
         initializeSegmentListView();
 
-        /*
-        create versespanes and controllers for each segment and keeps references
-        will need to be more flexible when other segment types are possible
-         */
-        for (int i = 0; i < defaultSegments; i++) {
-            addSegment();
-        }
-
-        segmentListView.getSelectionModel().selectFirst();
+//        /*
+//        create versespanes and controllers for each segment and keeps references
+//        will need to be more flexible when other segment types are possible
+//         */
+//        for (int i = 0; i < defaultSegments; i++) {
+//            addSegment();
+//        }
+//        
+//        segmentListView.getSelectionModel().selectFirst();
+        System.out.println("init more");
 
         initializeSegmentItemListView();
 
@@ -652,6 +656,13 @@ public class EventScreenController extends ControllerBase implements Initializab
                 }
             }
         }
+    }
+
+    /**
+     * @return the currentEvent
+     */
+    public Event getCurrentEvent() {
+        return currentEvent;
     }
 
     public static class SegmentNameItem {

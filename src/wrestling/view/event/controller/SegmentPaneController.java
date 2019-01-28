@@ -51,10 +51,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private static final int DEFAULTTEAMS = 2;
 
     @FXML
-    private VBox teamsPane;
+    private VBox teamsVBox;
 
     @FXML
-    private VBox titlesPane;
+    private VBox ringsideVBox;
 
     @FXML
     private Button matchButton;
@@ -74,9 +74,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     @FXML
     private Button interferenceButton;
 
-    @FXML
-    private AnchorPane refAnchor;
-
     private List<Button> segmentTypeButtons;
 
     private GameScreen angleOptionsScreen;
@@ -87,10 +84,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private iSegmentLength segmentLength;
 
     private List<GameScreen> workerTeamWrappers;
-    private List<GameScreen> allWrappers;
+    private List<GameScreen> allWrapperScreens;
     private GameScreen titlesWrapper;
     private TeamPaneWrapper titlesController;
     private TeamPaneWrapper refsController;
+    private GameScreen refScreen;
+    private TeamPaneWrapper broadcastTeamController;
 
     private EventScreenController eventScreenController;
 
@@ -100,7 +99,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
         logger = LogManager.getLogger(this.getClass());
         workerTeamWrappers = new ArrayList<>();
-        allWrappers = new ArrayList<>();
+        allWrapperScreens = new ArrayList<>();
         segmentTypeButtons = new ArrayList<>();
 
     }
@@ -127,10 +126,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
         segmentLengthWrapper.updateSelected(segmentLengthWrapper.getItems().indexOf(segmentLength));
 
+        ringsideVBox.setSpacing(5);
+        teamsVBox.setSpacing(5);
+
         initializeTitlesWrapper();
         initializeMatchOptions();
         initializeAngleOptions();
         initializeRef();
+        initializeBroadcastTeam();
 
         addTeamButton.setOnAction(e -> addTeam(
                 angleOptions.getAngleType().addTeamType()
@@ -143,27 +146,37 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         titlesController = ((TeamPaneWrapper) titlesWrapper.controller);
         titlesController.setTeamType(TeamType.TITLES);
         titlesController.setDragDropHandler(this, eventScreenController);
-        titlesController.setVisible(false);
+        titlesController.setHeaderVisible(false);
 
-        titlesPane.getChildren().add(titlesWrapper.pane);
-        allWrappers.add(titlesWrapper);
+        ringsideVBox.getChildren().add(titlesWrapper.pane);
+        allWrapperScreens.add(titlesWrapper);
     }
 
     private void initializeRef() {
-        GameScreen refScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController, refAnchor);
+        refScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         refsController = ((TeamPaneWrapper) refScreen.controller);
         refsController.setTeamType(TeamType.REF);
         refsController.setDragDropHandler(this, eventScreenController);
-        refsController.setVisible(false);
+        refsController.setHeaderVisible(false);
+        ringsideVBox.getChildren().add(refScreen.pane);
 
-        allWrappers.add(refScreen);
+        allWrapperScreens.add(refScreen);
+    }
+
+    private void initializeBroadcastTeam() {
+        GameScreen broadcastTeamScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        broadcastTeamController = ((TeamPaneWrapper) broadcastTeamScreen.controller);
+        broadcastTeamController.setTeamType(TeamType.BROADCAST);
+        broadcastTeamController.setDragDropHandler(this, eventScreenController);
+        broadcastTeamController.setHeaderVisible(false);
+
+        ringsideVBox.getChildren().add(broadcastTeamScreen.pane);
+        allWrapperScreens.add(broadcastTeamScreen);
     }
 
     private void initializeMatchOptions() {
-
         matchOptions.getMatchFinishes().setOnAction(e -> updateLabels());
         matchOptions.getMatchRules().setOnAction(e -> updateLabels());
-
     }
 
     private void initializeAngleOptions() {
@@ -231,7 +244,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     public void removeSegmentItem(SegmentItem segmentItem) {
-        for (GameScreen screen : allWrappers) {
+        for (GameScreen screen : allWrapperScreens) {
             ((TeamPaneWrapper) screen.controller).getTeamPaneController().removeSegmentItem(segmentItem);
         }
     }
@@ -248,7 +261,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     public List<SegmentItem> getSegmentItems() {
         List<SegmentItem> segmentItems = new ArrayList<>();
-        for (GameScreen screen : allWrappers) {
+        for (GameScreen screen : allWrapperScreens) {
             segmentItems.addAll(((TeamPaneWrapper) screen.controller).getTeamPaneController().getSegmentItems());
         }
         return segmentItems;
@@ -346,7 +359,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         if (teamType.equals(TeamType.INTERFERENCE)) {
             workerTeamWrappers.add(wrapperScreen);
-            teamsPane.getChildren().add(wrapperScreen.pane);
+            teamsVBox.getChildren().add(wrapperScreen.pane);
         } else {
             int indexToInsert = workerTeamWrappers.isEmpty() ? 0 : workerTeamWrappers.size();
 
@@ -358,7 +371,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             }
 
             workerTeamWrappers.add(indexToInsert, wrapperScreen);
-            teamsPane.getChildren().add(indexToInsert, wrapperScreen.pane);
+            teamsVBox.getChildren().add(indexToInsert, wrapperScreen.pane);
         }
 
         if (teamType.equals(TeamType.DEFAULT)) {
@@ -393,10 +406,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         updateLabels();
 
-        allWrappers.add(wrapperScreen);
+        allWrapperScreens.add(wrapperScreen);
 
         return wrapperScreen;
-
     }
 
     private void setSegmentType(SegmentType type) {
@@ -404,10 +416,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentLengthWrapper.setItems(FXCollections.observableArrayList(type.equals(SegmentType.MATCH)
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
-        refAnchor.setVisible(type.equals(SegmentType.MATCH));
+        refScreen.pane.setVisible(type.equals(SegmentType.MATCH));
         eventScreenController.segmentsChanged();
         updateLabels();
-
     }
 
     private boolean getXButtonVisible(int index, TeamType teamType) {
@@ -466,13 +477,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void removeTeam(GameScreen teamPaneWrapper) {
 
-        if (teamsPane.getChildren().contains(teamPaneWrapper.pane)) {
-            teamsPane.getChildren().remove(teamPaneWrapper.pane);
+        if (teamsVBox.getChildren().contains(teamPaneWrapper.pane)) {
+            teamsVBox.getChildren().remove(teamPaneWrapper.pane);
         }
 
         if (workerTeamWrappers.contains(teamPaneWrapper)) {
             workerTeamWrappers.remove(teamPaneWrapper);
-            allWrappers.remove(teamPaneWrapper);
+            allWrapperScreens.remove(teamPaneWrapper);
         }
         eventScreenController.updateLabels();
         updateLabels();
@@ -603,5 +614,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public void clearRef() {
         refsController.getTeamPaneController().setSegmentItems(Collections.emptyList());
         refsController.setAutoSet(true);
+    }
+
+    public void setBroadcastTeam(List<? extends SegmentItem> broadcastTeam) {
+        broadcastTeamController.getTeamPaneController().setSegmentItems(broadcastTeam);
     }
 }
