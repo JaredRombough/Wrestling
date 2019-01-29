@@ -109,7 +109,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
-            System.out.println("setCurrent");
             if (!Objects.equals(currentEvent, obj)) {
                 currentEvent = (Event) obj;
                 eventTitleLabel.setText("Now booking: " + getCurrentEvent().toString());
@@ -450,17 +449,6 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         //here we set a blank event
         initializeSegmentListView();
-
-//        /*
-//        create versespanes and controllers for each segment and keeps references
-//        will need to be more flexible when other segment types are possible
-//         */
-//        for (int i = 0; i < defaultSegments; i++) {
-//            addSegment();
-//        }
-//        
-//        segmentListView.getSelectionModel().selectFirst();
-        System.out.println("init more");
 
         initializeSegmentItemListView();
 

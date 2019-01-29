@@ -41,7 +41,6 @@ public class ContractController extends ControllerBase {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("init controller");
     }
 
     @Override
