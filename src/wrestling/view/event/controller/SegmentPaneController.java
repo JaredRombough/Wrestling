@@ -130,10 +130,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         teamsVBox.setSpacing(5);
 
         initializeTitlesWrapper();
+        initializeBroadcastTeam();
         initializeMatchOptions();
         initializeAngleOptions();
         initializeRef();
-        initializeBroadcastTeam();
 
         addTeamButton.setOnAction(e -> addTeam(
                 angleOptions.getAngleType().addTeamType()
@@ -534,6 +534,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentView.setTeams(getSegmentTeams());
         segmentView.addTitles(getTitles());
         segmentView.setReferee(getRef());
+        segmentView.setBroadcastTeam(broadcastTeamController.getTeamPaneController().getSegmentItems());
         return segmentView;
     }
 

@@ -102,10 +102,16 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     : String.format("%d%%", segment.getWorkRating())));
             sb.append("\n")
                     .append(String.format("Crowd reaction: %d%%", segment.getCrowdRating()));
-            sb.append("\n");
             if (isMatch) {
+                sb.append("\n");
                 sb.append((String.format("Referee: %s", segmentView.getReferee() != null ? segmentView.getReferee().toString() : " None")));
             }
+            sb.append("\n");
+            if (!segmentView.getBroadcastTeam().isEmpty()) {
+                sb.append("\n");
+                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNames(segmentView.getBroadcastTeam())));
+            }
+
             summaryText.setText(sb.toString());
             populateView();
         }

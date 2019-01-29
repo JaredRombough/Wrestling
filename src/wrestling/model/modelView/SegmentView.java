@@ -22,6 +22,7 @@ public class SegmentView implements Serializable {
     private final SegmentType segmentType;
     private EventView eventView;
     private StaffView referee;
+    private List<? extends SegmentItem> broadcastTeam;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -31,6 +32,7 @@ public class SegmentView implements Serializable {
             segment = new Angle();
         }
         teams = new ArrayList<>();
+        broadcastTeam = new ArrayList<>();
         titleViews = new ArrayList<>();
     }
 
@@ -222,6 +224,20 @@ public class SegmentView implements Serializable {
      */
     public void setReferee(StaffView referee) {
         this.referee = referee;
+    }
+
+    /**
+     * @return the broadcastTeam
+     */
+    public List<? extends SegmentItem> getBroadcastTeam() {
+        return broadcastTeam;
+    }
+
+    /**
+     * @param broadcastTeam the broadcastTeam to set
+     */
+    public void setBroadcastTeam(List<? extends SegmentItem> broadcastTeam) {
+        this.broadcastTeam = broadcastTeam;
     }
 
 }
