@@ -229,7 +229,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, PromotionView promotion) {
-            return gameController.getEventManager().getEventTemplates(promotion);
+            return promotion.getEventTemplates();
         }
 
         @Override

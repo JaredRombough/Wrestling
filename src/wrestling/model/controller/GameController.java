@@ -120,7 +120,7 @@ public final class GameController implements Serializable {
 
     public void initializeGameData() {
         for (PromotionView promotion : promotionManager.getPromotions()) {
-            if (eventManager.getEventTemplates(promotion).isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
+            if (promotion.getEventTemplates().isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
                 eventFactory.createMonthlyEvents(promotion);
             }
         }

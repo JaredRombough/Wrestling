@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.EventTemplate;
 
 public class PromotionView implements Serializable {
 
@@ -20,12 +21,14 @@ public class PromotionView implements Serializable {
     private final List<WorkerView> fullRoster;
     private final List<StaffView> allStaff;
     private List<StaffView> defaultBroadcastTeam;
+    private List<EventTemplate> eventTemplates;
 
     public PromotionView() {
 
         fullRoster = new ArrayList<>();
         allStaff = new ArrayList<>();
         defaultBroadcastTeam = new ArrayList<>();
+        eventTemplates = new ArrayList<>();
 
         name = "Promotion #" + serialNumber;
         shortName = "PRO" + serialNumber;
@@ -160,9 +163,11 @@ public class PromotionView implements Serializable {
     }
 
     public void removeFromStaff(StaffView staff) {
-        if (allStaff.contains(staff)) {
-            allStaff.remove(staff);
-        }
+        allStaff.remove(staff);
+        defaultBroadcastTeam.remove(staff);
+        eventTemplates.forEach(template -> {
+            template.getDefaultBroadcastTeam().remove(staff);
+        });
     }
 
     /**
@@ -177,5 +182,16 @@ public class PromotionView implements Serializable {
      */
     public void setDefaultBroadcastTeam(List<StaffView> defaultBroadcastTeam) {
         this.defaultBroadcastTeam = defaultBroadcastTeam;
+    }
+
+    /**
+     * @return the eventTemplates
+     */
+    public List<EventTemplate> getEventTemplates() {
+        return eventTemplates;
+    }
+
+    public void addEventTemplate(EventTemplate template) {
+        eventTemplates.add(template);
     }
 }
