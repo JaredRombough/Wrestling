@@ -89,6 +89,11 @@ public class MatchFactory implements Serializable {
         }
 
         finalMatchRating += finalMatchRating * StaffUtils.getMatchRatingModifier(segmentView.getPromotion());
+
+        if (!segmentView.getBroadcastTeam().isEmpty()) {
+            finalMatchRating += finalMatchRating * StaffUtils.getBroadcastTeamMatchRatingModifier(segmentView.getBroadcastTeam());
+        }
+
         segmentView.getSegment().setWorkRating(finalMatchRating);
 
         int crowdRating = Math.round(crowdRatingTotal / segmentView.getWorkers().size());

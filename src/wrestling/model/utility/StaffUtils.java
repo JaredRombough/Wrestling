@@ -1,25 +1,14 @@
 package wrestling.model.utility;
 
+import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.StaffType;
 
 public final class StaffUtils {
-
-    public static double getInjuryRate(PromotionView promotion) {
-        int coverage = getStaffCoverage(promotion, StaffType.MEDICAL);
-        double rate = 0.01;
-        if (coverage <= 100) {
-            rate += 0.01 * (100 - coverage) * 0.01;
-        } else if (coverage - 100 > 100) {
-            rate = .005;
-        } else {
-            rate -= 0.005 * (coverage - 100) * 0.01;
-        }
-        return rate;
-    }
 
     public static int getInjuryDurationBonusDays(PromotionView promotion) {
         int averageSkill = promotion.getStaffSkillAverage(StaffType.MEDICAL);
@@ -27,25 +16,25 @@ public final class StaffUtils {
     }
 
     public static double getCoverageAttendanceModifier(PromotionView promotion) {
-        return getModifer(getStaffCoverage(promotion, StaffType.PRODUCTION),
+        return getCoverageModifier(getStaffCoverage(promotion, StaffType.PRODUCTION),
                 -0.2,
                 0.1);
     }
 
     public static double getCoverageMatchRatingModifier(PromotionView promotion) {
-        return getModifer(getStaffCoverage(promotion, StaffType.ROAD_AGENT),
+        return getCoverageModifier(getStaffCoverage(promotion, StaffType.ROAD_AGENT),
                 -0.2,
                 0.1);
     }
 
     public static double getCreativeCrowdReactionModifer(PromotionView promotion) {
-        return getModifer(getStaffCoverage(promotion, StaffType.CREATIVE),
+        return getCoverageModifier(getStaffCoverage(promotion, StaffType.CREATIVE),
                 -0.2,
                 0.1);
     }
 
     public static double getTrainerSuccessRate(PromotionView promotion) {
-        double modifier = getModifer(getStaffCoverage(promotion, StaffType.TRAINER),
+        double modifier = getCoverageModifier(getStaffCoverage(promotion, StaffType.TRAINER),
                 -0.3,
                 0.1);
         double baseRate = 0.05;
@@ -56,7 +45,7 @@ public final class StaffUtils {
         return RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getTrainerSuccessRate(promotion));
     }
 
-    private static double getModifer(int coverage, double minimum, double maximum) {
+    private static double getCoverageModifier(int coverage, double minimum, double maximum) {
         double rate;
         if (coverage <= 100) {
             rate = minimum * (100 - coverage) * 0.01;
@@ -64,6 +53,19 @@ public final class StaffUtils {
             rate = maximum;
         } else {
             rate = maximum * (coverage - 100) * 0.01;
+        }
+        return rate;
+    }
+
+    public static double getInjuryRate(PromotionView promotion) {
+        int coverage = getStaffCoverage(promotion, StaffType.MEDICAL);
+        double rate = 0.01;
+        if (coverage <= 100) {
+            rate += 0.01 * (100 - coverage) * 0.01;
+        } else if (coverage - 100 > 100) {
+            rate = .005;
+        } else {
+            rate -= 0.005 * (coverage - 100) * 0.01;
         }
         return rate;
     }
@@ -80,6 +82,19 @@ public final class StaffUtils {
 
     public static double getProductionCrowdRatingModifier(PromotionView promotion) {
         int averageSkill = promotion.getStaffSkillAverage(StaffType.PRODUCTION);
+        return 0.1 * averageSkill * 0.01;
+    }
+
+    public static double getBroadcastTeamMatchRatingModifier(List<? extends SegmentItem> broadcastTeam) {
+        int totalSkill = 0;
+        for (SegmentItem broadcaster : broadcastTeam) {
+            if (broadcaster instanceof StaffView) {
+                totalSkill += ((StaffView) broadcaster).getSkill();
+            } else if (broadcaster instanceof WorkerView) {
+                totalSkill += ((WorkerView) broadcaster).getCharisma();
+            }
+        }
+        int averageSkill = totalSkill / broadcastTeam.size();
         return 0.1 * averageSkill * 0.01;
     }
 
