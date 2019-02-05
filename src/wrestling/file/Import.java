@@ -24,6 +24,7 @@ import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
 import wrestling.model.factory.PersonFactory;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
@@ -82,6 +83,7 @@ public class Import {
                 promotionsDat();
                 workersDat();
                 teamsDat();
+                stablesDat();
                 beltDat();
                 tvDat();
                 eventDat();
@@ -353,6 +355,48 @@ public class Import {
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
 
+            }
+        }
+    }
+
+    private void stablesDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\stables.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        String currentLine = "";
+        List<String> currentHexLine = new ArrayList<>();
+        List<String> currentStringLine = new ArrayList<>();
+        int counter = 0;
+        int lineLength = 69;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            if (counter == lineLength) {
+                StableView stable = new StableView();
+                stable.setName(currentLine.substring(0, 23).trim());
+
+                for (int f = 28; f < currentHexLine.size() - 1; f += 2) {
+                    String id1 = currentHexLine.get(f) + currentHexLine.get(f + 1);
+                    if (workerIDs.indexOf(id1) > -1
+                            && !stable.getWorkers().contains(allWorkers.get(workerIDs.indexOf(id1)))) {
+                        stable.getWorkers().add(allWorkers.get(workerIDs.indexOf(id1)));
+                    }
+                }
+
+                gameController.getStableManager().addStable(stable);
+
+                counter = 0;
+                currentLine = "";
+                currentHexLine = new ArrayList<>();
+                currentStringLine = new ArrayList<>();
+            } else {
+                currentLine += hexStringToLetter(hexValueString);
+                currentHexLine.add(hexValueString);
+                currentStringLine.add(hexStringToLetter(hexValueString));
+                counter++;
             }
         }
     }
