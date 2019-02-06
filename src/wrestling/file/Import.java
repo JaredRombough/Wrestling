@@ -376,7 +376,8 @@ public class Import {
 
             if (counter == lineLength) {
                 StableView stable = new StableView();
-                stable.setName(currentLine.substring(0, 23).trim());
+                stable.setName(currentLine.substring(1, 24).trim());
+                stable.setOwner(getPromotionFromKey(hexStringToInt(currentHexLine.get(26))));
 
                 for (int f = 28; f < currentHexLine.size() - 1; f += 2) {
                     String id1 = currentHexLine.get(f) + currentHexLine.get(f + 1);

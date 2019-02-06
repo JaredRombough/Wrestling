@@ -1,8 +1,10 @@
 package wrestling.model.segmentEnum;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import wrestling.model.controller.GameController;
@@ -214,6 +216,34 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public String toString() {
             return "Tag Teams";
+        }
+    },
+    STABLES {
+        @Override
+        public ObservableList comparators() {
+            return FXCollections.observableArrayList(
+                    new NameComparator());
+        }
+
+        @Override
+        public ScreenCode subScreenCode() {
+            return ScreenCode.STABLE;
+        }
+
+        @Override
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
+            return gameController.getStableManager().getStables()
+                    .stream().filter((stable) -> stable.getOwner().equals(promotion)).collect(Collectors.toList());
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
+        }
+
+        @Override
+        public String toString() {
+            return "Stables";
         }
     },
     EVENTS {

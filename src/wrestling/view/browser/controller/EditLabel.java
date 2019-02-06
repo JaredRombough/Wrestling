@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import wrestling.model.EventTemplate;
 import wrestling.model.SegmentItem;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -40,16 +41,19 @@ public class EditLabel extends ControllerBase implements Initializable {
         if (segmentItem != null) {
             label.setText(segmentItem.getLongName());
             editButton.setOnAction(e -> {
-                if (object instanceof TitleView) {
+                if (segmentItem instanceof TitleView) {
                     TitleView titleView = (TitleView) object;
                     titleView.getTitle().setName(ViewUtils.editTextDialog(titleView.getTitle().getName()));
-                } else if (object instanceof EventTemplate) {
+                } else if (segmentItem instanceof EventTemplate) {
                     EventTemplate eventTemplate = (EventTemplate) object;
                     eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
                     gameController.getEventManager().updateEventName(eventTemplate);
-                } else if (object instanceof TagTeamView) {
+                } else if (segmentItem instanceof TagTeamView) {
                     TagTeamView tagTeamView = (TagTeamView) object;
                     tagTeamView.getTagTeam().setName(ViewUtils.editTextDialog(tagTeamView.getTagTeam().getName()));
+                } else if (segmentItem instanceof StableView) {
+                    StableView stable = (StableView) object;
+                    stable.setName(ViewUtils.editTextDialog(stable.getName()));
                 }
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
@@ -58,7 +62,7 @@ public class EditLabel extends ControllerBase implements Initializable {
         } else {
             label.setText("");
         }
-        editButton.setVisible(segmentItem != null);
+        editButton.setVisible(segmentItem != null && !(segmentItem instanceof StableView));
 
         createButton.setOnAction(e -> {
             if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {

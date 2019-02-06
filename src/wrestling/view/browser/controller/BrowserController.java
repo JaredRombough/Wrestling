@@ -210,12 +210,11 @@ public class BrowserController extends ControllerBase implements Initializable {
         titlesButton.setId(BrowseMode.TITLES.name());
         staffButton.setId(BrowseMode.STAFF.name());
         hireStaffButton.setId(BrowseMode.HIRE_STAFF.name());
+        stablesButton.setId(BrowseMode.STABLES.name());
 
         ViewUtils.lockGridPane(gridPane);
 
         categoryButton = new Label();
-
-        stablesButton.setDisable(true);
 
         currentBrowseMode = BrowseMode.WORKERS;
 
