@@ -250,9 +250,9 @@ public final class ViewUtils {
         return result.get() == ButtonType.OK;
     }
 
-    public static String editTextDialog(String string) {
+    public static String editTextDialog(String string, String header) {
         TextInputDialog dialog = new TextInputDialog(string);
-        dialog.setHeaderText("Edit this value");
+        dialog.setHeaderText(header);
         dialog.getDialogPane().getStylesheets().add("style.css");
 
         Optional<String> result = dialog.showAndWait();
@@ -261,6 +261,10 @@ public final class ViewUtils {
         } else {
             return string;
         }
+    }
+
+    public static String editTextDialog(String string) {
+        return editTextDialog(string, "Edit this value");
     }
 
     public static Dialog<TitleView> createTitleViewDialog(GameController gameController) {

@@ -7,11 +7,15 @@ import wrestling.model.SegmentItem;
 public class StableView implements SegmentItem {
 
     private String name;
-    private List<WorkerView> workers;
+    private List<WorkerView> workers = new ArrayList<>();
     private PromotionView owner;
 
     public StableView() {
-        workers = new ArrayList<>();
+    }
+
+    public StableView(String name, PromotionView owner) {
+        this.name = name;
+        this.owner = owner;
     }
 
     /**

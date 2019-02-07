@@ -18,26 +18,26 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EditLabel extends ControllerBase implements Initializable {
-
+    
     @FXML
     Label label;
-
+    
     @FXML
     private Button editButton;
-
+    
     @FXML
     private Button createButton;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         label.setText("");
     }
-
+    
     @Override
     public void setCurrent(Object object) {
         SegmentItem segmentItem = object instanceof SegmentItem ? (SegmentItem) object : null;
         BrowseMode browseMode = object instanceof BrowseMode ? (BrowseMode) object : null;
-
+        
         if (segmentItem != null) {
             label.setText(segmentItem.getLongName());
             editButton.setOnAction(e -> {
@@ -58,12 +58,12 @@ public class EditLabel extends ControllerBase implements Initializable {
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
             });
-
+            
         } else {
             label.setText("");
         }
         editButton.setVisible(segmentItem != null);
-
+        
         createButton.setOnAction(e -> {
             if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {
                 mainApp.show(ScreenCode.CALENDAR);
@@ -74,14 +74,17 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeamView || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
                     optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
+                } else if (segmentItem instanceof StableView || BrowseMode.STABLES.equals(browseMode)) {
+                    gameController.getStableManager().addStable(new StableView(ViewUtils.editTextDialog("", "Stable name:"), playerPromotion()));
+                    mainApp.updateLabels(ScreenCode.BROWSER);
                 }
-
+                
                 optionalResult.ifPresent((SegmentItem newSegmentItem) -> {
                     mainApp.show(ScreenCode.BROWSER, newSegmentItem);
                 });
             }
         });
-
+        
     }
-
+    
 }
