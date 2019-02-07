@@ -62,7 +62,7 @@ public class EditLabel extends ControllerBase implements Initializable {
         } else {
             label.setText("");
         }
-        editButton.setVisible(segmentItem != null && !(segmentItem instanceof StableView));
+        editButton.setVisible(segmentItem != null);
 
         createButton.setOnAction(e -> {
             if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {
