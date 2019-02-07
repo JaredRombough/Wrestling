@@ -96,6 +96,18 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    STABLE_MEMBER {
+
+        @Override
+        public String resourcePath() {
+            return "view/browser/view/StableMember.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     TITLE_VIEW {
 
         @Override
