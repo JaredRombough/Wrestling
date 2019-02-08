@@ -1,9 +1,14 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -14,26 +19,30 @@ import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class StableController extends ControllerBase {
-    
+
     @FXML
     private AnchorPane nameAnchor;
-    
+
     @FXML
     private Label ownerLabel;
-    
+
     @FXML
     private GridPane gridPane;
-    
+
     @FXML
     private ListView listView;
-    
+
+    @FXML
+    private Button addButton;
+
     private EditLabel editLabel;
-    
+
     private StableView stable;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listView.setCellFactory(c -> new ListCell<WorkerView>() {
@@ -61,13 +70,30 @@ public class StableController extends ControllerBase {
             }
         });
     }
-    
+
     @Override
     public void initializeMore() {
         GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
         editLabel = (EditLabel) screen.controller;
+
+        addButton.setOnAction(a -> {
+            ChoiceDialog<WorkerView> dialog = new ChoiceDialog<>();
+            List<WorkerView> workers = playerPromotion().getFullRoster();
+            Collections.sort(workers, new NameComparator());
+            dialog.getItems().addAll(workers);
+            dialog.setTitle(stable.getName());
+            dialog.setHeaderText(String.format("Select a worker to join %s", stable.getName()));
+            dialog.getDialogPane().getStylesheets().add("style.css");
+
+            Optional<WorkerView> result = dialog.showAndWait();
+
+            result.ifPresent(worker -> {
+                stable.getWorkers().add(worker);
+                updateLabels();
+            });
+        });
     }
-    
+
     @Override
     public void setCurrent(Object object) {
         if (object instanceof StableView) {
@@ -76,12 +102,13 @@ public class StableController extends ControllerBase {
         }
         editLabel.setCurrent(object);
         gridPane.setVisible(object != null);
+        addButton.setVisible(stable.getOwner().equals(playerPromotion()));
     }
-    
+
     @Override
     public void updateLabels() {
         ownerLabel.setText(stable.getOwner().getName());
         listView.setItems(FXCollections.observableArrayList(stable.getWorkers()));
     }
-    
+
 }
