@@ -39,6 +39,11 @@ public class StableView implements SegmentItem {
         return workers;
     }
 
+    @Override
+    public List<? extends SegmentItem> getSegmentItems() {
+        return workers;
+    }
+
     /**
      * @param workers the workers to set
      */

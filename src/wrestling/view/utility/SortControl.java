@@ -75,6 +75,7 @@ public class SortControl extends ControllerBase implements Initializable {
         bookingBrowseComboBox = new ComboBox(FXCollections.observableArrayList(
                 BrowseMode.WORKERS,
                 BrowseMode.TAG_TEAMS,
+                BrowseMode.STABLES,
                 BrowseMode.TITLES,
                 BrowseMode.REFS,
                 BrowseMode.BROADCAST
