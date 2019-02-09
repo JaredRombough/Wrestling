@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iNewsItem;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
@@ -59,6 +60,9 @@ public class SortControl extends ControllerBase implements Initializable {
     private StaffType staffTypeFilter;
     private NewsFilter newsFilter;
 
+    private StableView stableFilter;
+    private ComboBox stablesCombobox;
+
     private boolean bookingBrowseMode;
 
     private ComboBox<BrowseMode> bookingBrowseComboBox;
@@ -68,6 +72,7 @@ public class SortControl extends ControllerBase implements Initializable {
         reverseButton.setText("▼");
         buttonWrappers = new ArrayList<>();
         filterComboBoxes = new ArrayList<>();
+        stablesCombobox = new ComboBox();
         genderFilter = Gender.ALL;
         activeTypeFilter = ActiveType.ALL;
         staffTypeFilter = StaffType.ALL;
@@ -120,6 +125,10 @@ public class SortControl extends ControllerBase implements Initializable {
             staffTypeFilter = (StaffType) obj;
         } else if (obj instanceof NewsFilter) {
             newsFilter = (NewsFilter) obj;
+        } else if (obj instanceof StableView) {
+            stableFilter = (StableView) obj;
+        } else if (obj instanceof String) {
+            stableFilter = null;
         }
 
         filterComboBoxes.stream().forEach(comboBox -> {
@@ -178,6 +187,23 @@ public class SortControl extends ControllerBase implements Initializable {
 
     }
 
+    private void addStableFilter() {
+        stablesCombobox.setMaxWidth(Double.MAX_VALUE);
+
+        filterComboBoxes.add(stablesCombobox);
+        vBox.getChildren().add(stablesCombobox);
+
+        stablesCombobox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+                setFilter(newValue);
+                updateLabels();
+            }
+        });
+
+        stablesCombobox.getSelectionModel().selectFirst();
+    }
+
     private Enum selectedEnum(EnumSet set) {
         for (Enum e : getActiveFilters()) {
             if (set.contains(e)) {
@@ -214,6 +240,9 @@ public class SortControl extends ControllerBase implements Initializable {
             } else {
                 addButtonWrapper(set);
             }
+        }
+        if (browseMode.equals(BrowseMode.WORKERS) || browseMode.equals(BrowseMode.TAG_TEAMS)) {
+            addStableFilter();
         }
 
     }
@@ -264,7 +293,7 @@ public class SortControl extends ControllerBase implements Initializable {
     public boolean isFiltered(Object object) {
         if (object instanceof SegmentItem) {
             SegmentItem segmentItem = (SegmentItem) object;
-            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || istStaffTypeFiltered(segmentItem);
+            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || isStaffTypeFiltered(segmentItem) || isStableFiltered(segmentItem);
         }
         return true;
     }
@@ -296,7 +325,19 @@ public class SortControl extends ControllerBase implements Initializable {
         return false;
     }
 
-    private boolean istStaffTypeFiltered(SegmentItem segmentItem) {
+    private boolean isStableFiltered(SegmentItem segmentItem) {
+        if (stableFilter != null) {
+            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
+                if (subItem instanceof WorkerView
+                        && !stableFilter.getWorkers().contains((WorkerView) subItem)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isStaffTypeFiltered(SegmentItem segmentItem) {
         if (!staffTypeFilter.equals(StaffType.ALL)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (subItem instanceof StaffView
@@ -323,6 +364,22 @@ public class SortControl extends ControllerBase implements Initializable {
      */
     public ComboBox<BrowseMode> getBookingBrowseComboBox() {
         return bookingBrowseComboBox;
+    }
+
+    /**
+     * @param stables the stables to set
+     */
+    public void setStables(List<StableView> stables) {
+        if (stables.isEmpty()) {
+            stablesCombobox.setVisible(false);
+        } else {
+            stablesCombobox.setVisible(true);
+            List<Object> listForComobBox = new ArrayList<>(stables);
+            listForComobBox.add(0, "All");
+            stablesCombobox.setItems(FXCollections.observableArrayList(listForComobBox));
+            stablesCombobox.getSelectionModel().selectFirst();
+        }
+
     }
 
 }

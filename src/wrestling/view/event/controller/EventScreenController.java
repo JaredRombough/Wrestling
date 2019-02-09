@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -439,6 +440,8 @@ public class EventScreenController extends ControllerBase implements Initializab
         SortControl sortControlController = (SortControl) sortControl.controller;
         sortControlController.setParentScreenCode(ScreenCode.EVENT);
         sortControlController.setBookingBrowseModeEnabled(true);
+        sortControlController.setStables(gameController.getStableManager().getStables().stream()
+                .filter(s -> s.getOwner().equals(playerPromotion())).collect(Collectors.toList()));
         sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BrowseMode>() {
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {

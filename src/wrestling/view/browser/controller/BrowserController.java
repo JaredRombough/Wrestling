@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -100,13 +101,12 @@ public class BrowserController extends ControllerBase implements Initializable {
     private BrowseMode currentBrowseMode;
     private SortControl sortControlController;
 
-    /*
-    sets the current promotion
-    updates relevant labels
-    fires the last button to update the list
-     */
     private void setCurrentPromotion(PromotionView newPromotion) {
-        this.currentPromotion = newPromotion;
+        currentPromotion = newPromotion;
+        sortControlController.setStables(
+                gameController.getStableManager().getStables().stream()
+                .filter(s -> s.getOwner().equals(currentPromotion))
+                .collect(Collectors.toList()));
 
         if (currentPromotion != null) {
             categoryButton.setText(newPromotion.toString());
