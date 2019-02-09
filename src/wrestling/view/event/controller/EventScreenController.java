@@ -245,7 +245,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentListView.getSelectionModel().selectFirst();
     }
 
-    //updates lists and labels
     @Override
     public void updateLabels() {
 
@@ -323,10 +322,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         return allWorkers;
     }
 
-    /*
-    adds a segment to the segment listview, creates the corresponding segment
-    pane and controller and adds them to the proper arrays for reference
-     */
     private void addSegment() {
 
         try {
@@ -395,10 +390,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         }
     }
 
-    /*
-    prepares the segment listView
-    this may need modification if we allow adding/removing segments
-     */
     private void initializeSegmentListView() {
 
         RefreshSkin skin = new RefreshSkin(segmentListView);
@@ -427,10 +418,6 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-
-    /*
-    additional initialization to be called externally after we have our mainApp etc.
-     */
     @Override
     public void initializeMore() {
 
