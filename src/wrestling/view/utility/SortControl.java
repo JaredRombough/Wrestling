@@ -26,6 +26,7 @@ import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -326,10 +327,9 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isStableFiltered(SegmentItem segmentItem) {
-        if (stableFilter != null) {
+        if (stableFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof WorkerView
-                        && !stableFilter.getWorkers().contains((WorkerView) subItem)) {
+                if (!stableFilter.getWorkers().contains((WorkerView) subItem)) {
                     return true;
                 }
             }
