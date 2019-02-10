@@ -8,6 +8,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.MatchTitle;
@@ -17,6 +18,7 @@ import wrestling.model.Title;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
@@ -28,7 +30,7 @@ import wrestling.model.utility.ModelUtils;
 import static wrestling.model.utility.ModelUtils.slashShortNames;
 import wrestling.view.utility.ViewUtils;
 
-public class SegmentManager implements Serializable{
+public class SegmentManager implements Serializable {
 
     private final List<Segment> segments;
     private final List<SegmentWorker> segmentWorkers;
@@ -36,14 +38,16 @@ public class SegmentManager implements Serializable{
     private final List<SegmentView> segmentViews;
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
+    private final StableManager stableManager;
 
-    public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager) {
+    public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
         segments = new ArrayList<>();
         segmentWorkers = new ArrayList<>();
         matchTitles = new ArrayList<>();
         segmentViews = new ArrayList<>();
         this.dateManager = dateManager;
         this.tagTeamManager = tagTeamManager;
+        this.stableManager = stableManager;
     }
 
     public void addSegmentWorker(SegmentWorker segmentWorker) {
@@ -268,14 +272,18 @@ public class SegmentManager implements Serializable{
             mainTeamString = "?";
             pluralString = "";
         } else {
-            mainTeamString = ModelUtils.slashNames(mainTeam.get(0).getWorkers());
+            mainTeamString = generateTeamName(mainTeam.get(0).getWorkers(), true);
             pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
+        }
+        List<String> andTeamNames = new ArrayList<>();
+        for (SegmentTeam tesm : segmentView.getTeams(angleType.addTeamType())) {
+            andTeamNames.add(generateTeamName(tesm.getWorkers()));
         }
 
         String string = String.format(angleType.resultString(),
                 mainTeamString,
                 pluralString,
-                ModelUtils.andTeams(segmentView.getTeams(angleType.addTeamType())));
+                ModelUtils.joinGrammatically(andTeamNames));
 
         if (angleType.equals(AngleType.PROMO) && segmentView.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
             string = string.split("targeting")[0];
@@ -296,6 +304,12 @@ public class SegmentManager implements Serializable{
                 String tagTeam = getTagTeamName(segmentItems);
                 if (!tagTeam.isEmpty()) {
                     return tagTeam;
+                }
+            } else if (segmentItems.size() > 1) {
+                for (StableView stable : stableManager.getStables()) {
+                    if (stable.getWorkers().containsAll(segmentItems)) {
+                        return stable.getName();
+                    }
                 }
             }
             return verbose ? ModelUtils.slashNames(segmentItems) : slashShortNames(segmentItems);

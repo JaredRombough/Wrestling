@@ -70,7 +70,7 @@ public final class GameController implements Serializable {
 
         tagTeamManager = new TagTeamManager(contractManager);
 
-        segmentManager = new SegmentManager(dateManager, tagTeamManager);
+        segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
 
         injuryManager = new InjuryManager(newsManager);
 

@@ -63,7 +63,7 @@ public final class ModelUtils {
         return slashed.isEmpty() ? "?" : joinGrammatically(slashed);
     }
 
-    private static String joinGrammatically(final List<String> list) {
+    public static String joinGrammatically(final List<String> list) {
         return list.size() > 1
                 ? String.join(", ", list.subList(0, list.size() - 1))
                 .concat(String.format("%s and ", list.size() > 2 ? "," : ""))
