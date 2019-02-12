@@ -172,13 +172,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 l.getStyleClass().add(style);
             }
 
-            if (worker.isManager()) {
-                managerLabel.setText("Manager");
-            } else {
-                managerLabel.setText("");
-            }
             if (!worker.isMainRoster()) {
                 managerLabel.setText("Development");
+            } else {
+                managerLabel.setText("");
             }
 
         } else if (!promotion.getFullRoster().contains(worker)) {

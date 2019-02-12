@@ -54,6 +54,7 @@ public class Import {
 
     private final List<WorkerView> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
+    private final List<String> managerIDs = new ArrayList<>();
     private final List<WorkerView> otherWorkers = new ArrayList<>();
     private final List<String> otherWorkerPromotions = new ArrayList<>();
 
@@ -82,6 +83,7 @@ public class Import {
                 gameController = new GameController(false);
                 promotionsDat();
                 workersDat();
+                setManagers();
                 teamsDat();
                 stablesDat();
                 beltDat();
@@ -522,38 +524,27 @@ public class Import {
                         currentStringLine.get(293).equals("ÿ")
                         ? Gender.FEMALE : Gender.MALE);
 
-                boolean manager;
                 boolean fullTime;
                 boolean mainRoster;
 
                 switch (currentHexLine.get(rosterPositionIndex)) {
                     case "07":
                         //development
-                        manager = false;
                         fullTime = true;
                         mainRoster = false;
                         break;
                     case "19":
                         //non-wrestler
-                        manager = false;
                         fullTime = false;
-                        mainRoster = true;
-                        break;
-                    case "32":
-                        //manager
-                        manager = true;
-                        fullTime = true;
                         mainRoster = true;
                         break;
                     default:
                         //shouldn't happen
-                        manager = false;
                         fullTime = true;
                         mainRoster = true;
                         break;
                 }
 
-                worker.setManager(manager);
                 worker.setFullTime(fullTime);
                 worker.setMainRoster(mainRoster);
 
@@ -575,11 +566,20 @@ public class Import {
 
                 allWorkers.add(worker);
                 workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
+                managerIDs.add(currentHexLine.get(121) + currentHexLine.get(122));
                 counter = 0;
                 currentLine = "";
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
 
+            }
+        }
+    }
+
+    private void setManagers() {
+        for (int i = 0; i < workerIDs.size(); i++) {
+            if (workerIDs.indexOf(managerIDs.get(i)) > -1) {
+                allWorkers.get(i).setManager(allWorkers.get(workerIDs.indexOf(managerIDs.get(i))));
             }
         }
     }

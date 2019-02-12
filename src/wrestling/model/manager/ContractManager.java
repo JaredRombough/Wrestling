@@ -136,7 +136,7 @@ public class ContractManager implements Serializable {
         List<WorkerView> roster = new ArrayList<>();
         for (Contract contract : contracts) {
             if (contract.isActive() && contract.getPromotion().equals(promotion)
-                    && contract.getWorker().isFullTime() && !contract.getWorker().isManager()) {
+                    && contract.getWorker().isFullTime() && !contract.getWorker().getManaged().isEmpty()) {
                 roster.add(contract.getWorker());
             }
         }

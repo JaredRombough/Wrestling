@@ -76,7 +76,6 @@ public class PersonFactory {
         worker.setGender(RandomUtils.nextInt(0, 2) == 1
                 ? Gender.MALE : Gender.FEMALE);
 
-        worker.setManager(false);
         worker.setMainRoster(true);
         worker.setFullTime(true);
 

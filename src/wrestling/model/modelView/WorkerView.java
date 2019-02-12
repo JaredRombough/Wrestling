@@ -35,7 +35,6 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private Gender gender;
 
-    private boolean manager;
     private boolean fullTime;
     private boolean mainRoster;
 
@@ -45,11 +44,16 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private Injury injury;
 
+    private WorkerView manager;
+
+    private List<WorkerView> managed;
+
     public WorkerView() {
         minimumPopularity = 0;
         name = "Worker #" + workerID;
         workerID++;
         contracts = new ArrayList<>();
+        managed = new ArrayList<>();
     }
 
     public void addContract(Contract contract) {
@@ -197,20 +201,6 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     }
 
     /**
-     * @return the manager
-     */
-    public boolean isManager() {
-        return manager;
-    }
-
-    /**
-     * @param manager the manager to set
-     */
-    public void setManager(boolean manager) {
-        this.manager = manager;
-    }
-
-    /**
      * @return the fullTime
      */
     public boolean isFullTime() {
@@ -319,5 +309,34 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     @Override
     public List<? extends iContract> getContracts() {
         return contracts;
+    }
+
+    /**
+     * @return the manager
+     */
+    public WorkerView getManager() {
+        return manager;
+    }
+
+    /**
+     * @param manager the manager to set
+     */
+    public void setManager(WorkerView manager) {
+        this.manager = manager;
+    }
+
+    /**
+     * @return the managed
+     */
+    public List<WorkerView> getManaged() {
+        return managed;
+    }
+
+    public void addManaged(WorkerView worker) {
+        managed.add(worker);
+    }
+
+    public void removeManaged(WorkerView worker) {
+        managed.remove(worker);
     }
 }
