@@ -50,7 +50,7 @@
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Behaviour" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <Label fx:id="popularityLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Label fx:id="behaviourLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Label fx:id="managerLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.rowIndex="10" />
+            <Label fx:id="development" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.rowIndex="10" />
             <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Charisma" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="charismaLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <AnchorPane fx:id="feedAnchor" GridPane.columnSpan="2147483647" GridPane.rowIndex="11" GridPane.rowSpan="2147483647">
@@ -71,6 +71,8 @@
             <Label fx:id="injuryLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Injury" GridPane.rowIndex="9" />
             <Label fx:id="injury" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <AnchorPane fx:id="contractAnchor" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.rowSpan="3" />
+            <Label fx:id="managerLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Manager" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+            <Label fx:id="manager" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="5" GridPane.rowIndex="6" />
          </children>
       </GridPane>
    </children>

@@ -91,7 +91,7 @@ public class PromotionController implements Serializable {
         if (diff > 0) {
             int i = 0;
             for (WorkerView worker : promotion.getFullRoster()) {
-                if (!pushList.contains(worker) && !worker.getManaged().isEmpty() && worker.isFullTime()) {
+                if (!pushList.contains(worker) && worker.isFullTime()) {
                     contractManager.getContract(worker, promotion).setPushed(true);
                 }
                 if (i >= diff) {
@@ -568,7 +568,7 @@ public class PromotionController implements Serializable {
 
         //go through the event roster and collect noncompetitors
         for (WorkerView worker : eventRoster) {
-            if (!worker.getManaged().isEmpty() || !worker.isFullTime() || !worker.isMainRoster()) {
+            if (!worker.isFullTime() || !worker.isMainRoster()) {
 
                 nonCompetitors.add(worker);
             }

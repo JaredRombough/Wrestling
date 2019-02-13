@@ -46,14 +46,11 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private WorkerView manager;
 
-    private List<WorkerView> managed;
-
     public WorkerView() {
         minimumPopularity = 0;
         name = "Worker #" + workerID;
         workerID++;
         contracts = new ArrayList<>();
-        managed = new ArrayList<>();
     }
 
     public void addContract(Contract contract) {
@@ -323,20 +320,5 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
      */
     public void setManager(WorkerView manager) {
         this.manager = manager;
-    }
-
-    /**
-     * @return the managed
-     */
-    public List<WorkerView> getManaged() {
-        return managed;
-    }
-
-    public void addManaged(WorkerView worker) {
-        managed.add(worker);
-    }
-
-    public void removeManaged(WorkerView worker) {
-        managed.remove(worker);
     }
 }
