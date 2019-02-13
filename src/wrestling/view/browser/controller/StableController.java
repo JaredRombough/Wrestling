@@ -1,6 +1,7 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -77,15 +78,15 @@ public class StableController extends ControllerBase {
         editLabel = (EditLabel) screen.controller;
 
         addButton.setOnAction(a -> {
-            ChoiceDialog<WorkerView> dialog = new ChoiceDialog<>();
-            List<WorkerView> workers = playerPromotion().getFullRoster();
-            Collections.sort(workers, new NameComparator());
-            dialog.getItems().addAll(workers);
-            dialog.setTitle(stable.getName());
-            dialog.setHeaderText(String.format("Select a worker to join %s", stable.getName()));
-            dialog.getDialogPane().getStylesheets().add("style.css");
 
-            Optional<WorkerView> result = dialog.showAndWait();
+            List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
+            workers.removeAll(stable.getWorkers());
+
+            Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+                    workers,
+                    stable.getName(),
+                    String.format("Select a worker to join %s", stable.getName())
+            ).showAndWait();
 
             result.ifPresent(worker -> {
                 stable.getWorkers().add(worker);

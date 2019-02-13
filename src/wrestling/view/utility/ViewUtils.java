@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -19,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Dialog;
@@ -53,6 +55,7 @@ import wrestling.model.interfaces.iContract;
 import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ContractUtils;
 import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.NameComparator;
@@ -456,5 +459,24 @@ public final class ViewUtils {
                     : "no additional cost");
         }
         return ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt);
+    }
+
+    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers, String title, String header) {
+        return selectWorkerDialog(workers, title, header, null);
+    }
+
+    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers, String title, String header, WorkerView defaultSelection) {
+        Collections.sort(workers, new NameComparator());
+        ChoiceDialog<WorkerView> dialog;
+        if (workers.contains(defaultSelection)) {
+            dialog = new ChoiceDialog<>(defaultSelection, workers);
+        } else {
+            dialog = new ChoiceDialog<>();
+            dialog.getItems().addAll(workers);
+        }
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.getDialogPane().getStylesheets().add("style.css");
+        return dialog;
     }
 }
