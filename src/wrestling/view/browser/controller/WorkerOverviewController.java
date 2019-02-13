@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import org.apache.logging.log4j.LogManager;
@@ -79,10 +81,16 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label managerLabel;
 
     @FXML
+    private Label managedLabel;
+
+    @FXML
     private Button managerButton;
 
     @FXML
     private AnchorPane imageAnchor;
+
+    @FXML
+    private ListView managedListView;
 
     @FXML
     private AnchorPane contractAnchor;
@@ -143,28 +151,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
-            manager.setText(worker.getManager() == null ? "None" : worker.getManager().getName());
 
-            if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
-                managerButton.setVisible(true);
-                managerButton.setOnAction(a -> {
-                    List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
-                    workers.remove(worker);
-                    Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
-                            workers,
-                            "Select Manager",
-                            String.format("Select a manager for %s", worker.getName()),
-                            worker.getManager()
-                    ).showAndWait();
-
-                    result.ifPresent(newManager -> {
-                        worker.setManager(newManager);
-                        updateLabels();
-                    });
-                });
-            } else {
-                managerButton.setVisible(false);
-            }
+            updateManagerLabels();
 
             if (worker.getInjury() != null) {
                 injury.setText(String.format("%s days left",
@@ -189,12 +177,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
 
             for (Label l : statLabels) {
-                //strip previous styles
-                for (String s : styleList) {
-                    if (l.getStyleClass().contains(s)) {
-                        l.getStyleClass().remove(s);
-                    }
-                }
+                styleList.stream().filter((s) -> (l.getStyleClass().contains(s))).forEach((s) -> {
+                    l.getStyleClass().remove(s);
+                });
 
                 String style;
                 if (Integer.parseInt(l.getText()) < 50) {
@@ -231,6 +216,42 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         feedPaneScreen.controller.updateLabels();
         contractScreen.controller.updateLabels();
 
+    }
+
+    private void updateManagerLabels() {
+        manager.setText(worker.getManager() == null ? "None" : worker.getManager().getName());
+
+        if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
+            managerButton.setVisible(true);
+            managerButton.setOnAction(a -> {
+                List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
+                workers.remove(worker);
+                Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+                        workers,
+                        "Select Manager",
+                        String.format("Select a manager for %s", worker.getName()),
+                        worker.getManager()
+                ).showAndWait();
+
+                result.ifPresent(newManager -> {
+                    worker.setManager(newManager);
+                    updateLabels();
+                });
+            });
+        } else {
+            managerButton.setVisible(false);
+            managedLabel.setVisible(false);
+        }
+        List<WorkerView> managed = new ArrayList<>(promotion.getFullRoster().stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
+        if (!managed.isEmpty()) {
+            managedLabel.setVisible(true);
+            managedListView.setVisible(true);
+            Collections.sort(managed, new NameComparator());
+            managedListView.setItems(FXCollections.observableArrayList(managed));
+        } else {
+            managedLabel.setVisible(false);
+            managedListView.setVisible(false);
+        }
     }
 
 }

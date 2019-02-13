@@ -2,14 +2,12 @@ package wrestling.view.browser.controller;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -20,7 +18,6 @@ import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
-import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class StableController extends ControllerBase {
