@@ -64,6 +64,9 @@ public final class ModelUtils {
     }
 
     public static String joinGrammatically(final List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return "";
+        }
         return list.size() > 1
                 ? String.join(", ", list.subList(0, list.size() - 1))
                 .concat(String.format("%s and ", list.size() > 2 ? "," : ""))
