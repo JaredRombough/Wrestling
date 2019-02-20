@@ -13,19 +13,12 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
 
     private final ObservableList<SegmentItem> itemList;
     private final SegmentPaneController segmentPaneController;
-    private final EventScreenController eventScreenController;
-    private final TeamPaneController teamPaneController;
 
     public SegmentItemDragDropHandler(
             SegmentPaneController segmentPaneController,
-            EventScreenController eventScreenController,
-            TeamPaneController teamPaneController) {
-
-        this.itemList = teamPaneController.getItems();
+            ObservableList<SegmentItem> itemList) {
+        this.itemList = itemList;
         this.segmentPaneController = segmentPaneController;
-        this.eventScreenController = eventScreenController;
-        this.teamPaneController = teamPaneController;
-
     }
 
     @Override
@@ -50,13 +43,9 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
                 }
             }
 
-            teamPaneController.updateLabels();
             segmentPaneController.updateLabels();
-            eventScreenController.updateLabels();
 
             ldb.clearAll();
-
         }
     }
-
 }

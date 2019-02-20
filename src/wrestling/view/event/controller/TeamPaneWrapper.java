@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -18,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -112,11 +112,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
     }
 
-    public void setDragDropHandler(SegmentPaneController segmentPaneController,
-            EventScreenController eventScreenController) {
-        getTeamPaneController().setDragDropHandler(
-                segmentPaneController,
-                eventScreenController);
+    public void setDragDroppedHandler(SegmentPaneController segmentPaneController) {
+        teamPaneController.setDragDroppedHandler(segmentPaneController);
     }
 
     @Override
@@ -158,16 +155,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
     }
 
-    public Button getXButton() {
-        return xButton;
-    }
-
     public void setHeaderVisible(boolean visible) {
         vBox.getChildren().remove(header);
     }
 
     public void setTeamNameVisible(boolean visible) {
-        getTeamPaneController().getTeamNameLabel().setVisible(visible);
+        teamPaneController.getTeamNameLabel().setVisible(visible);
     }
 
     public void changeSegmentType() {
@@ -266,6 +259,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         presenceType = PresenceType.ABSENT;
         successType = SuccessType.WIN;
         timingType = TimingType.DURING;
+        draggingTab = new SimpleObjectProperty<>();
+        draggingTab.set(anchorPane);
         autoSet = true;
     }
 
@@ -281,14 +276,11 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     private void preparePaneForSorting() {
-        draggingTab = new SimpleObjectProperty<>();
-        anchorPane.setOnDragDetected((MouseEvent event) -> {
+        anchorPane.setOnDragDetected(e -> {
             Dragboard dragboard = anchorPane.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.putString(TAB_DRAG_KEY);
             dragboard.setContent(clipboardContent);
-            draggingTab.set(anchorPane);
-            event.consume();
         });
         anchorPane.setOnDragOver((DragEvent event) -> {
             final Dragboard dragboard = event.getDragboard();
@@ -309,7 +301,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public List<SegmentItem> getSegmentItems() {
-        return getTeamPaneController().getSegmentItems();
+        return teamPaneController.getSegmentItems();
     }
 
     public SegmentTeam getSegmentTeam() {
@@ -341,13 +333,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     /**
-     * @return the teamPaneController
-     */
-    public TeamPaneController getTeamPaneController() {
-        return teamPaneController;
-    }
-
-    /**
      * @return the autoSet
      */
     public boolean isAutoSet() {
@@ -361,4 +346,31 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         this.autoSet = autoSet;
     }
 
+    public void removeSegmentItem(SegmentItem segmentItem) {
+        teamPaneController.removeSegmentItem(segmentItem);
+    }
+
+    public void addSegmentItems(List<? extends SegmentItem> segmentItems) {
+        segmentItems.forEach(item -> teamPaneController.addSegmentItem(item));
+    }
+
+    public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
+        teamPaneController.setSegmentItems(segmentItems);
+    }
+
+    public void addSegmentItem(SegmentItem segmentItem) {
+        teamPaneController.addSegmentItem(segmentItem);
+    }
+
+    public void setTeamNumber(int teamNumber) {
+        teamPaneController.setTeamNumber(teamNumber);
+    }
+
+    public void setOnXButton(EventHandler<ActionEvent> value) {
+        xButton.setOnAction(value);
+    }
+
+    public void setXButtonVisible(boolean visible) {
+        xButton.setVisible(visible);
+    }
 }

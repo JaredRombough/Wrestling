@@ -61,6 +61,10 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         }
     }
 
+    public void addSegmentItem(SegmentItem segmentItem) {
+        teamListView.getItems().add(segmentItem);
+    }
+
     @Override
     public void updateLabels() {
 
@@ -80,11 +84,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                 }
             }
         }
-
     }
 
     private void updateTeamListViewHeight() {
-
         int multiplier = teamListView.getItems().isEmpty() ? 1 : teamListView.getItems().size();
 
         double height = CELL_HEIGHT * multiplier + 5;
@@ -123,8 +125,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return teamListView.getItems();
     }
 
-    public void setDragDropHandler(SegmentPaneController segmentPaneController, EventScreenController eventScreenController) {
-        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, eventScreenController, this));
+    public void setDragDroppedHandler(SegmentPaneController segmentPaneController) {
+        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamListView.getItems()));
     }
 
     private void setSegmentItemCellFactory(ListView listView) {

@@ -152,7 +152,7 @@ public final class ModelUtils {
     public static boolean teamIsPresent(List<? extends SegmentItem> workers, List<GameScreen> workerTeamWrappers) {
         for (GameScreen workerTeamWrapper : workerTeamWrappers) {
             TeamPaneWrapper controller = (TeamPaneWrapper) workerTeamWrapper.controller;
-            if (controller.getTeamPaneController().getSegmentItems().equals(workers)) {
+            if (controller.getSegmentItems().equals(workers)) {
                 return true;
             }
         }
