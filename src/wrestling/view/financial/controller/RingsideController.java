@@ -7,17 +7,14 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import wrestling.model.SegmentItem;
 import wrestling.model.constants.GameConstants;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.browser.controller.BrowseParams;
-import wrestling.view.browser.controller.CreateTagTeamDialog;
 import wrestling.view.browser.controller.EditBroadcastTeamDialog;
 import wrestling.view.utility.ScreenCode;
-import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class RingsideController extends ControllerBase {

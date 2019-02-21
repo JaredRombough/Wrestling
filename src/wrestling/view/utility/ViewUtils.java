@@ -479,4 +479,5 @@ public final class ViewUtils {
         dialog.getDialogPane().getStylesheets().add("style.css");
         return dialog;
     }
+
 }

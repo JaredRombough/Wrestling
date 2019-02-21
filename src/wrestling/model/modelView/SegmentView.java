@@ -3,7 +3,6 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.Match;

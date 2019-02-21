@@ -53,12 +53,13 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     }
 
-    public void removeSegmentItem(SegmentItem segmentItem) {
-
+    public boolean removeSegmentItem(SegmentItem segmentItem) {
         if (teamListView.getItems().contains(segmentItem)) {
             teamListView.getItems().remove(segmentItem);
             updateLabels();
+            return true;
         }
+        return false;
     }
 
     public void addSegmentItem(SegmentItem segmentItem) {
@@ -76,6 +77,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                     case TITLES:
                     case REF:
                     case BROADCAST:
+                    case ENTOURAGE:
                         teamNameLabel.setText(teamType.description());
                         break;
                     default:
@@ -125,8 +127,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return teamListView.getItems();
     }
 
-    public void setDragDroppedHandler(SegmentPaneController segmentPaneController) {
-        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamListView.getItems()));
+    public void setDragDroppedHandler(SegmentPaneController segmentPaneController, TeamPaneWrapper teamPaneWrapper) {
+        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamPaneWrapper));
     }
 
     private void setSegmentItemCellFactory(ListView listView) {
@@ -142,15 +144,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     }
 
     public List<SegmentItem> getSegmentItems() {
-
         return new ArrayList<>(teamListView.getItems());
-
-    }
-
-    public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
-        teamListView.getItems().clear();
-        teamListView.getItems().addAll(segmentItems);
-        updateLabels();
     }
 
     public String getTeamName() {

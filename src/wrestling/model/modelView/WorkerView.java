@@ -3,6 +3,7 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import wrestling.model.Contract;
 import wrestling.model.Injury;
 import wrestling.model.SegmentItem;
@@ -46,11 +47,14 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     private WorkerView manager;
 
+    private List<WorkerView> entourage;
+
     public WorkerView() {
         minimumPopularity = 0;
         name = "Worker #" + workerID;
         workerID++;
         contracts = new ArrayList<>();
+        entourage = new ArrayList<>();
     }
 
     public void addContract(Contract contract) {
@@ -319,6 +323,18 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
      * @param manager the manager to set
      */
     public void setManager(WorkerView manager) {
+        if(!Objects.equals(this.manager, manager)) {
+            getEntourage().remove(this.manager);
+        }
         this.manager = manager;
+        getEntourage().add(manager);
     }
+
+    /**
+     * @return the entourage
+     */
+    public List<WorkerView> getEntourage() {
+        return entourage;
+    }
+
 }

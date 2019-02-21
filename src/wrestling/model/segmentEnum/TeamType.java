@@ -363,6 +363,22 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem) || (segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.BROADCAST));
         }
+    },
+    ENTOURAGE {
+        @Override
+        public String description() {
+            return "with";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        @Override
+        public boolean droppable(SegmentItem segmentItem) {
+            return workerDroppable(segmentItem);
+        }
     };
 
     @Override

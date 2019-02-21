@@ -15,8 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -40,6 +38,7 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
+import wrestling.view.event.helper.TeamPaneHelper;
 import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
@@ -84,6 +83,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private iSegmentLength segmentLength;
 
     private List<GameScreen> workerTeamWrappers;
+    private List<TeamPaneWrapper> workerTeamControllers;
     private List<GameScreen> allWrapperScreens;
     private GameScreen titlesWrapper;
     private TeamPaneWrapper titlesController;
@@ -100,8 +100,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         logger = LogManager.getLogger(this.getClass());
         workerTeamWrappers = new ArrayList<>();
         allWrapperScreens = new ArrayList<>();
+        workerTeamControllers = new ArrayList<>();
         segmentTypeButtons = new ArrayList<>();
-
     }
 
     @Override
@@ -359,6 +359,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         if (teamType.equals(TeamType.INTERFERENCE)) {
             workerTeamWrappers.add(wrapperScreen);
+            workerTeamControllers.add(wrapperController);
             teamsVBox.getChildren().add(wrapperScreen.pane);
         } else {
             int indexToInsert = workerTeamWrappers.isEmpty() ? 0 : workerTeamWrappers.size();
@@ -371,31 +372,18 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             }
 
             workerTeamWrappers.add(indexToInsert, wrapperScreen);
+            workerTeamControllers.add(indexToInsert, wrapperController);
             teamsVBox.getChildren().add(indexToInsert, wrapperScreen.pane);
         }
 
         if (teamType.equals(TeamType.DEFAULT)) {
             teamType = getTeamType(wrapperScreen);
-
         }
 
         wrapperController.setTeamType(teamType);
         wrapperController.setOutcomeType(getOutcomeType(wrapperScreen));
 
-        wrapperScreen.pane.setOnDragDropped((final DragEvent event) -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasString()) {
-                Pane parent = (Pane) wrapperScreen.pane.getParent();
-                Object source = event.getGestureSource();
-                int sourceIndex = parent.getChildren().indexOf(source);
-                int targetIndex = parent.getChildren().indexOf(wrapperScreen.pane);
-                this.swapTeams(sourceIndex, targetIndex);
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
+        TeamPaneHelper.initTeamPaneForSorting(wrapperScreen.pane, wrapperController.getDraggingTab(), this);
 
         wrapperController.setDragDroppedHandler(this);
         wrapperController.setTeamNumber(workerTeamWrappers.size() - 1);
@@ -480,8 +468,11 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             teamsVBox.getChildren().remove(teamPaneWrapper.pane);
         }
 
-        if (workerTeamWrappers.contains(teamPaneWrapper)) {
-            workerTeamWrappers.remove(teamPaneWrapper);
+        int index = workerTeamWrappers.indexOf(teamPaneWrapper);
+
+        if (index > -1) {
+            workerTeamWrappers.remove(index);
+            workerTeamControllers.remove(index);
             allWrapperScreens.remove(teamPaneWrapper);
         }
         eventScreenController.updateLabels();
@@ -499,14 +490,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             screen.controller.updateLabels();
         }
         eventScreenController.updateLabels();
-
     }
 
     public void swapTeams(int indexA, int indexB) {
-        List<SegmentItem> teamA = ((TeamPaneWrapper) workerTeamWrappers.get(indexA).controller).getSegmentItems();
-        List<SegmentItem> teamB = ((TeamPaneWrapper) workerTeamWrappers.get(indexB).controller).getSegmentItems();
-        ((TeamPaneWrapper) workerTeamWrappers.get(indexA).controller).setSegmentItems(teamB);
-        ((TeamPaneWrapper) workerTeamWrappers.get(indexB).controller).setSegmentItems(teamA);
+        List<SegmentItem> teamA = workerTeamControllers.get(indexA).getSegmentItems();
+        List<SegmentItem> teamB = workerTeamControllers.get(indexB).getSegmentItems();
+        workerTeamControllers.get(indexA).setSegmentItems(teamB);
+        workerTeamControllers.get(indexB).setSegmentItems(teamA);
 
         eventScreenController.updateLabels();
 

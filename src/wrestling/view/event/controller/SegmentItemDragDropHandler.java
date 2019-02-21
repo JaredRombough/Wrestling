@@ -1,6 +1,5 @@
 package wrestling.view.event.controller;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import wrestling.model.SegmentItem;
@@ -11,13 +10,13 @@ import wrestling.view.utility.LocalDragboard;
 
 public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
 
-    private final ObservableList<SegmentItem> itemList;
+    private final TeamPaneWrapper teamPaneWrapper;
     private final SegmentPaneController segmentPaneController;
 
     public SegmentItemDragDropHandler(
             SegmentPaneController segmentPaneController,
-            ObservableList<SegmentItem> itemList) {
-        this.itemList = itemList;
+            TeamPaneWrapper teamPaneController) {
+        this.teamPaneWrapper = teamPaneController;
         this.segmentPaneController = segmentPaneController;
     }
 
@@ -33,7 +32,7 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
             if (StaffUtils.isRef(segmentItem)) {
                 segmentPaneController.setRef((StaffView) segmentItem);
             } else {
-                itemList.addAll(segmentItem.getSegmentItems());
+                segmentItem.getSegmentItems().forEach(item -> teamPaneWrapper.addSegmentItem(item));
             }
 
             if (segmentItem instanceof TitleView) {

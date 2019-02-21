@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.EventTemplate;
+import wrestling.model.segmentEnum.StaffType;
 
 public class PromotionView implements Serializable {
 

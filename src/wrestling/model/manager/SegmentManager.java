@@ -8,7 +8,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.MatchTitle;
