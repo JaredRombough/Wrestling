@@ -12,8 +12,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import wrestling.model.SegmentItem;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.utility.LocalDragboard;
@@ -31,6 +34,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     private AnchorPane mainPane;
 
     @FXML
+    private GridPane gridPane;
+
+    @FXML
     private Label teamNameLabel;
 
     private double defaultMainPaneHeight;
@@ -42,6 +48,8 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     public int getTeamNumber() {
         return this.teamNumber;
     }
+
+    boolean toggle = true;
 
     public void setTeamNumber(int teamNumber) {
         this.teamNumber = teamNumber;
@@ -56,6 +64,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     public boolean removeSegmentItem(SegmentItem segmentItem) {
         if (teamListView.getItems().contains(segmentItem)) {
             teamListView.getItems().remove(segmentItem);
+            if (teamType.equals(TeamType.ENTOURAGE)) {
+                setVisible(false);
+            }
             updateLabels();
             return true;
         }
@@ -64,21 +75,26 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     public void addSegmentItem(SegmentItem segmentItem) {
         teamListView.getItems().add(segmentItem);
+        if (TeamType.ENTOURAGE.equals(teamType)) {
+            setVisible(true);
+
+        }
+        updateLabels();
     }
 
     @Override
     public void updateLabels() {
-
-        updateTeamListViewHeight();
-
         if (getSegmentItems() != null) {
             if (teamType != null) {
                 switch (teamType) {
                     case TITLES:
                     case REF:
                     case BROADCAST:
+                        teamNameLabel.setText(teamType.description());
+                        break;
                     case ENTOURAGE:
                         teamNameLabel.setText(teamType.description());
+                        // setVisible(!getSegmentItems().isEmpty());
                         break;
                     default:
                         teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
@@ -86,15 +102,22 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                 }
             }
         }
+        updateTeamListViewHeight();
     }
 
     private void updateTeamListViewHeight() {
-        int multiplier = teamListView.getItems().isEmpty() ? 1 : teamListView.getItems().size();
+        if (mainPane.getChildren().isEmpty()) {
+            mainPane.setMinHeight(0);
+            mainPane.setMaxHeight(0);
+        } else {
+            int multiplier = teamListView.getItems().isEmpty() ? 1 : teamListView.getItems().size();
 
-        double height = CELL_HEIGHT * multiplier + 5;
+            double height = CELL_HEIGHT * multiplier + 5;
 
-        mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
-        teamListView.setMinHeight(height);
+            mainPane.setMinHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
+            teamListView.setMinHeight(height);
+        }
+
     }
 
     @Override
@@ -120,7 +143,22 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         mainPane.setPrefHeight(defaultMainPaneHeight + CELL_HEIGHT + height);
 
         updateLabels();
+    }
 
+    public void setVisible(boolean visible) {
+        if (mainPane.getChildren().isEmpty() && visible) {
+            mainPane.getChildren().add(gridPane);
+        } else if (teamListView.getItems().isEmpty() && !visible) {
+            mainPane.getChildren().clear();
+        }
+    }
+
+    public void setLabelAction(EventHandler<MouseEvent> mouseEvent) {
+        teamNameLabel.setOnMouseClicked(mouseEvent);
+    }
+
+    public boolean getVisible() {
+        return !mainPane.getChildren().isEmpty();
     }
 
     public ObservableList<SegmentItem> getItems() {
@@ -139,7 +177,6 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                 super.updateItem(segmentItem, empty);
                 ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
             }
-
         });
     }
 
@@ -156,6 +193,9 @@ public class TeamPaneController extends ControllerBase implements Initializable 
      */
     public void setTeamType(TeamType teamType) {
         this.teamType = teamType;
+        if (teamType.equals(TeamType.ENTOURAGE)) {
+            setVisible(false);
+        }
         updateLabels();
     }
 

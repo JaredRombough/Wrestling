@@ -16,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -36,46 +37,46 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TeamPaneWrapper extends ControllerBase implements Initializable {
-    
+
     @FXML
     private AnchorPane anchorPane;
-    
+
     @FXML
     private VBox vBox;
-    
+
     @FXML
     private HBox header;
-    
+
     private Button xButton;
-    
+
     @FXML
     private Label teamTypeLabel;
-    
+
     private GameScreen teamPane;
     private TeamPaneController teamPaneController;
     private GameScreen entouragePane;
     private TeamPaneController entouragePaneController;
-    
+
     private ObjectProperty<AnchorPane> draggingTab;
-    
+
     private ResponseType responseType;
     private PresenceType presenceType;
     private SuccessType successType;
     private TimingType timingType;
-    
+
     private ComboBox<SegmentTeam> targetComboBox;
     private List<SegmentTeam> targets;
-    
+
     private TeamType teamType;
     private OutcomeType outcomeType;
-    
+
     private boolean autoSet;
-    
+
     public void setTeamType(TeamType newTeamType) {
         if (teamType != newTeamType) {
             vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header);
             teamPane.controller.setCurrent(newTeamType);
-            
+
             teamType = newTeamType;
             setTeamTypeLabel(newTeamType.toString());
             switch (teamType) {
@@ -106,24 +107,24 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             }
         }
     }
-    
+
     public void setTargets(List<SegmentTeam> teams) {
         targets = teams;
-        
+
         if (targetComboBox != null) {
             updateTargetComboBox();
         }
     }
-    
+
     public void setDragDroppedHandler(SegmentPaneController segmentPaneController) {
         teamPaneController.setDragDroppedHandler(segmentPaneController, this);
     }
-    
+
     @Override
     public void updateLabels() {
         teamPaneController.updateLabels();
     }
-    
+
     private void updateTargetComboBox() {
         int previousIndex = -1;
         String previousName = "";
@@ -132,16 +133,16 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             previousName = targetComboBox.getSelectionModel().getSelectedItem().toString();
         }
         targetComboBox.getItems().clear();
-        
+
         if (targets.size() > 1) {
             List<WorkerView> emptyList = new ArrayList<>();
             targets.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
         }
-        
+
         ObservableList list = FXCollections.observableArrayList(targets);
-        
+
         targetComboBox.setItems(list);
-        
+
         boolean nameMatch = false;
         for (int i = 0; i < targetComboBox.getItems().size(); i++) {
             if (targetComboBox.getItems().get(i).toString().equals(previousName)) {
@@ -157,27 +158,27 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             targetComboBox.getSelectionModel().selectFirst();
         }
     }
-    
+
     public void setHeaderVisible(boolean visible) {
         vBox.getChildren().remove(header);
     }
-    
+
     public void setTeamNameVisible(boolean visible) {
         teamPaneController.getTeamNameLabel().setVisible(visible);
     }
-    
+
     public void changeSegmentType() {
         if (!teamType.equals(TeamType.INTERFERENCE)) {
             vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header);
         }
     }
-    
+
     private void setInterference() {
         addTargetComboBox();
         addTimingButtons();
         addSuccessButtons();
     }
-    
+
     private void setResponse() {
         ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(ResponseType.values()));
         for (Button button : wrapper.getButtons()) {
@@ -187,7 +188,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
         wrapper.updateSelected(wrapper.getItems().indexOf(responseType));
     }
-    
+
     private void setPromoTarget() {
         ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(PresenceType.values()));
         for (Button button : wrapper.getButtons()) {
@@ -196,13 +197,13 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                     presenceType = (PresenceType) wrapper.updateSelected(button);
                     setPresent(wrapper);
                 }
-                
+
             });
         }
         wrapper.updateSelected(wrapper.getItems().indexOf(presenceType));
         setPresent(wrapper);
     }
-    
+
     private void setPresent(ButtonWrapper wrapper) {
         if (presenceType.equals(PresenceType.PRESENT)) {
             addSuccessButtons();
@@ -210,7 +211,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header, wrapper.getGridPane());
         }
     }
-    
+
     private void addSuccessButtons() {
         ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(SuccessType.values()));
         for (Button button : wrapper.getButtons()) {
@@ -220,7 +221,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
         wrapper.updateSelected(wrapper.getItems().indexOf(successType));
     }
-    
+
     private void addTargetComboBox() {
         targetComboBox = (ComboBox) ViewUtils.addComboBoxWrapperToVBox(
                 FXCollections.observableArrayList(targets),
@@ -228,7 +229,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 vBox).region;
         targetComboBox.getSelectionModel().selectFirst();
     }
-    
+
     private void addTimingButtons() {
         ButtonWrapper wrapper = addButtonWrapper(FXCollections.observableArrayList(TimingType.values()));
         for (Button button : wrapper.getButtons()) {
@@ -238,20 +239,20 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         }
         wrapper.updateSelected(wrapper.getItems().indexOf(timingType));
     }
-    
+
     private ButtonWrapper addButtonWrapper(ObservableList items) {
-        
+
         ButtonWrapper wrapper = new ButtonWrapper(items);
         vBox.getChildren().add(wrapper.getGridPane());
         VBox.setMargin(wrapper.getGridPane(), new Insets(5));
-        
+
         return wrapper;
     }
-    
+
     public void setTeamTypeLabel(String string) {
         teamTypeLabel.setText(string);
     }
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         targets = new ArrayList<>();
@@ -263,18 +264,31 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         getDraggingTab().set(anchorPane);
         autoSet = true;
     }
-    
+
     @Override
     public void initializeMore() {
+        EventHandler<MouseEvent> mouseEvent = (MouseEvent event) -> {
+            if (event.getClickCount() == 2) {
+                if (entouragePaneController.getSegmentItems().isEmpty()) {
+                    entouragePaneController.setVisible(!entouragePaneController.getVisible());
+                    entouragePaneController.updateLabels();
+                }
+            }
+        };
         teamPane = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE, mainApp, gameController);
         entouragePane = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE, mainApp, gameController);
         vBox.getChildren().addAll(teamPane.pane, entouragePane.pane);
+
         teamPaneController = (TeamPaneController) teamPane.controller;
         entouragePaneController = (TeamPaneController) entouragePane.controller;
+
+        teamPaneController.setLabelAction(mouseEvent);
+        entouragePaneController.setLabelAction(mouseEvent);
+
         entouragePaneController.setTeamType(TeamType.ENTOURAGE);
         xButton = ViewUtils.getXButton();
         header.getChildren().add(xButton);
-        
+
     }
 
     /**
@@ -283,33 +297,33 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     public TeamType getTeamType() {
         return teamType == null ? TeamType.DEFAULT : teamType;
     }
-    
+
     public List<SegmentItem> getSegmentItems() {
         return teamPaneController.getSegmentItems();
     }
-    
+
     public List<SegmentItem> getEntourage() {
         return entouragePaneController.getSegmentItems();
     }
-    
+
     public SegmentTeam getSegmentTeam() {
         List<WorkerView> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
-        
+
         SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
-        
+
         segmentTeam.setTarget(targetComboBox != null
                 ? targetComboBox.getSelectionModel().getSelectedItem()
                 : segmentTeam
         );
-        
+
         segmentTeam.setOutcome(outcomeType != null
                 ? outcomeType
                 : null);
-        
+
         segmentTeam.setTiming(timingType);
         segmentTeam.setSuccess(successType);
         segmentTeam.setPresence(presenceType);
-        
+
         return segmentTeam;
     }
 
@@ -333,7 +347,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     public void setAutoSet(boolean autoSet) {
         this.autoSet = autoSet;
     }
-    
+
     public void removeSegmentItem(SegmentItem segmentItem) {
         teamPaneController.removeSegmentItem(segmentItem);
         if (segmentItem instanceof WorkerView) {
@@ -341,17 +355,17 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             workerView.getEntourage().forEach(item -> entouragePaneController.removeSegmentItem(item));
         }
     }
-    
+
     public void addSegmentItems(List<? extends SegmentItem> segmentItems) {
         segmentItems.forEach(item -> addSegmentItem(item));
     }
-    
+
     public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
         List<SegmentItem> toRemove = new ArrayList<>(teamPaneController.getSegmentItems());
         toRemove.forEach(item -> removeSegmentItem(item));
         segmentItems.forEach(item -> addSegmentItem(item));
     }
-    
+
     public void addSegmentItem(SegmentItem segmentItem) {
         teamPaneController.addSegmentItem(segmentItem);
         if (segmentItem instanceof WorkerView) {
@@ -359,15 +373,15 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             workerView.getEntourage().forEach(item -> entouragePaneController.addSegmentItem(item));
         }
     }
-    
+
     public void setTeamNumber(int teamNumber) {
         teamPaneController.setTeamNumber(teamNumber);
     }
-    
+
     public void setOnXButton(EventHandler<ActionEvent> value) {
         xButton.setOnAction(value);
     }
-    
+
     public void setXButtonVisible(boolean visible) {
         xButton.setVisible(visible);
     }
