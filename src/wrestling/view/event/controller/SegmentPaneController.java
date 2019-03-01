@@ -244,14 +244,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     public void removeSegmentItem(SegmentItem segmentItem) {
-        for (GameScreen screen : allWrapperScreens) {
-            ((TeamPaneWrapper) screen.controller).removeSegmentItem(segmentItem);
-        }
+        removeSegmentItem(segmentItem, TeamType.DEFAULT, TeamType.DEFAULT);
     }
 
-    public void removeSegmentItems(List<? extends SegmentItem> segmentItems) {
-        for (SegmentItem segmentItem : segmentItems) {
-            removeSegmentItem(segmentItem);
+    public void removeSegmentItem(SegmentItem segmentItem, TeamType sourceType, TeamType targetType) {
+        for (GameScreen screen : allWrapperScreens) {
+            ((TeamPaneWrapper) screen.controller).removeSegmentItem(segmentItem, sourceType, targetType);
         }
     }
 
@@ -271,7 +269,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         if (addTeam(segmentItems)) {
             return;
         }
-        removeSegmentItems(segmentItems);
+        segmentItems.forEach(item -> removeSegmentItem(item));
 
         SegmentItem item = segmentItems.get(0);
 
@@ -526,7 +524,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private List<SegmentTeam> getSegmentTeams() {
-
         List<SegmentTeam> segmentTeams = new ArrayList<>();
 
         for (GameScreen screen : workerTeamWrappers) {

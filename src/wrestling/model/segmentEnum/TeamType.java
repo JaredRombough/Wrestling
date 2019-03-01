@@ -1,5 +1,8 @@
 package wrestling.model.segmentEnum;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iTeamType;
@@ -26,6 +29,11 @@ public enum TeamType implements Description, iTeamType {
             return workerDroppable(segmentItem);
         }
 
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
+
     },
     CHALLENGED {
         @Override
@@ -41,6 +49,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     ATTACKER {
@@ -59,6 +72,11 @@ public enum TeamType implements Description, iTeamType {
             return workerDroppable(segmentItem);
         }
 
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
+
     },
     VICTIM {
         @Override
@@ -74,6 +92,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     PROMO {
@@ -91,6 +114,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     BRAWLER_PRIME {
         @Override
@@ -107,6 +135,12 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
+
     },
     BRAWLER {
         @Override
@@ -122,6 +156,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     PROMO_TARGET {
@@ -139,6 +178,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     OFFERER {
         @Override
@@ -154,6 +198,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     OFFEREE {
@@ -171,6 +220,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     INTERFERENCE {
         @Override
@@ -186,6 +240,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Arrays.asList(ENTOURAGE, BROADCAST);
         }
     },
     INTERVIEWER {
@@ -203,6 +262,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     ANNOUNCER {
         @Override
@@ -218,6 +282,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     AUDIENCE {
@@ -235,6 +304,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     DEFAULT {
         @Override
@@ -250,6 +324,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     WINNER {
@@ -267,6 +346,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     LOSER {
         @Override
@@ -282,6 +366,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     DRAW {
@@ -299,6 +388,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     EVERYONE {
         @Override
@@ -314,6 +408,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return false;
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     TITLES {
@@ -331,6 +430,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return segmentItem instanceof TitleView;
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
+        }
     },
     REF {
         @Override
@@ -346,6 +450,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.REFEREE);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Collections.emptyList();
         }
     },
     BROADCAST {
@@ -363,6 +472,11 @@ public enum TeamType implements Description, iTeamType {
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem) || (segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.BROADCAST));
         }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Arrays.asList(ENTOURAGE, INTERFERENCE);
+        }
     },
     ENTOURAGE {
         @Override
@@ -378,6 +492,11 @@ public enum TeamType implements Description, iTeamType {
         @Override
         public boolean droppable(SegmentItem segmentItem) {
             return workerDroppable(segmentItem);
+        }
+
+        @Override
+        public List<TeamType> getShared() {
+            return Arrays.asList(BROADCAST, INTERFERENCE);
         }
     };
 

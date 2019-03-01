@@ -47,8 +47,11 @@ public class SegmentView implements Serializable {
         List<SegmentItem> segmentItems = new ArrayList<>();
         for (SegmentTeam team : teams) {
             segmentItems.addAll(team.getWorkers());
+            segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titleViews);
+        segmentItems.addAll(broadcastTeam);
+        segmentItems.add(referee);
         return segmentItems;
     }
 

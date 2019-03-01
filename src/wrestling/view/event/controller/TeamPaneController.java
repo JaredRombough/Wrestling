@@ -62,6 +62,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     }
 
     public boolean removeSegmentItem(SegmentItem segmentItem) {
+
         if (teamListView.getItems().contains(segmentItem)) {
             teamListView.getItems().remove(segmentItem);
             if (teamType.equals(TeamType.ENTOURAGE)) {
@@ -166,7 +167,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     }
 
     public void setDragDroppedHandler(SegmentPaneController segmentPaneController, TeamPaneWrapper teamPaneWrapper) {
-        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamPaneWrapper));
+        teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamPaneWrapper, teamType));
     }
 
     private void setSegmentItemCellFactory(ListView listView) {
@@ -175,7 +176,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
             @Override
             public void updateItem(final SegmentItem segmentItem, boolean empty) {
                 super.updateItem(segmentItem, empty);
-                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
+                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty, teamType);
             }
         });
     }

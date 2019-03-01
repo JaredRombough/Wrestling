@@ -56,6 +56,7 @@ import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ContractUtils;
 import wrestling.view.RegionWrapper;
 import wrestling.view.utility.comparators.NameComparator;
@@ -355,6 +356,25 @@ public final class ViewUtils {
                 cc.putString(listCell.getItem().toString());
                 listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
                 LocalDragboard.getINSTANCE().putValue(SegmentItem.class, segmentItem);
+                event.consume();
+            });
+        }
+    }
+
+    public static void initListCellForSegmentItemDragAndDrop(ListCell listCell, SegmentItem segmentItem, boolean empty, TeamType teamType) {
+        if (empty) {
+            listCell.setText(null);
+            listCell.setGraphic(null);
+            listCell.setOnDragDetected(null);
+        } else {
+            listCell.setText(segmentItem.toString());
+
+            listCell.setOnDragDetected((MouseEvent event) -> {
+                ClipboardContent cc = new ClipboardContent();
+                cc.putString(listCell.getItem().toString());
+                listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
+                LocalDragboard.getINSTANCE().putValue(SegmentItem.class, segmentItem);
+                LocalDragboard.getINSTANCE().putValue(TeamType.class, teamType);
                 event.consume();
             });
         }

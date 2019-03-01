@@ -13,6 +13,7 @@ import wrestling.model.utility.ModelUtils;
 public class SegmentTeam implements Serializable {
 
     private List<WorkerView> workers;
+    private List<WorkerView> entourage;
     private TeamType type;
     private SegmentTeam target;
     private SuccessType success;
@@ -23,10 +24,12 @@ public class SegmentTeam implements Serializable {
     public SegmentTeam(List<WorkerView> workers, TeamType type) {
         this.workers = workers;
         this.type = type;
+        entourage = new ArrayList();
     }
 
     public SegmentTeam() {
         workers = new ArrayList();
+        entourage = new ArrayList();
         type = TeamType.DEFAULT;
         outcome = OutcomeType.WINNER;
     }
@@ -142,6 +145,20 @@ public class SegmentTeam implements Serializable {
      */
     public void setPresence(PresenceType presence) {
         this.presence = presence;
+    }
+
+    /**
+     * @return the entourage
+     */
+    public List<WorkerView> getEntourage() {
+        return entourage;
+    }
+
+    /**
+     * @param entourage the entourage to set
+     */
+    public void setEntourage(List<WorkerView> entourage) {
+        this.entourage = entourage;
     }
 
 }
