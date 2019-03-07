@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
-public class StableMemberController extends ControllerBase {
+public class GroupMemberController extends ControllerBase {
 
     private WorkerView worker;
 

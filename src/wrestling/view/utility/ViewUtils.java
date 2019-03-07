@@ -45,6 +45,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javax.imageio.ImageIO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -486,13 +487,27 @@ public final class ViewUtils {
     }
 
     public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers, String title, String header, WorkerView defaultSelection) {
+        return selectWorkerDialog(workers, title, header, null, null);
+    }
+
+    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers,
+            String title, String header, WorkerView defaultSelection, String emptyName) {
+
         Collections.sort(workers, new NameComparator());
+        if (!StringUtils.isEmpty(emptyName)) {
+            WorkerView empty = new WorkerView();
+            empty.setName(emptyName);
+            workers.add(0, empty);
+        }
         ChoiceDialog<WorkerView> dialog;
         if (workers.contains(defaultSelection)) {
             dialog = new ChoiceDialog<>(defaultSelection, workers);
         } else {
             dialog = new ChoiceDialog<>();
             dialog.getItems().addAll(workers);
+            if(!workers.isEmpty()) {
+                dialog.setSelectedItem(workers.get(0));
+            }
         }
         dialog.setTitle(title);
         dialog.setHeaderText(header);

@@ -15,9 +15,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import static wrestling.model.constants.GameConstants.EDIT_ICON;
 import wrestling.model.modelView.PromotionView;
@@ -135,6 +137,41 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
         contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
+
+        managedListView.setCellFactory(c -> new ListCell<WorkerView>() {
+            @Override
+            public void updateItem(WorkerView client, boolean empty) {
+                super.updateItem(client, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    GameScreen clientScreen = ViewUtils.loadScreenFromResource(ScreenCode.STABLE_MEMBER, mainApp, gameController);
+                    GroupMemberController cotroller = (GroupMemberController) clientScreen.controller;
+                    cotroller.setCurrent(client);
+                    setPrefHeight(40);
+                    setMaxHeight(40);
+
+                    if (Objects.equals(promotion, playerPromotion())) {
+                        cotroller.getxButton().setVisible(false);
+                        cotroller.getxButton().setOnAction(a -> {
+                            String header = "Removing client from manager";
+                            String content = String.format("Really remove %s as a client for %s?", client.getName(), worker.getName());
+                            if (ViewUtils.generateConfirmationDialogue(header, content)) {
+                                client.setManager(null);
+                                updateLabels();
+                            }
+                        });
+                        clientScreen.pane.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+                            cotroller.getxButton().setVisible(isNowHovered);
+                        });
+                    }
+
+                    setGraphic(clientScreen.pane);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -230,12 +267,18 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                         workers,
                         "Select Manager",
                         String.format("Select a manager for %s", worker.getName()),
-                        worker.getManager()
+                        worker.getManager(),
+                        resx.getString("None")
                 ).showAndWait();
 
                 result.ifPresent(newManager -> {
-                    worker.setManager(newManager);
+                    if (!StringUtils.equals(worker.getName(), resx.getString("None"))) {
+                        worker.setManager(newManager);
+                    } else {
+                        worker.setManager(null);
+                    }
                     updateLabels();
+
                 });
             });
         } else {

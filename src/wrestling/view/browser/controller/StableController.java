@@ -52,7 +52,7 @@ public class StableController extends ControllerBase {
                     setGraphic(null);
                 } else {
                     GameScreen stableMemberScreen = ViewUtils.loadScreenFromResource(ScreenCode.STABLE_MEMBER, mainApp, gameController);
-                    StableMemberController cotroller = (StableMemberController) stableMemberScreen.controller;
+                    GroupMemberController cotroller = (GroupMemberController) stableMemberScreen.controller;
                     cotroller.setCurrent(worker);
                     cotroller.getxButton().setOnAction(a -> {
                         String header = "Removing worker from stable";
