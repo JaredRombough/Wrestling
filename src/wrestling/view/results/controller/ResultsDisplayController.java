@@ -145,7 +145,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         for (SegmentTeam team : defaultTeams) {
             List<GameScreen> workerCards = new ArrayList<>();
             for (WorkerView worker : team.getWorkers()) {
-                GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                GameScreen card = ViewUtils.loadScreenFromFXML(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
             }
@@ -165,7 +165,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         for (SegmentTeam team : teams) {
             List<GameScreen> workerCards = new ArrayList<>();
             for (WorkerView worker : team.getWorkers()) {
-                GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+                GameScreen card = ViewUtils.loadScreenFromFXML(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
             }
@@ -191,7 +191,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void addIntersertial(SegmentTeam team, double cardWidth, int maxColumns) {
-        GameScreen intersertial = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController);
+        GameScreen intersertial = ViewUtils.loadScreenFromFXML(ScreenCode.RESULTS_CARD, mainApp, gameController);
         String text = matchIntersertialString(team);
         intersertial.controller.setCurrent(text);
         if (team.getWorkers().size() > maxColumns / 2) {

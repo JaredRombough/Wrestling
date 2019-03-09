@@ -181,12 +181,12 @@ public final class ViewUtils {
     }
 
     public static GameScreen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController, AnchorPane parent) {
-        GameScreen screen = loadScreenFromResource(code, mainApp, gameController);
+        GameScreen screen = loadScreenFromFXML(code, mainApp, gameController);
         anchorRegionToParent(parent, screen.pane);
         return screen;
     }
 
-    public static GameScreen loadScreenFromResource(ScreenCode code, MainApp mainApp, GameController gameController) {
+    public static GameScreen loadScreenFromFXML(ScreenCode code, MainApp mainApp, GameController gameController) {
         Logger logger = LogManager.getLogger("ViewUtils loadScreenFromResource()");
         FXMLLoader loader = new FXMLLoader();
         GameScreen screen = new GameScreen();

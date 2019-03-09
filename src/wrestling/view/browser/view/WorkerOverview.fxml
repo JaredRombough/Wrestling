@@ -80,12 +80,19 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Button>
-            <ListView fx:id="managedListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.rowSpan="2">
+            <ListView fx:id="managedListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="7" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets bottom="5.0" top="5.0" />
                </GridPane.margin>
             </ListView>
-            <Label fx:id="managedLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Clients" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Label fx:id="managedLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Clients" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <Label fx:id="managedLabel1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Entourage" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <ListView fx:id="entourageListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin>
+            </ListView>
+            <Button fx:id="entourageButton" maxHeight="30.0" maxWidth="40.0" mnemonicParsing="false" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
    </children>

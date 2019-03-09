@@ -96,11 +96,11 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
-    STABLE_MEMBER {
+    GROUP_MEMBER {
 
         @Override
         public String resourcePath() {
-            return "view/browser/view/StableMember.fxml";
+            return "view/browser/view/GroupMember.fxml";
         }
 
         @Override

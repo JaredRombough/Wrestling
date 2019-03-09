@@ -187,7 +187,7 @@ public class MainApp extends Application {
     //shows initial title screen
     private void showTitleScreen() throws IOException {
 
-        GameScreen titleScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE, this, gameController);
+        GameScreen titleScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TITLE, this, gameController);
 
         // Show the scene containing the root layout.
         Scene scene = new Scene(titleScreen.pane);
@@ -309,7 +309,7 @@ public class MainApp extends Application {
         ));
 
         for (ScreenCode screen : screensToLoad) {
-            screens.add(ViewUtils.loadScreenFromResource(screen, this, gameController));
+            screens.add(ViewUtils.loadScreenFromFXML(screen, this, gameController));
         }
     }
 
@@ -319,7 +319,7 @@ public class MainApp extends Application {
      * @throws java.io.IOException
      */
     public void initRootLayout() throws IOException {
-        screens.add(ViewUtils.loadScreenFromResource(ScreenCode.ROOT, this, gameController));
+        screens.add(ViewUtils.loadScreenFromFXML(ScreenCode.ROOT, this, gameController));
         Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane, currentStageWidth, currentStageHeight);
         if (cssEnabled) {
             scene.getStylesheets().add("style.css");
@@ -360,7 +360,7 @@ public class MainApp extends Application {
      */
     public void showStartGameScreen() throws IOException {
 
-        GameScreen startGameScreen = ViewUtils.loadScreenFromResource(ScreenCode.START, this, gameController);
+        GameScreen startGameScreen = ViewUtils.loadScreenFromFXML(ScreenCode.START, this, gameController);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
         primaryStage.setResizable(true);
         primaryStage.setMaximized(true);

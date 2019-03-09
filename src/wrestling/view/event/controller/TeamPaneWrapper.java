@@ -277,8 +277,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 }
             }
         };
-        teamPane = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE, mainApp, gameController);
-        entouragePane = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE, mainApp, gameController);
+        teamPane = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE, mainApp, gameController);
+        entouragePane = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE, mainApp, gameController);
         vBox.getChildren().addAll(teamPane.pane, entouragePane.pane);
         
         teamPaneController = (TeamPaneController) teamPane.controller;

@@ -74,7 +74,7 @@ public class TitleScreenController extends ControllerBase implements Initializab
         importPopup.initModality(Modality.APPLICATION_MODAL);
         importPopup.setTitle("New Import Game");
         
-        GameScreen importDialog = ViewUtils.loadScreenFromResource(ScreenCode.IMPORT_DIALOG, mainApp, gameController);
+        GameScreen importDialog = ViewUtils.loadScreenFromFXML(ScreenCode.IMPORT_DIALOG, mainApp, gameController);
         importDialog.controller.updateLabels();
         ((ImportDialogController) importDialog.controller).setStage(importPopup);
         

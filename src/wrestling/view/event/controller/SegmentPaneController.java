@@ -142,7 +142,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void initializeTitlesWrapper() {
-        titlesWrapper = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        titlesWrapper = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         titlesController = ((TeamPaneWrapper) titlesWrapper.controller);
         titlesController.setTeamType(TeamType.TITLES);
         titlesController.setDragDroppedHandler(this);
@@ -153,7 +153,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void initializeRef() {
-        refScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        refScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         refsController = ((TeamPaneWrapper) refScreen.controller);
         refsController.setTeamType(TeamType.REF);
         refsController.setDragDroppedHandler(this);
@@ -164,7 +164,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void initializeBroadcastTeam() {
-        GameScreen broadcastTeamScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        GameScreen broadcastTeamScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         broadcastTeamController = ((TeamPaneWrapper) broadcastTeamScreen.controller);
         broadcastTeamController.setTeamType(TeamType.BROADCAST);
         broadcastTeamController.setDragDroppedHandler(this);
@@ -180,7 +180,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void initializeAngleOptions() {
-        angleOptionsScreen = ViewUtils.loadScreenFromResource(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
+        angleOptionsScreen = ViewUtils.loadScreenFromFXML(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
         angleOptions = (AngleOptions) angleOptionsScreen.controller;
 
         angleOptions.getAngleTypeComboBox().valueProperty().addListener(new ChangeListener<AngleType>() {
@@ -352,7 +352,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private GameScreen addTeam(TeamType teamType) {
 
-        GameScreen wrapperScreen = ViewUtils.loadScreenFromResource(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
+        GameScreen wrapperScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         TeamPaneWrapper wrapperController = ((TeamPaneWrapper) wrapperScreen.controller);
 
         if (teamType.equals(TeamType.INTERFERENCE)) {

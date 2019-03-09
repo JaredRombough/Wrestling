@@ -51,7 +51,7 @@ public class StableController extends ControllerBase {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    GameScreen stableMemberScreen = ViewUtils.loadScreenFromResource(ScreenCode.STABLE_MEMBER, mainApp, gameController);
+                    GameScreen stableMemberScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
                     GroupMemberController cotroller = (GroupMemberController) stableMemberScreen.controller;
                     cotroller.setCurrent(worker);
                     cotroller.getxButton().setOnAction(a -> {
@@ -62,7 +62,7 @@ public class StableController extends ControllerBase {
                             updateLabels();
                         }
                     });
-                    cotroller.getxButton().setVisible(stable.getOwner().equals(playerPromotion()));
+                    cotroller.setEditable(stable.getOwner().equals(playerPromotion()));
                     setGraphic(stableMemberScreen.pane);
                 }
             }

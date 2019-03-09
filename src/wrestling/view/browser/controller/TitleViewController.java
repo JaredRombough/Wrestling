@@ -58,7 +58,7 @@ public class TitleViewController extends ControllerBase implements Initializable
                     setText(null);
                     setGraphic(null);
                 } else {
-                    GameScreen titleReignScreen = ViewUtils.loadScreenFromResource(ScreenCode.TITLE_REIGN, mainApp, gameController);
+                    GameScreen titleReignScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TITLE_REIGN, mainApp, gameController);
                     titleReignScreen.controller.setCurrent(titleReign);
                     setGraphic(titleReignScreen.pane);
                 }

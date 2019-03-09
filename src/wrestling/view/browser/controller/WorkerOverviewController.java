@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -92,7 +94,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private AnchorPane imageAnchor;
 
     @FXML
-    private ListView managedListView;
+    private ListView<WorkerView> managedListView;
+
+    @FXML
+    private Button entourageButton;
+
+    @FXML
+    private ListView<WorkerView> entourageListView;
 
     @FXML
     private AnchorPane contractAnchor;
@@ -114,6 +122,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             feedPaneScreen.controller.setCurrent(worker);
             contractScreen.controller.setCurrent(worker);
+            entourageListView.getItems().clear();
+            entourageListView.getItems().addAll(worker.getEntourage());
 
             updateLabels();
         }
@@ -138,6 +148,37 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
 
+        entourageListView.setCellFactory(c -> new ListCell<WorkerView>() {
+            @Override
+            public void updateItem(WorkerView client, boolean empty) {
+                super.updateItem(client, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    GameScreen clientScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
+                    GroupMemberController cotroller = (GroupMemberController) clientScreen.controller;
+                    cotroller.setCurrent(client);
+                    setPrefHeight(40);
+                    setMaxHeight(40);
+                    cotroller.setEditable(Objects.equals(promotion, playerPromotion()));
+                    if (Objects.equals(promotion, playerPromotion())) {
+
+                        cotroller.getxButton().setOnAction(a -> {
+                            String header = "Removing worker from entourage";
+                            String content = String.format("Really remove %s from %s's entourage?", client.getName(), worker.getName());
+                            if (ViewUtils.generateConfirmationDialogue(header, content)) {
+                                worker.getEntourage().remove(client);
+                                updateLabels();
+                            }
+                        });
+                    }
+
+                    setGraphic(clientScreen.pane);
+                }
+            }
+        });
+
         managedListView.setCellFactory(c -> new ListCell<WorkerView>() {
             @Override
             public void updateItem(WorkerView client, boolean empty) {
@@ -146,14 +187,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     setText(null);
                     setGraphic(null);
                 } else {
-                    GameScreen clientScreen = ViewUtils.loadScreenFromResource(ScreenCode.STABLE_MEMBER, mainApp, gameController);
+                    GameScreen clientScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
                     GroupMemberController cotroller = (GroupMemberController) clientScreen.controller;
                     cotroller.setCurrent(client);
                     setPrefHeight(40);
                     setMaxHeight(40);
 
                     if (Objects.equals(promotion, playerPromotion())) {
-                        cotroller.getxButton().setVisible(false);
                         cotroller.getxButton().setOnAction(a -> {
                             String header = "Removing client from manager";
                             String content = String.format("Really remove %s as a client for %s?", client.getName(), worker.getName());
@@ -162,9 +202,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                                 updateLabels();
                             }
                         });
-                        clientScreen.pane.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-                            cotroller.getxButton().setVisible(isNowHovered);
-                        });
+
                     }
 
                     setGraphic(clientScreen.pane);
@@ -238,8 +276,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
 
         } else if (!promotion.getFullRoster().contains(worker)) {
-            //probably our roster is empty for some reason, should be a rare situation
-            //try to eliminate this possibility if we haven't already
             worker = null;
 
             nameLabel.setText("");
@@ -291,6 +327,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managedListView.setVisible(true);
             Collections.sort(managed, new NameComparator());
             managedListView.setItems(FXCollections.observableArrayList(managed));
+            entourageListView.setItems(FXCollections.observableArrayList(managed));
         } else {
             managedLabel.setVisible(false);
             managedListView.setVisible(false);
