@@ -52,8 +52,6 @@ GREY
 
 .cell:selected, .cell:filled:selected:hover {
     -fx-background: #424242;
-
-
 }
 
 .cell:filled:hover{
@@ -170,13 +168,15 @@ GREY
 }
 
 
-
+.light-border{
+    -fx-border-width: 1;
+    -fx-border-color: #E0E0E0;
+}
 
 
 .button{
     -fx-text-fill: white;
     -fx-background-color: #424242;
-
 }
 
 .selectedButton

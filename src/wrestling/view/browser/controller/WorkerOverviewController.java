@@ -11,8 +11,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -21,6 +19,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import static wrestling.model.constants.GameConstants.EDIT_ICON;
@@ -88,6 +88,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label managedLabel;
 
     @FXML
+    private Label entourageLabel;
+
+    @FXML
     private Button managerButton;
 
     @FXML
@@ -122,8 +125,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             feedPaneScreen.controller.setCurrent(worker);
             contractScreen.controller.setCurrent(worker);
-            entourageListView.getItems().clear();
-            entourageListView.getItems().addAll(worker.getEntourage());
 
             updateLabels();
         }
@@ -147,6 +148,24 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         feedPaneScreen = ViewUtils.loadScreenFromResource(ScreenCode.SIMPLE_DISPLAY, mainApp, gameController, feedAnchor);
         contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
+
+        initializeButtonHover(entourageLabel, entourageButton);
+
+        entourageButton.setOnAction(a -> {
+            List<WorkerView> workers = new ArrayList<>(promotion.getFullRoster());
+            workers.removeAll(worker.getEntourage());
+            workers.remove(worker);
+            Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+                    workers,
+                    resx.getString("JoinEntourageTitle"),
+                    String.format(resx.getString("JoinEntourageText"), worker.getName())
+            ).showAndWait();
+
+            result.ifPresent(newMember -> {
+                worker.getEntourage().add(newMember);
+                updateLabels();
+            });
+        });
 
         entourageListView.setCellFactory(c -> new ListCell<WorkerView>() {
             @Override
@@ -228,6 +247,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             genderLabel.setText(worker.getGender().toString());
 
             updateManagerLabels();
+            entourageListView.getItems().clear();
+            entourageListView.getItems().addAll(worker.getEntourage());
 
             if (worker.getInjury() != null) {
                 injury.setText(String.format("%s days left",
@@ -295,7 +316,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         manager.setText(worker.getManager() == null ? "None" : worker.getManager().getName());
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
-            managerButton.setVisible(true);
+            initializeButtonHover(manager, managerButton);
             managerButton.setOnAction(a -> {
                 List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
                 workers.remove(worker);
@@ -314,7 +335,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                         worker.setManager(null);
                     }
                     updateLabels();
-
                 });
             });
         } else {
@@ -327,11 +347,24 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managedListView.setVisible(true);
             Collections.sort(managed, new NameComparator());
             managedListView.setItems(FXCollections.observableArrayList(managed));
-            entourageListView.setItems(FXCollections.observableArrayList(managed));
         } else {
             managedLabel.setVisible(false);
             managedListView.setVisible(false);
         }
+    }
+
+    private void initializeButtonHover(Region region, Button button) {
+        button.setVisible(false);
+        region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            if (Objects.equals(promotion, playerPromotion())) {
+                button.setVisible(Objects.equals(promotion, playerPromotion()) && isNowHovered);
+            }
+        });
+        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            if (Objects.equals(promotion, playerPromotion())) {
+                button.setVisible(Objects.equals(promotion, playerPromotion()) && isNowHovered);
+            }
+        });
     }
 
 }

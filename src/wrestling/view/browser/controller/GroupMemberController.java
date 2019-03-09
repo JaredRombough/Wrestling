@@ -40,7 +40,6 @@ public class GroupMemberController extends ControllerBase {
                 xButton.setVisible(editable && isNowHovered);
             }
         });
-
     }
 
     @Override
