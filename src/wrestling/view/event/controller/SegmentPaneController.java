@@ -504,8 +504,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public SegmentView getSegmentView() {
         //this would return whatever segment we generate, match or angle
         //along with all the rules etc
-        SegmentView segmentView = new SegmentView(getSegmentType());
-        if (getSegmentType().equals(SegmentType.MATCH)) {
+        SegmentView segmentView = new SegmentView(segmentType);
+        if (segmentType.equals(SegmentType.MATCH)) {
             MatchParams params = new MatchParams();
             params.setMatchFinish(matchOptions.getMatchFinish());
             params.setMatchRule(matchOptions.getMatchRule());

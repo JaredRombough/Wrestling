@@ -243,7 +243,9 @@ public class SegmentManager implements Serializable {
         stringBuilder.append("\n");
         stringBuilder.append(getSegmentString(segmentView));
         stringBuilder.append("\n");
-        stringBuilder.append(ViewUtils.intToStars(segmentView.getSegment().getWorkRating()));
+        stringBuilder.append(segmentView.getSegmentType().equals(SegmentType.MATCH)
+                ? ViewUtils.intToStars(segmentView.getSegment().getWorkRating())
+                : "Rating: " + segmentView.getSegment().getWorkRating() + "%");
 
         return stringBuilder.toString();
     }
@@ -338,6 +340,10 @@ public class SegmentManager implements Serializable {
                 List<WorkerView> team = teams.get(t).getWorkers();
 
                 matchString += generateTeamName(team, verbose);
+
+                if (!teams.get(t).getEntourage().isEmpty()) {
+                    matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
+                }
 
                 if (t == 0 && !matchString.isEmpty()) {
                     matchString += " def. ";

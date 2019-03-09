@@ -13,10 +13,6 @@ import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.view.utility.interfaces.ControllerBase;
 
-
-/*
-basic anchor pane for displaying a string on a label, used by browser
- */
 public class SimpleDisplayController extends ControllerBase implements Initializable {
 
     private Object obj;
@@ -52,9 +48,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
     public void updateLabels() {
         displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
-        String newText = "";
+        String newText;
 
-        //call the appropriate method based on object type
         if (obj instanceof Event) {
             newText = eventManager.generateSummaryString((Event) obj);
         } else if (obj instanceof TitleView) {
