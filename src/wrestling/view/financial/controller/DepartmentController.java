@@ -59,18 +59,11 @@ public class DepartmentController extends ControllerBase {
     public void updateLabels() {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
-            progressBar.getStyleClass().remove("progress-bar-level-2");
+
             double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
             progressBar.setProgress(coverage / 100);
 
-            ratioLabel.setText(coverage > 200 ? "200%+" : String.format("%.0f%%", coverage));
-            if (coverage > 100) {
-                progressBar.getStyleClass().add("progress-bar-level-2");
-            }
-            if (coverage > 100 && coverage < 200) {
-
-                progressBar.setProgress((coverage - 100) / 100);
-            }
+            ratioLabel.setText(coverage > 100 ? "100%+" : String.format("%.0f%%", coverage));
 
             int avgSkill = playerPromotion().getStaffSkillAverage(staffType);
             skillDifferentialLabel.setText(String.format("%d", avgSkill));
