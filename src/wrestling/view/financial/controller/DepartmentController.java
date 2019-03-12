@@ -81,20 +81,6 @@ public class DepartmentController extends ControllerBase {
                             bonusDays,
                             bonusDays == 0 || Math.abs(bonusDays) > 1 ? "s" : ""));
                     break;
-                case CREATIVE:
-                    double crowdModifier = StaffUtils.getCreativeCrowdReactionModifer(playerPromotion());
-                    sb.append(String.format("%.0f%% crowd reaction %s (coverage)",
-                            crowdModifier * 100,
-                            crowdModifier >= 0 ? "bonus" : "penalty"
-                    ));
-                    sb.append("\n");
-                    double angleModifier = StaffUtils.getAngleRatingModifier(playerPromotion());
-                    sb.append(String.format("%.0f%% angle rating %s (skill)",
-                            angleModifier * 100,
-                            angleModifier >= 0 ? "bonus" : "penalty"
-                    ));
-                    sb.append("\n");
-                    break;
                 case TRAINER:
                     double trainerRate = StaffUtils.getTrainerSuccessRate(playerPromotion());
                     sb.append(String.format("%.0f%% trainer success daily (coverage)",
