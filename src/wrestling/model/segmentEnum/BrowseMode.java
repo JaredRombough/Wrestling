@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.DateComparator;
@@ -123,7 +124,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, PromotionView promotion) {
-            return promotion.getStaff(StaffType.REFEREE);
+            return StaffUtils.getStaff(StaffType.REFEREE, promotion);
         }
 
         @Override
@@ -149,7 +150,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, PromotionView promotion) {
-            return promotion.getStaff(StaffType.BROADCAST);
+            return StaffUtils.getStaff(StaffType.BROADCAST, promotion);
         }
 
         @Override

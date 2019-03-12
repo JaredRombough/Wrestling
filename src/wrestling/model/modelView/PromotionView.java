@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import wrestling.model.EventTemplate;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.utility.StaffUtils;
 
 public class PromotionView implements Serializable {
 
@@ -139,23 +140,9 @@ public class PromotionView implements Serializable {
         return allStaff;
     }
 
-    public List<StaffView> getStaff(StaffType staffType) {
-        return allStaff.stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
-    }
-
     public StaffView getOwner() {
-        List<StaffView> owner = getStaff(StaffType.OWNER);
+        List<StaffView> owner = StaffUtils.getStaff(StaffType.OWNER, this);
         return owner.isEmpty() ? null : owner.get(0);
-    }
-
-    public int getStaffSkillAverage(StaffType staffType) {
-        double total = 0;
-        List<StaffView> staffOfType = getStaff(staffType);
-        for (StaffView staff : staffOfType) {
-            total += staff.getSkill();
-        }
-        return (int) Math.ceil(total / staffOfType.size());
-
     }
 
     public void addToStaff(StaffView staff) {

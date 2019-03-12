@@ -166,7 +166,7 @@ public class PromotionController implements Serializable {
     }
 
     public void trainerUpdate(PromotionView promotion) {
-        for (StaffView trainer : promotion.getStaff(StaffType.TRAINER)) {
+        for (StaffView trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
             if (StaffUtils.trainerSuccess(promotion)) {
                 WorkerView worker = promotion.getFullRoster().get(RandomUtils.nextInt(0, promotion.getFullRoster().size() - 1));
                 Map<String, Integer> properties = new HashMap<>();

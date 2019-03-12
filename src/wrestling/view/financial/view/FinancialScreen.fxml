@@ -25,8 +25,7 @@
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
@@ -48,15 +47,14 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
                <children>
-                  <AnchorPane fx:id="medicalBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="1" />
+                  <AnchorPane fx:id="medicalBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="1" />
                   <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Department" />
                   <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Coverage" GridPane.columnIndex="1" GridPane.columnSpan="2" />
                   <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Avg. Skill" GridPane.columnIndex="3" />
-                  <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Effects" GridPane.columnIndex="4" GridPane.columnSpan="2" />
-                  <AnchorPane fx:id="roadAgentBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="2" />
-                  <AnchorPane fx:id="creativeBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="3" />
-                  <AnchorPane fx:id="trainerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="5" />
-                  <AnchorPane fx:id="productionBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="4" />
+                  <AnchorPane fx:id="roadAgentBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="2" />
+                  <AnchorPane fx:id="creativeBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="3" />
+                  <AnchorPane fx:id="trainerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="5" />
+                  <AnchorPane fx:id="productionBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="4" />
                   <GridPane GridPane.columnSpan="2147483647" GridPane.rowIndex="6" GridPane.rowSpan="2147483647">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
@@ -73,7 +71,7 @@
                         <AnchorPane fx:id="ownerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" />
                      </children>
                   </GridPane>
-                  <GridPane fx:id="balanceSheetGrid" GridPane.columnIndex="7" GridPane.columnSpan="2147483647" GridPane.rowSpan="5">
+                  <GridPane fx:id="balanceSheetGrid" GridPane.columnIndex="6" GridPane.columnSpan="2147483647" GridPane.rowSpan="5">
                      <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
@@ -103,6 +101,7 @@
                         <Label text="Total" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
+                  <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Modifier" GridPane.columnIndex="4" />
                </children>
             </GridPane>
          </children>

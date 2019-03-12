@@ -12,6 +12,7 @@ import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.browser.controller.BrowseParams;
 import wrestling.view.browser.controller.EditBroadcastTeamDialog;
 import wrestling.view.utility.ScreenCode;
@@ -67,7 +68,7 @@ public class RingsideController extends ControllerBase {
 
                 staffCount.setText(playerPromotion().getOwner() != null ? playerPromotion().getOwner().getName() : "None");
             } else {
-                staffCount.setText(String.format("Count: %d", playerPromotion().getStaff(staffType).size()));
+                staffCount.setText(String.format("Count: %d", StaffUtils.getStaff(staffType, playerPromotion()).size()));
             }
 
             defaultBroadcastTeam.setText(ModelUtils.slashShortNames(playerPromotion().getDefaultBroadcastTeam()));

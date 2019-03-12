@@ -1,6 +1,11 @@
 package wrestling.model.factory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import wrestling.model.SegmentWorker;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
@@ -39,11 +44,87 @@ public class MatchFactory implements Serializable {
         return segmentView.getSegment();
     }
 
+    private int getMatchRating(SegmentView segmentView) {
+        Map<TeamType, List<WorkerView>> segmentTeams = getMap(segmentView.getTeams());
+        Map<TeamType, Integer> teamAvgs = new HashMap<>();
+        segmentTeams.forEach((type, workers) -> {
+            double total = 0;
+            for (WorkerView w : workers) {
+                total += ModelUtils.getMatchWorkRating(w);
+            }
+            Integer avg = (int) total / workers.size();
+            teamAvgs.put(type, avg);
+        });
+
+        List<TeamType> matchTypes = Arrays.asList(TeamType.WINNER, TeamType.LOSER, TeamType.DRAW);
+
+        int baseMatchRatingTotal = 0;
+        int count = 0;
+
+        for (TeamType type : matchTypes) {
+            if (teamAvgs.containsKey(type)) {
+                baseMatchRatingTotal += teamAvgs.get(type);
+                count++;
+            }
+        }
+        int baseMatchRating = baseMatchRatingTotal / count;
+
+        int refScore = segmentView.getReferee().getSkill();
+        System.out.println("baseMatchRating" + baseMatchRating);
+
+        int refDiff = refScore - baseMatchRating;
+
+        System.out.println("refScore" + refScore);
+
+        System.out.println("refDiff" + refDiff);
+
+        int refModified = baseMatchRating += (refDiff / 10);
+
+        System.out.println("refModified" + refModified);
+
+        return refModified;
+    }
+
+    private Map<TeamType, List<WorkerView>> getMap(List<SegmentTeam> teams) {
+        Map<TeamType, List<WorkerView>> segmentTeams = new HashMap<>();
+
+        for (SegmentTeam team : teams) {
+            if (segmentTeams.get(team.getType()) == null) {
+                segmentTeams.put(team.getType(), new ArrayList<>());
+            }
+
+            segmentTeams.get(team.getType()).addAll(team.getWorkers());
+
+            if (!team.getEntourage().isEmpty()) {
+                if (segmentTeams.get(TeamType.ENTOURAGE) == null) {
+                    segmentTeams.put(TeamType.ENTOURAGE, new ArrayList<>());
+                }
+                segmentTeams.get(TeamType.ENTOURAGE).addAll(team.getEntourage());
+            }
+
+        }
+
+        return segmentTeams;
+    }
+
+    private boolean isInMatch(SegmentTeam team) {
+        return team.getType().equals(TeamType.WINNER)
+                || team.getType().equals(TeamType.LOSER)
+                || team.getType().equals(TeamType.DRAW);
+    }
+
     private void setSegmentRatings(SegmentView segmentView) {
 
         int workRatingTotal = 0;
         int crowdRatingTotal = 0;
         int interferenceTotal = 0;
+
+        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            int rating = getMatchRating(segmentView);
+            segmentView.getSegment().setWorkRating(rating);
+            segmentView.getSegment().setCrowdRating(rating);
+            return;
+        }
 
         for (SegmentTeam team : segmentView.getTeams()) {
 

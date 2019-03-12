@@ -51,6 +51,7 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.StaffUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.LocalDragboard;
@@ -619,7 +620,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void autoUpdateRefs() {
-        List<StaffView> refs = playerPromotion().getStaff(StaffType.REFEREE);
+        List<StaffView> refs = new ArrayList(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
         Collections.sort(refs, Comparator.comparingInt(StaffView::getSkill));
         if (!refs.isEmpty()) {
             for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
@@ -629,7 +630,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 } else if (controller.isAutoSetRef()) {
                     controller.setRefAuto(refs.remove(refs.size() - 1));
                     if (refs.isEmpty()) {
-                        refs.addAll(playerPromotion().getStaff(StaffType.REFEREE));
+                        refs.addAll(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
                     }
                 }
             }

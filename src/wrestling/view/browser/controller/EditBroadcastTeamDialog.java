@@ -14,6 +14,7 @@ import wrestling.model.controller.GameController;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.utility.StaffUtils;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.comparators.NameComparator;
 
@@ -35,7 +36,7 @@ public class EditBroadcastTeamDialog {
         empty = new StaffView();
         empty.setName(EMPTY);
 
-        broadcastStaff = promotion.getStaff(StaffType.BROADCAST);
+        broadcastStaff = StaffUtils.getStaff(StaffType.BROADCAST, promotion);
         Collections.sort(broadcastStaff, new NameComparator());
         broadcastStaff.add(0, empty);
 

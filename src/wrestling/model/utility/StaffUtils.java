@@ -1,6 +1,7 @@
 package wrestling.model.utility;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
@@ -10,8 +11,30 @@ import wrestling.model.segmentEnum.StaffType;
 
 public final class StaffUtils {
 
+    public static int getStaffSkillAverage(StaffType staffType, PromotionView promotion) {
+        double total = 0;
+        List<StaffView> staffOfType = getStaff(staffType, promotion);
+        for (StaffView staff : staffOfType) {
+            total += staff.getSkill();
+        }
+        return (int) Math.ceil(total / staffOfType.size());
+    }
+
+    public static int getStaffSkillModifier(StaffType staffType, PromotionView promotion) {
+        double coverage = getStaffCoverage(promotion, staffType);
+        double averageSkill = getStaffSkillAverage(staffType, promotion);
+        if (coverage > 100) {
+            return (int) averageSkill;
+        }
+        return (int) (coverage / 100 * averageSkill);
+    }
+
+    public static List<StaffView> getStaff(StaffType staffType, PromotionView promotion) {
+        return promotion.getAllStaff().stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
+    }
+
     public static int getInjuryDurationBonusDays(PromotionView promotion) {
-        int averageSkill = promotion.getStaffSkillAverage(StaffType.MEDICAL);
+        int averageSkill = getStaffSkillAverage(StaffType.MEDICAL, promotion);
         return (int) Math.round(averageSkill * 0.01 * 15);
     }
 
@@ -71,17 +94,17 @@ public final class StaffUtils {
     }
 
     public static double getMatchRatingModifier(PromotionView promotion) {
-        int averageSkill = promotion.getStaffSkillAverage(StaffType.ROAD_AGENT);
+        int averageSkill = getStaffSkillAverage(StaffType.ROAD_AGENT, promotion);
         return 0.1 * averageSkill * 0.01;
     }
 
     public static double getAngleRatingModifier(PromotionView promotion) {
-        int averageSkill = promotion.getStaffSkillAverage(StaffType.CREATIVE);
+        int averageSkill = getStaffSkillAverage(StaffType.CREATIVE, promotion);
         return 0.1 * averageSkill * 0.01;
     }
 
     public static double getProductionCrowdRatingModifier(PromotionView promotion) {
-        int averageSkill = promotion.getStaffSkillAverage(StaffType.PRODUCTION);
+        int averageSkill = getStaffSkillAverage(StaffType.PRODUCTION, promotion);
         return 0.1 * averageSkill * 0.01;
     }
 
@@ -110,7 +133,7 @@ public final class StaffUtils {
 
     public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {
 
-        float staffCount = promotion.getStaff(staffType).size();
+        float staffCount = getStaff(staffType, promotion).size();
         float ratio;
         if (staffType.equals(StaffType.PRODUCTION)) {
             ratio = staffCount / (promotion.getLevel() * 2);
