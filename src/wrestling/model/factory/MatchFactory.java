@@ -23,6 +23,11 @@ import wrestling.model.utility.StaffUtils;
 
 public class MatchFactory implements Serializable {
 
+    private final int REF_DIFF_RATIO = 10;
+    private final int ROAD_AGENT_DIFF_RATIO = 10;
+    private final int ENTOURAGE_DIFF_RATIO = 5;
+    private final int CROWD_RATING_DIFF_RATIO = 5;
+
     private final SegmentManager matchManager;
     private final DateManager dateManager;
 
@@ -46,9 +51,9 @@ public class MatchFactory implements Serializable {
     }
 
     private int getMatchRating(SegmentView segmentView) {
-        Map<TeamType, List<WorkerView>> segmentTeams = getMap(segmentView.getTeams());
+        Map<TeamType, List<WorkerView>> segmentTeamsMap = getMap(segmentView.getTeams());
         Map<TeamType, Integer> teamAvgs = new HashMap<>();
-        segmentTeams.forEach((type, workers) -> {
+        segmentTeamsMap.forEach((type, workers) -> {
             double total = 0;
             for (WorkerView w : workers) {
                 total += ModelUtils.getMatchWorkRating(w);
@@ -72,13 +77,43 @@ public class MatchFactory implements Serializable {
 
         int refScore = segmentView.getReferee().getSkill();
         int refDiff = refScore - baseMatchRating;
-        int refModified = baseMatchRating += (refDiff / 10);
-        
+        int refModified = baseMatchRating += (refDiff / REF_DIFF_RATIO);
+
         int roadAgentModifier = StaffUtils.getStaffSkillModifier(StaffType.ROAD_AGENT, segmentView.getPromotion());
         int roadAgentDiff = roadAgentModifier - baseMatchRating;
-        int roadAgentModified = refModified += (roadAgentDiff / 10);
+        int roadAgentModified = refModified += (roadAgentDiff / ROAD_AGENT_DIFF_RATIO);
 
         return roadAgentModified;
+    }
+
+    private int getMatchCrowdRating(SegmentView segmentView) {
+        int teamCount = 0;
+        int totalPop = 0;
+
+        for (SegmentTeam team : segmentView.getTeams()) {
+            int teamPopTotal = 0;
+            int entouragePopTotal = 0;
+            for (WorkerView worker : team.getWorkers()) {
+
+                for (WorkerView entourage : team.getEntourage()) {
+                    entouragePopTotal += entourage.getPopularity();
+                }
+                teamPopTotal += worker.getPopularity();
+            }
+
+            int teamPop = team.getWorkers().isEmpty() ? 0 : teamPopTotal / team.getWorkers().size();
+
+            if (!team.getEntourage().isEmpty()) {
+                int entourageAvg = entouragePopTotal / team.getEntourage().size();
+                int diff = entourageAvg - teamPop;
+
+                teamPop += (diff / ENTOURAGE_DIFF_RATIO);
+            }
+            totalPop += teamPop;
+            teamCount++;
+        }
+
+        return totalPop / teamCount;
     }
 
     private Map<TeamType, List<WorkerView>> getMap(List<SegmentTeam> teams) {
@@ -103,12 +138,6 @@ public class MatchFactory implements Serializable {
         return segmentTeams;
     }
 
-    private boolean isInMatch(SegmentTeam team) {
-        return team.getType().equals(TeamType.WINNER)
-                || team.getType().equals(TeamType.LOSER)
-                || team.getType().equals(TeamType.DRAW);
-    }
-
     private void setSegmentRatings(SegmentView segmentView) {
 
         int workRatingTotal = 0;
@@ -118,7 +147,10 @@ public class MatchFactory implements Serializable {
         if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
             int rating = getMatchRating(segmentView);
             segmentView.getSegment().setWorkRating(rating);
-            segmentView.getSegment().setCrowdRating(rating);
+            int crowdRating = getMatchCrowdRating(segmentView);
+            int diff = rating - crowdRating;
+            crowdRating += (diff / CROWD_RATING_DIFF_RATIO);
+            segmentView.getSegment().setCrowdRating(crowdRating);
             return;
         }
 
