@@ -13,6 +13,7 @@ import wrestling.model.manager.SegmentManager;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
@@ -27,6 +28,7 @@ public class MatchFactory implements Serializable {
     private final int ROAD_AGENT_DIFF_RATIO = 10;
     private final int CREATIVE_DIFF_RATIO = 10;
     private final int PRODUCTION_DIFF_RATIO = 10;
+    private final int TITLE_DIFF_RATIO = 7;
     private final int ENTOURAGE_DIFF_RATIO = 5;
     private final int CROWD_RATING_DIFF_RATIO = 5;
 
@@ -116,6 +118,18 @@ public class MatchFactory implements Serializable {
         }
 
         int crowdRating = totalPop / teamCount;
+
+        if (!segmentView.getTitleViews().isEmpty()) {
+            int titleTotal = 0;
+            for (TitleView title : segmentView.getTitleViews()) {
+                titleTotal += title.getPrestige();
+            }
+
+            int titleAvg = titleTotal / segmentView.getTitleViews().size();
+            int titleDiff = titleAvg - crowdRating;
+            
+            crowdRating += (titleDiff / TITLE_DIFF_RATIO);
+        }
 
         int creativeDiff = StaffUtils.getStaffSkillModifier(StaffType.CREATIVE, segmentView.getPromotion()) - crowdRating;
         crowdRating += (creativeDiff / CREATIVE_DIFF_RATIO);
