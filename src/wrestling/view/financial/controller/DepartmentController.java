@@ -86,19 +86,6 @@ public class DepartmentController extends ControllerBase {
                     sb.append(String.format("%.0f%% trainer success daily (coverage)",
                             trainerRate * 100));
                     break;
-                case PRODUCTION:
-                    double attendanceModifier = StaffUtils.getCoverageAttendanceModifier(playerPromotion());
-                    sb.append(String.format("%.0f%% event attendance %s (coverage)",
-                            attendanceModifier * 100,
-                            attendanceModifier >= 0 ? "bonus" : "penalty"
-                    ));
-                    sb.append("\n");
-                    double productionCrowdModifier = StaffUtils.getProductionCrowdRatingModifier(playerPromotion());
-                    sb.append(String.format("%.0f%% crowd reaction %s (skill)",
-                            productionCrowdModifier * 100,
-                            productionCrowdModifier >= 0 ? "bonus" : "penalty"
-                    ));
-                    break;
             }
         }
     }

@@ -81,11 +81,6 @@ public final class StaffUtils {
         return rate;
     }
 
-    public static double getProductionCrowdRatingModifier(PromotionView promotion) {
-        int averageSkill = getStaffSkillAverage(StaffType.PRODUCTION, promotion);
-        return 0.1 * averageSkill * 0.01;
-    }
-
     public static double getBroadcastTeamMatchRatingModifier(List<? extends SegmentItem> broadcastTeam) {
         int totalSkill = 0;
         for (SegmentItem broadcaster : broadcastTeam) {
@@ -97,10 +92,6 @@ public final class StaffUtils {
         }
         int averageSkill = totalSkill / broadcastTeam.size();
         return 0.1 * averageSkill * 0.01;
-    }
-
-    public static double getCombinedCrowdRatingModifier(PromotionView promotion) {
-        return getProductionCrowdRatingModifier(promotion);
     }
 
     public static int getInjuryDuration(PromotionView promotion) {

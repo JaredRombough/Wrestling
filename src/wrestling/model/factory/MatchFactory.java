@@ -26,6 +26,7 @@ public class MatchFactory implements Serializable {
     private final int REF_DIFF_RATIO = 10;
     private final int ROAD_AGENT_DIFF_RATIO = 10;
     private final int CREATIVE_DIFF_RATIO = 10;
+    private final int PRODUCTION_DIFF_RATIO = 10;
     private final int ENTOURAGE_DIFF_RATIO = 5;
     private final int CROWD_RATING_DIFF_RATIO = 5;
 
@@ -119,6 +120,9 @@ public class MatchFactory implements Serializable {
         int creativeDiff = StaffUtils.getStaffSkillModifier(StaffType.CREATIVE, segmentView.getPromotion()) - crowdRating;
         crowdRating += (creativeDiff / CREATIVE_DIFF_RATIO);
 
+        int productinDiff = StaffUtils.getStaffSkillModifier(StaffType.PRODUCTION, segmentView.getPromotion()) - crowdRating;
+        crowdRating += (productinDiff / PRODUCTION_DIFF_RATIO);
+
         return crowdRating;
     }
 
@@ -210,8 +214,6 @@ public class MatchFactory implements Serializable {
         segmentView.getSegment().setWorkRating(finalMatchRating);
 
         int crowdRating = Math.round(crowdRatingTotal / segmentView.getWorkers().size());
-
-        crowdRating += crowdRating * StaffUtils.getCombinedCrowdRatingModifier(segmentView.getPromotion());
 
         segmentView.getSegment().setCrowdRating(crowdRating);
     }
