@@ -44,12 +44,6 @@ public final class StaffUtils {
                 0.1);
     }
 
-    public static double getCoverageMatchRatingModifier(PromotionView promotion) {
-        return getCoverageModifier(getStaffCoverage(promotion, StaffType.ROAD_AGENT),
-                -0.2,
-                0.1);
-    }
-
     public static double getCreativeCrowdReactionModifer(PromotionView promotion) {
         return getCoverageModifier(getStaffCoverage(promotion, StaffType.CREATIVE),
                 -0.2,
@@ -91,11 +85,6 @@ public final class StaffUtils {
             rate -= 0.005 * (coverage - 100) * 0.01;
         }
         return rate;
-    }
-
-    public static double getMatchRatingModifier(PromotionView promotion) {
-        int averageSkill = getStaffSkillAverage(StaffType.ROAD_AGENT, promotion);
-        return 0.1 * averageSkill * 0.01;
     }
 
     public static double getAngleRatingModifier(PromotionView promotion) {

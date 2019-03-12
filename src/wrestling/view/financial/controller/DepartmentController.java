@@ -81,21 +81,6 @@ public class DepartmentController extends ControllerBase {
                             bonusDays,
                             bonusDays == 0 || Math.abs(bonusDays) > 1 ? "s" : ""));
                     break;
-                case ROAD_AGENT:
-                    double coverageModifer = StaffUtils.getCoverageMatchRatingModifier(playerPromotion());
-                    sb.append(String.format("%.0f%% match rating %s (coverage)",
-                            coverageModifer * 100,
-                            coverageModifer >= 0 ? "bonus" : "penalty"
-                    ));
-                    sb.append("\n");
-                    double skillModifier = StaffUtils.getMatchRatingModifier(playerPromotion());
-                    sb.append(String.format("%.0f%% match rating %s (skill)",
-                            skillModifier * 100,
-                            skillModifier >= 0 ? "bonus" : "penalty"
-                    ));
-                    sb.append("\n");
-                    break;
-
                 case CREATIVE:
                     double crowdModifier = StaffUtils.getCreativeCrowdReactionModifer(playerPromotion());
                     sb.append(String.format("%.0f%% crowd reaction %s (coverage)",

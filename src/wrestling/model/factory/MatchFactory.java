@@ -16,6 +16,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
@@ -70,19 +71,14 @@ public class MatchFactory implements Serializable {
         int baseMatchRating = baseMatchRatingTotal / count;
 
         int refScore = segmentView.getReferee().getSkill();
-        System.out.println("baseMatchRating" + baseMatchRating);
-
         int refDiff = refScore - baseMatchRating;
-
-        System.out.println("refScore" + refScore);
-
-        System.out.println("refDiff" + refDiff);
-
         int refModified = baseMatchRating += (refDiff / 10);
+        
+        int roadAgentModifier = StaffUtils.getStaffSkillModifier(StaffType.ROAD_AGENT, segmentView.getPromotion());
+        int roadAgentDiff = roadAgentModifier - baseMatchRating;
+        int roadAgentModified = refModified += (roadAgentDiff / 10);
 
-        System.out.println("refModified" + refModified);
-
-        return refModified;
+        return roadAgentModified;
     }
 
     private Map<TeamType, List<WorkerView>> getMap(List<SegmentTeam> teams) {
@@ -168,8 +164,6 @@ public class MatchFactory implements Serializable {
         } else {
             finalMatchRating = Math.round(workRatingTotal / segmentView.getTeams().size());
         }
-
-        finalMatchRating += finalMatchRating * StaffUtils.getMatchRatingModifier(segmentView.getPromotion());
 
         if (!segmentView.getBroadcastTeam().isEmpty()) {
             finalMatchRating += finalMatchRating * StaffUtils.getBroadcastTeamMatchRatingModifier(segmentView.getBroadcastTeam());
