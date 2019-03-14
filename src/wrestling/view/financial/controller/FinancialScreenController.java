@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -56,16 +57,14 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private final int STAFF_EXPENSE_ROW = 5;
     private final int TOTAL_ROW = 6;
 
-    private String sheetCell(TransactionType type, int monthsAgo) {
+    private int sheetCell(TransactionType type, int monthsAgo) {
 
         LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
-        int amount = gameController.getPromotionManager().getBankAccount(playerPromotion())
+        return gameController.getPromotionManager().getBankAccount(playerPromotion())
                 .getTransactionTotal(
                         type,
                         startDate);
-
-        return "$" + amount;
     }
 
     @Override
@@ -79,11 +78,11 @@ public class FinancialScreenController extends ControllerBase implements Initial
         }
 
         addSheetLabel(-1,
-                String.format("$%s", ContractUtils.getWorkerPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion())),
+                ContractUtils.getWorkerPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 WORKER_EXPENSE_ROW);
 
         addSheetLabel(-1,
-                String.format("$%s", ContractUtils.getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion())),
+                ContractUtils.getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 STAFF_EXPENSE_ROW);
 
         for (GameScreen screen : departmentScreens) {
@@ -91,19 +90,21 @@ public class FinancialScreenController extends ControllerBase implements Initial
         }
     }
 
-    private void addSheetLabel(int monthsAgo, String text, int row) {
+    private void addSheetLabel(int monthsAgo, int amount, int row) {
         Label label = new Label();
-        label.setText(text);
+        label.setText(String.format("$%,d", amount));
         if (monthsAgo != 0) {
             label.getStyleClass().add("grey-text");
         }
         sheetLabels.add(label);
+        GridPane.setHalignment(label, HPos.RIGHT);
         balanceSheetGrid.add(label, 3 - monthsAgo, row);
+
     }
 
-    private String totalText(int monthsAgo) {
-        return String.format("$%d", gameController.getPromotionManager().getBankAccount(playerPromotion())
-                .getMonthlyNet(gameController.getDateManager().today().minusMonths(monthsAgo)));
+    private int totalText(int monthsAgo) {
+        return gameController.getPromotionManager().getBankAccount(playerPromotion())
+                .getMonthlyNet(gameController.getDateManager().today().minusMonths(monthsAgo));
     }
 
     @Override
@@ -126,7 +127,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
         creative.controller.setCurrent(StaffType.CREATIVE);
         departmentScreens.add(creative);
 
-        GameScreen trainers = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, trainerBase);
+        GameScreen trainers = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, trainerBase);
         trainers.controller.setCurrent(StaffType.TRAINER);
         departmentScreens.add(trainers);
 

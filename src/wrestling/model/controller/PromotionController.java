@@ -18,6 +18,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Title;
 import wrestling.model.TrainerEvent;
+import static wrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_RATE;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -167,7 +168,7 @@ public class PromotionController implements Serializable {
 
     public void trainerUpdate(PromotionView promotion) {
         for (StaffView trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
-            if (StaffUtils.trainerSuccess(promotion)) {
+            if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {
                 WorkerView worker = promotion.getFullRoster().get(RandomUtils.nextInt(0, promotion.getFullRoster().size() - 1));
                 Map<String, Integer> properties = new HashMap<>();
                 properties.put("striking", worker.getStriking());

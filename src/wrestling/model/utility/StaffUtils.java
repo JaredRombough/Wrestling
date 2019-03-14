@@ -2,11 +2,9 @@ package wrestling.model.utility;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
-import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.StaffType;
 
 public final class StaffUtils {
@@ -31,36 +29,6 @@ public final class StaffUtils {
 
     public static List<StaffView> getStaff(StaffType staffType, PromotionView promotion) {
         return promotion.getAllStaff().stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
-    }
-
-    public static double getCoverageAttendanceModifier(PromotionView promotion) {
-        return getCoverageModifier(getStaffCoverage(promotion, StaffType.PRODUCTION),
-                -0.2,
-                0.1);
-    }
-
-    public static double getTrainerSuccessRate(PromotionView promotion) {
-        double modifier = getCoverageModifier(getStaffCoverage(promotion, StaffType.TRAINER),
-                -0.3,
-                0.1);
-        double baseRate = 0.05;
-        return baseRate + (baseRate * modifier);
-    }
-
-    public static boolean trainerSuccess(PromotionView promotion) {
-        return RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getTrainerSuccessRate(promotion));
-    }
-
-    private static double getCoverageModifier(int coverage, double minimum, double maximum) {
-        double rate;
-        if (coverage <= 100) {
-            rate = minimum * (100 - coverage) * 0.01;
-        } else if (coverage - 100 > 100) {
-            rate = maximum;
-        } else {
-            rate = maximum * (coverage - 100) * 0.01;
-        }
-        return rate;
     }
 
     public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {

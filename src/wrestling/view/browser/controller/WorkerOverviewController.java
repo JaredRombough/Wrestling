@@ -23,7 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
-import static wrestling.model.constants.GameConstants.EDIT_ICON;
+import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;

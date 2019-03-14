@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.Event;
 import wrestling.model.constants.GameConstants;
+import static wrestling.model.constants.UIConstants.CALENDAR_ICON;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.interfaces.ControllerBase;
 
@@ -184,7 +185,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     private void updateCalendarButton() {
-        calendarButton.setText(String.format("%s %s", GameConstants.CALENDAR_ICON, gameController.getDateManager().todayString()));
+        calendarButton.setText(String.format("%s %s", CALENDAR_ICON, gameController.getDateManager().todayString()));
     }
 
     private void updateCurrentFundsButton() {

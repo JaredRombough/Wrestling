@@ -475,8 +475,6 @@ public class EventManager implements Serializable {
 
         attendance += RandomUtils.nextInt(promotion.getLevel(), promotion.getLevel() * 15) * draws;
 
-        attendance += attendance * StaffUtils.getCoverageAttendanceModifier(promotion);
-
         return attendance;
     }
 

@@ -15,6 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.model.EventTemplate;
 import wrestling.model.constants.GameConstants;
+import static wrestling.model.constants.UIConstants.CALENDAR_ICON;
+import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.EventVenueSize;
@@ -65,12 +67,12 @@ public class EventTemplateController extends ControllerBase implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        calendarButton.setText(GameConstants.CALENDAR_ICON);
+        calendarButton.setText(CALENDAR_ICON);
         calendarButton.setOnAction(e -> {
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getNextEvent(eventTemplate));
         });
-        editBroadcastTeamButton.setText(GameConstants.EDIT_ICON);
+        editBroadcastTeamButton.setText(EDIT_ICON);
         editBroadcastTeamButton.setOnAction(e -> {
             EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
             Optional<List<StaffView>> optionalResult = dialog.getDialog(

@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import wrestling.model.constants.GameConstants;
+import static wrestling.model.constants.UIConstants.EDIT_ICON;
+import static wrestling.model.constants.UIConstants.VIEW_ICON;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
@@ -76,7 +78,7 @@ public class RingsideController extends ControllerBase {
     }
 
     private void setButtonActions() {
-        viewButton.setText("\uD83D\uDC41");
+        viewButton.setText(VIEW_ICON);
 
         BrowseParams params = new BrowseParams();
         params.filter = staffType;
@@ -96,7 +98,7 @@ public class RingsideController extends ControllerBase {
             });
         }
 
-        editButton.setText(GameConstants.EDIT_ICON);
+        editButton.setText(EDIT_ICON);
 
         if (staffType.equals(StaffType.BROADCAST)) {
             editButton.setOnAction(e -> {

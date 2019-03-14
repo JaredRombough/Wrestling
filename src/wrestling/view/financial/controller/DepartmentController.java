@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import static wrestling.model.constants.UIConstants.VIEW_ICON;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.StaffUtils;
@@ -69,21 +70,11 @@ public class DepartmentController extends ControllerBase {
             averageSkillLabel.setText(String.format("%d", avgSkill));
 
             modifierLabel.setText("" + StaffUtils.getStaffSkillModifier(staffType, playerPromotion()));
-
-            StringBuilder sb = new StringBuilder();
-
-            switch (staffType) {
-                case TRAINER:
-                    double trainerRate = StaffUtils.getTrainerSuccessRate(playerPromotion());
-                    sb.append(String.format("%.0f%% trainer success daily (coverage)",
-                            trainerRate * 100));
-                    break;
-            }
         }
     }
 
     private void setButtonActions() {
-        viewButton.setText("\uD83D\uDC41");
+        viewButton.setText(VIEW_ICON);
         BrowseParams params = new BrowseParams();
         params.filter = staffType;
         params.promotion = playerPromotion();
