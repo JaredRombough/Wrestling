@@ -16,5 +16,7 @@ public class GameConstants {
     public static final int ENTOURAGE_DIFF_RATIO = 5;
     public static final int CROWD_RATING_DIFF_RATIO = 5;
     public static final int BROADCAST_TEAM_DIFF_RATIO = 5;
+    public static final int BASE_INJURY_RATE = 100;
+    public static final int MAX_INJURY_DAYS = 200;
 
 }

@@ -92,21 +92,21 @@ public class MatchFactory implements Serializable {
 
         for (SegmentTeam team : segmentView.getTeams()) {
             int teamPopTotal = 0;
-            int entouragePopTotal = 0;
             for (WorkerView worker : team.getWorkers()) {
-
-                for (WorkerView entourage : team.getEntourage()) {
-                    entouragePopTotal += entourage.getPopularity();
-                }
                 teamPopTotal += worker.getPopularity();
             }
 
             int teamPop = team.getWorkers().isEmpty() ? 0 : teamPopTotal / team.getWorkers().size();
 
             if (!team.getEntourage().isEmpty()) {
+                int entouragePopTotal = 0;
+                for (WorkerView entourage : team.getEntourage()) {
+                    entouragePopTotal += entourage.getPopularity();
+                }
                 int entourageAvg = entouragePopTotal / team.getEntourage().size();
                 teamPop += modifyRating(teamPop, entourageAvg, ENTOURAGE_DIFF_RATIO);
             }
+
             totalPop += teamPop;
             teamCount++;
         }

@@ -10,6 +10,8 @@ import wrestling.model.EventWorker;
 import wrestling.model.Injury;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
+import static wrestling.model.constants.GameConstants.BASE_INJURY_RATE;
+import static wrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -28,6 +30,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.StaffUtils;
 
@@ -168,8 +171,10 @@ public class EventFactory {
         List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
         matchWorkers.stream().forEach((w) -> {
             PromotionView promotion = eventView.getEvent().getPromotion();
-            if (RandomUtils.nextInt(0, 1000) <= (1000 * StaffUtils.getInjuryRate(promotion))) {
-                int duration = StaffUtils.getInjuryDuration(promotion);
+            int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion);
+            if (RandomUtils.nextInt(0, BASE_INJURY_RATE) == 1 && RandomUtils.nextInt(0, BASE_INJURY_RATE) > medicModifier) {
+                int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
+                int duration = injuryDays - (medicModifier / 10);
                 if (duration > 0) {
                     Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
                     w.setInjury(injury);

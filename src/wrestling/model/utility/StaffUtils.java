@@ -33,11 +33,6 @@ public final class StaffUtils {
         return promotion.getAllStaff().stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
 
-    public static int getInjuryDurationBonusDays(PromotionView promotion) {
-        int averageSkill = getStaffSkillAverage(StaffType.MEDICAL, promotion);
-        return (int) Math.round(averageSkill * 0.01 * 15);
-    }
-
     public static double getCoverageAttendanceModifier(PromotionView promotion) {
         return getCoverageModifier(getStaffCoverage(promotion, StaffType.PRODUCTION),
                 -0.2,
@@ -66,25 +61,6 @@ public final class StaffUtils {
             rate = maximum * (coverage - 100) * 0.01;
         }
         return rate;
-    }
-
-    public static double getInjuryRate(PromotionView promotion) {
-        int coverage = getStaffCoverage(promotion, StaffType.MEDICAL);
-        double rate = 0.01;
-        if (coverage <= 100) {
-            rate += 0.01 * (100 - coverage) * 0.01;
-        } else if (coverage - 100 > 100) {
-            rate = .005;
-        } else {
-            rate -= 0.005 * (coverage - 100) * 0.01;
-        }
-        return rate;
-    }
-
-    public static int getInjuryDuration(PromotionView promotion) {
-        int min = 7;
-        int max = 160;
-        return RandomUtils.nextInt(min, max) - getInjuryDurationBonusDays(promotion);
     }
 
     public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {

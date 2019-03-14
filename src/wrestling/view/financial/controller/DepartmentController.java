@@ -73,14 +73,6 @@ public class DepartmentController extends ControllerBase {
             StringBuilder sb = new StringBuilder();
 
             switch (staffType) {
-                case MEDICAL:
-                    sb.append(String.format("%.2f%% injury rate (coverage)", StaffUtils.getInjuryRate(playerPromotion()) * 100));
-                    sb.append("\n");
-                    int bonusDays = StaffUtils.getInjuryDurationBonusDays(playerPromotion());
-                    sb.append(String.format("-%d day%s to injuries (skill)",
-                            bonusDays,
-                            bonusDays == 0 || Math.abs(bonusDays) > 1 ? "s" : ""));
-                    break;
                 case TRAINER:
                     double trainerRate = StaffUtils.getTrainerSuccessRate(playerPromotion());
                     sb.append(String.format("%.0f%% trainer success daily (coverage)",
