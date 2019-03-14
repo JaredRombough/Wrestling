@@ -81,19 +81,6 @@ public final class StaffUtils {
         return rate;
     }
 
-    public static double getBroadcastTeamMatchRatingModifier(List<? extends SegmentItem> broadcastTeam) {
-        int totalSkill = 0;
-        for (SegmentItem broadcaster : broadcastTeam) {
-            if (broadcaster instanceof StaffView) {
-                totalSkill += ((StaffView) broadcaster).getSkill();
-            } else if (broadcaster instanceof WorkerView) {
-                totalSkill += ((WorkerView) broadcaster).getCharisma();
-            }
-        }
-        int averageSkill = totalSkill / broadcastTeam.size();
-        return 0.1 * averageSkill * 0.01;
-    }
-
     public static int getInjuryDuration(PromotionView promotion) {
         int min = 7;
         int max = 160;

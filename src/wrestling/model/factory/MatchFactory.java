@@ -1,36 +1,31 @@
 package wrestling.model.factory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import wrestling.model.SegmentItem;
 import wrestling.model.SegmentWorker;
+import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.CREATIVE_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.CROWD_RATING_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.ENTOURAGE_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.PRODUCTION_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.REF_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.ROAD_AGENT_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.TITLE_DIFF_RATIO;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
-import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.PresenceType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.StaffType;
-import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
-import wrestling.model.utility.StaffUtils;
+import static wrestling.model.utility.StaffUtils.getStaffSkillAverage;
 
 public class MatchFactory implements Serializable {
-
-    private final int REF_DIFF_RATIO = 10;
-    private final int ROAD_AGENT_DIFF_RATIO = 10;
-    private final int CREATIVE_DIFF_RATIO = 10;
-    private final int PRODUCTION_DIFF_RATIO = 10;
-    private final int TITLE_DIFF_RATIO = 7;
-    private final int ENTOURAGE_DIFF_RATIO = 5;
-    private final int CROWD_RATING_DIFF_RATIO = 5;
 
     private final SegmentManager matchManager;
     private final DateManager dateManager;
@@ -54,40 +49,41 @@ public class MatchFactory implements Serializable {
         return segmentView.getSegment();
     }
 
-    private int getMatchRating(SegmentView segmentView) {
-        Map<TeamType, List<WorkerView>> segmentTeamsMap = getMap(segmentView.getTeams());
-        Map<TeamType, Integer> teamAvgs = new HashMap<>();
-        segmentTeamsMap.forEach((type, workers) -> {
-            double total = 0;
-            for (WorkerView w : workers) {
-                total += ModelUtils.getMatchWorkRating(w);
-            }
-            Integer avg = (int) total / workers.size();
-            teamAvgs.put(type, avg);
-        });
+    private int getSegmentRating(SegmentView segmentView) {
+        int workRatingTotal = 0;
 
-        List<TeamType> matchTypes = Arrays.asList(TeamType.WINNER, TeamType.LOSER, TeamType.DRAW);
-
-        int baseMatchRatingTotal = 0;
-        int count = 0;
-
-        for (TeamType type : matchTypes) {
-            if (teamAvgs.containsKey(type)) {
-                baseMatchRatingTotal += teamAvgs.get(type);
-                count++;
-            }
+        for (SegmentTeam team : segmentView.getTeams()) {
+            workRatingTotal += getWorkRating(team);
         }
-        int baseMatchRating = baseMatchRatingTotal / count;
 
-        int refScore = segmentView.getReferee().getSkill();
-        int refDiff = refScore - baseMatchRating;
-        int refModified = baseMatchRating += (refDiff / REF_DIFF_RATIO);
+        int segmentRating = workRatingTotal / segmentView.getTeams().size();
 
-        int roadAgentModifier = StaffUtils.getStaffSkillModifier(StaffType.ROAD_AGENT, segmentView.getPromotion());
-        int roadAgentDiff = roadAgentModifier - baseMatchRating;
-        int roadAgentModified = refModified += (roadAgentDiff / ROAD_AGENT_DIFF_RATIO);
+        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+            segmentRating = getSegmentRatingWithMatchModifiers(segmentView, segmentRating);
+        } else {
+            segmentRating = getSegmentRatingWithAngleModifiers(segmentView, segmentRating);
+        }
 
-        return roadAgentModified;
+        return segmentRating;
+    }
+
+    private int getSegmentRatingWithAngleModifiers(SegmentView segmentView, int baseRating) {
+        baseRating = modifyRating(baseRating,
+                getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
+                CREATIVE_DIFF_RATIO);
+
+        return baseRating;
+    }
+
+    private int getSegmentRatingWithMatchModifiers(SegmentView segmentView, int baseRating) {
+        baseRating = modifyRating(baseRating,
+                getStaffSkillAverage(StaffType.REFEREE, segmentView.getPromotion()),
+                REF_DIFF_RATIO);
+        baseRating = modifyRating(baseRating,
+                getStaffSkillAverage(StaffType.ROAD_AGENT, segmentView.getPromotion()),
+                ROAD_AGENT_DIFF_RATIO);
+
+        return baseRating;
     }
 
     private int getMatchCrowdRating(SegmentView segmentView) {
@@ -109,9 +105,7 @@ public class MatchFactory implements Serializable {
 
             if (!team.getEntourage().isEmpty()) {
                 int entourageAvg = entouragePopTotal / team.getEntourage().size();
-                int diff = entourageAvg - teamPop;
-
-                teamPop += (diff / ENTOURAGE_DIFF_RATIO);
+                teamPop += modifyRating(teamPop, entourageAvg, ENTOURAGE_DIFF_RATIO);
             }
             totalPop += teamPop;
             teamCount++;
@@ -126,114 +120,60 @@ public class MatchFactory implements Serializable {
             }
 
             int titleAvg = titleTotal / segmentView.getTitleViews().size();
-            int titleDiff = titleAvg - crowdRating;
-            
-            crowdRating += (titleDiff / TITLE_DIFF_RATIO);
+            crowdRating = modifyRating(crowdRating, titleAvg, TITLE_DIFF_RATIO);
         }
 
-        int creativeDiff = StaffUtils.getStaffSkillModifier(StaffType.CREATIVE, segmentView.getPromotion()) - crowdRating;
-        crowdRating += (creativeDiff / CREATIVE_DIFF_RATIO);
-
-        int productinDiff = StaffUtils.getStaffSkillModifier(StaffType.PRODUCTION, segmentView.getPromotion()) - crowdRating;
-        crowdRating += (productinDiff / PRODUCTION_DIFF_RATIO);
+        crowdRating = modifyRating(crowdRating,
+                getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
+                CREATIVE_DIFF_RATIO);
+        crowdRating = modifyRating(crowdRating,
+                getStaffSkillAverage(StaffType.PRODUCTION, segmentView.getPromotion()),
+                PRODUCTION_DIFF_RATIO);
 
         return crowdRating;
     }
 
-    private Map<TeamType, List<WorkerView>> getMap(List<SegmentTeam> teams) {
-        Map<TeamType, List<WorkerView>> segmentTeams = new HashMap<>();
-
-        for (SegmentTeam team : teams) {
-            if (segmentTeams.get(team.getType()) == null) {
-                segmentTeams.put(team.getType(), new ArrayList<>());
-            }
-
-            segmentTeams.get(team.getType()).addAll(team.getWorkers());
-
-            if (!team.getEntourage().isEmpty()) {
-                if (segmentTeams.get(TeamType.ENTOURAGE) == null) {
-                    segmentTeams.put(TeamType.ENTOURAGE, new ArrayList<>());
-                }
-                segmentTeams.get(TeamType.ENTOURAGE).addAll(team.getEntourage());
-            }
-
-        }
-
-        return segmentTeams;
+    private int modifyRating(int base, int modifier, int ratio) {
+        int diff = modifier - base;
+        base += (diff / ratio);
+        return base;
     }
 
     private void setSegmentRatings(SegmentView segmentView) {
+        int workRating = getSegmentRating(segmentView);
+        segmentView.getSegment().setWorkRating(workRating);
 
-        int workRatingTotal = 0;
-        int crowdRatingTotal = 0;
-        int interferenceTotal = 0;
-
-        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-            int rating = getMatchRating(segmentView);
-            segmentView.getSegment().setWorkRating(rating);
-            int crowdRating = getMatchCrowdRating(segmentView);
-            int diff = rating - crowdRating;
-            crowdRating += (diff / CROWD_RATING_DIFF_RATIO);
-            segmentView.getSegment().setCrowdRating(crowdRating);
-            return;
-        }
-
-        for (SegmentTeam team : segmentView.getTeams()) {
-
-            if (segmentView.getSegmentType().equals(SegmentType.MATCH)
-                    && team.getType().equals(TeamType.INTERFERENCE)) {
-                interferenceTotal += getWorkRating(segmentView.getPromotion(), team);
-            }
-
-            workRatingTotal += getWorkRating(segmentView.getPromotion(), team);
-
-            for (WorkerView worker : team.getWorkers()) {
-                crowdRatingTotal += ModelUtils.getPrioritizedScore(new Integer[]{
-                    worker.getPopularity(),
-                    worker.getCharisma()
-                });
-            }
-
-        }
-
-        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-            if (segmentView.getReferee() == null) {
-                workRatingTotal *= .5;
-            } else {
-                workRatingTotal += segmentView.getReferee().getSkill() / 10;
-            }
-        }
-
-        int finalMatchRating;
-
-        if (interferenceTotal > 0) {
-            int intRating = interferenceTotal
-                    / segmentView.getTeams(TeamType.INTERFERENCE).size();
-            int workRating = workRatingTotal
-                    / (segmentView.getTeams().size()
-                    - segmentView.getTeams(TeamType.INTERFERENCE).size());
-
-            finalMatchRating = ModelUtils.getPrioritizedScore(new Integer[]{
-                intRating,
-                workRating
-            });
-        } else {
-            finalMatchRating = Math.round(workRatingTotal / segmentView.getTeams().size());
-        }
+        int crowdRating = modifyRating(getMatchCrowdRating(segmentView), workRating, CROWD_RATING_DIFF_RATIO);
 
         if (!segmentView.getBroadcastTeam().isEmpty()) {
-            finalMatchRating += finalMatchRating * StaffUtils.getBroadcastTeamMatchRatingModifier(segmentView.getBroadcastTeam());
+            int broadCastTeamTotal = 0;
+            for (SegmentItem item : segmentView.getBroadcastTeam()) {
+                if (item instanceof StaffView) {
+                    broadCastTeamTotal += ((StaffView) item).getSkill();
+                } else if (item instanceof WorkerView) {
+                    broadCastTeamTotal += ModelUtils.getWeightedScore(new Integer[]{
+                        ((WorkerView) item).getCharisma(),
+                        ((WorkerView) item).getPopularity()
+                    });
+                }
+            }
+
+            crowdRating = modifyRating(crowdRating,
+                    broadCastTeamTotal / segmentView.getBroadcastTeam().size(),
+                    BROADCAST_TEAM_DIFF_RATIO);
         }
-
-        segmentView.getSegment().setWorkRating(finalMatchRating);
-
-        int crowdRating = Math.round(crowdRatingTotal / segmentView.getWorkers().size());
 
         segmentView.getSegment().setCrowdRating(crowdRating);
     }
 
-    private int getWorkRating(PromotionView promotion, SegmentTeam team) {
-        int score = 0;
+    private int getWorkRating(SegmentTeam team) {
+        if (team.getWorkers().isEmpty()) {
+            return 0;
+        }
+
+        int totalTeamScore = 0;
+        int entourageTotalScore = 0;
+
         for (WorkerView worker : team.getWorkers()) {
             switch (team.getType()) {
                 case OFFERER:
@@ -243,32 +183,51 @@ public class MatchFactory implements Serializable {
                 case ANNOUNCER:
                 case AUDIENCE:
                 case PROMO: {
-                    if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += getAngleRatingModified(promotion, worker.getCharisma());
-                    }
+                    totalTeamScore += worker.getCharisma();
                 }
                 case PROMO_TARGET: {
                     if (team.getPresence().equals(PresenceType.PRESENT)) {
-                        score += getAngleRatingModified(promotion, worker.getCharisma());
+                        totalTeamScore += worker.getCharisma();
                     } else {
-                        score += getAngleRatingModified(promotion, worker.getPopularity());
+                        totalTeamScore += worker.getPopularity();
                     }
                 }
                 break;
                 default:
-                    score += ModelUtils.getMatchWorkRating(worker);
+                    totalTeamScore += ModelUtils.getMatchWorkRating(worker);
                     break;
             }
         }
 
-        return (Math.round(score / team.getWorkers().size()));
-    }
+        for (WorkerView worker : team.getEntourage()) {
+            switch (team.getType()) {
+                case OFFERER:
+                case OFFEREE:
+                case CHALLENGER:
+                case CHALLENGED:
+                case ANNOUNCER:
+                case AUDIENCE:
+                case PROMO: {
+                    entourageTotalScore += worker.getCharisma();
+                }
+                case PROMO_TARGET: {
+                    if (team.getPresence().equals(PresenceType.PRESENT)) {
+                        entourageTotalScore += worker.getCharisma();
+                    } else {
+                        entourageTotalScore += worker.getPopularity();
+                    }
+                }
+                break;
+                default:
+                    break;
+            }
+        }
 
-    private int getAngleRatingModified(PromotionView promotion, int rating) {
-        int baseScore = ModelUtils.getWeightedScore(new Integer[]{
-            rating
-        });
-        return baseScore;
+        if (!team.getEntourage().isEmpty() && entourageTotalScore > 0) {
+            int entourageAvg = entourageTotalScore / team.getEntourage().size();
+            totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_DIFF_RATIO);
+        }
+        return totalTeamScore / team.getWorkers().size();
     }
 
 }

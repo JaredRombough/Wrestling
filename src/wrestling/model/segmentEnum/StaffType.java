@@ -1,5 +1,10 @@
 package wrestling.model.segmentEnum;
 
+import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.CREATIVE_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.PRODUCTION_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.REF_DIFF_RATIO;
+import static wrestling.model.constants.GameConstants.ROAD_AGENT_DIFF_RATIO;
 import wrestling.model.interfaces.iSortFilter;
 import wrestling.model.interfaces.iStaffType;
 
@@ -15,6 +20,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         public int workerRatio() {
             return 0;
         }
+
+        @Override
+        public int diffRatio() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     },
     OWNER {
         @Override
@@ -25,6 +35,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         @Override
         public int workerRatio() {
             return 0;
+        }
+
+        @Override
+        public int diffRatio() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     },
     BROADCAST {
@@ -37,6 +52,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         public int workerRatio() {
             return 0;
         }
+
+        @Override
+        public int diffRatio() {
+            return BROADCAST_TEAM_DIFF_RATIO;
+        }
     },
     REFEREE {
         @Override
@@ -47,6 +67,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         @Override
         public int workerRatio() {
             return 0;
+        }
+
+        @Override
+        public int diffRatio() {
+            return REF_DIFF_RATIO;
         }
     },
     PRODUCTION {
@@ -59,6 +84,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         public int workerRatio() {
             return 0;
         }
+
+        @Override
+        public int diffRatio() {
+            return PRODUCTION_DIFF_RATIO;
+        }
     },
     MEDICAL {
         @Override
@@ -69,6 +99,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         @Override
         public int workerRatio() {
             return 20;
+        }
+
+        @Override
+        public int diffRatio() {
+            return 0;
         }
     },
     CREATIVE {
@@ -81,6 +116,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         public int workerRatio() {
             return 25;
         }
+
+        @Override
+        public int diffRatio() {
+            return CREATIVE_DIFF_RATIO;
+        }
     },
     ROAD_AGENT {
         @Override
@@ -92,6 +132,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         public int workerRatio() {
             return 30;
         }
+
+        @Override
+        public int diffRatio() {
+            return ROAD_AGENT_DIFF_RATIO;
+        }
     },
     TRAINER {
         @Override
@@ -102,6 +147,11 @@ public enum StaffType implements iSortFilter, iStaffType {
         @Override
         public int workerRatio() {
             return 40;
+        }
+
+        @Override
+        public int diffRatio() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
