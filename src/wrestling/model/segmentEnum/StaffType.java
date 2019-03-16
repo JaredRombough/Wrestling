@@ -1,12 +1,12 @@
 package wrestling.model.segmentEnum;
 
-import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.CREATIVE_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.PRODUCTION_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.REF_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.ROAD_AGENT_DIFF_RATIO;
 import wrestling.model.interfaces.iSortFilter;
 import wrestling.model.interfaces.iStaffType;
+import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
 
 public enum StaffType implements iSortFilter, iStaffType {
 
@@ -55,7 +55,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int diffRatio() {
-            return BROADCAST_TEAM_DIFF_RATIO;
+            return BROADCAST_TEAM_MODIFIER_WEIGHT;
         }
     },
     REFEREE {
@@ -71,7 +71,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int diffRatio() {
-            return REF_DIFF_RATIO;
+            return REF_MODIFIER_WEIGHT;
         }
     },
     PRODUCTION {
@@ -87,7 +87,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int diffRatio() {
-            return PRODUCTION_DIFF_RATIO;
+            return PRODUCTION_MODIFIER_WEIGHT;
         }
     },
     MEDICAL {
@@ -119,7 +119,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int diffRatio() {
-            return CREATIVE_DIFF_RATIO;
+            return CREATIVE_MODIFIER_WEIGHT;
         }
     },
     ROAD_AGENT {
@@ -135,7 +135,7 @@ public enum StaffType implements iSortFilter, iStaffType {
 
         @Override
         public int diffRatio() {
-            return ROAD_AGENT_DIFF_RATIO;
+            return ROAD_AGENT_MODIFIER_WEIGHT;
         }
     },
     TRAINER {

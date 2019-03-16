@@ -115,7 +115,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segmentType = SegmentType.MATCH;
         ViewUtils.updateSelectedButton(matchButton, segmentTypeButtons);
 
-        segmentLength = MatchLength.FIFTEEN;
+        segmentLength = MatchLength.SHORT;
         segmentLengthWrapper = new ButtonWrapper(FXCollections.observableArrayList(MatchLength.values()), 3);
         ViewUtils.anchorRegionToParent(segmentLengthAnchor, segmentLengthWrapper.getGridPane());
         for (Button button : segmentLengthWrapper.getButtons()) {

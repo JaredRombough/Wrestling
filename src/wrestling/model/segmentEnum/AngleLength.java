@@ -3,7 +3,7 @@ package wrestling.model.segmentEnum;
 import wrestling.model.interfaces.iSegmentLength;
 
 public enum AngleLength implements iSegmentLength {
-    ONE {
+    MINIMUM {
         @Override
         public String toString() {
             return "1";
@@ -14,7 +14,7 @@ public enum AngleLength implements iSegmentLength {
             return 1;
         }
     },
-    THREE {
+    SHORT {
         @Override
         public String toString() {
             return "3";
@@ -25,7 +25,7 @@ public enum AngleLength implements iSegmentLength {
             return 3;
         }
     },
-    FIVE {
+    MEDIUM {
         @Override
         public String toString() {
             return "5";
@@ -36,7 +36,7 @@ public enum AngleLength implements iSegmentLength {
             return 5;
         }
     },
-    TEN {
+    LONG {
         @Override
         public String toString() {
             return "10";
@@ -47,7 +47,7 @@ public enum AngleLength implements iSegmentLength {
             return 10;
         }
     },
-    FIFTEEN {
+    MAXIMUM {
         @Override
         public String toString() {
             return "15";

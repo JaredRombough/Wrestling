@@ -505,7 +505,7 @@ public final class ViewUtils {
         } else {
             dialog = new ChoiceDialog<>();
             dialog.getItems().addAll(workers);
-            if(!workers.isEmpty()) {
+            if (!workers.isEmpty()) {
                 dialog.setSelectedItem(workers.get(0));
             }
         }

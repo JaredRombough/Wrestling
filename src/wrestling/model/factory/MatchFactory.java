@@ -3,14 +3,7 @@ package wrestling.model.factory;
 import java.io.Serializable;
 import wrestling.model.SegmentItem;
 import wrestling.model.SegmentWorker;
-import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.CREATIVE_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.CROWD_RATING_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.ENTOURAGE_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.PRODUCTION_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.REF_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.ROAD_AGENT_DIFF_RATIO;
-import static wrestling.model.constants.GameConstants.TITLE_DIFF_RATIO;
+import wrestling.model.constants.GameConstants;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
@@ -24,6 +17,18 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
 import static wrestling.model.utility.StaffUtils.getStaffSkillAverage;
+import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.CROWD_RATING_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.ENTOURAGE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.TITLE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.TIME_OVERRUN_PENALTY_WEIGHT;
+import static wrestling.model.constants.GameConstants.TIME_UNDERRUN_PENALTY_WEIGHT;
+import wrestling.model.segmentEnum.AngleLength;
+import wrestling.model.segmentEnum.MatchLength;
 
 public class MatchFactory implements Serializable {
 
@@ -51,6 +56,7 @@ public class MatchFactory implements Serializable {
 
     private int getSegmentRating(SegmentView segmentView) {
         int workRatingTotal = 0;
+        boolean isMatch = segmentView.getSegmentType().equals(SegmentType.MATCH);
 
         for (SegmentTeam team : segmentView.getTeams()) {
             workRatingTotal += getWorkRating(team);
@@ -58,19 +64,32 @@ public class MatchFactory implements Serializable {
 
         int segmentRating = workRatingTotal / segmentView.getTeams().size();
 
-        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+        if (isMatch) {
             segmentRating = getSegmentRatingWithMatchModifiers(segmentView, segmentRating);
         } else {
             segmentRating = getSegmentRatingWithAngleModifiers(segmentView, segmentRating);
         }
 
+        segmentRating = getSegmentRatingWithTimeModifier(segmentView, segmentRating);
+
         return segmentRating;
+    }
+
+    private int getSegmentRatingWithTimeModifier(SegmentView segmentView, int baseRating) {
+        int maxTime = segmentView.getSegmentType().equals(SegmentType.MATCH) ? MatchLength.MAXIMUM.value() : AngleLength.MAXIMUM.value();
+        int actual = segmentView.getSegment().getSegmentLength() / maxTime * 100;
+
+        int timeDiff = (int) actual - baseRating;
+
+        int penalty = timeDiff > 0 ? TIME_OVERRUN_PENALTY_WEIGHT : TIME_UNDERRUN_PENALTY_WEIGHT;
+
+        return baseRating - Math.abs(timeDiff) / penalty;
     }
 
     private int getSegmentRatingWithAngleModifiers(SegmentView segmentView, int baseRating) {
         baseRating = modifyRating(baseRating,
                 getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
-                CREATIVE_DIFF_RATIO);
+                CREATIVE_MODIFIER_WEIGHT);
 
         return baseRating;
     }
@@ -78,10 +97,10 @@ public class MatchFactory implements Serializable {
     private int getSegmentRatingWithMatchModifiers(SegmentView segmentView, int baseRating) {
         baseRating = modifyRating(baseRating,
                 getStaffSkillAverage(StaffType.REFEREE, segmentView.getPromotion()),
-                REF_DIFF_RATIO);
+                REF_MODIFIER_WEIGHT);
         baseRating = modifyRating(baseRating,
                 getStaffSkillAverage(StaffType.ROAD_AGENT, segmentView.getPromotion()),
-                ROAD_AGENT_DIFF_RATIO);
+                ROAD_AGENT_MODIFIER_WEIGHT);
 
         return baseRating;
     }
@@ -104,7 +123,7 @@ public class MatchFactory implements Serializable {
                     entouragePopTotal += entourage.getPopularity();
                 }
                 int entourageAvg = entouragePopTotal / team.getEntourage().size();
-                teamPop += modifyRating(teamPop, entourageAvg, ENTOURAGE_DIFF_RATIO);
+                teamPop += modifyRating(teamPop, entourageAvg, ENTOURAGE_MODIFIER_WEIGHT);
             }
 
             totalPop += teamPop;
@@ -120,15 +139,15 @@ public class MatchFactory implements Serializable {
             }
 
             int titleAvg = titleTotal / segmentView.getTitleViews().size();
-            crowdRating = modifyRating(crowdRating, titleAvg, TITLE_DIFF_RATIO);
+            crowdRating = modifyRating(crowdRating, titleAvg, TITLE_MODIFIER_WEIGHT);
         }
 
         crowdRating = modifyRating(crowdRating,
                 getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
-                CREATIVE_DIFF_RATIO);
+                CREATIVE_MODIFIER_WEIGHT);
         crowdRating = modifyRating(crowdRating,
                 getStaffSkillAverage(StaffType.PRODUCTION, segmentView.getPromotion()),
-                PRODUCTION_DIFF_RATIO);
+                PRODUCTION_MODIFIER_WEIGHT);
 
         return crowdRating;
     }
@@ -143,7 +162,7 @@ public class MatchFactory implements Serializable {
         int workRating = getSegmentRating(segmentView);
         segmentView.getSegment().setWorkRating(workRating);
 
-        int crowdRating = modifyRating(getMatchCrowdRating(segmentView), workRating, CROWD_RATING_DIFF_RATIO);
+        int crowdRating = modifyRating(getMatchCrowdRating(segmentView), workRating, CROWD_RATING_MODIFIER_WEIGHT);
 
         if (!segmentView.getBroadcastTeam().isEmpty()) {
             int broadCastTeamTotal = 0;
@@ -160,7 +179,7 @@ public class MatchFactory implements Serializable {
 
             crowdRating = modifyRating(crowdRating,
                     broadCastTeamTotal / segmentView.getBroadcastTeam().size(),
-                    BROADCAST_TEAM_DIFF_RATIO);
+                    BROADCAST_TEAM_MODIFIER_WEIGHT);
         }
 
         segmentView.getSegment().setCrowdRating(crowdRating);
@@ -225,7 +244,7 @@ public class MatchFactory implements Serializable {
 
         if (!team.getEntourage().isEmpty() && entourageTotalScore > 0) {
             int entourageAvg = entourageTotalScore / team.getEntourage().size();
-            totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_DIFF_RATIO);
+            totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_MODIFIER_WEIGHT);
         }
         return totalTeamScore / team.getWorkers().size();
     }

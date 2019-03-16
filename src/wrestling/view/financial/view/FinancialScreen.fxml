@@ -53,33 +53,13 @@
                   <AnchorPane fx:id="roadAgentBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="2" />
                   <AnchorPane fx:id="creativeBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="3" />
                   <AnchorPane fx:id="productionBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="4" />
-                  <GridPane GridPane.columnSpan="2147483647" GridPane.rowIndex="5" GridPane.rowSpan="2147483647">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <AnchorPane fx:id="refereeBase" prefHeight="200.0" prefWidth="200.0" />
-                        <AnchorPane fx:id="broadcastBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
-                        <AnchorPane fx:id="ownerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" />
-                        <AnchorPane fx:id="trainerBase" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
-                     </children>
-                  </GridPane>
-                  <GridPane fx:id="balanceSheetGrid" GridPane.columnIndex="6" GridPane.columnSpan="2147483647" GridPane.rowSpan="4">
+                  <GridPane fx:id="balanceSheetGrid" GridPane.columnIndex="6" GridPane.columnSpan="2147483647" GridPane.rowSpan="5">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-                        <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
@@ -95,15 +75,22 @@
                         <Label text="Gate" GridPane.rowIndex="2" />
                         <Label text="Expenses" GridPane.rowIndex="3" />
                         <Label text="Worker Costs" GridPane.rowIndex="4" />
-                        <Label fx:id="month1" text="This Month" GridPane.columnIndex="3" />
-                        <Label fx:id="month2" text="Last Month" GridPane.columnIndex="2" />
-                        <Label fx:id="month3" text="Two Months Ago" GridPane.columnIndex="1" />
+                        <Label fx:id="month1" text="This Month" GridPane.columnIndex="3" GridPane.halignment="RIGHT" />
+                        <Label fx:id="month2" text="Last Month" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                        <Label fx:id="month3" text="Two Months Ago" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
                         <Label text="Staff Costs" GridPane.rowIndex="5" />
-                        <Label fx:id="nextMonth" text="Next Month" GridPane.columnIndex="4" />
+                        <Label fx:id="nextMonth" text="Next Month" GridPane.columnIndex="4" GridPane.halignment="RIGHT" />
                         <Label text="Total" GridPane.rowIndex="6" />
                      </children>
+                     <padding>
+                        <Insets right="30.0" />
+                     </padding>
                   </GridPane>
                   <Label alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Modifier" GridPane.columnIndex="4" />
+                  <AnchorPane fx:id="refereeBase" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+                  <AnchorPane fx:id="broadcastBase" GridPane.columnIndex="6" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+                  <AnchorPane fx:id="ownerBase" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+                  <AnchorPane fx:id="trainerBase" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="5" />
                </children>
             </GridPane>
          </children>
