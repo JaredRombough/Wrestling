@@ -8,6 +8,7 @@ import wrestling.model.Angle;
 import wrestling.model.Match;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.Segment;
+import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.TeamType;
@@ -240,6 +241,10 @@ public class SegmentView implements Serializable {
      */
     public void setBroadcastTeam(List<? extends SegmentItem> broadcastTeam) {
         this.broadcastTeam = broadcastTeam;
+    }
+
+    public MatchRule getMatchRule() {
+        return segment.getSegmentParams().getMatchRule();
     }
 
 }

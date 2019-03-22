@@ -12,6 +12,7 @@ import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.MatchRule;
 import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 
@@ -106,6 +107,15 @@ public final class ModelUtils {
             worker.getFlying(),
             worker.getWrestling(),
             worker.getStriking(),
+            worker.getCharisma()
+        });
+    }
+
+    public static int getMatchWorkRating(WorkerView worker, MatchRule matchRule) {
+        return getWeightedScore(new Integer[]{
+            worker.getFlying() * (matchRule.getFlyingModifier() * worker.getFlying() / 100),
+            worker.getWrestling() * (matchRule.getWrestingModifier() * worker.getWrestling() / 100),
+            worker.getStriking() * (matchRule.getStrikingModifier() * worker.getStriking() / 100),
             worker.getCharisma()
         });
     }

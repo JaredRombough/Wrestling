@@ -6,11 +6,6 @@ public enum MatchRule implements iMatchRule {
 
     DEFAULT {
         @Override
-        public int injuryRate() {
-            return 1;
-        }
-
-        @Override
         public boolean nodq() {
             return false;
         }
@@ -23,8 +18,18 @@ public enum MatchRule implements iMatchRule {
     },
     HARDCORE {
         @Override
-        public int injuryRate() {
-            return 8;
+        public int getInjuryModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getStrikingModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getFlyingModifier() {
+            return 5;
         }
 
         @Override
@@ -40,8 +45,23 @@ public enum MatchRule implements iMatchRule {
     },
     SUBMISSION {
         @Override
-        public int injuryRate() {
-            return 1;
+        public int getInjuryModifier() {
+            return -15;
+        }
+
+        @Override
+        public int getStrikingModifier() {
+            return -10;
+        }
+
+        @Override
+        public int getFlyingModifier() {
+            return -10;
+        }
+
+        @Override
+        public int getWrestingModifier() {
+            return 15;
         }
 
         @Override
@@ -57,7 +77,12 @@ public enum MatchRule implements iMatchRule {
     },
     LADDER {
         @Override
-        public int injuryRate() {
+        public int getInjuryModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getFlyingModifier() {
             return 10;
         }
 
@@ -74,8 +99,13 @@ public enum MatchRule implements iMatchRule {
     },
     TABLES {
         @Override
-        public int injuryRate() {
-            return 5;
+        public int getInjuryModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getWrestingModifier() {
+            return -5;
         }
 
         @Override
@@ -91,8 +121,18 @@ public enum MatchRule implements iMatchRule {
     },
     CAGE {
         @Override
-        public int injuryRate() {
-            return 6;
+        public int getInjuryModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getStrikingModifier() {
+            return 5;
+        }
+
+        @Override
+        public int getFlyingModifier() {
+            return 10;
         }
 
         @Override
@@ -107,8 +147,8 @@ public enum MatchRule implements iMatchRule {
     },
     LASTMANSTANDING {
         @Override
-        public int injuryRate() {
-            return 3;
+        public int getInjuryModifier() {
+            return 5;
         }
 
         @Override
@@ -123,13 +163,13 @@ public enum MatchRule implements iMatchRule {
     },
     IRONMAN {
         @Override
-        public int injuryRate() {
-            return 2;
+        public boolean nodq() {
+            return false;
         }
 
         @Override
-        public boolean nodq() {
-            return false;
+        public int getWrestingModifier() {
+            return 5;
         }
 
         @Override
@@ -139,7 +179,12 @@ public enum MatchRule implements iMatchRule {
     },
     IQUIT {
         @Override
-        public int injuryRate() {
+        public int getInjuryModifier() {
+            return 10;
+        }
+
+        @Override
+        public int getStrikingModifier() {
             return 5;
         }
 
@@ -156,7 +201,12 @@ public enum MatchRule implements iMatchRule {
     },
     INFERNO {
         @Override
-        public int injuryRate() {
+        public int getInjuryModifier() {
+            return 15;
+        }
+
+        @Override
+        public int getStrikingModifier() {
             return 10;
         }
 
@@ -172,8 +222,13 @@ public enum MatchRule implements iMatchRule {
     },
     FIRSTBLOOD {
         @Override
-        public int injuryRate() {
-            return 6;
+        public int getInjuryModifier() {
+            return 15;
+        }
+
+        @Override
+        public int getStrikingModifier() {
+            return 10;
         }
 
         @Override
@@ -188,8 +243,23 @@ public enum MatchRule implements iMatchRule {
     },
     BARBEDWIRE {
         @Override
-        public int injuryRate() {
-            return 10;
+        public int getInjuryModifier() {
+            return 20;
+        }
+
+        @Override
+        public int getStrikingModifier() {
+            return 15;
+        }
+
+        @Override
+        public int getFlyingModifier() {
+            return -5;
+        }
+
+        @Override
+        public int getWrestingModifier() {
+            return -5;
         }
 
         @Override
@@ -202,7 +272,7 @@ public enum MatchRule implements iMatchRule {
             return "Barbed Wire";
         }
     };
-    
+
     @Override
     public String toString() {
         return description();

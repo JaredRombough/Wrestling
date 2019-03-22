@@ -29,6 +29,7 @@ import static wrestling.model.constants.GameConstants.TIME_OVERRUN_PENALTY_WEIGH
 import static wrestling.model.constants.GameConstants.TIME_UNDERRUN_PENALTY_WEIGHT;
 import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.MatchLength;
+import wrestling.model.segmentEnum.MatchRule;
 
 public class MatchFactory implements Serializable {
 
@@ -54,12 +55,12 @@ public class MatchFactory implements Serializable {
         return segmentView.getSegment();
     }
 
-    private int getSegmentRating(SegmentView segmentView) {
+    private int getSegmentWorkRating(SegmentView segmentView) {
         int workRatingTotal = 0;
         boolean isMatch = segmentView.getSegmentType().equals(SegmentType.MATCH);
 
         for (SegmentTeam team : segmentView.getTeams()) {
-            workRatingTotal += getWorkRating(team);
+            workRatingTotal += getWorkRating(team, segmentView.getMatchRule());
         }
 
         int segmentRating = workRatingTotal / segmentView.getTeams().size();
@@ -159,7 +160,7 @@ public class MatchFactory implements Serializable {
     }
 
     private void setSegmentRatings(SegmentView segmentView) {
-        int workRating = getSegmentRating(segmentView);
+        int workRating = getSegmentWorkRating(segmentView);
         segmentView.getSegment().setWorkRating(workRating);
 
         int crowdRating = modifyRating(getMatchCrowdRating(segmentView), workRating, CROWD_RATING_MODIFIER_WEIGHT);
@@ -185,7 +186,7 @@ public class MatchFactory implements Serializable {
         segmentView.getSegment().setCrowdRating(crowdRating);
     }
 
-    private int getWorkRating(SegmentTeam team) {
+    private int getWorkRating(SegmentTeam team, MatchRule matchRule) {
         if (team.getWorkers().isEmpty()) {
             return 0;
         }
@@ -213,7 +214,7 @@ public class MatchFactory implements Serializable {
                 }
                 break;
                 default:
-                    totalTeamScore += ModelUtils.getMatchWorkRating(worker);
+                    totalTeamScore += ModelUtils.getMatchWorkRating(worker, matchRule);
                     break;
             }
         }
