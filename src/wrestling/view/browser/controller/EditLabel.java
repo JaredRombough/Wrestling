@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import org.apache.commons.lang3.StringUtils;
 import wrestling.model.EventTemplate;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.StableView;
@@ -18,26 +19,30 @@ import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EditLabel extends ControllerBase implements Initializable {
-    
+
     @FXML
     Label label;
-    
+
     @FXML
     private Button editButton;
-    
+
     @FXML
     private Button createButton;
-    
+
+    private BrowseMode browseMode;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         label.setText("");
     }
-    
+
     @Override
     public void setCurrent(Object object) {
         SegmentItem segmentItem = object instanceof SegmentItem ? (SegmentItem) object : null;
-        BrowseMode browseMode = object instanceof BrowseMode ? (BrowseMode) object : null;
-        
+        if (object instanceof BrowseMode) {
+            browseMode = (BrowseMode) object;
+        }
+
         if (segmentItem != null) {
             label.setText(segmentItem.getLongName());
             editButton.setOnAction(e -> {
@@ -58,12 +63,12 @@ public class EditLabel extends ControllerBase implements Initializable {
                 updateLabels();
                 mainApp.updateLabels(ScreenCode.BROWSER);
             });
-            
+
         } else {
             label.setText("");
         }
         editButton.setVisible(segmentItem != null);
-        
+
         createButton.setOnAction(e -> {
             if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {
                 mainApp.show(ScreenCode.CALENDAR);
@@ -75,16 +80,20 @@ public class EditLabel extends ControllerBase implements Initializable {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
                     optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
                 } else if (segmentItem instanceof StableView || BrowseMode.STABLES.equals(browseMode)) {
-                    gameController.getStableManager().addStable(new StableView(ViewUtils.editTextDialog("", "Stable name:"), playerPromotion()));
-                    mainApp.updateLabels(ScreenCode.BROWSER);
+                    String stableName = ViewUtils.editTextDialog("", "Stable name:");
+                    if (StringUtils.isNotBlank(stableName)) {
+                        StableView stable = new StableView(stableName, playerPromotion());
+                        gameController.getStableManager().addStable(stable);
+                        mainApp.show(ScreenCode.BROWSER, stable);
+                    }
                 }
-                
+
                 optionalResult.ifPresent((SegmentItem newSegmentItem) -> {
                     mainApp.show(ScreenCode.BROWSER, newSegmentItem);
                 });
             }
         });
-        
+
     }
-    
+
 }

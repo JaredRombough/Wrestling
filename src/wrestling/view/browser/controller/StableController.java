@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -73,6 +74,7 @@ public class StableController extends ControllerBase {
     public void initializeMore() {
         GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
         editLabel = (EditLabel) screen.controller;
+        editLabel.setCurrent(BrowseMode.STABLES);
 
         addButton.setOnAction(a -> {
 
@@ -94,19 +96,21 @@ public class StableController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        if (object instanceof StableView) {
-            stable = (StableView) object;
-            updateLabels();
-        }
+        stable = (StableView) object;
         editLabel.setCurrent(object);
-        gridPane.setVisible(object != null);
-        addButton.setVisible(stable.getOwner().equals(playerPromotion()));
+        updateLabels();
     }
 
     @Override
     public void updateLabels() {
-        ownerLabel.setText(stable.getOwner().getName());
-        listView.setItems(FXCollections.observableArrayList(stable.getWorkers()));
+        if (stable != null) {
+            ownerLabel.setText(stable.getOwner().getName());
+            listView.setItems(FXCollections.observableArrayList(stable.getWorkers()));
+        }
+
+        gridPane.setVisible(stable != null);
+        addButton.setVisible(stable != null && stable.getOwner().equals(playerPromotion()));
+        ownerLabel.setVisible(stable != null && stable.getOwner().equals(playerPromotion()));
     }
 
 }
