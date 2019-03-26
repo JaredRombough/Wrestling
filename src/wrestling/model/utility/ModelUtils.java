@@ -112,10 +112,13 @@ public final class ModelUtils {
     }
 
     public static int getMatchWorkRating(WorkerView worker, MatchRule matchRule) {
+        int flying = worker.getFlying() + (matchRule.getFlyingModifier() * worker.getFlying() / 100);
+        int wrestling = worker.getWrestling() + (matchRule.getWrestingModifier() * worker.getWrestling() / 100);
+        int striking = worker.getStriking() + (matchRule.getStrikingModifier() * worker.getStriking() / 100);
         return getWeightedScore(new Integer[]{
-            worker.getFlying() * (matchRule.getFlyingModifier() * worker.getFlying() / 100),
-            worker.getWrestling() * (matchRule.getWrestingModifier() * worker.getWrestling() / 100),
-            worker.getStriking() * (matchRule.getStrikingModifier() * worker.getStriking() / 100),
+            flying,
+            wrestling,
+            striking,
             worker.getCharisma()
         });
     }

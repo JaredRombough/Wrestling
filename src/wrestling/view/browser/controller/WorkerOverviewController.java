@@ -149,7 +149,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
 
-        initializeButtonHover(entourageLabel, entourageButton);
+        ViewUtils.initializeButtonHover(entourageLabel, entourageButton, promotion, playerPromotion());
 
         entourageButton.setOnAction(a -> {
             List<WorkerView> workers = new ArrayList<>(promotion.getFullRoster());
@@ -316,7 +316,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         manager.setText(worker.getManager() == null ? "None" : worker.getManager().getName());
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
-            initializeButtonHover(manager, managerButton);
+            ViewUtils.initializeButtonHover(manager, managerButton, promotion, playerPromotion());
             managerButton.setOnAction(a -> {
                 List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
                 workers.remove(worker);
@@ -352,19 +352,4 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managedListView.setVisible(false);
         }
     }
-
-    private void initializeButtonHover(Region region, Button button) {
-        button.setVisible(false);
-        region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-            if (Objects.equals(promotion, playerPromotion())) {
-                button.setVisible(Objects.equals(promotion, playerPromotion()) && isNowHovered);
-            }
-        });
-        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-            if (Objects.equals(promotion, playerPromotion())) {
-                button.setVisible(Objects.equals(promotion, playerPromotion()) && isNowHovered);
-            }
-        });
-    }
-
 }

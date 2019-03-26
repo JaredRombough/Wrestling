@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -513,6 +514,30 @@ public final class ViewUtils {
         dialog.setHeaderText(header);
         dialog.getDialogPane().getStylesheets().add("style.css");
         return dialog;
+    }
+
+    public static void initializeButtonHover(Region region, Button button, PromotionView promotion, PromotionView playerPromotion) {
+        button.setVisible(false);
+        region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            if (Objects.equals(promotion, playerPromotion)) {
+                button.setVisible(Objects.equals(promotion, playerPromotion) && isNowHovered);
+            }
+        });
+        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            if (Objects.equals(promotion, playerPromotion)) {
+                button.setVisible(Objects.equals(promotion, playerPromotion) && isNowHovered);
+            }
+        });
+    }
+
+    public static void initializeButtonHover(Region region, Button button) {
+        button.setVisible(false);
+        region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            button.setVisible(isNowHovered);
+        });
+        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+            button.setVisible(isNowHovered);
+        });
     }
 
 }
