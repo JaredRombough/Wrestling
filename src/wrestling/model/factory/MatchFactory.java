@@ -1,9 +1,13 @@
 package wrestling.model.factory;
 
 import java.io.Serializable;
+import java.util.List;
+import org.apache.commons.lang3.RandomUtils;
+import wrestling.model.Injury;
 import wrestling.model.SegmentItem;
 import wrestling.model.SegmentWorker;
 import wrestling.model.constants.GameConstants;
+import static wrestling.model.constants.GameConstants.BASE_INJURY_RATE;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.manager.DateManager;
 import wrestling.model.manager.SegmentManager;
@@ -23,27 +27,35 @@ import static wrestling.model.constants.GameConstants.ENTOURAGE_MODIFIER_WEIGHT;
 import static wrestling.model.constants.GameConstants.TITLE_MODIFIER_WEIGHT;
 import static wrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
 import static wrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
 import static wrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
 import static wrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
 import static wrestling.model.constants.GameConstants.TIME_OVERRUN_PENALTY_WEIGHT;
 import static wrestling.model.constants.GameConstants.TIME_UNDERRUN_PENALTY_WEIGHT;
+import wrestling.model.manager.InjuryManager;
+import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.MatchRule;
+import wrestling.model.utility.StaffUtils;
 
 public class MatchFactory implements Serializable {
 
     private final SegmentManager matchManager;
     private final DateManager dateManager;
+    private final InjuryManager injuryManager;
 
-    public MatchFactory(SegmentManager matchManager, DateManager dateManager) {
+    public MatchFactory(SegmentManager matchManager, DateManager dateManager, InjuryManager injuryManager) {
         this.matchManager = matchManager;
         this.dateManager = dateManager;
+        this.injuryManager = injuryManager;
     }
 
     public Segment saveSegment(SegmentView segmentView) {
         setSegmentRatings(segmentView);
         segmentView.setDate(dateManager.today());
+        processInjuries(segmentView);
         matchManager.addSegmentView(segmentView);
         for (SegmentTeam team : segmentView.getTeams()) {
             for (WorkerView worker : team.getWorkers()) {
@@ -248,6 +260,24 @@ public class MatchFactory implements Serializable {
             totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_MODIFIER_WEIGHT);
         }
         return totalTeamScore / team.getWorkers().size();
+    }
+
+    private void processInjuries(SegmentView segmentView) {
+        List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
+        matchWorkers.stream().forEach((w) -> {
+            PromotionView promotion = segmentView.getPromotion();
+            int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion);
+            int injuryRate = BASE_INJURY_RATE - segmentView.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
+            if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {
+                int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
+                int duration = injuryDays - (medicModifier / 10);
+                if (duration > 0) {
+                    Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
+                    w.setInjury(injury);
+                    injuryManager.addInjury(injury);
+                }
+            }
+        });
     }
 
 }

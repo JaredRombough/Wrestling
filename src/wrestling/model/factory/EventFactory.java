@@ -3,23 +3,16 @@ package wrestling.model.factory;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
-import wrestling.model.Injury;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
-import static wrestling.model.constants.GameConstants.BASE_INJURY_RATE;
-import static wrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.manager.ContractManager;
-import wrestling.model.manager.DateManager;
 import wrestling.model.manager.EventManager;
-import wrestling.model.manager.InjuryManager;
-import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.TitleManager;
@@ -30,9 +23,7 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventVenueSize;
-import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.segmentEnum.TransactionType;
-import wrestling.model.utility.StaffUtils;
 
 public class EventFactory {
 
@@ -43,9 +34,6 @@ public class EventFactory {
     private final SegmentManager matchManager;
     private final MatchFactory matchFactory;
     private final PromotionManager promotionManager;
-    private final DateManager dateManager;
-    private final InjuryManager injuryManager;
-    private final NewsManager newsManager;
 
     public EventFactory(
             ContractManager contractManager,
@@ -54,10 +42,7 @@ public class EventFactory {
             SegmentManager matchManager,
             PromotionManager promotionManager,
             TitleManager titleManager,
-            WorkerManager workerManager,
-            DateManager dateManager,
-            InjuryManager injuryManager,
-            NewsManager newsManager) {
+            WorkerManager workerManager) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -65,9 +50,6 @@ public class EventFactory {
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
-        this.dateManager = dateManager;
-        this.injuryManager = injuryManager;
-        this.newsManager = newsManager;
     }
 
     public void processEventView(EventView eventView, boolean processSegments,
@@ -153,30 +135,11 @@ public class EventFactory {
                 workerManager.gainPopularity(w);
             });
 
-            processInjuries(eventView, segmentView);
-
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
         }
         return segment;
-    }
-
-    private void processInjuries(EventView eventView, SegmentView segmentView) {
-        List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
-        matchWorkers.stream().forEach((w) -> {
-            PromotionView promotion = eventView.getEvent().getPromotion();
-            int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion);
-            if (RandomUtils.nextInt(0, BASE_INJURY_RATE) == 1 && RandomUtils.nextInt(0, BASE_INJURY_RATE) > medicModifier) {
-                int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
-                int duration = injuryDays - (medicModifier / 10);
-                if (duration > 0) {
-                    Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
-                    w.setInjury(injury);
-                    injuryManager.addInjury(injury);
-                }
-            }
-        });
     }
 
     private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {

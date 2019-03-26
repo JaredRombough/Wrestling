@@ -80,7 +80,7 @@ public final class GameController implements Serializable {
                 segmentManager);
 
         titleFactory = new TitleFactory(titleManager);
-        matchFactory = new MatchFactory(segmentManager, dateManager);
+        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager);
 
         workerManager = new WorkerManager(contractManager);
         contractFactory = new ContractFactory(contractManager);
@@ -92,10 +92,7 @@ public final class GameController implements Serializable {
                 segmentManager,
                 promotionManager,
                 titleManager,
-                workerManager,
-                dateManager,
-                injuryManager,
-                newsManager);
+                workerManager);
 
         promotionFactory = new PromotionFactory(
                 contractFactory,
