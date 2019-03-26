@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
     private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    private static final String VERSION = "0.3.10";
+    private static final String VERSION = "0.3.11";
     private final transient Logger logger;
     private Stage primaryStage;
     private GameController gameController;
