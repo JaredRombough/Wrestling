@@ -79,43 +79,6 @@ public enum AngleType implements Description, iAngleType {
         }
 
     },
-    OFFER {
-        @Override
-        public String description() {
-            return "Offer";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
-        @Override
-        public int minWorkers() {
-            return 2;
-        }
-
-        @Override
-        public int defaultWorkers() {
-            return 2;
-        }
-
-        @Override
-        public TeamType mainTeamType() {
-            return TeamType.OFFERER;
-        }
-
-        @Override
-        public TeamType addTeamType() {
-            return TeamType.OFFEREE;
-        }
-
-        @Override
-        public String resultString() {
-            return "%s offer%s %s";
-        }
-
-    },
     BRAWL {
         @Override
         public String description() {
@@ -150,6 +113,43 @@ public enum AngleType implements Description, iAngleType {
         @Override
         public String resultString() {
             return "%s brawl%s with %s";
+        }
+
+    },
+    OFFER {
+        @Override
+        public String description() {
+            return "Offer";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+        @Override
+        public int minWorkers() {
+            return 2;
+        }
+
+        @Override
+        public int defaultWorkers() {
+            return 2;
+        }
+
+        @Override
+        public TeamType mainTeamType() {
+            return TeamType.OFFERER;
+        }
+
+        @Override
+        public TeamType addTeamType() {
+            return TeamType.OFFEREE;
+        }
+
+        @Override
+        public String resultString() {
+            return "%s offer%s %s";
         }
 
     },
