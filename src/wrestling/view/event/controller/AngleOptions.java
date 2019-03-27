@@ -32,15 +32,12 @@ public class AngleOptions extends ControllerBase implements Initializable {
     @FXML
     private Label label2;
 
-    private AngleType type;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
     public void setAngleType(AngleType type) {
-        this.type = type;
         switch (type) {
             case OFFER:
                 setCombo1(FXCollections.observableArrayList(JoinTeamType.values()),
@@ -98,9 +95,7 @@ public class AngleOptions extends ControllerBase implements Initializable {
             @Override
             public void changed(ObservableValue ov, AngleType t, AngleType t1) {
                 if (t1 != null) {
-
                     setAngleType(t1);
-
                 }
             }
         });

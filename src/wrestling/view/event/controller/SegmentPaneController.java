@@ -185,8 +185,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         angleOptions.getAngleTypeComboBox().valueProperty().addListener(new ChangeListener<AngleType>() {
             @Override
-            public void changed(ObservableValue ov, AngleType t, AngleType t1) {
-                if (t1 != null) {
+            public void changed(ObservableValue ov, AngleType oldType, AngleType newType) {
+                if (newType != null) {
+                    titlesWrapper.pane.setVisible(newType.equals(AngleType.CHALLENGE));
                     updateLabels();
                 }
             }
@@ -398,10 +399,11 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void setSegmentType(SegmentType type) {
         segmentType = type;
-        segmentLengthWrapper.setItems(FXCollections.observableArrayList(type.equals(SegmentType.MATCH)
+        segmentLengthWrapper.setItems(FXCollections.observableArrayList(SegmentType.MATCH.equals(type)
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
-        refScreen.pane.setVisible(type.equals(SegmentType.MATCH));
+        refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
+        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptions.getAngleType()));
         eventScreenController.segmentsChanged();
         updateLabels();
     }
