@@ -249,6 +249,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void updateLabels() {
 
+        if (currentSegmentPaneController() != null) {
+            currentSegmentPaneController().updateLabels();
+        }
+
         totalCostLabel.setText("Total Cost: $" + currentCost());
         totalCostLabel.setVisible(currentCost() != 0);
 

@@ -46,7 +46,7 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
                 }
             }
 
-            segmentPaneController.updateLabels();
+            segmentPaneController.itemDroppedInSegment();
 
             ldb.clearAll();
         }

@@ -1,6 +1,7 @@
 package wrestling.view.event.controller;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -67,13 +68,6 @@ public class AngleOptions extends ControllerBase implements Initializable {
         label1.setText(labelText);
     }
 
-    private void setCombo2(ObservableList items, String labelText) {
-        setCombo2Visibility(true);
-        getCombo2().setItems(items);
-        getCombo2().getSelectionModel().selectFirst();
-        label2.setText(labelText);
-    }
-
     private void setCombo1Visibility(boolean visible) {
         getCombo1().setVisible(visible);
         label1.setVisible(visible);
@@ -100,6 +94,19 @@ public class AngleOptions extends ControllerBase implements Initializable {
             }
         });
         angleTypeComboBox.getSelectionModel().selectFirst();
+    }
+
+    public void setOffers(List<Object> offers) {
+        Object selected = null;
+        if (offers.contains(combo1.getSelectionModel().selectedItemProperty().get())) {
+            selected = combo1.getSelectionModel().selectedItemProperty().get();
+        }
+        combo1.setItems(FXCollections.observableArrayList(offers));
+        if (selected != null) {
+            combo1.getSelectionModel().select(selected);
+        } else {
+            combo1.getSelectionModel().selectFirst();
+        }
     }
 
     /**

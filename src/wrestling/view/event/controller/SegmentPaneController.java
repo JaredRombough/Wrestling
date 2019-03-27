@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
@@ -25,12 +28,14 @@ import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleLength;
 import wrestling.model.segmentEnum.AngleType;
+import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
@@ -175,8 +180,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void initializeMatchOptions() {
-        matchOptions.getMatchFinishes().setOnAction(e -> updateLabels());
-        matchOptions.getMatchRules().setOnAction(e -> updateLabels());
+        matchOptions.getMatchFinishes().setOnAction(e -> eventScreenController.updateLabels());
+        matchOptions.getMatchRules().setOnAction(e -> eventScreenController.updateLabels());
     }
 
     private void initializeAngleOptions() {
@@ -188,7 +193,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             public void changed(ObservableValue ov, AngleType oldType, AngleType newType) {
                 if (newType != null) {
                     titlesWrapper.pane.setVisible(newType.equals(AngleType.CHALLENGE));
-                    updateLabels();
+                    eventScreenController.updateLabels();
                 }
             }
         });
@@ -405,7 +410,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
         titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptions.getAngleType()));
         eventScreenController.segmentsChanged();
-        updateLabels();
+        eventScreenController.updateLabels();
     }
 
     private boolean getXButtonVisible(int index, TeamType teamType) {
@@ -481,7 +486,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     @Override
     public void updateLabels() {
-
         for (GameScreen screen : workerTeamWrappers) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             controller.setTargets(getOtherTeams(workerTeamWrappers.indexOf(screen)));
@@ -489,7 +493,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             controller.setXButtonVisible(getXButtonVisible(workerTeamWrappers.indexOf(screen), controller.getTeamType()));
             screen.controller.updateLabels();
         }
-        eventScreenController.updateLabels();
+
+        if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptions.getAngleType())) {
+            updateOffers();
+        }
     }
 
     public void swapTeams(int indexA, int indexB) {
@@ -503,9 +510,11 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         updateLabels();
     }
 
+    public void itemDroppedInSegment() {
+        eventScreenController.updateLabels();
+    }
+
     public SegmentView getSegmentView() {
-        //this would return whatever segment we generate, match or angle
-        //along with all the rules etc
         SegmentView segmentView = new SegmentView(segmentType);
         if (segmentType.equals(SegmentType.MATCH)) {
             MatchParams params = new MatchParams();
@@ -601,5 +610,42 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     public void setBroadcastTeam(List<? extends SegmentItem> broadcastTeam) {
         broadcastTeamController.setSegmentItems(broadcastTeam);
+    }
+
+    private void updateOffers() {
+        List<Object> offers = new ArrayList<>();
+
+        TeamPaneWrapper offerer = workerTeamControllers.stream()
+                .filter(controller -> TeamType.OFFERER.equals(controller.getTeamType()))
+                .findFirst().orElse(null);
+
+        List<TeamPaneWrapper> offerees = workerTeamControllers.stream()
+                .filter(controller -> TeamType.OFFEREE.equals(controller.getTeamType())).collect(Collectors.toList());
+
+        if (offerer != null) {
+            if (offerer.getSegmentItems().size() <= 1
+                    && (offerees.isEmpty() || offerees.size() == 1 && offerees.get(0).getSegmentItems().size() <= 1)) {
+                List<SegmentItem> potentialTeam = new ArrayList<>();
+                potentialTeam.addAll(offerer.getSegmentItems());
+                potentialTeam.addAll(offerees.get(0).getSegmentItems());
+                if (potentialTeam.size() != 2 || StringUtils.isEmpty(gameController.getSegmentManager().getTagTeamName(potentialTeam))) {
+                    offers.add(JoinTeamType.TAG_TEAM);
+                }
+            }
+
+            offers.add(JoinTeamType.NEW_STABLE);
+
+            if (!offerer.getSegmentItems().isEmpty()) {
+                for (StableView stable : gameController.getStableManager().getStables()) {
+                    if (stable.getWorkers().containsAll(offerer.getSegmentItems())
+                            && !offerees.stream()
+                            .filter(offeree -> !offeree.getSegmentItems().isEmpty() && stable.getWorkers().containsAll(offeree.getSegmentItems()))
+                            .findAny().isPresent()) {
+                        offers.add(stable);
+                    }
+                }
+            }
+            angleOptions.setOffers(offers);
+        }
     }
 }
