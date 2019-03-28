@@ -26,6 +26,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
@@ -35,6 +36,7 @@ import wrestling.model.segmentEnum.ResponseType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.view.utility.ViewUtils;
 
 public class EventFactory {
 
@@ -176,6 +178,22 @@ public class EventFactory {
                         offerer.getWorkers().get(0),
                         offeree.getWorkers().get(0));
             }
+        } else if (JoinTeamType.NEW_STABLE.equals(angleParams.getJoinTeamType())) {
+            List<WorkerView> newMembers = new ArrayList<>();
+            newMembers.addAll(offerer.getWorkers());
+            offerees.forEach(offeree -> {
+                if (ResponseType.YES.equals(offeree.getResponse())) {
+                    newMembers.addAll(offeree.getWorkers());
+                }
+            });
+
+            if (newMembers.size() > 1) {
+                StableView stable = new StableView(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
+                stable.setWorkers(newMembers);
+                stableManager.addStable(stable);
+                segmentView.setNewStable(stable);
+            }
+
         }
     }
 

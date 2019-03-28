@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentView;
+import wrestling.model.modelView.StableView;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
@@ -89,6 +90,10 @@ public class ResultsScreenController extends ControllerBase implements Initializ
         current.setSegment(gameController.getEventFactory().processSegmentView(eventView, current));
         currentSegmentViewIndex++;
         showNextDisplay(current);
+        if (current.getNewStable() != null) {
+            String name = ViewUtils.editTextDialog("", "Enter name for new stable");
+            current.getNewStable().setName(name);
+        }
     }
 
     private void showNextDisplay(Object obj) {

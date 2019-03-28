@@ -23,6 +23,7 @@ public class SegmentView implements Serializable {
     private EventView eventView;
     private StaffView referee;
     private List<? extends SegmentItem> broadcastTeam;
+    private StableView newStable;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -245,6 +246,20 @@ public class SegmentView implements Serializable {
 
     public MatchRule getMatchRule() {
         return segment.getSegmentParams().getMatchRule();
+    }
+
+    /**
+     * @return the newStable
+     */
+    public StableView getNewStable() {
+        return newStable;
+    }
+
+    /**
+     * @param newStable the newStable to set
+     */
+    public void setNewStable(StableView newStable) {
+        this.newStable = newStable;
     }
 
 }
