@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import wrestling.model.AngleParams;
+import wrestling.model.modelView.StableView;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.ShowType;
@@ -57,8 +59,18 @@ public class AngleOptions extends ControllerBase implements Initializable {
         }
     }
 
-    public AngleType getAngleType() {
-        return (AngleType) angleTypeComboBox.getValue();
+    public AngleParams getAngleParams() {
+        AngleParams angleParams = new AngleParams();
+        angleParams.setAngleType((AngleType) angleTypeComboBox.getValue());
+        if (AngleType.OFFER.equals(angleParams.getAngleType())) {
+            if (combo1.getValue() instanceof JoinTeamType) {
+                angleParams.setJoinTeamType((JoinTeamType) combo1.getValue());
+            } else if (combo1.getValue() instanceof StableView) {
+                angleParams.setJoinTeamType(JoinTeamType.STABLE);
+                angleParams.setJoinStable((StableView) combo1.getValue());
+            }
+        }
+        return angleParams;
     }
 
     private void setCombo1(ObservableList items, String labelText) {

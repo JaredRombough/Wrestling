@@ -141,7 +141,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         initializeRef();
 
         addTeamButton.setOnAction(e -> addTeam(
-                angleOptions.getAngleType().addTeamType()
+                angleOptions.getAngleParams().getAngleType().addTeamType()
         ));
         interferenceButton.setOnAction(e -> addTeam(TeamType.INTERFERENCE));
     }
@@ -197,6 +197,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 }
             }
         });
+
         angleOptions.getAngleTypeComboBox().getSelectionModel().selectFirst();
 
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
@@ -219,7 +220,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     }
 
     private void angleOptionChanged(Object obj) {
-        // if(obj instanceof)
+        eventScreenController.updateLabels();
     }
 
     @FXML
@@ -408,7 +409,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
         refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
-        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptions.getAngleType()));
+        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType()));
         eventScreenController.segmentsChanged();
         eventScreenController.updateLabels();
     }
@@ -416,7 +417,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private boolean getXButtonVisible(int index, TeamType teamType) {
         int minTeams = getSegmentType().equals(SegmentType.MATCH)
                 ? 2
-                : angleOptions.getAngleType().minWorkers();
+                : angleOptions.getAngleParams().getAngleType().minWorkers();
 
         return index >= minTeams || teamType.equals(TeamType.INTERFERENCE);
     }
@@ -431,8 +432,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         TeamType teamType;
 
         if (getSegmentType().equals(SegmentType.ANGLE)) {
-            teamType = index == 0 ? angleOptions.getAngleType().mainTeamType()
-                    : angleOptions.getAngleType().addTeamType();
+            teamType = index == 0 ? angleOptions.getAngleParams().getAngleType().mainTeamType()
+                    : angleOptions.getAngleParams().getAngleType().addTeamType();
         } else if (matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
             teamType = TeamType.DRAW;
         } else {
@@ -494,7 +495,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             screen.controller.updateLabels();
         }
 
-        if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptions.getAngleType())) {
+        if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptions.getAngleParams().getAngleType())) {
             updateOffers();
         }
     }
@@ -522,9 +523,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             params.setMatchRule(matchOptions.getMatchRule());
             segmentView.getSegment().setSegmentParams(params);
         } else {
-            AngleParams params = new AngleParams();
-            params.setAngleType(angleOptions.getAngleType());
-            segmentView.getSegment().setSegmentParams(params);
+            segmentView.getSegment().setSegmentParams(angleOptions.getAngleParams());
         }
         segmentView.getSegment().setSegmentLength(segmentLength.value());
         segmentView.setTeams(getSegmentTeams());

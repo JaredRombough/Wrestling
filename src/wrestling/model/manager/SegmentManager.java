@@ -21,6 +21,7 @@ import wrestling.model.modelView.StableView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
+import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.segmentEnum.SegmentType;
@@ -289,6 +290,26 @@ public class SegmentManager implements Serializable {
         if (angleType.equals(AngleType.PROMO) && segmentView.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
             string = string.split("targeting")[0];
             string = string.replace(" targeting", "");
+        }
+
+        if (angleType.equals(AngleType.OFFER)) {
+            switch (segmentView.getSegment().getSegmentParams().getJoinTeamType()) {
+                case TAG_TEAM:
+                    string += " to form a new tag team";
+                    break;
+                case NEW_STABLE:
+                    string += " to form a new stable";
+                    break;
+                default:
+                    StableView stable = segmentView.getSegment().getSegmentParams().getJoinStable();
+                    if (stable != null) {
+                        if (string.contains(stable.getName())) {
+                            string += " to join them";
+                        } else {
+                            string += " to join " + segmentView.getSegment().getSegmentParams().getJoinStable().getName();
+                        }
+                    }
+            }
         }
 
         return string;
