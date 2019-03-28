@@ -126,7 +126,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         for (Button button : segmentLengthWrapper.getButtons()) {
             button.setOnAction(e -> {
                 segmentLength = ((iSegmentLength) segmentLengthWrapper.updateSelected(button));
-                updateLabels();
+                eventScreenController.updateLabels();
             });
         }
         segmentLengthWrapper.updateSelected(segmentLengthWrapper.getItems().indexOf(segmentLength));

@@ -326,6 +326,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         segmentTeam.setTiming(timingType);
         segmentTeam.setSuccess(successType);
         segmentTeam.setPresence(presenceType);
+        segmentTeam.setResponse(responseType);
         
         return segmentTeam;
     }

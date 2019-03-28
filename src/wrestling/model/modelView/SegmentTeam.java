@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
+import wrestling.model.segmentEnum.ResponseType;
 import wrestling.model.segmentEnum.SuccessType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TimingType;
@@ -20,6 +21,7 @@ public class SegmentTeam implements Serializable {
     private TimingType timing;
     private OutcomeType outcome;
     private PresenceType presence;
+    private ResponseType response;
 
     public SegmentTeam(List<WorkerView> workers, TeamType type) {
         this.workers = workers;
@@ -159,6 +161,20 @@ public class SegmentTeam implements Serializable {
      */
     public void setEntourage(List<WorkerView> entourage) {
         this.entourage = entourage;
+    }
+
+    /**
+     * @return the response
+     */
+    public ResponseType getResponse() {
+        return response;
+    }
+
+    /**
+     * @param response the response to set
+     */
+    public void setResponse(ResponseType response) {
+        this.response = response;
     }
 
 }

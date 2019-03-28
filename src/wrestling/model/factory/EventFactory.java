@@ -2,7 +2,10 @@ package wrestling.model.factory;
 
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import wrestling.model.AngleParams;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
@@ -15,15 +18,23 @@ import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.EventManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.SegmentManager;
+import wrestling.model.manager.StableManager;
+import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.PromotionView;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.EventVenueSize;
+import wrestling.model.segmentEnum.JoinTeamType;
+import wrestling.model.segmentEnum.ResponseType;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TransactionType;
+import wrestling.model.utility.ModelUtils;
 
 public class EventFactory {
 
@@ -34,6 +45,8 @@ public class EventFactory {
     private final SegmentManager matchManager;
     private final MatchFactory matchFactory;
     private final PromotionManager promotionManager;
+    private final TagTeamManager tagTeamManager;
+    private final StableManager stableManager;
 
     public EventFactory(
             ContractManager contractManager,
@@ -42,7 +55,9 @@ public class EventFactory {
             SegmentManager matchManager,
             PromotionManager promotionManager,
             TitleManager titleManager,
-            WorkerManager workerManager) {
+            WorkerManager workerManager,
+            TagTeamManager tagTeamManager,
+            StableManager stableManager) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -50,6 +65,8 @@ public class EventFactory {
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
+        this.tagTeamManager = tagTeamManager;
+        this.stableManager = stableManager;
     }
 
     public void processEventView(EventView eventView, boolean processSegments,
@@ -138,8 +155,28 @@ public class EventFactory {
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
+        } else {
+            AngleParams angleParams = (AngleParams) segmentView.getSegment().getSegmentParams();
+            if (AngleType.OFFER.equals(angleParams.getAngleType())) {
+                processOffer(segmentView, angleParams);
+            }
         }
         return segment;
+    }
+
+    private void processOffer(SegmentView segmentView, AngleParams angleParams) {
+        SegmentTeam offerer = segmentView.getTeams(TeamType.OFFERER).stream().findFirst().orElse(null);
+        List<SegmentTeam> offerees = segmentView.getTeams(TeamType.OFFEREE).stream().collect(Collectors.toList());
+
+        if (JoinTeamType.TAG_TEAM.equals(angleParams.getJoinTeamType())) {
+            SegmentTeam offeree = offerees.get(0);
+            if (ResponseType.YES.equals(offeree.getResponse())) {
+                tagTeamManager.createTagTeam(
+                        ModelUtils.andTeams(Arrays.asList(offerer, offeree)),
+                        offerer.getWorkers().get(0),
+                        offeree.getWorkers().get(0));
+            }
+        }
     }
 
     private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {
