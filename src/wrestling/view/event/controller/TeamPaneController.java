@@ -91,14 +91,11 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                     case TITLES:
                     case REF:
                     case BROADCAST:
-                        teamNameLabel.setText(teamType.description());
-                        break;
                     case ENTOURAGE:
                         teamNameLabel.setText(teamType.description());
-                        // setVisible(!getSegmentItems().isEmpty());
                         break;
                     default:
-                        teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems()));
+                        teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems(), teamType));
                         break;
                 }
             }

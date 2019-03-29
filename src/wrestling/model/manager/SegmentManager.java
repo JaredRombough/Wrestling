@@ -274,7 +274,7 @@ public class SegmentManager implements Serializable {
             mainTeamString = "?";
             pluralString = "";
         } else {
-            mainTeamString = generateTeamName(mainTeam.get(0).getWorkers(), true);
+            mainTeamString = generateTeamName(mainTeam.get(0).getWorkers(), true, mainTeam.get(0).getType());
             pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
         }
         List<String> andTeamNames = new ArrayList<>();
@@ -316,18 +316,26 @@ public class SegmentManager implements Serializable {
 
     }
 
+    public String generateTeamName(List<? extends SegmentItem> segmentItems, TeamType teamType) {
+        return generateTeamName(segmentItems, false, teamType);
+    }
+
     public String generateTeamName(List<? extends SegmentItem> segmentItems) {
-        return generateTeamName(segmentItems, false);
+        return generateTeamName(segmentItems, false, TeamType.DEFAULT);
     }
 
     public String generateTeamName(List<? extends SegmentItem> segmentItems, boolean verbose) {
+        return generateTeamName(segmentItems, verbose, TeamType.DEFAULT);
+    }
+
+    public String generateTeamName(List<? extends SegmentItem> segmentItems, boolean verbose, TeamType teamType) {
         if (!segmentItems.isEmpty()) {
             if (segmentItems.size() == 2) {
                 String tagTeam = getTagTeamName(segmentItems);
                 if (!tagTeam.isEmpty()) {
                     return tagTeam;
                 }
-            } else if (segmentItems.size() > 1) {
+            } else if (segmentItems.size() > 1 && !TeamType.OFFEREE.equals(teamType) && !TeamType.OFFERER.equals(teamType)) {
                 for (StableView stable : stableManager.getStables()) {
                     if (stable.getWorkers().containsAll(segmentItems)) {
                         return stable.getName();
@@ -360,7 +368,7 @@ public class SegmentManager implements Serializable {
             for (int t = 0; t < teamsSize; t++) {
                 List<WorkerView> team = teams.get(t).getWorkers();
 
-                matchString += generateTeamName(team, verbose);
+                matchString += generateTeamName(team, verbose, teams.get(t).getType());
 
                 if (!teams.get(t).getEntourage().isEmpty()) {
                     matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
