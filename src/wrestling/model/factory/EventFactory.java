@@ -194,6 +194,14 @@ public class EventFactory {
                 segmentView.setNewStable(stable);
             }
 
+        } else if (JoinTeamType.STABLE.equals(angleParams.getJoinTeamType())) {
+            List<WorkerView> newMembers = new ArrayList<>();
+            offerees.forEach(offeree -> {
+                if (ResponseType.YES.equals(offeree.getResponse())) {
+                    newMembers.addAll(offeree.getWorkers());
+                }
+            });
+            segmentView.getSegment().getSegmentParams().getJoinStable().getWorkers().addAll(newMembers);
         }
     }
 
