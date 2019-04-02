@@ -23,6 +23,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.NewsItem;
 import wrestling.model.interfaces.iNewsItem;
@@ -158,9 +159,12 @@ public class NewsScreenController extends ControllerBase implements Initializabl
                 super.updateItem(segmentView, empty);
 
                 if (empty || segmentView == null || !(segmentView instanceof SegmentView)) {
-                    setText(null);
+                    setGraphic(null);
                 } else {
-                    setText(gameController.getSegmentManager().getIsolatedSegmentString(segmentView));
+                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segmentView));
+                    text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
+                    text.setTextAlignment(TextAlignment.CENTER);
+                    setGraphic(text);
                 }
             }
         });
