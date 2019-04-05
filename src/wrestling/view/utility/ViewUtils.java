@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -516,20 +519,6 @@ public final class ViewUtils {
         return dialog;
     }
 
-    public static void initializeButtonHover(Region region, Button button, PromotionView promotion, PromotionView playerPromotion) {
-        button.setVisible(false);
-        region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-            if (Objects.equals(promotion, playerPromotion)) {
-                button.setVisible(Objects.equals(promotion, playerPromotion) && isNowHovered);
-            }
-        });
-        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-            if (Objects.equals(promotion, playerPromotion)) {
-                button.setVisible(Objects.equals(promotion, playerPromotion) && isNowHovered);
-            }
-        });
-    }
-
     public static void initializeButtonHover(Region region, Button button) {
         button.setVisible(false);
         region.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
@@ -538,6 +527,12 @@ public final class ViewUtils {
         button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
             button.setVisible(isNowHovered);
         });
+    }
+
+    public static ChangeListener<Boolean> buttonHoverListener(Button button) {
+        return (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            button.setVisible(newValue);
+        };
     }
 
 }

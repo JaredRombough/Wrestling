@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -92,6 +93,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Button managerButton;
+    private ChangeListener<Boolean> managerButtonHoverListener;
 
     @FXML
     private AnchorPane imageAnchor;
@@ -101,6 +103,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Button entourageButton;
+    private ChangeListener<Boolean> entourageButtonHoverListener;
 
     @FXML
     private ListView<WorkerView> entourageListView;
@@ -135,6 +138,21 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             this.promotion = promotion;
             updateLabels();
         }
+
+        entourageButton.setVisible(false);
+        managerButton.setVisible(false);
+
+        if (playerPromotion().equals(promotion)) {
+            entourageButton.hoverProperty().addListener(entourageButtonHoverListener);
+            entourageLabel.hoverProperty().addListener(entourageButtonHoverListener);
+            managerButton.hoverProperty().addListener(managerButtonHoverListener);
+            manager.hoverProperty().addListener(managerButtonHoverListener);
+        } else {
+            entourageButton.hoverProperty().removeListener(entourageButtonHoverListener);
+            entourageLabel.hoverProperty().removeListener(entourageButtonHoverListener);
+            managerButton.hoverProperty().removeListener(managerButtonHoverListener);
+            manager.hoverProperty().removeListener(managerButtonHoverListener);
+        }
     }
 
     @Override
@@ -149,7 +167,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
         injury.getStyleClass().add("lowStat");
 
-        ViewUtils.initializeButtonHover(entourageLabel, entourageButton, promotion, playerPromotion());
+        managerButtonHoverListener = ViewUtils.buttonHoverListener(managerButton);
+        entourageButtonHoverListener = ViewUtils.buttonHoverListener(entourageButton);
 
         entourageButton.setOnAction(a -> {
             List<WorkerView> workers = new ArrayList<>(promotion.getFullRoster());
@@ -316,7 +335,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         manager.setText(worker.getManager() == null ? "None" : worker.getManager().getName());
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
-            ViewUtils.initializeButtonHover(manager, managerButton, promotion, playerPromotion());
             managerButton.setOnAction(a -> {
                 List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
                 workers.remove(worker);

@@ -63,7 +63,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
         Text text = new Text();
         text.setText(newText);
-        text.wrappingWidthProperty().bind(scrollPane.widthProperty());
+        text.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(20));
 
         scrollPane.setContent(text);
 
