@@ -189,43 +189,6 @@ public enum AngleType implements Description, iAngleType {
             return "%s challenge%s %s";
         }
 
-    },
-    ANNOUNCEMENT {
-        @Override
-        public String description() {
-            return "Announcement";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
-        @Override
-        public int minWorkers() {
-            return 1;
-        }
-
-        @Override
-        public int defaultWorkers() {
-            return 1;
-        }
-
-        @Override
-        public TeamType mainTeamType() {
-            return TeamType.ANNOUNCER;
-        }
-
-        @Override
-        public TeamType addTeamType() {
-            return TeamType.AUDIENCE;
-        }
-
-        @Override
-        public String resultString() {
-            return "%s announce%s %s";
-        }
-
     };
 
     @Override
