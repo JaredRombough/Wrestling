@@ -21,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.AngleParams;
 import wrestling.model.MatchParams;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iSegmentLength;
@@ -38,6 +39,7 @@ import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
@@ -97,6 +99,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private EventScreenController eventScreenController;
 
     private SegmentType segmentType;
+    private SegmentView challengeSource;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -201,8 +204,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);
         });
-        angleOptions.getCombo2().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
-            angleOptionChanged(t1);
+
+        angleOptions.getChallengeButton().setOnAction(e -> {
+            eventScreenController.addSegment(getChallengeMatch(getSegmentView()));
         });
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
@@ -496,6 +500,16 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptions.getAngleParams().getAngleType())) {
             updateOffers();
         }
+
+        if (SegmentType.ANGLE.equals(segmentType) && AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType())) {
+            SegmentView segmentView = getSegmentView();
+            if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
+                SegmentView challengeMatch = getChallengeMatch(segmentView);
+                boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
+                angleOptions.setChallengeForTonightPresent(isPresent);
+            }
+
+        }
     }
 
     public void swapTeams(int indexA, int indexB) {
@@ -515,6 +529,11 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     public SegmentView getSegmentView() {
         SegmentView segmentView = new SegmentView(segmentType);
+        segmentView.getSegment().setSegmentLength(segmentLength.value());
+        segmentView.setTeams(getSegmentTeams());
+        segmentView.addTitles(getTitles());
+        segmentView.setReferee(getRef());
+        segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
         if (segmentType.equals(SegmentType.MATCH)) {
             MatchParams params = new MatchParams();
             params.setMatchFinish(matchOptions.getMatchFinish());
@@ -523,12 +542,21 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         } else {
             segmentView.getSegment().setSegmentParams(angleOptions.getAngleParams());
         }
-        segmentView.getSegment().setSegmentLength(segmentLength.value());
-        segmentView.setTeams(getSegmentTeams());
-        segmentView.addTitles(getTitles());
-        segmentView.setReferee(getRef());
-        segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
+
         return segmentView;
+    }
+
+    private SegmentView getChallengeMatch(SegmentView challengeSegment) {
+        SegmentView challengeMatch = new SegmentView(SegmentType.MATCH);
+        challengeSegment.getTeams().forEach(team -> {
+            if (TeamType.CHALLENGER.equals(team.getType()) || TeamType.CHALLENGED.equals(team.getType())) {
+                SegmentTeam segmentTeam = new SegmentTeam();
+                segmentTeam.setType(TeamType.CHALLENGER.equals(team.getType()) ? TeamType.WINNER : TeamType.LOSER);
+                segmentTeam.setWorkers(team.getWorkers());
+                challengeMatch.getTeams().add(segmentTeam);
+            }
+        });
+        return challengeMatch;
     }
 
     private List<SegmentTeam> getSegmentTeams() {
@@ -644,5 +672,19 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             }
             angleOptions.setOffers(offers);
         }
+    }
+
+    /**
+     * @return the challengeSource
+     */
+    public SegmentView getChallengeSource() {
+        return challengeSource;
+    }
+
+    /**
+     * @param challengeSource the challengeSource to set
+     */
+    public void setChallengeSource(SegmentView challengeSource) {
+        this.challengeSource = challengeSource;
     }
 }

@@ -42,6 +42,7 @@ import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.EventView;
+import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TitleView;
@@ -246,6 +247,8 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentListView.getSelectionModel().selectFirst();
     }
 
+    private boolean updatingChallenge = false;
+
     @Override
     public void updateLabels() {
 
@@ -256,8 +259,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         totalCostLabel.setText("Total Cost: $" + currentCost());
         totalCostLabel.setVisible(currentCost() != 0);
 
+        List<SegmentView> segmentViews = getSegmentViews();
+
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
-            segmentNameItem.segment.set(getSegmentViews().get(segmentListView.getItems().indexOf(segmentNameItem)));
+            segmentNameItem.segment.set(segmentViews.get(segmentListView.getItems().indexOf(segmentNameItem)));
         }
 
         if (getCurrentEvent() != null) {
@@ -327,42 +332,56 @@ public class EventScreenController extends ControllerBase implements Initializab
         return allWorkers;
     }
 
-    private void addSegment() {
-
+    private SegmentPaneController initController() {
+        SegmentPaneController controller = null;
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader
-                    .setLocation(MainApp.class
-                            .getResource(ScreenCode.SEGMENT_PANE.resourcePath()));
-            Pane segmentPane = (Pane) loader.load();
+            loader.setLocation(MainApp.class
+                    .getResource(ScreenCode.SEGMENT_PANE.resourcePath()));
 
-            //keep a reference to the segment pane
-            segmentPanes.add(segmentPane);
+            segmentPanes.add((Pane) loader.load());
 
-            //keep a reference to the controller
-            SegmentPaneController controller = loader.getController();
+            controller = loader.getController();
             segmentPaneControllers.add(controller);
 
             controller.setEventScreenController(this);
             controller.setDependencies(mainApp, gameController);
+
             controller.setBroadcastTeam(currentEvent.getEventTemplate().getDefaultBroadcastTeam().isEmpty()
                     ? playerPromotion().getDefaultBroadcastTeam()
                     : currentEvent.getEventTemplate().getDefaultBroadcastTeam());
 
-            //update the segment listview
-            SegmentNameItem item = new SegmentNameItem();
-            item.segment.set(controller.getSegmentView());
-            segmentListView.getItems().add(item);
-            segmentListView.getSelectionModel().select(item);
-
-            segmentsChanged();
-
-            updateLabels();
-
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
         }
+        return controller;
+    }
+
+    private void addSegment() {
+
+        SegmentNameItem item = new SegmentNameItem();
+        item.segment.set(initController().getSegmentView());
+        segmentListView.getItems().add(item);
+        segmentListView.getSelectionModel().select(item);
+
+        segmentsChanged();
+
+        updateLabels();
+    }
+
+    public void addSegment(SegmentView segmentView) {
+        SegmentPaneController controller = initController();
+        SegmentNameItem item = new SegmentNameItem();
+        item.segment.set(controller.getSegmentView());
+        segmentListView.getItems().add(item);
+        segmentListView.getSelectionModel().select(item);
+        segmentView.getMatchParticipantTeams().forEach(team -> controller.addTeam(team.getWorkers(), updatingChallenge));
+
+        segmentsChanged();
+
+        updateLabels();
+
     }
 
     public void removeSegment(int index) {
@@ -403,8 +422,8 @@ public class EventScreenController extends ControllerBase implements Initializab
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
         segmentListView.setCellFactory(param -> new SorterCell(
-                segmentPanes, getSegmentPaneControllers(),
-                getSegmentViews(),
+                segmentPanes,
+                segmentPaneControllers,
                 segmentListView,
                 this,
                 gameController.getSegmentManager()
@@ -522,13 +541,38 @@ public class EventScreenController extends ControllerBase implements Initializab
         return isBooked;
     }
 
-    private boolean segmentItemIsBookedForCurrentShow(SegmentItem segmentItem) {
-        for (SegmentPaneController controller : getSegmentPaneControllers()) {
-            if (controller.getSegmentItems().contains(segmentItem)) {
+    public boolean challengeForTonightIsPresent(SegmentView segmentView, SegmentPaneController sourceController) {
+        int startIndex = segmentPaneControllers.indexOf(sourceController);
+        for (int i = startIndex; i < segmentPaneControllers.size(); i++) {
+            if (SegmentType.MATCH.equals(segmentPaneControllers.get(i).getSegmentType())
+                    && segmentsMatch(segmentPaneControllers.get(i).getSegmentView(), segmentView)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean segmentsMatch(SegmentView segment1, SegmentView segment2) {
+        if (!Objects.equals(segment1.getSegmentType(), segment2.getSegmentType())) {
+            return false;
+        }
+        if (segment1.getMatchParticipantTeams().size() != segment2.getMatchParticipantTeams().size()) {
+            return false;
+        }
+        return segment1.getMatchParticipantTeams().stream().allMatch(actualTeam -> {
+            return segment2.getMatchParticipantTeams().stream().anyMatch(expectedTeam -> {
+                return teamsMatch(actualTeam, expectedTeam);
+            });
+        });
+    }
+
+    private boolean teamsMatch(SegmentTeam segment1, SegmentTeam segment2) {
+        return segment1.getWorkers().size() == segment2.getWorkers().size()
+                && segment1.getWorkers().containsAll(segment2.getWorkers());
+    }
+
+    private boolean segmentItemIsBookedForCurrentShow(SegmentItem segmentItem) {
+        return segmentPaneControllers.stream().anyMatch(controller -> controller.getSegmentItems().contains(segmentItem));
     }
 
     @Override

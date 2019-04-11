@@ -33,7 +33,6 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
     public SorterCell(
             List<Pane> segmentPanes,
             List<SegmentPaneController> segmentPaneControllers,
-            List<SegmentView> segments,
             ListView listView,
             EventScreenController eventScreenController,
             SegmentManager segmentManager) {
@@ -108,7 +107,6 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
                 Collections.swap(items, thisIdx, draggedIdx);
                 Collections.swap(segmentPanes, thisIdx, draggedIdx);
                 Collections.swap(segmentPaneControllers, thisIdx, draggedIdx);
-                Collections.swap(segments, thisIdx, draggedIdx);
 
                 eventScreenController.segmentsChanged();
 

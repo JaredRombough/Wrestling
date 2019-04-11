@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.model.AngleParams;
@@ -27,34 +28,29 @@ public class AngleOptions extends ControllerBase implements Initializable {
     private ComboBox combo1;
 
     @FXML
-    private ComboBox combo2;
-
-    @FXML
     private Label label1;
 
     @FXML
-    private Label label2;
+    private Button challengeButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
-    public void setAngleType(AngleType type) {
+    private void setAngleType(AngleType type) {
         switch (type) {
             case OFFER:
                 setCombo1(FXCollections.observableArrayList(JoinTeamType.values()),
                         JoinTeamType.label());
-                setCombo2Visibility(false);
                 break;
             case CHALLENGE:
+
                 setCombo1(FXCollections.observableArrayList(ShowType.values()),
                         ShowType.label());
-                setCombo2Visibility(false);
                 break;
             default:
                 setCombo1Visibility(false);
-                setCombo2Visibility(false);
                 break;
         }
     }
@@ -69,6 +65,8 @@ public class AngleOptions extends ControllerBase implements Initializable {
                 angleParams.setJoinTeamType(JoinTeamType.STABLE);
                 angleParams.setJoinStable((StableView) combo1.getValue());
             }
+        } else if (AngleType.CHALLENGE.equals((angleParams.getAngleType()))) {
+
         }
         return angleParams;
     }
@@ -83,11 +81,6 @@ public class AngleOptions extends ControllerBase implements Initializable {
     private void setCombo1Visibility(boolean visible) {
         getCombo1().setVisible(visible);
         label1.setVisible(visible);
-    }
-
-    private void setCombo2Visibility(boolean visible) {
-        getCombo2().setVisible(visible);
-        label2.setVisible(visible);
     }
 
     @Override
@@ -135,11 +128,15 @@ public class AngleOptions extends ControllerBase implements Initializable {
         return combo1;
     }
 
+    public void setChallengeForTonightPresent(boolean challengeForTonightPresent) {
+        getChallengeButton().setDisable(challengeForTonightPresent);
+    }
+
     /**
-     * @return the combo2
+     * @return the challengeButton
      */
-    public ComboBox getCombo2() {
-        return combo2;
+    public Button getChallengeButton() {
+        return challengeButton;
     }
 
 }
