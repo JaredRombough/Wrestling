@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import wrestling.model.AngleParams;
+import wrestling.model.EventTemplate;
 import wrestling.model.MatchParams;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iSegmentLength;
@@ -40,6 +41,7 @@ import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
+import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.StaffUtils;
@@ -48,6 +50,7 @@ import wrestling.view.utility.ButtonWrapper;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import wrestling.view.utility.comparators.DateComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
@@ -198,6 +201,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 }
             }
         });
+
+        List<Object> challengeOptions = new ArrayList<>();
+        challengeOptions.add(ShowType.TONIGHT);
+        List<EventTemplate> futureEvents = new ArrayList<>(playerPromotion().getEventTemplates());
+        Collections.sort(futureEvents, new DateComparator());
+        challengeOptions.addAll(futureEvents);
+        angleOptions.setChallengeOptions(challengeOptions);
+        
 
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);

@@ -1,6 +1,7 @@
 package wrestling.view.event.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -33,9 +34,11 @@ public class AngleOptions extends ControllerBase implements Initializable {
     @FXML
     private Button challengeButton;
 
+    private List<Object> challengeOptions;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        challengeOptions = new ArrayList<>();
     }
 
     private void setAngleType(AngleType type) {
@@ -46,7 +49,7 @@ public class AngleOptions extends ControllerBase implements Initializable {
                 break;
             case CHALLENGE:
 
-                setCombo1(FXCollections.observableArrayList(ShowType.values()),
+                setCombo1(FXCollections.observableArrayList(challengeOptions),
                         ShowType.label());
                 break;
             default:
@@ -99,6 +102,10 @@ public class AngleOptions extends ControllerBase implements Initializable {
             }
         });
         angleTypeComboBox.getSelectionModel().selectFirst();
+    }
+
+    public void setChallengeOptions(List<Object> challengeOptions) {
+        this.challengeOptions = challengeOptions;
     }
 
     public void setOffers(List<Object> offers) {
