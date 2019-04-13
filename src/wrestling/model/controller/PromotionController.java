@@ -465,6 +465,7 @@ public class PromotionController implements Serializable {
                     RandomUtils.nextInt(1, 4),
                     eventTemplate.getDayOfWeek()));
             eventTemplate.setNextDate(date);
+            System.out.println(date + " " + eventTemplate.getName());
             bookNextEvent(eventTemplate, date);
         }
         return date;
@@ -486,8 +487,10 @@ public class PromotionController implements Serializable {
             bookNextEvent(eventTemplate, startDate);
             eventTemplate.setBookedUntil(startDate);
         } else {
-            eventTemplate.setNextDate(startDate);
-            LocalDate weeklyDate = startDate;
+            if (eventTemplate.getNextDate() == null) {
+                eventTemplate.setNextDate(startDate);
+            }
+            LocalDate weeklyDate = LocalDate.from(startDate);
             int eventsToBook = eventManager.getEventsLeftFuture(eventTemplate, yearMonth);
             int booked = 0;
             for (int i = 0; i < startDate.lengthOfMonth(); i++) {
@@ -495,7 +498,7 @@ public class PromotionController implements Serializable {
                     break;
                 }
                 bookNextEvent(eventTemplate, weeklyDate);
-                weeklyDate = weeklyDate.plusWeeks(1);
+                weeklyDate.plusWeeks(1);
                 booked++;
             }
             eventTemplate.setBookedUntil(weeklyDate);

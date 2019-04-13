@@ -189,7 +189,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         angleOptionsScreen = ViewUtils.loadScreenFromFXML(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
         angleOptions = (AngleOptions) angleOptionsScreen.controller;
 
-        angleOptions.getAngleTypeComboBox().valueProperty().addListener(new ChangeListener<AngleType>() {
+        angleOptions.setAngleTypeListener(new ChangeListener<AngleType>() {
             @Override
             public void changed(ObservableValue ov, AngleType oldType, AngleType newType) {
                 if (newType != null) {
@@ -198,8 +198,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 }
             }
         });
-
-        angleOptions.getAngleTypeComboBox().getSelectionModel().selectFirst();
 
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);

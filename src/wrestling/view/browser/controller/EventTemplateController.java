@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.model.EventTemplate;
-import wrestling.model.constants.GameConstants;
 import static wrestling.model.constants.UIConstants.CALENDAR_ICON;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import wrestling.model.modelView.StaffView;

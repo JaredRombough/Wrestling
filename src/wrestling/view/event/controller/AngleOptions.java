@@ -114,11 +114,9 @@ public class AngleOptions extends ControllerBase implements Initializable {
         }
     }
 
-    /**
-     * @return the angleTypeComboBox
-     */
-    public ComboBox getAngleTypeComboBox() {
-        return angleTypeComboBox;
+    public void setAngleTypeListener(ChangeListener<AngleType> listener) {
+        angleTypeComboBox.valueProperty().addListener(listener);
+        angleTypeComboBox.getSelectionModel().selectFirst();
     }
 
     /**
