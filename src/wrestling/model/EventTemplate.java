@@ -31,6 +31,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
     private DayOfWeek dayOfWeek;
     private Month month;
     private List<StaffView> defaultBroadcastTeam;
+    private final List<SegmentTemplate> segmentTemplates;
 
     public EventTemplate() {
         bookedUntil = LocalDate.MIN;
@@ -45,6 +46,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
                         RandomUtils.nextInt(0, 2));
         month = Month.JANUARY;
         defaultBroadcastTeam = new ArrayList<>();
+        segmentTemplates = new ArrayList<>();
     }
 
     @Override
@@ -237,6 +239,13 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
      */
     public void setDefaultBroadcastTeam(List<StaffView> defaultBroadcastTeam) {
         this.defaultBroadcastTeam = defaultBroadcastTeam;
+    }
+
+    /**
+     * @return the segmentTemplates
+     */
+    public List<SegmentTemplate> getSegmentTemplates() {
+        return segmentTemplates;
     }
 
 }

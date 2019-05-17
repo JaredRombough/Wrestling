@@ -33,6 +33,7 @@ import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.ResponseType;
+import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ModelUtils;
@@ -161,6 +162,8 @@ public class EventFactory {
             AngleParams angleParams = (AngleParams) segmentView.getSegment().getSegmentParams();
             if (AngleType.OFFER.equals(angleParams.getAngleType())) {
                 processOffer(segmentView, angleParams);
+            } else if (AngleType.CHALLENGE.equals(angleParams.getAngleType())) {
+                processChallenge(angleParams);
             }
         }
         return segment;
@@ -211,6 +214,12 @@ public class EventFactory {
             if (change) {
                 titleManager.titleChange(titleView.getTitle(), winners);
             }
+        }
+    }
+
+    private void processChallenge(AngleParams angleParams) {
+        if (angleParams.getShowType().equals(ShowType.NEXT_SHOW)) {
+            angleParams.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(angleParams.getChallengeSegment());
         }
     }
 

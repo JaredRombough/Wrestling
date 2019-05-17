@@ -25,6 +25,7 @@ import wrestling.model.AngleParams;
 import wrestling.model.EventTemplate;
 import wrestling.model.MatchParams;
 import wrestling.model.SegmentItem;
+import wrestling.model.SegmentTemplate;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -84,7 +85,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private List<Button> segmentTypeButtons;
 
     private GameScreen angleOptionsScreen;
-    private AngleOptions angleOptions;
+    private AngleOptionsController angleOptions;
     private GameScreen matchOptionsScreen;
     private MatchOptions matchOptions;
     private ButtonWrapper segmentLengthWrapper;
@@ -190,7 +191,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void initializeAngleOptions() {
         angleOptionsScreen = ViewUtils.loadScreenFromFXML(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
-        angleOptions = (AngleOptions) angleOptionsScreen.controller;
+        angleOptions = (AngleOptionsController) angleOptionsScreen.controller;
 
         angleOptions.setAngleTypeListener(new ChangeListener<AngleType>() {
             @Override
@@ -208,7 +209,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         Collections.sort(futureEvents, new DateComparator());
         challengeOptions.addAll(futureEvents);
         angleOptions.setChallengeOptions(challengeOptions);
-        
 
         angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);
@@ -549,7 +549,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             params.setMatchRule(matchOptions.getMatchRule());
             segmentView.getSegment().setSegmentParams(params);
         } else {
-            segmentView.getSegment().setSegmentParams(angleOptions.getAngleParams());
+            AngleParams angleParams = angleOptions.getAngleParams();
+            if (angleParams.getAngleType().equals(AngleType.CHALLENGE)) {
+                angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeams());
+                angleParams.getChallengeSegment().getTitleViews().addAll(getTitles());
+            }
+            segmentView.getSegment().setSegmentParams(angleParams);
         }
 
         return segmentView;

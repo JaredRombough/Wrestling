@@ -14,13 +14,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import wrestling.model.AngleParams;
+import wrestling.model.EventTemplate;
+import wrestling.model.SegmentTemplate;
 import wrestling.model.modelView.StableView;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.ShowType;
 import wrestling.view.utility.interfaces.ControllerBase;
 
-public class AngleOptions extends ControllerBase implements Initializable {
+public class AngleOptionsController extends ControllerBase implements Initializable {
 
     @FXML
     private ComboBox angleTypeComboBox;
@@ -69,7 +71,14 @@ public class AngleOptions extends ControllerBase implements Initializable {
                 angleParams.setJoinStable((StableView) combo1.getValue());
             }
         } else if (AngleType.CHALLENGE.equals((angleParams.getAngleType()))) {
-
+            SegmentTemplate challengeSegment = new SegmentTemplate();
+            if (combo1.getValue() instanceof ShowType) {
+                angleParams.setShowType((ShowType) combo1.getValue());
+            } else if (combo1.getValue() instanceof EventTemplate) {
+                angleParams.setShowType(ShowType.NEXT_SHOW);
+                challengeSegment.setEventTemplate((EventTemplate) combo1.getValue());
+            }
+            angleParams.setChallengeSegment(challengeSegment);
         }
         return angleParams;
     }
