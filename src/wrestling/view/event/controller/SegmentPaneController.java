@@ -40,6 +40,7 @@ import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.MatchFinish;
 import wrestling.model.segmentEnum.MatchLength;
 import wrestling.model.segmentEnum.OutcomeType;
+import wrestling.model.segmentEnum.ResponseType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.ShowType;
@@ -550,6 +551,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             segmentView.getSegment().setSegmentParams(params);
         } else {
             AngleParams angleParams = angleOptions.getAngleParams();
+
             if (angleParams.getAngleType().equals(AngleType.CHALLENGE)) {
                 angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeams());
                 angleParams.getChallengeSegment().getTitleViews().addAll(getTitles());

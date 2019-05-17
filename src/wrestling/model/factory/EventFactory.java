@@ -219,7 +219,12 @@ public class EventFactory {
 
     private void processChallenge(AngleParams angleParams) {
         if (angleParams.getShowType().equals(ShowType.NEXT_SHOW)) {
-            angleParams.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(angleParams.getChallengeSegment());
+            List<SegmentTeam> teams = angleParams.getChallengeSegment().getSegmentTeams().stream()
+                    .filter(team -> team.getType().equals(TeamType.CHALLENGER) || ResponseType.YES.equals(team.getResponse()))
+                    .collect(Collectors.toList());
+            if (teams.size() > 1) {
+                angleParams.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(angleParams.getChallengeSegment());
+            }
         }
     }
 
