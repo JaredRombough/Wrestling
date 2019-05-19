@@ -142,10 +142,6 @@ public class AngleOptionsController extends ControllerBase implements Initializa
         return combo1;
     }
 
-    public void setChallengeForTonightPresent(boolean challengeForTonightPresent) {
-        getChallengeButton().setDisable(challengeForTonightPresent);
-    }
-
     /**
      * @return the challengeButton
      */

@@ -516,9 +516,13 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
                 SegmentView challengeMatch = getChallengeMatch(segmentView);
                 boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
-                angleOptions.setChallengeForTonightPresent(isPresent);
+                angleOptions.getChallengeButton().setDisable(isPresent);
+            } else {
+                angleOptions.getChallengeButton().setDisable(true);
             }
-
+            angleOptions.getChallengeButton().setVisible(true);
+        } else {
+            angleOptions.getChallengeButton().setVisible(false);
         }
     }
 
