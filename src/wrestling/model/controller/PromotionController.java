@@ -498,7 +498,7 @@ public class PromotionController implements Serializable {
                     break;
                 }
                 bookNextEvent(eventTemplate, weeklyDate);
-                weeklyDate.plusWeeks(1);
+                weeklyDate = weeklyDate.plusWeeks(1);
                 booked++;
             }
             eventTemplate.setBookedUntil(weeklyDate);
