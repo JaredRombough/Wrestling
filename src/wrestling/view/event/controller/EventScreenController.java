@@ -41,6 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import wrestling.MainApp;
 import wrestling.model.Event;
 import wrestling.model.SegmentItem;
+import wrestling.model.SegmentTemplate;
 import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -240,6 +241,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentPanes.clear();
         segmentPaneControllers.clear();
 
+        for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
+            addSegment(ModelUtils.getSegmentFromTeams(segmentTemplate.getSegmentTeams()));
+        }
+
         for (int i = 0; i < defaultSegments; i++) {
             addSegment();
         }
@@ -381,7 +386,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentsChanged();
 
         updateLabels();
-
     }
 
     public void removeSegment(int index) {

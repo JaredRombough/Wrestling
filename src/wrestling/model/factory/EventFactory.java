@@ -72,15 +72,17 @@ public class EventFactory {
         this.stableManager = stableManager;
     }
 
-    public void processEventView(EventView eventView, boolean processSegments,
-            PromotionController promotionController) {
+    public void processEventView(EventView eventView, boolean processSegments, PromotionController promotionController) {
+        Event event = eventView.getEvent();
+
+        event.getEventTemplate().getSegmentTemplates().clear();
 
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegmentViews()) {
                 segmentView.setSegment(processSegmentView(eventView, segmentView));
             }
         }
-        Event event = eventView.getEvent();
+
         List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
 
         setEventStats(event, segments);

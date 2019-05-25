@@ -216,7 +216,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         });
 
         angleOptions.setChallengeButtonAction(e -> {
-            eventScreenController.addSegment(getChallengeMatch(getSegmentView()));
+            eventScreenController.addSegment(ModelUtils.getSegmentFromTeams(getSegmentView().getTeams()));
         });
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
@@ -514,7 +514,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         if (SegmentType.ANGLE.equals(segmentType) && AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType())) {
             SegmentView segmentView = getSegmentView();
             if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
-                SegmentView challengeMatch = getChallengeMatch(segmentView);
+                SegmentView challengeMatch = ModelUtils.getSegmentFromTeams(segmentView.getTeams());
                 boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
                 angleOptions.setChallengeIsPresent(isPresent);
             } else {
@@ -562,19 +562,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
         return segmentView;
-    }
-
-    private SegmentView getChallengeMatch(SegmentView challengeSegment) {
-        SegmentView challengeMatch = new SegmentView(SegmentType.MATCH);
-        challengeSegment.getTeams().forEach(team -> {
-            if (TeamType.CHALLENGER.equals(team.getType()) || TeamType.CHALLENGED.equals(team.getType())) {
-                SegmentTeam segmentTeam = new SegmentTeam();
-                segmentTeam.setType(TeamType.CHALLENGER.equals(team.getType()) ? TeamType.WINNER : TeamType.LOSER);
-                segmentTeam.setWorkers(team.getWorkers());
-                challengeMatch.getTeams().add(segmentTeam);
-            }
-        });
-        return challengeMatch;
     }
 
     private List<SegmentTeam> getSegmentTeams() {

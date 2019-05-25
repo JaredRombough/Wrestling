@@ -10,9 +10,12 @@ import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
+import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.MatchRule;
+import wrestling.model.segmentEnum.SegmentType;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.view.event.controller.TeamPaneWrapper;
 import wrestling.view.utility.GameScreen;
 
@@ -170,6 +173,19 @@ public final class ModelUtils {
             }
         }
         return false;
+    }
+
+    public static SegmentView getSegmentFromTeams(List<SegmentTeam> segmentTeams) {
+        SegmentView challengeMatch = new SegmentView(SegmentType.MATCH);
+        segmentTeams.forEach(team -> {
+            if (TeamType.CHALLENGER.equals(team.getType()) || TeamType.CHALLENGED.equals(team.getType())) {
+                SegmentTeam segmentTeam = new SegmentTeam();
+                segmentTeam.setType(TeamType.CHALLENGER.equals(team.getType()) ? TeamType.WINNER : TeamType.LOSER);
+                segmentTeam.setWorkers(team.getWorkers());
+                challengeMatch.getTeams().add(segmentTeam);
+            }
+        });
+        return challengeMatch;
     }
 
 }
