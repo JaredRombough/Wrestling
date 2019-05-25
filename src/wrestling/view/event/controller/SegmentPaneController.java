@@ -215,7 +215,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             angleOptionChanged(t1);
         });
 
-        angleOptions.getChallengeButton().setOnAction(e -> {
+        angleOptions.setChallengeButtonAction(e -> {
             eventScreenController.addSegment(getChallengeMatch(getSegmentView()));
         });
 
@@ -516,14 +516,12 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
                 SegmentView challengeMatch = getChallengeMatch(segmentView);
                 boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
-                angleOptions.getChallengeButton().setDisable(isPresent);
+                angleOptions.setChallengeIsPresent(isPresent);
             } else {
-                angleOptions.getChallengeButton().setDisable(true);
+                angleOptions.setChallengeIsPresent(true);
             }
-            angleOptions.getChallengeButton().setVisible(true);
-        } else {
-            angleOptions.getChallengeButton().setVisible(false);
         }
+        angleOptions.updateLabels();
     }
 
     public void swapTeams(int indexA, int indexB) {

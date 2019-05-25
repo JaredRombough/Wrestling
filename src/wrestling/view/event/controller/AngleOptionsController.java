@@ -8,6 +8,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -37,6 +39,7 @@ public class AngleOptionsController extends ControllerBase implements Initializa
     private Button challengeButton;
 
     private List<Object> challengeOptions;
+    private boolean challengeIsPresent;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -142,11 +145,22 @@ public class AngleOptionsController extends ControllerBase implements Initializa
         return combo1;
     }
 
+    public void setChallengeButtonAction(EventHandler<ActionEvent> action) {
+        challengeButton.setOnAction(action);
+    }
+
+    @Override
+    public void updateLabels() {
+        AngleParams angleParams = getAngleParams();
+        challengeButton.setDisable(challengeIsPresent || !angleParams.getShowType().equals(ShowType.TONIGHT));
+        challengeButton.setVisible(AngleType.CHALLENGE.equals(angleParams.getAngleType()));
+    }
+
     /**
-     * @return the challengeButton
+     * @param challengeIsPresent the challengeIsPresent to set
      */
-    public Button getChallengeButton() {
-        return challengeButton;
+    public void setChallengeIsPresent(boolean challengeIsPresent) {
+        this.challengeIsPresent = challengeIsPresent;
     }
 
 }
