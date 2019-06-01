@@ -29,6 +29,7 @@ import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import static wrestling.model.utility.ModelUtils.slashShortNames;
+import wrestling.model.utility.SegmentStringUtils;
 import wrestling.view.utility.ViewUtils;
 
 public class SegmentManager implements Serializable {
@@ -166,76 +167,13 @@ public class SegmentManager implements Serializable {
 
     public String getSegmentTitle(SegmentView segmentView) {
         if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-            return getMatchTitle(segmentView);
+            return SegmentStringUtils.getMatchTitle(segmentView);
         }
         return getAngleTitle(segmentView);
     }
 
     private String getAngleTitle(SegmentView segmentView) {
         return ((AngleParams) segmentView.getSegment().getSegmentParams()).getAngleType().description();
-    }
-
-    public String getMatchTitle(SegmentView segmentView) {
-        List<SegmentTeam> teams = segmentView.getTeams();
-        MatchRule rules = ((Match) segmentView.getSegment()).getSegmentParams().getMatchRule();
-
-        String string = "";
-
-        if (segmentView.getWorkers().isEmpty()) {
-            return "Empty Match";
-        }
-
-        if (!segmentView.getTitleViews().isEmpty()) {
-            string += ModelUtils.andItemsLongName(segmentView.getTitleViews());
-            string += " ";
-        }
-
-        if (isHandicapMatch(segmentView)) {
-            string += "Handicap";
-
-        } else if (rules.equals(MatchRule.DEFAULT) && string.isEmpty()) {
-
-            int teamsSize = segmentView.getMatchParticipantTeams().size();
-
-            switch (teamsSize) {
-                case 2:
-                    int teamSize = teams.get(0).getWorkers().size();
-                    switch (teamSize) {
-                        case 1:
-                            string += "Singles";
-                            break;
-                        case 2:
-                            string += "Tag Team";
-                            break;
-                        case 3:
-                            string += "Six Man Tag Team";
-                            break;
-                        case 4:
-                            string += "Eight Man Tag Team";
-                            break;
-                        case 5:
-                            string += "Ten Man Tag Team";
-                            break;
-                        default:
-                            string += String.format("%d Man Tag Team", teamSize * 2);
-                            break;
-                    }
-                    break;
-                default:
-                    string += teamsSize + "-Way";
-                    break;
-            }
-        } else if (!rules.equals(MatchRule.DEFAULT)) {
-            string += rules.description();
-        }
-
-        if (string.lastIndexOf(' ') != string.length() - 1) {
-            string += " ";
-        }
-
-        string += "Match";
-
-        return string;
     }
 
     public String getIsolatedSegmentString(SegmentView segmentView) {
@@ -409,6 +347,44 @@ public class SegmentManager implements Serializable {
         return String.format("");
     }
 
+    public String getVsMatchString(SegmentView segmentView) {
+        List<SegmentTeam> teams = segmentView.getTeams();
+        int teamsSize = segmentView.getMatchParticipantTeams().size();
+        String matchString = "";
+
+        if (teamsSize > 1) {
+
+            for (int t = 0; t < teamsSize; t++) {
+                List<WorkerView> team = teams.get(t).getWorkers();
+
+                matchString += generateTeamName(team, false, teams.get(t).getType());
+
+                if (!teams.get(t).getEntourage().isEmpty()) {
+                    matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
+                }
+
+                if (t == 0 && !matchString.isEmpty()) {
+                    matchString += " vs ";
+
+                } else if (t < teamsSize - 1 && !matchString.isEmpty()) {
+                    matchString += ", ";
+                }
+
+            }
+        } else {
+            //probable placeholder
+            matchString += !teams.isEmpty() ? teams.get(0) : "";
+        }
+
+        if (matchString.isEmpty()) {
+
+            matchString += "Empty Match";
+        }
+
+        return matchString;
+
+    }
+
     public String getMatchString(SegmentView segmentView, boolean verbose) {
         List<SegmentTeam> teams = segmentView.getTeams();
         MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
@@ -465,19 +441,4 @@ public class SegmentManager implements Serializable {
         return matchString;
 
     }
-
-    private boolean isHandicapMatch(SegmentView segmentView) {
-        boolean handicap = false;
-
-        int size = segmentView.getMatchParticipantTeams().get(0).getWorkers().size();
-        for (SegmentTeam team : segmentView.getMatchParticipantTeams()) {
-            if (team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
-                handicap = true;
-                break;
-
-            }
-        }
-        return handicap;
-    }
-
 }

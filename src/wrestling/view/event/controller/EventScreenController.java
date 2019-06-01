@@ -48,11 +48,14 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
+import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
+import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
+import wrestling.model.utility.SegmentUtils;
 import wrestling.model.utility.StaffUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.GameScreen;
@@ -198,6 +201,13 @@ public class EventScreenController extends ControllerBase implements Initializab
             if (segmentView.getSegmentType().equals(SegmentType.MATCH) && segmentView.getReferee() == null) {
                 warnings.append(String.format("Segment #%d has no referee.\n", i + 1));
             }
+            if (SegmentUtils.isChallengeForTonight(segmentView)) {
+                SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentView.getAngleParams().getChallengeSegment());
+                if (!challengeForTonightIsPresent(challengeMatch, i)) {
+                    warnings.append(String.format("%s\nA challenge for this match was made tonight, but it is not present.\n",
+                            gameController.getSegmentManager().getVsMatchString(challengeMatch)));
+                }
+            }
             for (TitleView titleView : segmentView.getTitleViews()) {
                 if (!titleView.getChampions().isEmpty()
                         && !ModelUtils.teamIsPresent(titleView.getChampions(),
@@ -207,6 +217,13 @@ public class EventScreenController extends ControllerBase implements Initializab
                             ModelUtils.slashNames(titleView.getChampions())));
                 }
 
+            }
+        }
+        for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
+            SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
+            if (!challengeForTonightIsPresent(challengeMatch, 0)) {
+                warnings.append(String.format("%s\nA challenge for this match was made at a previous event, but it is not present.\n",
+                        gameController.getSegmentManager().getVsMatchString(challengeMatch)));
             }
         }
         return warnings.toString();
@@ -545,15 +562,18 @@ public class EventScreenController extends ControllerBase implements Initializab
         return isBooked;
     }
 
-    public boolean challengeForTonightIsPresent(SegmentView segmentView, SegmentPaneController sourceController) {
-        int startIndex = segmentPaneControllers.indexOf(sourceController);
-        for (int i = startIndex; i < segmentPaneControllers.size(); i++) {
+    public boolean challengeForTonightIsPresent(SegmentView segmentView, int challengeSegmentIndex) {
+        for (int i = challengeSegmentIndex; i < segmentPaneControllers.size(); i++) {
             if (SegmentType.MATCH.equals(segmentPaneControllers.get(i).getSegmentType())
                     && segmentsMatch(segmentPaneControllers.get(i).getSegmentView(), segmentView)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean challengeForTonightIsPresent(SegmentView segmentView, SegmentPaneController sourceController) {
+        return challengeForTonightIsPresent(segmentView, segmentPaneControllers.indexOf(sourceController));
     }
 
     private boolean segmentsMatch(SegmentView segment1, SegmentView segment2) {

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import wrestling.model.SegmentItem;
+import wrestling.model.SegmentTemplate;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
@@ -173,6 +174,10 @@ public final class ModelUtils {
             }
         }
         return false;
+    }
+
+    public static SegmentView getSegmentFromTemplate(SegmentTemplate template) {
+        return getSegmentFromTeams(template.getSegmentTeams());
     }
 
     public static SegmentView getSegmentFromTeams(List<SegmentTeam> segmentTeams) {

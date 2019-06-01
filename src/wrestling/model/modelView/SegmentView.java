@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Angle;
+import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.Segment;
@@ -260,6 +261,13 @@ public class SegmentView implements Serializable {
      */
     public void setNewStable(StableView newStable) {
         this.newStable = newStable;
+    }
+
+    /**
+     * @return the angleParams
+     */
+    public AngleParams getAngleParams() {
+        return (AngleParams) segment.getSegmentParams();
     }
 
 }
