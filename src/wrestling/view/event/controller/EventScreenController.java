@@ -241,14 +241,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private List<SegmentView> removeEmpty(List<SegmentView> list) {
-        List<SegmentView> returnList = new ArrayList<>();
-        for (SegmentView segmentView : list) {
-            if (!segmentView.getWorkers().isEmpty()) {
-                returnList.add(segmentView);
-            }
-
-        }
-        return returnList;
+        return list.stream().filter(segmentView -> !segmentView.getWorkers().isEmpty()).collect(Collectors.toList());
     }
 
     private void resetSegments() {

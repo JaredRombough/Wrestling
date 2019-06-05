@@ -10,6 +10,7 @@ public class SegmentTemplate {
     private EventTemplate eventTemplate;
     private final List<TitleView> titleView = new ArrayList();
     private final List<SegmentTeam> segmentTeams = new ArrayList();
+    private Event sourceEvent;
 
     /**
      * @return the eventTemplate
@@ -37,6 +38,20 @@ public class SegmentTemplate {
      */
     public List<SegmentTeam> getSegmentTeams() {
         return segmentTeams;
+    }
+
+    /**
+     * @return the sourceEvent
+     */
+    public Event getSourceEvent() {
+        return sourceEvent;
+    }
+
+    /**
+     * @param sourceEvent the sourceEvent to set
+     */
+    public void setSourceEvent(Event sourceEvent) {
+        this.sourceEvent = sourceEvent;
     }
 
 }

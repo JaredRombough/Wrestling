@@ -11,6 +11,7 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
+import wrestling.model.SegmentTemplate;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -75,13 +76,17 @@ public class EventFactory {
     public void processEventView(EventView eventView, boolean processSegments, PromotionController promotionController) {
         Event event = eventView.getEvent();
 
-        event.getEventTemplate().getSegmentTemplates().clear();
-
         if (processSegments) {
             for (SegmentView segmentView : eventView.getSegmentViews()) {
                 segmentView.setSegment(processSegmentView(eventView, segmentView));
             }
         }
+
+        List<SegmentTemplate> templatesForEvent = event.getEventTemplate().getSegmentTemplates().stream()
+                .filter(segmentTemplate -> segmentTemplate.getSourceEvent().equals(eventView.getEvent()))
+                .collect(Collectors.toList());
+        eventView.getEvent().getEventTemplate().getSegmentTemplates().clear();
+        eventView.getEvent().getEventTemplate().getSegmentTemplates().addAll(templatesForEvent);
 
         List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
 

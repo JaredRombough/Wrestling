@@ -557,6 +557,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             if (angleParams.getAngleType().equals(AngleType.CHALLENGE)) {
                 angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeams());
                 angleParams.getChallengeSegment().getTitleViews().addAll(getTitles());
+                angleParams.getChallengeSegment().setSourceEvent(eventScreenController.getCurrentEvent());
             }
             segmentView.getSegment().setSegmentParams(angleParams);
         }
