@@ -40,6 +40,7 @@ public class AngleOptionsController extends ControllerBase implements Initializa
 
     private List<Object> challengeOptions;
     private boolean challengeIsPresent;
+    private boolean challengeIsComplete;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -152,7 +153,7 @@ public class AngleOptionsController extends ControllerBase implements Initializa
     @Override
     public void updateLabels() {
         AngleParams angleParams = getAngleParams();
-        challengeButton.setDisable(challengeIsPresent || !angleParams.getShowType().equals(ShowType.TONIGHT));
+        challengeButton.setDisable(challengeIsPresent || !challengeIsComplete || !angleParams.getShowType().equals(ShowType.TONIGHT));
         challengeButton.setVisible(AngleType.CHALLENGE.equals(angleParams.getAngleType()));
     }
 
@@ -161,6 +162,13 @@ public class AngleOptionsController extends ControllerBase implements Initializa
      */
     public void setChallengeIsPresent(boolean challengeIsPresent) {
         this.challengeIsPresent = challengeIsPresent;
+    }
+
+    /**
+     * @param challengeIsComplete the challengeIsComplete to set
+     */
+    public void setChallengeIsComplete(boolean challengeIsComplete) {
+        this.challengeIsComplete = challengeIsComplete;
     }
 
 }

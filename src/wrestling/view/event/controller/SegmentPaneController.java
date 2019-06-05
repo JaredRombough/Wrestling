@@ -216,7 +216,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         });
 
         angleOptions.setChallengeButtonAction(e -> {
-            eventScreenController.addSegment(ModelUtils.getSegmentFromTeams(getSegmentView().getTeams()));
+            eventScreenController.addSegment(ModelUtils.getSegmentFromTeams(getSegmentTeamsForChallenge()));
         });
 
         for (int i = 0; i < DEFAULTTEAMS; i++) {
@@ -514,9 +514,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         if (SegmentType.ANGLE.equals(segmentType) && AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType())) {
             SegmentView segmentView = getSegmentView();
             if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
-                SegmentView challengeMatch = ModelUtils.getSegmentFromTeams(segmentView.getTeams());
+                SegmentView challengeMatch = ModelUtils.getSegmentFromTeams(getSegmentTeamsForChallenge());
                 boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
                 angleOptions.setChallengeIsPresent(isPresent);
+                angleOptions.setChallengeIsComplete(challengeMatch.getMatchParticipantTeams().size() > 1);
             } else {
                 angleOptions.setChallengeIsPresent(true);
             }
@@ -555,7 +556,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             AngleParams angleParams = angleOptions.getAngleParams();
 
             if (angleParams.getAngleType().equals(AngleType.CHALLENGE)) {
-                angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeams());
+                angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeamsForChallenge());
                 angleParams.getChallengeSegment().getTitleViews().addAll(getTitles());
                 angleParams.getChallengeSegment().setSourceEvent(eventScreenController.getCurrentEvent());
             }
@@ -563,6 +564,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
         return segmentView;
+    }
+
+    private List<SegmentTeam> getSegmentTeamsForChallenge() {
+        return getSegmentTeams().stream().filter(segmentTeam -> segmentTeam.getResponse().equals(ResponseType.YES)).collect(Collectors.toList());
     }
 
     private List<SegmentTeam> getSegmentTeams() {
