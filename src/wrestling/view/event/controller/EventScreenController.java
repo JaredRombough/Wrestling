@@ -204,7 +204,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             if (SegmentUtils.isChallengeForTonight(segmentView)) {
                 SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentView.getAngleParams().getChallengeSegment());
                 if (!challengeForTonightIsPresent(challengeMatch, i)) {
-                    warnings.append(String.format("%s\nA challenge for this match was made tonight, but it is not present.\n",
+                    warnings.append(String.format("%s\nA challenge for this match was made and accepted tonight, but it is not present.\n",
                             gameController.getSegmentManager().getVsMatchString(challengeMatch)));
                 }
             }
@@ -222,8 +222,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
             SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
             if (!challengeForTonightIsPresent(challengeMatch, 0)) {
-                warnings.append(String.format("%s\nA challenge for this match was made at a previous event, but it is not present.\n",
-                        gameController.getSegmentManager().getVsMatchString(challengeMatch)));
+                warnings.append(String.format("%s\nA challenge for this match was made and accepted on %s at %s, but it is not present.\n",
+                        gameController.getSegmentManager().getVsMatchString(challengeMatch),
+                        segmentTemplate.getSourceEvent().getDate().toString(),
+                        segmentTemplate.getSourceEvent().getName()));
             }
         }
         return warnings.toString();

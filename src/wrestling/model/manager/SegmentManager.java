@@ -232,78 +232,13 @@ public class SegmentManager implements Serializable {
         }
 
         if (angleType.equals(AngleType.OFFER)) {
-            string += appendOfferString(segmentView);
+            string += SegmentStringUtils.getOfferString(segmentView);
+        } else if (angleType.equals(AngleType.CHALLENGE)) {
+            string += SegmentStringUtils.getChallengeString(segmentView);
         }
 
         return string;
 
-    }
-
-    private String appendOfferString(SegmentView segmentView) {
-        String string = "";
-        switch (segmentView.getSegment().getSegmentParams().getJoinTeamType()) {
-            case TAG_TEAM:
-                string += " to form a new tag team";
-                break;
-            case NEW_STABLE:
-                string += " to form a new stable";
-                break;
-            default:
-                StableView stable = segmentView.getSegment().getSegmentParams().getJoinStable();
-                if (stable != null) {
-                    if (string.contains(stable.getName())) {
-                        string += " to join them";
-                    } else {
-                        string += " to join " + segmentView.getSegment().getSegmentParams().getJoinStable().getName();
-                    }
-                }
-        }
-
-        List<SegmentTeam> offerees = segmentView.getTeams(TeamType.OFFEREE);
-        List<WorkerView> yes = new ArrayList<>();
-        List<WorkerView> no = new ArrayList<>();
-        List<WorkerView> push = new ArrayList<>();
-
-        offerees.forEach(offeree -> {
-            if (null != offeree.getResponse()) {
-                switch (offeree.getResponse()) {
-                    case YES:
-                        yes.addAll(offeree.getWorkers());
-                        break;
-                    case NO:
-                        no.addAll(offeree.getWorkers());
-                        break;
-                    case PUSH:
-                        push.addAll(offeree.getWorkers());
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-        if (!yes.isEmpty()) {
-            if (no.isEmpty() && push.isEmpty()) {
-                string += ". The offer is accepted";
-            } else {
-                string += String.format(". %s accept%s", ModelUtils.andItemsLongName(yes), yes.size() > 1 ? "" : "s");
-            }
-        }
-        if (!no.isEmpty()) {
-            if (yes.isEmpty() && push.isEmpty()) {
-                string += ". The offer is rejected";
-            } else {
-                string += String.format(". %s decline%s", ModelUtils.andItemsLongName(no), no.size() > 1 ? "" : "s");
-            }
-        }
-        if (!push.isEmpty()) {
-            if (yes.isEmpty() && no.isEmpty()) {
-                string += ". The offer is considered";
-            } else {
-                string += String.format(". %s consider%s it", ModelUtils.andItemsLongName(push), push.size() > 1 ? "" : "s");
-            }
-        }
-        return string;
     }
 
     public String generateTeamName(List<? extends SegmentItem> segmentItems, TeamType teamType) {
