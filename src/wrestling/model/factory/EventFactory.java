@@ -82,11 +82,7 @@ public class EventFactory {
             }
         }
 
-        List<SegmentTemplate> templatesForEvent = event.getEventTemplate().getSegmentTemplates().stream()
-                .filter(segmentTemplate -> segmentTemplate.getSourceEvent().equals(eventView.getEvent()))
-                .collect(Collectors.toList());
-        eventView.getEvent().getEventTemplate().getSegmentTemplates().clear();
-        eventView.getEvent().getEventTemplate().getSegmentTemplates().addAll(templatesForEvent);
+        clearOldSegmentTemplates(event);
 
         List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
 
@@ -130,6 +126,14 @@ public class EventFactory {
             eventManager.addEventTemplate(template);
 
         }
+    }
+
+    private void clearOldSegmentTemplates(Event event) {
+        List<SegmentTemplate> templatesForEvent = event.getEventTemplate().getSegmentTemplates().stream()
+                .filter(segmentTemplate -> segmentTemplate.getSourceEvent().equals(event))
+                .collect(Collectors.toList());
+        event.getEventTemplate().getSegmentTemplates().clear();
+        event.getEventTemplate().getSegmentTemplates().addAll(templatesForEvent);
     }
 
     private void setEventStats(Event event, List<Segment> segments) {
