@@ -24,7 +24,7 @@ import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
 import wrestling.model.factory.PersonFactory;
 import wrestling.model.modelView.PromotionView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
@@ -377,7 +377,7 @@ public class Import {
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
 
             if (counter == lineLength) {
-                StableView stable = new StableView();
+                WorkerGroup stable = new WorkerGroup();
                 stable.setName(currentLine.substring(1, 24).trim());
                 stable.setOwner(getPromotionFromKey(hexStringToInt(currentHexLine.get(26))));
 
@@ -466,7 +466,7 @@ public class Import {
                 }
 
                 for (PromotionView p : allPromotions) {
-                    checkForContract(p, staff, currentHexLine);
+                    checkForStaffContract(p, staff, currentHexLine);
                 }
 
                 staffViews.add(staff);
@@ -561,7 +561,7 @@ public class Import {
                 //look for extra promotions
                 //sign contracts for workers that match with promotion keys
                 for (PromotionView p : allPromotions) {
-                    checkForContract(p, worker, currentHexLine);
+                    checkForWorkerContract(p, worker, currentHexLine, currentLine);
                 }
 
                 allWorkers.add(worker);
@@ -584,16 +584,49 @@ public class Import {
         }
     }
 
-    private void checkForContract(PromotionView p, WorkerView w, List<String> currentHexLine) {
+    private void checkForWorkerContract(PromotionView promotion, WorkerView worker, List<String> currentHexLine, String currentLine) {
         boolean exclusive = hexStringToLetter(currentHexLine.get(71)).equals("W");
-        if (p.indexNumber() == hexStringToInt(currentHexLine.get(65))
-                || p.indexNumber() == hexStringToInt(currentHexLine.get(67))
-                || p.indexNumber() == hexStringToInt(currentHexLine.get(69))) {
-            getGameController().getContractFactory().createContract(w, p, getGameController().getDateManager().today(), exclusive);
+
+        int a = hexStringToInt(currentHexLine.get(65));
+        int b = hexStringToInt(currentHexLine.get(65));
+        int c = hexStringToInt(currentHexLine.get(65));
+        String groupName = "";
+
+        if (promotion.indexNumber() == a) {
+            groupName = currentLine.substring(91, 100);
+        } else if (promotion.indexNumber() == b) {
+            groupName = currentLine.substring(101, 110);
+        } else if (promotion.indexNumber() == c) {
+            groupName = currentLine.substring(111, 120);
+        } else {
+            return;
+        }
+        checkForRosterGroup(promotion, worker, groupName);
+        getGameController().getContractFactory().createContract(worker, promotion, getGameController().getDateManager().today(), exclusive);
+
+    }
+
+    private void checkForRosterGroup(PromotionView promotion, WorkerView worker, String groupName) {
+        final String trimmedName = groupName.trim();
+        if (trimmedName.equalsIgnoreCase("NONE")) {
+            return;
+        }
+        WorkerGroup existingGroup = gameController.getStableManager().getRosterSplits().stream()
+                .filter(group -> group.getOwner().equals(promotion) && group.getName().equals(trimmedName))
+                .findFirst().orElse(null);
+
+        if (existingGroup != null) {
+            existingGroup.getWorkers().add(worker);
+        } else {
+            WorkerGroup newGroup = new WorkerGroup();
+            newGroup.setName(trimmedName);
+            newGroup.setOwner(promotion);
+            newGroup.getWorkers().add(worker);
+            gameController.getStableManager().addRosterSplit(newGroup);
         }
     }
 
-    private void checkForContract(PromotionView p, StaffView s, List<String> currentHexLine) {
+    private void checkForStaffContract(PromotionView p, StaffView s, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
             getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today());
         }

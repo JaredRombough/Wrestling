@@ -2,25 +2,38 @@ package wrestling.model.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 
 public class StableManager {
 
-    private final List<StableView> stables;
+    private final List<WorkerGroup> stables;
+    private final List<WorkerGroup> rosterSplits;
 
     public StableManager() {
         stables = new ArrayList<>();
+        rosterSplits = new ArrayList<>();
     }
 
     /**
      * @return the stables
      */
-    public List<StableView> getStables() {
+    public List<WorkerGroup> getStables() {
         return stables;
     }
 
-    public void addStable(StableView stable) {
+    public void addStable(WorkerGroup stable) {
         stables.add(stable);
+    }
+
+    /**
+     * @return the rosterGroups
+     */
+    public List<WorkerGroup> getRosterSplits() {
+        return rosterSplits;
+    }
+
+    public void addRosterSplit(WorkerGroup rosterSplit) {
+        rosterSplits.add(rosterSplit);
     }
 
 }

@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iNewsItem;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
@@ -61,7 +61,7 @@ public class SortControl extends ControllerBase implements Initializable {
     private StaffType staffTypeFilter;
     private NewsFilter newsFilter;
 
-    private StableView stableFilter;
+    private WorkerGroup stableFilter;
     private ComboBox stablesCombobox;
 
     private boolean bookingBrowseMode;
@@ -126,8 +126,8 @@ public class SortControl extends ControllerBase implements Initializable {
             staffTypeFilter = (StaffType) obj;
         } else if (obj instanceof NewsFilter) {
             newsFilter = (NewsFilter) obj;
-        } else if (obj instanceof StableView) {
-            stableFilter = (StableView) obj;
+        } else if (obj instanceof WorkerGroup) {
+            stableFilter = (WorkerGroup) obj;
         } else if (obj instanceof String) {
             stableFilter = null;
         }
@@ -369,7 +369,7 @@ public class SortControl extends ControllerBase implements Initializable {
     /**
      * @param stables the stables to set
      */
-    public void setStables(List<StableView> stables) {
+    public void setStables(List<WorkerGroup> stables) {
         if (stables.isEmpty()) {
             stablesCombobox.setVisible(false);
         } else {

@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.EventTemplate;
 import wrestling.model.SegmentItem;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -56,8 +56,8 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeamView) {
                     TagTeamView tagTeamView = (TagTeamView) object;
                     tagTeamView.getTagTeam().setName(ViewUtils.editTextDialog(tagTeamView.getTagTeam().getName()));
-                } else if (segmentItem instanceof StableView) {
-                    StableView stable = (StableView) object;
+                } else if (segmentItem instanceof WorkerGroup) {
+                    WorkerGroup stable = (WorkerGroup) object;
                     stable.setName(ViewUtils.editTextDialog(stable.getName()));
                 }
                 updateLabels();
@@ -79,10 +79,10 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeamView || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
                     optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
-                } else if (segmentItem instanceof StableView || BrowseMode.STABLES.equals(browseMode)) {
+                } else if (segmentItem instanceof WorkerGroup || BrowseMode.STABLES.equals(browseMode)) {
                     String stableName = ViewUtils.editTextDialog("", "Stable name:");
                     if (StringUtils.isNotBlank(stableName)) {
-                        StableView stable = new StableView(stableName, playerPromotion());
+                        WorkerGroup stable = new WorkerGroup(stableName, playerPromotion());
                         gameController.getStableManager().addStable(stable);
                         mainApp.show(ScreenCode.BROWSER, stable);
                     }

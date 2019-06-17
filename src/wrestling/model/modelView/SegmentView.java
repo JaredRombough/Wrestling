@@ -24,7 +24,7 @@ public class SegmentView implements Serializable {
     private EventView eventView;
     private StaffView referee;
     private List<? extends SegmentItem> broadcastTeam;
-    private StableView newStable;
+    private WorkerGroup newStable;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -252,14 +252,14 @@ public class SegmentView implements Serializable {
     /**
      * @return the newStable
      */
-    public StableView getNewStable() {
+    public WorkerGroup getNewStable() {
         return newStable;
     }
 
     /**
      * @param newStable the newStable to set
      */
-    public void setNewStable(StableView newStable) {
+    public void setNewStable(WorkerGroup newStable) {
         this.newStable = newStable;
     }
 

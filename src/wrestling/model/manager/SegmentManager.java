@@ -17,7 +17,7 @@ import wrestling.model.Title;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
@@ -261,7 +261,7 @@ public class SegmentManager implements Serializable {
                     return tagTeam;
                 }
             } else if (segmentItems.size() > 1 && !TeamType.OFFEREE.equals(teamType) && !TeamType.OFFERER.equals(teamType)) {
-                for (StableView stable : stableManager.getStables()) {
+                for (WorkerGroup stable : stableManager.getStables()) {
                     if (stable.getWorkers().containsAll(segmentItems)) {
                         return stable.getName();
                     }

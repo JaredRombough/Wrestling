@@ -13,7 +13,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
@@ -40,7 +40,7 @@ public class StableController extends ControllerBase {
 
     private EditLabel editLabel;
 
-    private StableView stable;
+    private WorkerGroup stable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -96,7 +96,7 @@ public class StableController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        stable = (StableView) object;
+        stable = (WorkerGroup) object;
         editLabel.setCurrent(object);
         updateLabels();
     }

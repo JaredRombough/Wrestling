@@ -3,7 +3,7 @@ package wrestling.model;
 import java.io.Serializable;
 import wrestling.model.interfaces.SegmentParams;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.PresenceType;
@@ -17,7 +17,7 @@ public class AngleParams implements Serializable, SegmentParams {
     private PresenceType presenceType;
     private PromoType promoType;
     private ShowType showType;
-    private StableView joinStable;
+    private WorkerGroup joinStable;
     private SegmentTemplate challengeSegment;
 
     public AngleParams() {
@@ -104,14 +104,14 @@ public class AngleParams implements Serializable, SegmentParams {
      * @return the joinStable
      */
     @Override
-    public StableView getJoinStable() {
+    public WorkerGroup getJoinStable() {
         return joinStable;
     }
 
     /**
      * @param joinStable the joinStable to set
      */
-    public void setJoinStable(StableView joinStable) {
+    public void setJoinStable(WorkerGroup joinStable) {
         this.joinStable = joinStable;
     }
 

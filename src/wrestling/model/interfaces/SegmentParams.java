@@ -1,6 +1,6 @@
 package wrestling.model.interfaces;
 
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.MatchRule;
 
@@ -10,7 +10,7 @@ public interface SegmentParams {
         return MatchRule.DEFAULT;
     }
 
-    default StableView getJoinStable() {
+    default WorkerGroup getJoinStable() {
         return null;
     }
 

@@ -29,7 +29,7 @@ import wrestling.model.SegmentTemplate;
 import wrestling.model.interfaces.iSegmentLength;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
@@ -672,7 +672,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             offers.add(JoinTeamType.NEW_STABLE);
 
             if (!offerer.getSegmentItems().isEmpty()) {
-                for (StableView stable : gameController.getStableManager().getStables()) {
+                for (WorkerGroup stable : gameController.getStableManager().getStables()) {
                     if (stable.getWorkers().containsAll(offerer.getSegmentItems())
                             && !offerees.stream()
                             .filter(offeree -> !offeree.getSegmentItems().isEmpty() && stable.getWorkers().containsAll(offeree.getSegmentItems()))

@@ -11,7 +11,7 @@ import wrestling.model.AngleParams;
 import wrestling.model.Match;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.MatchRule;
 import wrestling.model.segmentEnum.TeamType;
@@ -91,7 +91,7 @@ public final class SegmentStringUtils {
                 string += " to form a new stable";
                 break;
             default:
-                StableView stable = segmentView.getSegment().getSegmentParams().getJoinStable();
+                WorkerGroup stable = segmentView.getSegment().getSegmentParams().getJoinStable();
                 if (stable != null) {
                     if (string.contains(stable.getName())) {
                         string += " to join them";

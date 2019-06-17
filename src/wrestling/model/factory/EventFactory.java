@@ -27,7 +27,7 @@ import wrestling.model.modelView.EventView;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.SegmentTeam;
 import wrestling.model.modelView.SegmentView;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
@@ -202,7 +202,7 @@ public class EventFactory {
             });
 
             if (newMembers.size() > 1) {
-                StableView stable = new StableView(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
+                WorkerGroup stable = new WorkerGroup(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
                 stable.setWorkers(newMembers);
                 stableManager.addStable(stable);
                 segmentView.setNewStable(stable);

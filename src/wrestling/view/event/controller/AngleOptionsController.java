@@ -18,7 +18,7 @@ import javafx.scene.control.Label;
 import wrestling.model.AngleParams;
 import wrestling.model.EventTemplate;
 import wrestling.model.SegmentTemplate;
-import wrestling.model.modelView.StableView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.ShowType;
@@ -70,9 +70,9 @@ public class AngleOptionsController extends ControllerBase implements Initializa
         if (AngleType.OFFER.equals(angleParams.getAngleType())) {
             if (combo1.getValue() instanceof JoinTeamType) {
                 angleParams.setJoinTeamType((JoinTeamType) combo1.getValue());
-            } else if (combo1.getValue() instanceof StableView) {
+            } else if (combo1.getValue() instanceof WorkerGroup) {
                 angleParams.setJoinTeamType(JoinTeamType.STABLE);
-                angleParams.setJoinStable((StableView) combo1.getValue());
+                angleParams.setJoinStable((WorkerGroup) combo1.getValue());
             }
         } else if (AngleType.CHALLENGE.equals((angleParams.getAngleType()))) {
             SegmentTemplate challengeSegment = new SegmentTemplate();

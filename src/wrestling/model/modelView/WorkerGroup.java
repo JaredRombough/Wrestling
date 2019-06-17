@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.SegmentItem;
 
-public class StableView implements SegmentItem {
+public class WorkerGroup implements SegmentItem {
 
     private String name;
     private List<WorkerView> workers = new ArrayList<>();
     private PromotionView owner;
 
-    public StableView() {
+    public WorkerGroup() {
     }
 
-    public StableView(String name, PromotionView owner) {
+    public WorkerGroup(String name, PromotionView owner) {
         this.name = name;
         this.owner = owner;
     }
