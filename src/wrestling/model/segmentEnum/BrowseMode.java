@@ -246,6 +246,34 @@ public enum BrowseMode implements iBrowseMode {
             return "Stables";
         }
     },
+    ROSTER_SPLIT {
+        @Override
+        public ObservableList comparators() {
+            return FXCollections.observableArrayList(
+                    new NameComparator());
+        }
+
+        @Override
+        public ScreenCode subScreenCode() {
+            return ScreenCode.STABLE;
+        }
+
+        @Override
+        public List listToBrowse(GameController gameController, PromotionView promotion) {
+            return gameController.getStableManager().getRosterSplits()
+                    .stream().filter((split) -> split.getOwner().equals(promotion)).collect(Collectors.toList());
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList();
+        }
+
+        @Override
+        public String toString() {
+            return "Roster splits";
+        }
+    },
     EVENTS {
         @Override
         public ObservableList comparators() {
