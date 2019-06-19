@@ -181,6 +181,10 @@ public class BrowserController extends ControllerBase implements Initializable {
         displaySubScreen = ViewUtils.loadScreenFromResource(
                 currentBrowseMode.subScreenCode(), mainApp, gameController, mainDisplayPane);
         
+        if (displaySubScreen.controller instanceof StableController) {
+            ((StableController) displaySubScreen.controller).setBrowseMode(currentBrowseMode);
+        }
+        
         sortControl.controller.setCurrent(currentBrowseMode);
         
         updateLabels();

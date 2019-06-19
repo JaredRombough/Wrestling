@@ -79,12 +79,17 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeamView || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
                     optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
-                } else if (segmentItem instanceof WorkerGroup || BrowseMode.STABLES.equals(browseMode)) {
-                    String stableName = ViewUtils.editTextDialog("", "Stable name:");
-                    if (StringUtils.isNotBlank(stableName)) {
-                        WorkerGroup stable = new WorkerGroup(stableName, playerPromotion());
-                        gameController.getStableManager().addStable(stable);
-                        mainApp.show(ScreenCode.BROWSER, stable);
+                } else if (BrowseMode.STABLES.equals(browseMode) || BrowseMode.ROSTER_SPLIT.equals(browseMode)) {
+                    boolean stableMode = BrowseMode.STABLES.equals(browseMode);
+                    String groupName = ViewUtils.editTextDialog("", String.format("%s name:", stableMode ? "Stable" : "Roster split"));
+                    if (StringUtils.isNotBlank(groupName)) {
+                        WorkerGroup workerGroup = new WorkerGroup(groupName, playerPromotion());
+                        if (stableMode) {
+                            gameController.getStableManager().addStable(workerGroup);
+                        } else {
+                            gameController.getStableManager().addRosterSplit(workerGroup);
+                        }
+                        mainApp.show(ScreenCode.BROWSER, workerGroup);
                     }
                 }
 

@@ -40,7 +40,7 @@ public class StableController extends ControllerBase {
 
     private EditLabel editLabel;
 
-    private WorkerGroup stable;
+    private WorkerGroup workerGroup;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,39 +56,42 @@ public class StableController extends ControllerBase {
                     GroupMemberController cotroller = (GroupMemberController) stableMemberScreen.controller;
                     cotroller.setCurrent(worker);
                     cotroller.getxButton().setOnAction(a -> {
-                        String header = "Removing worker from stable";
-                        String content = String.format("Really remove %s from %s?", worker.getName(), stable.getName());
+                        String header = String.format("Removing worker from %s", workerGroup.getName());
+                        String content = String.format("Really remove %s from %s?", worker.getName(), workerGroup.getName());
                         if (ViewUtils.generateConfirmationDialogue(header, content)) {
-                            stable.getWorkers().remove(worker);
+                            workerGroup.getWorkers().remove(worker);
                             updateLabels();
                         }
                     });
-                    cotroller.setEditable(stable.getOwner().equals(playerPromotion()));
+                    cotroller.setEditable(workerGroup.getOwner().equals(playerPromotion()));
                     setGraphic(stableMemberScreen.pane);
                 }
             }
         });
     }
 
+    public void setBrowseMode(BrowseMode browseMode) {
+        editLabel.setCurrent(browseMode);
+    }
+
     @Override
     public void initializeMore() {
         GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
         editLabel = (EditLabel) screen.controller;
-        editLabel.setCurrent(BrowseMode.STABLES);
 
         addButton.setOnAction(a -> {
 
             List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
-            workers.removeAll(stable.getWorkers());
+            workers.removeAll(workerGroup.getWorkers());
 
             Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
                     workers,
-                    stable.getName(),
-                    String.format("Select a worker to join %s", stable.getName())
+                    workerGroup.getName(),
+                    String.format("Select a worker to join %s", workerGroup.getName())
             ).showAndWait();
 
             result.ifPresent(worker -> {
-                stable.getWorkers().add(worker);
+                workerGroup.getWorkers().add(worker);
                 updateLabels();
             });
         });
@@ -96,21 +99,21 @@ public class StableController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        stable = (WorkerGroup) object;
+        workerGroup = (WorkerGroup) object;
         editLabel.setCurrent(object);
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
-        if (stable != null) {
-            ownerLabel.setText(stable.getOwner().getName());
-            listView.setItems(FXCollections.observableArrayList(stable.getWorkers()));
+        if (workerGroup != null) {
+            ownerLabel.setText(workerGroup.getOwner().getName());
+            listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
         }
 
-        gridPane.setVisible(stable != null);
-        addButton.setVisible(stable != null && stable.getOwner().equals(playerPromotion()));
-        ownerLabel.setVisible(stable != null && stable.getOwner().equals(playerPromotion()));
+        gridPane.setVisible(workerGroup != null);
+        addButton.setVisible(workerGroup != null && workerGroup.getOwner().equals(playerPromotion()));
+        ownerLabel.setVisible(workerGroup != null && workerGroup.getOwner().equals(playerPromotion()));
     }
 
 }
