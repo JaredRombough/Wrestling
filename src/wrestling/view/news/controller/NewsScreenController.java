@@ -78,8 +78,10 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         ViewUtils.updateSelectedButton(weekButton, timeButtons);
 
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-        ((SortControl) sortControl.controller).setParentScreenCode(ScreenCode.NEWS);
         sortControlController = (SortControl) sortControl.controller;
+        sortControlController.setUpdateAction(e -> {
+            updateLabels();
+        });
         sortControlController.setFilter(NewsFilter.ALL);
         sortControlController.setNewsMode();
         newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<iNewsItem>() {

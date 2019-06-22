@@ -26,6 +26,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -48,11 +49,9 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
-import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
-import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.SegmentUtils;
@@ -112,6 +111,9 @@ public class EventScreenController extends ControllerBase implements Initializab
     private int eventLength;
 
     private BrowseMode browseMode;
+
+    @FXML
+    private ComboBox<BrowseMode> bookingBrowseComboBox;
 
     @Override
     public void setCurrent(Object obj) {
@@ -462,22 +464,32 @@ public class EventScreenController extends ControllerBase implements Initializab
     public void initializeMore() {
 
         sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-
-        sortControl.controller.setCurrent(BrowseMode.WORKERS);
         SortControl sortControlController = (SortControl) sortControl.controller;
-        sortControlController.setParentScreenCode(ScreenCode.EVENT);
-        sortControlController.setBookingBrowseModeEnabled(true);
-        sortControlController.setStables(gameController.getStableManager().getStables().stream()
-                .filter(s -> s.getOwner().equals(playerPromotion())).collect(Collectors.toList()));
-        sortControlController.getBookingBrowseComboBox().valueProperty().addListener(new ChangeListener<BrowseMode>() {
+
+        bookingBrowseComboBox.setItems((FXCollections.observableArrayList(
+                BrowseMode.WORKERS,
+                BrowseMode.TAG_TEAMS,
+                BrowseMode.STABLES,
+                BrowseMode.TITLES,
+                BrowseMode.REFS,
+                BrowseMode.BROADCAST
+        )));
+        bookingBrowseComboBox.getSelectionModel().selectFirst();
+        bookingBrowseComboBox.valueProperty().addListener(new ChangeListener<BrowseMode>() {
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
                 browseMode = newValue;
+                sortControlController.setBrowseMode(newValue);
                 updateSegmentItemListView();
             }
         });
 
-        //here we set a blank event
+        sortControlController.setCurrentPromotion(playerPromotion());
+        sortControlController.setBrowseMode(BrowseMode.WORKERS);
+        sortControlController.setUpdateAction(e -> {
+            updateLabels();
+        });
+
         initializeSegmentListView();
 
         initializeSegmentItemListView();

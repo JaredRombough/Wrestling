@@ -28,7 +28,7 @@
                         <Insets bottom="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </ComboBox>
-                  <Button fx:id="reverseButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Button" GridPane.columnIndex="2">
+                  <Button fx:id="reverseButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" top="5.0" />
                      </GridPane.margin>
