@@ -104,7 +104,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private final List<Pane> segmentPanes = new ArrayList<>();
     private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
 
-    private GameScreen sortControl;
+    private SortControl sortControl;
 
     private Event currentEvent;
 
@@ -121,6 +121,11 @@ public class EventScreenController extends ControllerBase implements Initializab
             if (!Objects.equals(currentEvent, obj)) {
                 currentEvent = (Event) obj;
                 eventTitleLabel.setText("Now booking: " + getCurrentEvent().toString());
+                if (currentEvent.getEventTemplate().getRosterSplit() != null) {
+                    sortControl.setFilter(currentEvent.getEventTemplate().getRosterSplit());
+                } else {
+                    sortControl.clearFilters();
+                }
                 resetSegments();
             }
             updateLabels();
@@ -463,8 +468,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     @Override
     public void initializeMore() {
 
-        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-        SortControl sortControlController = (SortControl) sortControl.controller;
+        GameScreen sortControlscreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
+        sortControl = (SortControl) sortControlscreen.controller;
 
         bookingBrowseComboBox.setItems((FXCollections.observableArrayList(
                 BrowseMode.WORKERS,
@@ -479,14 +484,14 @@ public class EventScreenController extends ControllerBase implements Initializab
             @Override
             public void changed(ObservableValue<? extends BrowseMode> observable, BrowseMode oldValue, BrowseMode newValue) {
                 browseMode = newValue;
-                sortControlController.setBrowseMode(newValue);
+                sortControl.setBrowseMode(newValue);
                 updateSegmentItemListView();
             }
         });
 
-        sortControlController.setCurrentPromotion(playerPromotion());
-        sortControlController.setBrowseMode(BrowseMode.WORKERS);
-        sortControlController.setUpdateAction(e -> {
+        sortControl.setCurrentPromotion(playerPromotion());
+        sortControl.setBrowseMode(BrowseMode.WORKERS);
+        sortControl.setUpdateAction(e -> {
             updateLabels();
         });
 
@@ -543,9 +548,9 @@ public class EventScreenController extends ControllerBase implements Initializab
                 ? currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH)
                 : true;
 
-        Comparator comparator = sortControl != null ? ((SortControl) sortControl.controller).getCurrentComparator() : null;
+        Comparator comparator = sortControl != null ? sortControl.getCurrentComparator() : null;
         FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), segmentItem
-                -> !(((SortControl) sortControl.controller).isFiltered(segmentItem) || (isMatch && filterInjured(segmentItem))));
+                -> !(sortControl.isFiltered(segmentItem) || (isMatch && filterInjured(segmentItem))));
 
         segmentItemListView.setItems(new SortedList<>(filteredList, comparator));
 
