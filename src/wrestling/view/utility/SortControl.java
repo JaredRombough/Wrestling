@@ -1,6 +1,5 @@
 package wrestling.view.utility;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -205,6 +204,7 @@ public class SortControl extends ControllerBase implements Initializable {
     private void addWorkerGroupFilter(List<WorkerGroup> list, ComboBox comboBox, String noFilterString) {
         List<Object> listForComobBox = new ArrayList<>(list);
         listForComobBox.add(0, noFilterString);
+        Object selected = comboBox.getSelectionModel().getSelectedItem();
         comboBox.setItems(FXCollections.observableArrayList(listForComobBox));
         comboBox.getSelectionModel().selectFirst();
         comboBox.setOnAction(updateAction);
@@ -216,7 +216,12 @@ public class SortControl extends ControllerBase implements Initializable {
 
         comboBox.getSelectionModel().selectedItemProperty().addListener(filterChangeListener);
 
-        comboBox.getSelectionModel().selectFirst();
+        if (comboBox.getItems().contains(selected)) {
+            comboBox.getSelectionModel().select(selected);
+        } else {
+            comboBox.getSelectionModel().selectFirst();
+        }
+
     }
 
     private Enum selectedEnum(EnumSet set) {
