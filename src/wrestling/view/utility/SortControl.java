@@ -23,6 +23,8 @@ import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import wrestling.model.SegmentItem;
+import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
+import static wrestling.model.constants.StringConstants.ALL_STABLES;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.PromotionView;
@@ -68,9 +70,6 @@ public class SortControl extends ControllerBase implements Initializable {
 
     private List<WorkerGroup> stables;
     private List<WorkerGroup> rosterSplits;
-
-    private final String ALL_ROSTER_SPLITS = "All Roster Splits";
-    private final String ALL_STABLES = "All Stables";
 
     private EventHandler<ActionEvent> updateAction;
 

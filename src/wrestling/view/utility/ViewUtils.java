@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -87,18 +88,17 @@ public final class ViewUtils {
         anchorPane.getChildren().clear();
 
         ComboBox comboBox = new ComboBox();
-        if (isPlayerPromotion) {
+        ViewUtils.anchorRegionToParent(anchorPane, comboBox);
+        comboBox.setItems(FXCollections.observableArrayList(objects));
+        comboBox.getSelectionModel().select(object);
+        comboBox.setDisable(!isPlayerPromotion);
+        return comboBox;
+    }
 
-            ViewUtils.anchorRegionToParent(anchorPane, comboBox);
-            comboBox.setItems(FXCollections.observableArrayList(objects));
-            comboBox.getSelectionModel().select(object);
-        } else {
-            Label label = new Label(object.toString());
-            label.getStyleClass().add("workerStat");
-            ViewUtils.anchorRegionToParent(anchorPane, label);
-
-        }
-
+    public static ComboBox initComboBoxWithPlaceholder(ComboBox comboBox, List items, String placeholder) {
+        List<Object> listForComobBox = new ArrayList<>(items);
+        listForComobBox.add(0, placeholder);
+        comboBox.setItems(FXCollections.observableArrayList(listForComobBox));
         return comboBox;
     }
 

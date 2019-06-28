@@ -11,6 +11,7 @@ import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.interfaces.iDate;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.EventBroadcast;
 import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
@@ -32,6 +33,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
     private Month month;
     private List<StaffView> defaultBroadcastTeam;
     private final List<SegmentTemplate> segmentTemplates;
+    private WorkerGroup rosterSplit;
 
     public EventTemplate() {
         bookedUntil = LocalDate.MIN;
@@ -246,6 +248,20 @@ public class EventTemplate implements Serializable, iDate, SegmentItem {
      */
     public List<SegmentTemplate> getSegmentTemplates() {
         return segmentTemplates;
+    }
+
+    /**
+     * @return the rosterSplit
+     */
+    public WorkerGroup getRosterSplit() {
+        return rosterSplit;
+    }
+
+    /**
+     * @param rosterSplit the rosterSplit to set
+     */
+    public void setRosterSplit(WorkerGroup rosterSplit) {
+        this.rosterSplit = rosterSplit;
     }
 
 }

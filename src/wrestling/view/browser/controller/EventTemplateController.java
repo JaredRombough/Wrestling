@@ -1,9 +1,11 @@
 package wrestling.view.browser.controller;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,9 +16,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import wrestling.model.EventTemplate;
+import wrestling.model.constants.StringConstants;
+import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import static wrestling.model.constants.UIConstants.CALENDAR_ICON;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import wrestling.model.modelView.StaffView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.EventVenueSize;
 import wrestling.model.utility.ModelUtils;
@@ -61,6 +66,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
 
     @FXML
     private Button editBroadcastTeamButton;
+
+    @FXML
+    private ComboBox rosterSplitComboBox;
 
     private EditLabel editLabel;
 
@@ -119,6 +127,23 @@ public class EventTemplateController extends ControllerBase implements Initializ
                 @Override
                 public void changed(ObservableValue<? extends EventVenueSize> observable, EventVenueSize oldValue, EventVenueSize newValue) {
                     eventTemplate.setEventVenueSize(newValue);
+                }
+            });
+
+            List rosterSplits = gameController.getStableManager().getRosterSplits().stream()
+                    .filter(split -> split.getOwner().equals(eventTemplate.getPromotion()))
+                    .collect(Collectors.toList());
+            rosterSplitComboBox.setOnAction(null);
+            ViewUtils.initComboBoxWithPlaceholder(rosterSplitComboBox, rosterSplits, ALL_ROSTER_SPLITS);
+            rosterSplitComboBox.setDisable(!playerPromotion().equals(eventTemplate.getPromotion()));
+            if (eventTemplate.getRosterSplit() != null) {
+                rosterSplitComboBox.getSelectionModel().select(eventTemplate.getRosterSplit());
+            } else {
+                rosterSplitComboBox.getSelectionModel().selectFirst();
+            }
+            rosterSplitComboBox.setOnAction(e -> {
+                if (rosterSplitComboBox.getSelectionModel().getSelectedItem() instanceof WorkerGroup) {
+                    eventTemplate.setRosterSplit((WorkerGroup) rosterSplitComboBox.getSelectionModel().getSelectedItem());
                 }
             });
 

@@ -209,6 +209,7 @@ public class Import {
                 eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
                 eventTemplate.setEventsLeft(RandomUtils.nextInt(30, 60));
                 eventTemplate.setName(currentLine.substring(1, 21).trim());
+
                 int duration = 0;
                 switch (currentStringLine.get(timeSlotIndex)) {
                     case "P":
@@ -236,6 +237,7 @@ public class Import {
                     }
                 }
 
+                assignRosterSplit(eventTemplate);
                 eventTemplates.add(eventTemplate);
 
                 counter = 0;
@@ -673,10 +675,21 @@ public class Import {
                 eventTemplate.setMonth(month);
                 eventTemplate.setEventBroadcast(EventBroadcast.NONE);
                 eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
+                assignRosterSplit(eventTemplate);
                 eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
 
+            }
+        }
+    }
+
+    private void assignRosterSplit(EventTemplate eventTemplate) {
+        for (WorkerGroup rosterSplit : gameController.getStableManager().getRosterSplits()) {
+            if (rosterSplit.getOwner().equals(eventTemplate.getPromotion())
+                    && eventTemplate.getName().toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
+                eventTemplate.setRosterSplit(rosterSplit);
+                break;
             }
         }
     }

@@ -299,3 +299,8 @@ GREY
 .dialog-pane {
     -fx-max-width: 500px;
 }
+
+
+.combo-box:disabled, .combo-box:disabled > * {
+    -fx-opacity: .75 ;
+}
