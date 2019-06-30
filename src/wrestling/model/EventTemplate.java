@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.interfaces.iDate;
+import wrestling.model.interfaces.iRosterSplit;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerGroup;
@@ -17,7 +18,7 @@ import wrestling.model.segmentEnum.EventFrequency;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.EventVenueSize;
 
-public class EventTemplate implements Serializable, iDate, SegmentItem {
+public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterSplit {
 
     private PromotionView promotion;
     private LocalDate nextDate;

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -56,11 +57,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
 import wrestling.model.SegmentItem;
+import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import wrestling.model.controller.GameController;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.interfaces.iPerson;
+import wrestling.model.interfaces.iRosterSplit;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ContractUtils;
@@ -533,6 +537,25 @@ public final class ViewUtils {
         return (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             button.setVisible(newValue);
         };
+    }
+
+    public static void updateRosterSplitComboBox(ComboBox comboBox, List<WorkerGroup> allRosterSplits, iRosterSplit item, PromotionView promotion, PromotionView playerPromotion) {
+        List rosterSplits = allRosterSplits.stream()
+                .filter(split -> split.getOwner().equals(promotion))
+                .collect(Collectors.toList());
+        comboBox.setOnAction(null);
+        ViewUtils.initComboBoxWithPlaceholder(comboBox, rosterSplits, ALL_ROSTER_SPLITS);
+        comboBox.setDisable(!playerPromotion.equals(promotion));
+        if (item.getRosterSplit() != null) {
+            comboBox.getSelectionModel().select(item.getRosterSplit());
+        } else {
+            comboBox.getSelectionModel().selectFirst();
+        }
+        comboBox.setOnAction(e -> {
+            if (comboBox.getSelectionModel().getSelectedItem() instanceof WorkerGroup) {
+                item.setRosterSplit((WorkerGroup) comboBox.getSelectionModel().getSelectedItem());
+            }
+        });
     }
 
 }

@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.Title;
+import wrestling.model.interfaces.iRosterSplit;
 import wrestling.model.segmentEnum.ActiveType;
 
-public class TitleView implements SegmentItem, Serializable {
+public class TitleView implements SegmentItem, Serializable, iRosterSplit {
 
     private final Title title;
     private final List<TitleReign> titleReigns;
     private TitleReign champions;
+    private WorkerGroup rosterSplit;
 
     public TitleView(Title title) {
         this.title = title;
@@ -67,6 +69,20 @@ public class TitleView implements SegmentItem, Serializable {
 
     public int getPrestige() {
         return title.getPrestige();
+    }
+
+    /**
+     * @return the rosterSplit
+     */
+    public WorkerGroup getRosterSplit() {
+        return rosterSplit;
+    }
+
+    /**
+     * @param rosterSplit the rosterSplit to set
+     */
+    public void setRosterSplit(WorkerGroup rosterSplit) {
+        this.rosterSplit = rosterSplit;
     }
 
 }

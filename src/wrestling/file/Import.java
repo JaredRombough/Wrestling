@@ -23,6 +23,7 @@ import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
 import wrestling.model.controller.GameController;
 import wrestling.model.factory.PersonFactory;
+import wrestling.model.interfaces.iRosterSplit;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
@@ -237,7 +238,7 @@ public class Import {
                     }
                 }
 
-                assignRosterSplit(eventTemplate);
+                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), eventTemplate.getName());
                 eventTemplates.add(eventTemplate);
 
                 counter = 0;
@@ -603,12 +604,12 @@ public class Import {
         } else {
             return;
         }
-        checkForRosterGroup(promotion, worker, groupName);
+        checkForRosterSplit(promotion, worker, groupName);
         getGameController().getContractFactory().createContract(worker, promotion, getGameController().getDateManager().today(), exclusive);
 
     }
 
-    private void checkForRosterGroup(PromotionView promotion, WorkerView worker, String groupName) {
+    private void checkForRosterSplit(PromotionView promotion, WorkerView worker, String groupName) {
         final String trimmedName = groupName.trim();
         if (trimmedName.equalsIgnoreCase("NONE")) {
             return;
@@ -675,7 +676,7 @@ public class Import {
                 eventTemplate.setMonth(month);
                 eventTemplate.setEventBroadcast(EventBroadcast.NONE);
                 eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
-                assignRosterSplit(eventTemplate);
+                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), eventTemplate.getName());
                 eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
@@ -684,11 +685,11 @@ public class Import {
         }
     }
 
-    private void assignRosterSplit(EventTemplate eventTemplate) {
+    private void assignRosterSplit(iRosterSplit item, PromotionView promotion, String name) {
         for (WorkerGroup rosterSplit : gameController.getStableManager().getRosterSplits()) {
-            if (rosterSplit.getOwner().equals(eventTemplate.getPromotion())
-                    && eventTemplate.getName().toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
-                eventTemplate.setRosterSplit(rosterSplit);
+            if (rosterSplit.getOwner().equals(promotion)
+                    && name.toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
+                item.setRosterSplit(rosterSplit);
                 break;
             }
         }
@@ -789,6 +790,7 @@ public class Import {
                             //create the title
                             TitleView titleView = getGameController().getTitleFactory().createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
                             titleView.getTitle().setPrestige(titlePrestigeInts.get(t));
+                            assignRosterSplit(titleView, titleView.getTitle().getPromotion(), titleView.getLongName());
                         }
                     }
                 }

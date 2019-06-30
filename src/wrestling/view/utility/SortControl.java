@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
@@ -31,6 +32,7 @@ import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
+import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -252,8 +254,8 @@ public class SortControl extends ControllerBase implements Initializable {
                 addButtonWrapper(set);
             }
         }
-        if (browseMode.equals(BrowseMode.WORKERS) || browseMode.equals(BrowseMode.TAG_TEAMS)) {
-            if (CollectionUtils.isNotEmpty(stables)) {
+        if (browseMode.equals(BrowseMode.WORKERS) || browseMode.equals(BrowseMode.TAG_TEAMS) || browseMode.equals(BrowseMode.TITLES)) {
+            if (CollectionUtils.isNotEmpty(stables) && !browseMode.equals(BrowseMode.TITLES)) {
                 addWorkerGroupFilter(stables, stablesCombobox, ALL_STABLES);
             }
             if (CollectionUtils.isNotEmpty(rosterSplits)) {
@@ -317,6 +319,10 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isWorkerGroupFiltered(SegmentItem segmentItem) {
+        return isStableFiltered(segmentItem) || isRosterSplitFiltered(segmentItem);
+    }
+
+    private boolean isStableFiltered(SegmentItem segmentItem) {
         if (stableFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (!stableFilter.getWorkers().contains((WorkerView) subItem)) {
@@ -324,9 +330,15 @@ public class SortControl extends ControllerBase implements Initializable {
                 }
             }
         }
-        if (rosterSplitFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView)) {
+        return false;
+    }
+
+    private boolean isRosterSplitFiltered(SegmentItem segmentItem) {
+        if (rosterSplitFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView || segmentItem instanceof TitleView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (!rosterSplitFilter.getWorkers().contains((WorkerView) subItem)) {
+                if (segmentItem instanceof TitleView) {
+                    return !Objects.equals(((TitleView) segmentItem).getRosterSplit(), rosterSplitFilter);
+                } else if (!rosterSplitFilter.getWorkers().contains((WorkerView) subItem)) {
                     return true;
                 }
             }

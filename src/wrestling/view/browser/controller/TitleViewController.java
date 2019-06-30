@@ -23,6 +23,7 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import static wrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class TitleViewController extends ControllerBase implements Initializable {
@@ -43,6 +44,9 @@ public class TitleViewController extends ControllerBase implements Initializable
 
     @FXML
     private GridPane gridPane;
+
+    @FXML
+    private ComboBox rosterSplitComboBox;
 
     private EditLabel editLabel;
 
@@ -99,6 +103,12 @@ public class TitleViewController extends ControllerBase implements Initializable
                     titleView.getTitle().setActiveType(newValue);
                 }
             });
+
+            updateRosterSplitComboBox(rosterSplitComboBox,
+                    gameController.getStableManager().getRosterSplits(),
+                    titleView,
+                    titleView.getTitle().getPromotion(),
+                    playerPromotion());
 
             prestigeLabel.setText(String.valueOf(titleView.getTitle().getPrestige()));
 

@@ -20,6 +20,8 @@ import wrestling.model.constants.StringConstants;
 import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import static wrestling.model.constants.UIConstants.CALENDAR_ICON;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
+import wrestling.model.interfaces.iRosterSplit;
+import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.BrowseMode;
@@ -28,6 +30,7 @@ import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.GameScreen;
 import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.ViewUtils;
+import static wrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class EventTemplateController extends ControllerBase implements Initializable {
@@ -130,22 +133,11 @@ public class EventTemplateController extends ControllerBase implements Initializ
                 }
             });
 
-            List rosterSplits = gameController.getStableManager().getRosterSplits().stream()
-                    .filter(split -> split.getOwner().equals(eventTemplate.getPromotion()))
-                    .collect(Collectors.toList());
-            rosterSplitComboBox.setOnAction(null);
-            ViewUtils.initComboBoxWithPlaceholder(rosterSplitComboBox, rosterSplits, ALL_ROSTER_SPLITS);
-            rosterSplitComboBox.setDisable(!playerPromotion().equals(eventTemplate.getPromotion()));
-            if (eventTemplate.getRosterSplit() != null) {
-                rosterSplitComboBox.getSelectionModel().select(eventTemplate.getRosterSplit());
-            } else {
-                rosterSplitComboBox.getSelectionModel().selectFirst();
-            }
-            rosterSplitComboBox.setOnAction(e -> {
-                if (rosterSplitComboBox.getSelectionModel().getSelectedItem() instanceof WorkerGroup) {
-                    eventTemplate.setRosterSplit((WorkerGroup) rosterSplitComboBox.getSelectionModel().getSelectedItem());
-                }
-            });
+            updateRosterSplitComboBox(rosterSplitComboBox,
+                    gameController.getStableManager().getRosterSplits(),
+                    eventTemplate,
+                    eventTemplate.getPromotion(),
+                    playerPromotion());
 
             nextEventLabel.setText(ModelUtils.dateString(eventTemplate.getNextDate()));
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
