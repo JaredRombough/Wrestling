@@ -84,6 +84,7 @@ public class SortControl extends ControllerBase implements Initializable {
     };
 
     private iBrowseMode browseMode;
+    private PromotionView promotion;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -234,11 +235,6 @@ public class SortControl extends ControllerBase implements Initializable {
         return null;
     }
 
-    public void setBrowseMode(iBrowseMode browseMode) {
-        this.browseMode = browseMode;
-        updateFilters();
-    }
-
     private void updateFilters() {
         if (browseMode == null) {
             return;
@@ -358,7 +354,23 @@ public class SortControl extends ControllerBase implements Initializable {
         return false;
     }
 
+    public void setBrowseMode(iBrowseMode browseMode) {
+        this.browseMode = browseMode;
+        updateWorkerGroups();
+        updateFilters();
+    }
+
     public void setCurrentPromotion(PromotionView promotion) {
+        this.promotion = promotion;
+        updateWorkerGroups();
+        updateFilters();
+    }
+
+    public void setUpdateAction(EventHandler<ActionEvent> action) {
+        this.updateAction = action;
+    }
+
+    private void updateWorkerGroups() {
         stables = gameController.getStableManager().getStables().stream()
                 .filter(s -> s.getOwner().equals(promotion))
                 .collect(Collectors.toList());
@@ -366,11 +378,6 @@ public class SortControl extends ControllerBase implements Initializable {
         rosterSplits = gameController.getStableManager().getRosterSplits().stream()
                 .filter(s -> s.getOwner().equals(promotion))
                 .collect(Collectors.toList());
-        updateFilters();
-    }
-
-    public void setUpdateAction(EventHandler<ActionEvent> action) {
-        this.updateAction = action;
     }
 
 }
