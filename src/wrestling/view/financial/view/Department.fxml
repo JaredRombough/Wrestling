@@ -23,7 +23,7 @@
       <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Label fx:id="departmentNameLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="80.0" prefWidth="90.0" text="Medical" GridPane.rowSpan="2147483647">
+      <Label fx:id="departmentNameLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Medical" GridPane.rowSpan="2147483647">
          <font>
             <Font size="18.0" />
          </font>
