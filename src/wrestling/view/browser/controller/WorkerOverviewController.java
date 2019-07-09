@@ -84,6 +84,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Label managerLabel;
+    
+    @FXML
+    private Label moraleLabel;
 
     @FXML
     private Label managedLabel;
@@ -264,6 +267,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
+            moraleLabel.setText(Integer.toString(worker.getMorale()));
 
             updateManagerLabels();
             entourageListView.getItems().clear();
@@ -287,7 +291,8 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     strikingLabel,
                     behaviourLabel,
                     charismaLabel,
-                    popularityLabel);
+                    popularityLabel,
+                    moraleLabel);
 
             List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
 

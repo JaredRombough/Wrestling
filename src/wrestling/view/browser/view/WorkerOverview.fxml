@@ -73,9 +73,9 @@
             <Label fx:id="injuryLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Injury" GridPane.rowIndex="9" />
             <Label fx:id="injury" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <AnchorPane fx:id="contractAnchor" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.rowSpan="3" />
-            <Label fx:id="managerLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Manager" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Label fx:id="manager" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-            <Button fx:id="managerButton" maxHeight="30.0" maxWidth="30.0" mnemonicParsing="false" text="Button" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+            <Label fx:id="managerLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Manager" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Label fx:id="manager" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <Button fx:id="managerButton" maxHeight="30.0" maxWidth="30.0" mnemonicParsing="false" text="Button" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets bottom="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
@@ -83,25 +83,27 @@
                   <Font size="12.0" />
                </font>
             </Button>
-            <ListView fx:id="managedListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="7" GridPane.rowSpan="2">
+            <ListView fx:id="managedListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="8" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets bottom="5.0" top="5.0" />
                </GridPane.margin>
             </ListView>
-            <Label fx:id="managedLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Clients" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-            <Label fx:id="entourageLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Entourage" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-            <ListView fx:id="entourageListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
+            <Label fx:id="managedLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Clients" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <Label fx:id="entourageLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Entourage" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <ListView fx:id="entourageListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="8" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets bottom="5.0" top="5.0" />
                </GridPane.margin>
             </ListView>
-            <Button fx:id="entourageButton" maxHeight="30.0" maxWidth="30.0" mnemonicParsing="false" styleClass="light-border" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+            <Button fx:id="entourageButton" maxHeight="30.0" maxWidth="30.0" mnemonicParsing="false" styleClass="light-border" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets bottom="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
                <font>
                   <Font size="12.0" />
                </font></Button>
+            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="Morale" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Label fx:id="moraleLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>
