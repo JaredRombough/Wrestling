@@ -34,5 +34,7 @@ public interface iContract {
     public WorkerView getWorker();
 
     public StaffView getStaff();
+    
+    public int getMorale();
 
 }

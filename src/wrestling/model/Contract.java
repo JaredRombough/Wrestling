@@ -22,9 +22,6 @@ public class Contract implements Serializable, iContract {
 
     private boolean active;
 
-    //total number of days/appearances left
-    private int duration;
-
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -37,9 +34,11 @@ public class Contract implements Serializable, iContract {
 
     private int monthlyCost;
 
-    //default constructor is empty, values must be set by contractFactory
+    private int morale;
+
     public Contract() {
         active = true;
+        morale = 100;
     }
 
     /**
@@ -180,5 +179,19 @@ public class Contract implements Serializable, iContract {
     @Override
     public iPerson getPerson() {
         return worker;
+    }
+
+    /**
+     * @return the morale
+     */
+    public int getMorale() {
+        return morale;
+    }
+
+    /**
+     * @param morale the morale to set
+     */
+    public void setMorale(int morale) {
+        this.morale = morale;
     }
 }

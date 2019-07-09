@@ -33,7 +33,6 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     private int behaviour;
     private int popularity;
     private int age;
-    private int morale;
 
     private Gender gender;
 
@@ -52,7 +51,6 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
 
     public WorkerView() {
         minimumPopularity = 0;
-        morale = 100;
         name = "Worker #" + workerID;
         workerID++;
         contracts = new ArrayList<>();
@@ -339,18 +337,5 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
         return entourage;
     }
 
-    /**
-     * @return the morale
-     */
-    public int getMorale() {
-        return morale;
-    }
-
-    /**
-     * @param morale the morale to set
-     */
-    public void setMorale(int morale) {
-        this.morale = morale;
-    }
 
 }

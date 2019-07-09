@@ -16,9 +16,11 @@ public class StaffContract implements Serializable, iContract {
     private LocalDate endDate;
     private boolean active;
     private int biWeeklyCost;
+    private int morale;
 
     public StaffContract() {
         active = true;
+        morale = 100;
     }
 
     /**
@@ -131,6 +133,11 @@ public class StaffContract implements Serializable, iContract {
     @Override
     public iPerson getPerson() {
         return staff;
+    }
+
+    @Override
+    public int getMorale() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
