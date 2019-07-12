@@ -25,6 +25,8 @@ public class Contract implements Serializable, iContract {
     private LocalDate startDate;
 
     private LocalDate endDate;
+    
+    private LocalDate lastShowDate;
 
     private boolean exclusive;
 
@@ -39,6 +41,7 @@ public class Contract implements Serializable, iContract {
     public Contract() {
         active = true;
         morale = 100;
+        lastShowDate = LocalDate.MIN;
     }
 
     /**
@@ -193,5 +196,20 @@ public class Contract implements Serializable, iContract {
      */
     public void setMorale(int morale) {
         this.morale = morale;
+    }
+
+    /**
+     * @return the lastShowDate
+     */
+    @Override
+    public LocalDate getLastShowDate() {
+        return lastShowDate;
+    }
+
+    /**
+     * @param lastShowDate the lastShowDate to set
+     */
+    public void setLastShowDate(LocalDate lastShowDate) {
+        this.lastShowDate = lastShowDate;
     }
 }

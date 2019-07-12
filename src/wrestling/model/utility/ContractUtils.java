@@ -15,6 +15,10 @@ import wrestling.model.modelView.WorkerView;
 
 public final class ContractUtils {
 
+    public static boolean isMoraleCheckDay(iContract contract, LocalDate today) {
+        return DAYS.between(contract.getStartDate(), today) % 30 == 0;
+    }
+
     public static int calculateWorkerContractCost(WorkerView worker, boolean exclusive) {
         int unitCost;
 

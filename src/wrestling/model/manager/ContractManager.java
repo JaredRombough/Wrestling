@@ -14,6 +14,9 @@ import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
+import java.time.temporal.ChronoUnit;
+import wrestling.model.NewsItem;
+import static wrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
 public class ContractManager implements Serializable {
 
@@ -22,18 +25,26 @@ public class ContractManager implements Serializable {
 
     private final PromotionManager promotionManager;
     private final TitleManager titleManager;
+    private final NewsManager newsManager;
 
-    public ContractManager(PromotionManager promotionManager, TitleManager titleManager) {
+    public ContractManager(PromotionManager promotionManager, TitleManager titleManager, NewsManager newsManager) {
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
+        this.newsManager = newsManager;
     }
 
     public void dailyUpdate(LocalDate date) {
         for (Contract contract : contracts) {
+            if (!contract.isActive()) {
+                continue;
+            }
             if (!nextDay(contract, date)) {
                 titleManager.stripTitles(contract);
+            }
+            if (isMoraleCheckDay(contract, date)) {
+                handleMoraleCheck(contract, date);
             }
         }
 
@@ -167,9 +178,8 @@ public class ContractManager implements Serializable {
         return true;
     }
 
-    //handles appearance-based contracts
     public void appearance(LocalDate date, Contract contract) {
-        //make the promotion 'pay' the worker for the appearance
+        contract.setLastShowDate(date);
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }
 
@@ -301,5 +311,29 @@ public class ContractManager implements Serializable {
         }
 
         return averagePop;
+    }
+
+    private void handleMoraleCheck(iContract contract, LocalDate date) {
+        int morale = contract.getMorale();
+        long daysBetween = contract.getLastShowDate().isBefore(date) ? DAYS.between(contract.getStartDate(), date) : DAYS.between(contract.getLastShowDate(), date);
+        int penalty = Math.round(daysBetween / 30);
+        morale -= penalty;
+        contract.setMorale(morale);
+        if (penalty > 0) {
+            addMoraleNewsItem(contract, daysBetween, penalty, date);
+        }
+    }
+
+    private void addMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
+        NewsItem newsItem = new NewsItem(String.format("%s loses morale", contract.getWorker().getShortName()),
+                String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
+                        contract.getWorker().getLongName(),
+                        contract.getPromotion().getName(),
+                        daysBetween,
+                        penalty)
+        );
+        newsItem.setDate(date);
+        newsItem.setPromotion(contract.getPromotion());
+        newsManager.addNews(newsItem);
     }
 }

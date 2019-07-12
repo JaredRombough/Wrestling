@@ -66,7 +66,7 @@ public final class GameController implements Serializable {
         staffManager = new StaffManager();
         stableManager = new StableManager();
 
-        contractManager = new ContractManager(promotionManager, titleManager);
+        contractManager = new ContractManager(promotionManager, titleManager, newsManager);
 
         tagTeamManager = new TagTeamManager(contractManager);
 
