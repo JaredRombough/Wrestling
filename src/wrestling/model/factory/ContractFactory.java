@@ -40,11 +40,8 @@ public class ContractFactory {
     }
 
     public iContract createContract(WorkerView worker, PromotionView promotion, boolean exclusive, int duration, LocalDate startDate) {
-        Contract contract = new Contract();
-        contract.setWorker(worker);
-        contract.setPromotion(promotion);
+        Contract contract = new Contract(startDate, worker, promotion);
         contract.setExclusive(exclusive);
-        contract.setStartDate(startDate);
         contract.setEndDate(ContractUtils.contractEndDate(startDate, duration));
 
         if (exclusive) {
@@ -63,12 +60,9 @@ public class ContractFactory {
     }
 
     private void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, LocalDate endDate) {
-        StaffContract contract = new StaffContract();
-        contract.setStaff(staff);
-        contract.setPromotion(promotion);
+        StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);
-        contract.setStartDate(startDate);
         promotion.addToStaff(staff);
         contractManager.addContract(contract);
         contractManager.buyOutContracts(staff, promotion, startDate);

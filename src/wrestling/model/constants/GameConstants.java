@@ -20,5 +20,9 @@ public class GameConstants {
     public static final int MAX_INJURY_DAYS = 200;
 
     public static final int BASE_TRAINER_SUCCESS_RATE = 100;
+    
+    public static final int MAX_MORALE = 100;
+    public static final int APPEARANCE_MORALE_BONUS = 1;
+    public static final int MORALE_PENALTY_DAYS_BETWEEN = 30;
 
 }

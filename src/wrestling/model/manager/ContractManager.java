@@ -16,6 +16,9 @@ import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
 import java.time.temporal.ChronoUnit;
 import wrestling.model.NewsItem;
+import static wrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
+import static wrestling.model.constants.GameConstants.MAX_MORALE;
+import static wrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static wrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
 public class ContractManager implements Serializable {
@@ -178,7 +181,12 @@ public class ContractManager implements Serializable {
         return true;
     }
 
-    public void appearance(LocalDate date, Contract contract) {
+    public void appearance(LocalDate date, WorkerView worker, PromotionView promotion) {
+        Contract contract = getContract(worker, promotion);
+        int morale = contract.getMorale();
+        if (contract.getMorale() < MAX_MORALE) {
+            contract.setMorale(morale + APPEARANCE_MORALE_BONUS);
+        }
         contract.setLastShowDate(date);
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }
@@ -315,11 +323,11 @@ public class ContractManager implements Serializable {
 
     private void handleMoraleCheck(iContract contract, LocalDate date) {
         int morale = contract.getMorale();
-        long daysBetween = contract.getLastShowDate().isBefore(date) ? DAYS.between(contract.getStartDate(), date) : DAYS.between(contract.getLastShowDate(), date);
-        int penalty = Math.round(daysBetween / 30);
-        morale -= penalty;
-        contract.setMorale(morale);
+        long daysBetween = DAYS.between(contract.getLastShowDate(), date);
+        int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
         if (penalty > 0) {
+            morale -= penalty;
+            contract.setMorale(morale);
             addMoraleNewsItem(contract, daysBetween, penalty, date);
         }
     }

@@ -10,18 +10,21 @@ import wrestling.model.modelView.WorkerView;
 
 public class StaffContract implements Serializable, iContract {
 
-    private StaffView staff;
-    private PromotionView promotion;
-    private LocalDate startDate;
+    private final StaffView staff;
+    private final PromotionView promotion;
+    private final LocalDate startDate;
     private LocalDate endDate;
     private LocalDate lastShowDate;
     private boolean active;
     private int biWeeklyCost;
     private int morale;
 
-    public StaffContract() {
+    public StaffContract(LocalDate startDate, StaffView staff, PromotionView promotion) {
         active = true;
         morale = 100;
+        this.startDate = startDate;
+        this.staff = staff;
+        this.promotion = promotion;
     }
 
     /**
@@ -33,25 +36,11 @@ public class StaffContract implements Serializable, iContract {
     }
 
     /**
-     * @param staff the staff to set
-     */
-    public void setStaff(StaffView staff) {
-        this.staff = staff;
-    }
-
-    /**
      * @return the promotion
      */
     @Override
     public PromotionView getPromotion() {
         return promotion;
-    }
-
-    /**
-     * @param promotion the promotion to set
-     */
-    public void setPromotion(PromotionView promotion) {
-        this.promotion = promotion;
     }
 
     /**
@@ -75,14 +64,6 @@ public class StaffContract implements Serializable, iContract {
     @Override
     public LocalDate getStartDate() {
         return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    @Override
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 
     /**
@@ -123,14 +104,6 @@ public class StaffContract implements Serializable, iContract {
         return endDate;
     }
 
-    /**
-     * @param endDate the endDate to set
-     */
-    @Override
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
     @Override
     public iPerson getPerson() {
         return staff;
@@ -158,6 +131,11 @@ public class StaffContract implements Serializable, iContract {
     @Override
     public void setMorale(int morale) {
         this.morale = morale;
+    }
+
+    @Override
+    public void setEndDate(LocalDate date) {
+        this.endDate = date;
     }
 
 }

@@ -151,11 +151,16 @@ public class EventFactory {
     }
 
     private void processContracts(iEvent event, List<Segment> segments) {
-        eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
-            contractManager.appearance(event.getDate(), contract);
+        eventManager.allWorkers(segments).stream().forEach((worker) -> {
+            contractManager.appearance(event.getDate(), worker, event.getPromotion());
         });
     }
 
+//    private void processContracts(iEvent event, List<Segment> segments) {
+//        eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
+//            contractManager.appearance(event.getDate(), contract);
+//        });
+//    }
     public Segment processSegmentView(EventView eventView, SegmentView segmentView) {
         segmentView.setEventView(eventView);
         Segment segment = matchFactory.saveSegment(segmentView);

@@ -11,13 +11,9 @@ import wrestling.model.modelView.WorkerView;
  */
 public interface iContract {
 
-    public void setEndDate(LocalDate date);
-
     public iPerson getPerson();
 
     public LocalDate getEndDate();
-
-    public void setStartDate(LocalDate date);
 
     public LocalDate getStartDate();
 
@@ -40,5 +36,7 @@ public interface iContract {
     public void setMorale(int morale);
     
     public LocalDate getLastShowDate();
+    
+    public void setEndDate(LocalDate date);
 
 }

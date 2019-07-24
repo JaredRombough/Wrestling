@@ -17,15 +17,15 @@ import wrestling.model.modelView.WorkerView;
  */
 public class Contract implements Serializable, iContract {
 
-    private PromotionView promotion;
-    private WorkerView worker;
+    private final PromotionView promotion;
+    private final WorkerView worker;
 
     private boolean active;
 
-    private LocalDate startDate;
+    private final LocalDate startDate;
 
     private LocalDate endDate;
-    
+
     private LocalDate lastShowDate;
 
     private boolean exclusive;
@@ -38,10 +38,13 @@ public class Contract implements Serializable, iContract {
 
     private int morale;
 
-    public Contract() {
+    public Contract(LocalDate startDate, WorkerView worker, PromotionView promotion) {
         active = true;
         morale = 100;
-        lastShowDate = LocalDate.MIN;
+        lastShowDate = startDate;
+        this.startDate = startDate;
+        this.worker = worker;
+        this.promotion = promotion;
     }
 
     /**
@@ -53,25 +56,11 @@ public class Contract implements Serializable, iContract {
     }
 
     /**
-     * @param promotion the promotion to set
-     */
-    public void setPromotion(PromotionView promotion) {
-        this.promotion = promotion;
-    }
-
-    /**
      * @return the worker
      */
     @Override
     public WorkerView getWorker() {
         return worker;
-    }
-
-    /**
-     * @param worker the worker to set
-     */
-    public void setWorker(WorkerView worker) {
-        this.worker = worker;
     }
 
     /**
@@ -115,14 +104,6 @@ public class Contract implements Serializable, iContract {
     @Override
     public LocalDate getEndDate() {
         return endDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    @Override
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 
     /**
@@ -175,11 +156,6 @@ public class Contract implements Serializable, iContract {
     }
 
     @Override
-    public void setEndDate(LocalDate date) {
-        this.endDate = date;
-    }
-
-    @Override
     public iPerson getPerson() {
         return worker;
     }
@@ -211,5 +187,10 @@ public class Contract implements Serializable, iContract {
      */
     public void setLastShowDate(LocalDate lastShowDate) {
         this.lastShowDate = lastShowDate;
+    }
+
+    @Override
+    public void setEndDate(LocalDate date) {
+        this.endDate = date;
     }
 }
