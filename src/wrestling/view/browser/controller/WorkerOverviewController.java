@@ -25,6 +25,7 @@ import javafx.scene.layout.Region;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
+import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
@@ -84,7 +85,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Label managerLabel;
-    
+
     @FXML
     private Label moraleLabel;
 
@@ -267,7 +268,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
-            moraleLabel.setText(Integer.toString(worker.getContract(promotion).getMorale()));
+
+            iContract contract = gameController.getContractManager().getContract(worker, promotion);
+            moraleLabel.setText(contract != null ? Integer.toString(worker.getContract(promotion).getMorale()) : "100");
 
             updateManagerLabels();
             entourageListView.getItems().clear();
