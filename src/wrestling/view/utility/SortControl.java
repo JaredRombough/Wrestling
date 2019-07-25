@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import wrestling.model.SegmentItem;
 import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import static wrestling.model.constants.StringConstants.ALL_STABLES;
+import static wrestling.model.constants.UIConstants.DOWN_ARROW;
+import static wrestling.model.constants.UIConstants.UP_ARROW;
 import wrestling.model.interfaces.iBrowseMode;
 import wrestling.model.interfaces.iNewsItem;
 import wrestling.model.modelView.PromotionView;
@@ -47,15 +48,13 @@ public class SortControl extends ControllerBase implements Initializable {
     private Button reverseButton;
 
     @FXML
-    private ComboBox comparatorsComboBox;
+    private ComboBox<Comparator> comparatorsComboBox;
 
     @FXML
     private VBox vBox;
 
     @FXML
     private GridPane gridPane;
-
-    private Comparator currentComparator;
 
     private List<ButtonWrapper> buttonWrappers;
     private List<ComboBox> filterComboBoxes;
@@ -88,7 +87,7 @@ public class SortControl extends ControllerBase implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        reverseButton.setText("▼");
+        reverseButton.setText(DOWN_ARROW);
         buttonWrappers = new ArrayList<>();
         filterComboBoxes = new ArrayList<>();
         stables = new ArrayList<>();
@@ -101,17 +100,15 @@ public class SortControl extends ControllerBase implements Initializable {
 
         comparatorsComboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null && updateAction != null) {
-                setCurrentComparator((Comparator) newItem);
                 updateAction.handle(new ActionEvent());
             }
         });
 
         reverseButton.setOnAction(e -> {
             reverseButton.setText(
-                    reverseButton.getText().equals("▲")
-                    ? "▼" : "▲");
-
-            setCurrentComparator(currentComparator.reversed());
+                    reverseButton.getText().equals(UP_ARROW)
+                    ? DOWN_ARROW : UP_ARROW);
+            updateAction.handle(new ActionEvent());
         });
     }
 
@@ -182,7 +179,6 @@ public class SortControl extends ControllerBase implements Initializable {
         } else {
             wrapper.updateSelected(0);
         }
-
     }
 
     private void addComboboxFilter(EnumSet set) {
@@ -200,7 +196,6 @@ public class SortControl extends ControllerBase implements Initializable {
         } else {
             comboBox.getSelectionModel().selectFirst();
         }
-
     }
 
     private void addWorkerGroupFilter(List<WorkerGroup> list, ComboBox comboBox, String noFilterString) {
@@ -223,7 +218,6 @@ public class SortControl extends ControllerBase implements Initializable {
         } else {
             comboBox.getSelectionModel().selectFirst();
         }
-
     }
 
     private Enum selectedEnum(EnumSet set) {
@@ -242,7 +236,6 @@ public class SortControl extends ControllerBase implements Initializable {
         vBox.getChildren().retainAll(Arrays.asList(gridPane));
         buttonWrappers.clear();
         filterComboBoxes.clear();
-        setComparators(browseMode.comparators());
         for (EnumSet set : browseMode.getSortFilters()) {
             if (set.size() > 5) {
                 addComboboxFilter(set);
@@ -260,23 +253,13 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     }
 
-    private void setCurrentComparator(Comparator comparator) {
-        currentComparator = comparator;
-        updateLabels();
-
-    }
-
-    private void setComparators(ObservableList<Comparator> comparators) {
-        comparatorsComboBox.setItems(comparators);
-
-        comparatorsComboBox.getSelectionModel().selectFirst();
-    }
-
     /**
      * @return the currentComparator
      */
     public Comparator getCurrentComparator() {
-        return currentComparator;
+        return reverseButton.getText().equals(DOWN_ARROW)
+                ? comparatorsComboBox.getSelectionModel().getSelectedItem()
+                : comparatorsComboBox.getSelectionModel().getSelectedItem().reversed();
     }
 
     public boolean isFiltered(Object object) {
@@ -356,6 +339,8 @@ public class SortControl extends ControllerBase implements Initializable {
 
     public void setBrowseMode(iBrowseMode browseMode) {
         this.browseMode = browseMode;
+        comparatorsComboBox.setItems(browseMode.comparators());
+        comparatorsComboBox.getSelectionModel().selectFirst();
         updateWorkerGroups();
         updateFilters();
     }
