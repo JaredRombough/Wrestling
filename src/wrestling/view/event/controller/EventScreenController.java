@@ -154,31 +154,33 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
-
         if (event.getSource() == runEventButton) {
-            String errors = getErrors();
-            String warnings = getWarnings();
-            if (!errors.isEmpty()) {
-
-                ViewUtils.generateAlert(
-                        "Error",
-                        "Event is not valid.",
-                        errors + "\n" + warnings,
-                        AlertType.ERROR)
-                        .showAndWait();
-
-            } else if (!warnings.isEmpty()) {
-                if (ViewUtils.generateConfirmationDialogue(
-                        "Consider the following...",
-                        warnings + "\nRun the event anyway?")) {
-                    showResults();
-                }
-
-            } else {
-                showResults();
-            }
+            handleRunEvent();
         } else if (event.getSource() == addSegmentButton) {
             addSegment();
+        }
+    }
+
+    private void handleRunEvent() {
+        String errors = getErrors();
+        String warnings = getWarnings();
+        if (!errors.isEmpty()) {
+            ViewUtils.generateAlert(
+                    "Error",
+                    "Event is not valid.",
+                    errors + "\n" + warnings,
+                    AlertType.ERROR)
+                    .showAndWait();
+
+        } else if (!warnings.isEmpty()) {
+            if (ViewUtils.generateConfirmationDialogue(
+                    "Consider the following...",
+                    warnings + "\nRun the event anyway?")) {
+                showResults();
+            }
+
+        } else {
+            showResults();
         }
     }
 

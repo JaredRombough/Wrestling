@@ -17,11 +17,9 @@ public class StaffContract implements Serializable, iContract {
     private LocalDate lastShowDate;
     private boolean active;
     private int biWeeklyCost;
-    private int morale;
 
     public StaffContract(LocalDate startDate, StaffView staff, PromotionView promotion) {
         active = true;
-        morale = 100;
         this.startDate = startDate;
         this.staff = staff;
         this.promotion = promotion;
@@ -109,11 +107,6 @@ public class StaffContract implements Serializable, iContract {
         return staff;
     }
 
-    @Override
-    public int getMorale() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     /**
      * @return the lastShowDate
      */
@@ -126,11 +119,6 @@ public class StaffContract implements Serializable, iContract {
      */
     public void setLastShowDate(LocalDate lastShowDate) {
         this.lastShowDate = lastShowDate;
-    }
-
-    @Override
-    public void setMorale(int morale) {
-        this.morale = morale;
     }
 
     @Override

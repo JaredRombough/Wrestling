@@ -3,12 +3,12 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import wrestling.model.EventTemplate;
+import wrestling.model.SegmentItem;
 import wrestling.model.segmentEnum.StaffType;
 import wrestling.model.utility.StaffUtils;
 
-public class PromotionView implements Serializable {
+public class PromotionView implements SegmentItem, Serializable {
 
     private static int serialNumber = 0;
 

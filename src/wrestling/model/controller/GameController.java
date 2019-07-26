@@ -17,6 +17,7 @@ import wrestling.model.manager.EventManager;
 import wrestling.model.manager.InjuryManager;
 import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.RelationshipManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.StableManager;
 import wrestling.model.manager.StaffManager;
@@ -50,6 +51,7 @@ public final class GameController implements Serializable {
     private final NewsManager newsManager;
     private final StaffManager staffManager;
     private final StableManager stableManager;
+    private final RelationshipManager relationshipManager;
 
     private final PromotionController promotionController;
 
@@ -65,8 +67,9 @@ public final class GameController implements Serializable {
         newsManager = new NewsManager();
         staffManager = new StaffManager();
         stableManager = new StableManager();
+        relationshipManager = new RelationshipManager();
 
-        contractManager = new ContractManager(promotionManager, titleManager, newsManager);
+        contractManager = new ContractManager(promotionManager, titleManager, newsManager, getRelationshipManager());
 
         tagTeamManager = new TagTeamManager(contractManager);
 
@@ -136,7 +139,6 @@ public final class GameController implements Serializable {
 
         contractManager.dailyUpdate(dateManager.today());
 
-        //iterate through all promotions
         for (PromotionView promotion : promotionManager.getPromotions()) {
             promotionController.trainerUpdate(promotion);
             if (dateManager.isPayDay()) {
@@ -302,6 +304,13 @@ public final class GameController implements Serializable {
      */
     public StableManager getStableManager() {
         return stableManager;
+    }
+
+    /**
+     * @return the relationshipManager
+     */
+    public RelationshipManager getRelationshipManager() {
+        return relationshipManager;
     }
 
 }

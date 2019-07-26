@@ -36,11 +36,8 @@ public class Contract implements Serializable, iContract {
 
     private int monthlyCost;
 
-    private int morale;
-
     public Contract(LocalDate startDate, WorkerView worker, PromotionView promotion) {
         active = true;
-        morale = 100;
         lastShowDate = startDate;
         this.startDate = startDate;
         this.worker = worker;
@@ -158,20 +155,6 @@ public class Contract implements Serializable, iContract {
     @Override
     public iPerson getPerson() {
         return worker;
-    }
-
-    /**
-     * @return the morale
-     */
-    public int getMorale() {
-        return morale;
-    }
-
-    /**
-     * @param morale the morale to set
-     */
-    public void setMorale(int morale) {
-        this.morale = morale;
     }
 
     /**

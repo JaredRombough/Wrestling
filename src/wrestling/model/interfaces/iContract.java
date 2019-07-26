@@ -31,10 +31,6 @@ public interface iContract {
 
     public StaffView getStaff();
     
-    public int getMorale();
-    
-    public void setMorale(int morale);
-    
     public LocalDate getLastShowDate();
     
     public void setEndDate(LocalDate date);

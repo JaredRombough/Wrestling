@@ -268,9 +268,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
-
-            iContract contract = gameController.getContractManager().getContract(worker, promotion);
-            moraleLabel.setText(contract != null ? Integer.toString(worker.getContract(promotion).getMorale()) : "100");
+            moraleLabel.setText(Integer.toString(gameController.getRelationshipManager().getRelationshipLevel(promotion, worker)));
 
             updateManagerLabels();
             entourageListView.getItems().clear();

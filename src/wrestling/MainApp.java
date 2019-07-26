@@ -433,9 +433,9 @@ public class MainApp extends Application {
 
         task.setOnSucceeded((WorkerStateEvent t) -> {
 
+            root.setButtonsDisable(false);
             nextDayScreenController.nextDay();
             updateLabels();
-            root.setButtonsDisable(false);
             primaryStage.getScene().setCursor(Cursor.DEFAULT);
         });
 

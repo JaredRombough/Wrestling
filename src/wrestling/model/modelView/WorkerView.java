@@ -323,7 +323,7 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
      * @param manager the manager to set
      */
     public void setManager(WorkerView manager) {
-        if(!Objects.equals(this.manager, manager)) {
+        if (!Objects.equals(this.manager, manager)) {
             getEntourage().remove(this.manager);
         }
         this.manager = manager;
@@ -336,6 +336,4 @@ public class WorkerView implements Serializable, SegmentItem, iPerson {
     public List<WorkerView> getEntourage() {
         return entourage;
     }
-
-
 }

@@ -14,7 +14,6 @@ import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
-import java.time.temporal.ChronoUnit;
 import wrestling.model.NewsItem;
 import static wrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
 import static wrestling.model.constants.GameConstants.MAX_MORALE;
@@ -29,13 +28,15 @@ public class ContractManager implements Serializable {
     private final PromotionManager promotionManager;
     private final TitleManager titleManager;
     private final NewsManager newsManager;
+    private final RelationshipManager relationshipManager;
 
-    public ContractManager(PromotionManager promotionManager, TitleManager titleManager, NewsManager newsManager) {
+    public ContractManager(PromotionManager promotionManager, TitleManager titleManager, NewsManager newsManager, RelationshipManager relationshipManager) {
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.newsManager = newsManager;
+        this.relationshipManager = relationshipManager;
     }
 
     public void dailyUpdate(LocalDate date) {
@@ -183,9 +184,9 @@ public class ContractManager implements Serializable {
 
     public void appearance(LocalDate date, WorkerView worker, PromotionView promotion) {
         Contract contract = getContract(worker, promotion);
-        int morale = contract.getMorale();
-        if (contract.getMorale() < MAX_MORALE) {
-            contract.setMorale(morale + APPEARANCE_MORALE_BONUS);
+        int morale = relationshipManager.getRelationship(worker, promotion).getLevel();
+        if (morale < MAX_MORALE) {
+            relationshipManager.addRelationshipValue(worker, promotion, APPEARANCE_MORALE_BONUS);
         }
         contract.setLastShowDate(date);
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
@@ -322,12 +323,10 @@ public class ContractManager implements Serializable {
     }
 
     private void handleMoraleCheck(iContract contract, LocalDate date) {
-        int morale = contract.getMorale();
         long daysBetween = DAYS.between(contract.getLastShowDate(), date);
         int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
         if (penalty > 0) {
-            morale -= penalty;
-            contract.setMorale(morale);
+            relationshipManager.addRelationshipValue(contract.getWorker(), contract.getPromotion(), -penalty);
             addMoraleNewsItem(contract, daysBetween, penalty, date);
         }
     }
