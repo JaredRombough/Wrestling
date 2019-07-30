@@ -21,6 +21,10 @@ import org.apache.logging.log4j.Logger;
 import wrestling.model.EventTemplate;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
+import wrestling.model.constants.GameConstants;
+import static wrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
+import static wrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
+import static wrestling.model.constants.GameConstants.MIN_RELATIONSHIP_LEVEL;
 import wrestling.model.controller.GameController;
 import wrestling.model.factory.PersonFactory;
 import wrestling.model.interfaces.iRosterSplit;
@@ -612,28 +616,28 @@ public class Import {
                         int level;
                         switch (hexStringToInt(currentHexLine.get(35))) {
                             case 0:
-                                level = 200;
+                                level = MAX_RELATIONSHIP_LEVEL;
                                 break;
                             case 1:
-                                level = 200;
+                                level = MAX_RELATIONSHIP_LEVEL;
                                 break;
                             case 2:
-                                level = 0;
+                                level = MIN_RELATIONSHIP_LEVEL;
                                 break;
                             case 3:
-                                level = 50;
+                                level = MIN_RELATIONSHIP_LEVEL + 50;
                                 break;
                             case 4:
-                                level = 150;
+                                level = MAX_RELATIONSHIP_LEVEL - 50;
                                 break;
                             case 5:
-                                level = 200;
+                                level = MAX_RELATIONSHIP_LEVEL;
                                 break;
                             default:
-                                level = 100;
+                                level = DEFAULT_RELATIONSHIP_LEVEL;
                                 break;
                         }
-                        gameController.getRelationshipManager().setRelationshipLevel(worker2, worker2, level);
+                        gameController.getRelationshipManager().setRelationshipLevel(worker1, worker2, level);
                         break;
                     }
                 }

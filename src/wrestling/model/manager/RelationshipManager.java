@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import wrestling.model.Relationship;
 import wrestling.model.SegmentItem;
+import static wrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
 
 public class RelationshipManager {
 
@@ -26,7 +27,7 @@ public class RelationshipManager {
 
     public void addRelationshipValue(SegmentItem segmentItem, SegmentItem segmentItem2, int addValue) {
         if (!hasRelationship(segmentItem, segmentItem2)) {
-            createRelationship(segmentItem, segmentItem2, 100 + addValue);
+            createRelationship(segmentItem, segmentItem2, DEFAULT_RELATIONSHIP_LEVEL + addValue);
         } else {
             setRelationshipLevel(segmentItem, segmentItem2, getRelationshipLevel(segmentItem, segmentItem2) + addValue);
         }
@@ -36,7 +37,7 @@ public class RelationshipManager {
         if (hasRelationship(segmentItem, segmentItem2)) {
             return relationshipMap.get(segmentItem).get(segmentItem2);
         }
-        return createRelationship(segmentItem, segmentItem2, 100);
+        return createRelationship(segmentItem, segmentItem2, DEFAULT_RELATIONSHIP_LEVEL);
     }
 
     public int getRelationshipLevel(SegmentItem segmentItem, SegmentItem segmentItem2) {

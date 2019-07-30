@@ -20,12 +20,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
+import wrestling.model.Relationship;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
-import wrestling.model.interfaces.iContract;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.utility.ModelUtils;
@@ -37,6 +35,9 @@ import wrestling.view.utility.comparators.NameComparator;
 import wrestling.view.utility.interfaces.ControllerBase;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
+
+    @FXML
+    private Button relationshipButton;
 
     @FXML
     private GridPane gridPane;
@@ -252,6 +253,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
         });
 
+        relationshipButton.setOnAction(e -> {
+            List<Relationship> relationships = gameController.getRelationshipManager().getRelationships(worker);
+            StringBuilder sb = new StringBuilder();
+            relationships.forEach(relationship -> sb.append("\n" + relationship.getOtherSegmentItem(worker) + " " + relationship.getLevel()));
+            ViewUtils.generateAlert("Relationships", "Relationships for " + worker.getLongName(), sb.toString()).showAndWait();
+        });
+
     }
 
     @Override
@@ -303,10 +311,19 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 });
 
                 String style;
-                if (Integer.parseInt(l.getText()) < 50) {
+
+                int lowBound = 50;
+                int midBound = 75;
+
+                if (Objects.equals(moraleLabel, l)) {
+                    lowBound = -50;
+                    midBound = -1;
+                }
+
+                if (Integer.parseInt(l.getText()) < lowBound) {
                     style = "lowStat";
-                } else if (Integer.parseInt(l.getText()) >= 50
-                        && Integer.parseInt(l.getText()) < 75) {
+                } else if (Integer.parseInt(l.getText()) >= lowBound
+                        && Integer.parseInt(l.getText()) < midBound) {
                     style = "midStat";
                 } else {
                     style = "highStat";

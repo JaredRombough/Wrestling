@@ -16,9 +16,9 @@ import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
 import wrestling.model.NewsItem;
 import static wrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
-import static wrestling.model.constants.GameConstants.MAX_MORALE;
 import static wrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static wrestling.model.utility.ContractUtils.isMoraleCheckDay;
+import static wrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
 
 public class ContractManager implements Serializable {
 
@@ -184,10 +184,7 @@ public class ContractManager implements Serializable {
 
     public void appearance(LocalDate date, WorkerView worker, PromotionView promotion) {
         Contract contract = getContract(worker, promotion);
-        int morale = relationshipManager.getRelationship(worker, promotion).getLevel();
-        if (morale < MAX_MORALE) {
-            relationshipManager.addRelationshipValue(worker, promotion, APPEARANCE_MORALE_BONUS);
-        }
+        relationshipManager.addRelationshipValue(worker, promotion, APPEARANCE_MORALE_BONUS);
         contract.setLastShowDate(date);
         promotionManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }
