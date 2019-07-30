@@ -37,10 +37,6 @@ import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.segmentEnum.Gender;
 import wrestling.model.segmentEnum.StaffType;
 
-/**
- *
- * for importing roster files etc
- */
 public class Import {
 
     private GameController gameController;
@@ -91,6 +87,7 @@ public class Import {
                 tvDat();
                 eventDat();
                 staffDat();
+                relateDat();
             } catch (Exception ex) {
 
                 sb.append(ex);
@@ -575,6 +572,74 @@ public class Import {
                 currentHexLine = new ArrayList<>();
                 currentStringLine = new ArrayList<>();
 
+            }
+        }
+    }
+
+    private void relateDat() throws IOException {
+        Path path = Paths.get(importFolder.getPath() + "\\relate.dat");
+        byte[] data = Files.readAllBytes(path);
+
+        String fileString = DatatypeConverter.printHexBinary(data);
+        List<String> currentHexLine = new ArrayList<>();
+        int counter = 0;
+        int lineLength = 37;
+
+        for (int i = 0; i < fileString.length(); i += 2) {
+
+            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+
+            currentHexLine.add(hexValueString);
+
+            counter++;
+
+            if (counter == lineLength) {
+
+                String id1 = currentHexLine.get(31) + currentHexLine.get(32);
+                String id2 = currentHexLine.get(33) + currentHexLine.get(34);
+
+                WorkerView worker1 = null;
+                WorkerView worker2 = null;;
+
+                for (int x = 0; x < allWorkers.size(); x++) {
+
+                    if (workerIDs.get(x).equals(id1)) {
+                        worker1 = allWorkers.get(x);
+                    } else if (workerIDs.get(x).equals(id2)) {
+                        worker2 = allWorkers.get(x);
+                    }
+                    if (worker1 != null && worker2 != null) {
+                        int level;
+                        switch (hexStringToInt(currentHexLine.get(35))) {
+                            case 0:
+                                level = 200;
+                                break;
+                            case 1:
+                                level = 200;
+                                break;
+                            case 2:
+                                level = 0;
+                                break;
+                            case 3:
+                                level = 50;
+                                break;
+                            case 4:
+                                level = 150;
+                                break;
+                            case 5:
+                                level = 200;
+                                break;
+                            default:
+                                level = 100;
+                                break;
+                        }
+                        gameController.getRelationshipManager().setRelationshipLevel(worker2, worker2, level);
+                        break;
+                    }
+                }
+
+                counter = 0;
+                currentHexLine = new ArrayList<>();
             }
         }
     }
