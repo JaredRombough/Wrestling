@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -21,6 +23,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -33,8 +36,13 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -50,12 +58,14 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wrestling.MainApp;
+import wrestling.model.Relationship;
 import wrestling.model.SegmentItem;
 import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import wrestling.model.controller.GameController;
@@ -250,6 +260,37 @@ public final class ViewUtils {
         return alert;
     }
 
+    public static Dialog generateRelationshipDialog(SegmentItem segmentItem, List<Relationship> relationships) {
+        Dialog<TitleView> dialog = new Dialog<>();
+        DialogPane dialogPane = dialog.getDialogPane();
+
+        dialog.setTitle("Relationships");
+        dialog.setHeaderText("Relationships for " + segmentItem.getLongName());
+        dialogPane.getButtonTypes().addAll(ButtonType.OK);
+
+        TableView tableView = new TableView();
+
+        TableColumn<Relationship, String> column1 = new TableColumn<>("Name");
+        column1.setCellValueFactory((CellDataFeatures<Relationship, String> p)
+                -> new SimpleStringProperty(p.getValue().getOtherSegmentItem(segmentItem).getLongName()));
+        TableColumn<Relationship, Integer> column2 = new TableColumn<>("Value");
+        column2.setCellValueFactory((CellDataFeatures<Relationship, Integer> p)
+                -> new SimpleIntegerProperty(p.getValue().getLevel()).asObject());
+
+        column1.setMaxWidth(1f * Integer.MAX_VALUE * 75);
+        column2.setMaxWidth(1f * Integer.MAX_VALUE * 25);
+
+        tableView.getColumns().setAll(column1, column2);
+        tableView.setItems(FXCollections.observableArrayList(relationships));
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        dialogPane.setContent(tableView);
+        dialogPane.setMinWidth(400);
+        dialogPane.getStylesheets().add("style.css");
+
+        return dialog;
+    }
+
     public static boolean generateConfirmationDialogue(String header, String content) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm");
@@ -364,7 +405,8 @@ public final class ViewUtils {
                 ClipboardContent cc = new ClipboardContent();
                 cc.putString(listCell.getItem().toString());
                 listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
-                LocalDragboard.getINSTANCE().putValue(SegmentItem.class, segmentItem);
+                LocalDragboard
+                        .getINSTANCE().putValue(SegmentItem.class, segmentItem);
                 event.consume();
             });
         }
@@ -382,8 +424,10 @@ public final class ViewUtils {
                 ClipboardContent cc = new ClipboardContent();
                 cc.putString(listCell.getItem().toString());
                 listCell.startDragAndDrop(TransferMode.MOVE).setContent(cc);
-                LocalDragboard.getINSTANCE().putValue(SegmentItem.class, segmentItem);
-                LocalDragboard.getINSTANCE().putValue(TeamType.class, teamType);
+                LocalDragboard
+                        .getINSTANCE().putValue(SegmentItem.class, segmentItem);
+                LocalDragboard
+                        .getINSTANCE().putValue(TeamType.class, teamType);
                 event.consume();
             });
         }

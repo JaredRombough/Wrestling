@@ -63,6 +63,14 @@ GREY
     -fx-background: #f1f1f1;
 }
 
+.table-row-cell:empty {
+    -fx-background-color: #f1f1f1;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0px;
+}
+
 .sorterCell {
     -fx-text-fill: white;
 }

@@ -254,10 +254,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         });
 
         relationshipButton.setOnAction(e -> {
-            List<Relationship> relationships = gameController.getRelationshipManager().getRelationships(worker);
-            StringBuilder sb = new StringBuilder();
-            relationships.forEach(relationship -> sb.append("\n" + relationship.getOtherSegmentItem(worker) + " " + relationship.getLevel()));
-            ViewUtils.generateAlert("Relationships", "Relationships for " + worker.getLongName(), sb.toString()).showAndWait();
+            ViewUtils.generateRelationshipDialog(worker, gameController.getRelationshipManager().getRelationships(worker)).showAndWait();
         });
 
     }
