@@ -97,7 +97,9 @@ public final class GameController implements Serializable {
                 titleManager,
                 workerManager,
                 tagTeamManager,
-                stableManager);
+                stableManager,
+                relationshipManager,
+                newsManager);
 
         promotionFactory = new PromotionFactory(
                 contractFactory,

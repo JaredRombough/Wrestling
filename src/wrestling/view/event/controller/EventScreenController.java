@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -53,8 +55,11 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.StaffType;
+import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.SegmentUtils;
+import static wrestling.model.utility.SegmentUtils.getMatchLossMoralePenalty;
+import static wrestling.model.utility.SegmentUtils.getMatchObjectors;
 import wrestling.model.utility.StaffUtils;
 import wrestling.model.utility.TestUtils;
 import wrestling.view.utility.GameScreen;
@@ -64,6 +69,7 @@ import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
+import static wrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -162,26 +168,50 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void handleRunEvent() {
-        String errors = getErrors();
+        if (handleErrors() && handleWarnings() && handleWorkers()) {
+            showResults();
+        }
+    }
+
+    private boolean handleWorkers() {
+        StringBuilder objectionString = new StringBuilder();
+
+        getSegmentViews().stream().forEach(segment -> {
+            List<WorkerView> objectors = getMatchObjectors(segment);
+            if (!objectors.isEmpty()) {
+                objectionString.append(String.format("%s %s not happy about losing their match against %s.",
+                        ModelUtils.andItemsLongName(objectors),
+                        objectors.size() > 1 ? "are" : "is",
+                        ModelUtils.andItemsLongName(segment.getWinner().getWorkers())));
+                objectionString.append("\n\n");
+            }
+        });
+
+        return objectionString.length() == 0 || ViewUtils.generateConfirmationDialogue(
+                "Run the event anyway?",
+                objectionString.toString());
+
+    }
+
+    private boolean handleWarnings() {
         String warnings = getWarnings();
+        return getWarnings().isEmpty() || ViewUtils.generateConfirmationDialogue(
+                "Consider the following...",
+                warnings + "\nRun the event anyway?");
+    }
+
+    private boolean handleErrors() {
+        String errors = getErrors();
         if (!errors.isEmpty()) {
             ViewUtils.generateAlert(
                     "Error",
                     "Event is not valid.",
-                    errors + "\n" + warnings,
+                    errors + "\n" + getWarnings(),
                     AlertType.ERROR)
                     .showAndWait();
-
-        } else if (!warnings.isEmpty()) {
-            if (ViewUtils.generateConfirmationDialogue(
-                    "Consider the following...",
-                    warnings + "\nRun the event anyway?")) {
-                showResults();
-            }
-
-        } else {
-            showResults();
+            return false;
         }
+        return true;
     }
 
     private String getErrors() {

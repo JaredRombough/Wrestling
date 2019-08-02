@@ -11,13 +11,16 @@ import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
 import wrestling.model.Match;
 import wrestling.model.MatchEvent;
+import wrestling.model.NewsItem;
 import wrestling.model.SegmentTemplate;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
 import wrestling.model.manager.ContractManager;
 import wrestling.model.manager.EventManager;
+import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
+import wrestling.model.manager.RelationshipManager;
 import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.StableManager;
 import wrestling.model.manager.TagTeamManager;
@@ -39,6 +42,7 @@ import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.view.utility.ViewUtils;
+import static wrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory {
 
@@ -51,6 +55,8 @@ public class EventFactory {
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
+    private final RelationshipManager relationshipManager;
+    private final NewsManager newsManager;
 
     public EventFactory(
             ContractManager contractManager,
@@ -61,7 +67,9 @@ public class EventFactory {
             TitleManager titleManager,
             WorkerManager workerManager,
             TagTeamManager tagTeamManager,
-            StableManager stableManager) {
+            StableManager stableManager,
+            RelationshipManager relationshipManager,
+            NewsManager newsManager) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -71,6 +79,8 @@ public class EventFactory {
         this.workerManager = workerManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
+        this.relationshipManager = relationshipManager;
+        this.newsManager = newsManager;
     }
 
     public void processEventView(EventView eventView, boolean processSegments, PromotionController promotionController) {
@@ -156,11 +166,6 @@ public class EventFactory {
         });
     }
 
-//    private void processContracts(iEvent event, List<Segment> segments) {
-//        eventManager.allWorkers(segments).stream().map((worker) -> contractManager.getContract(worker, event.getPromotion())).forEach((contract) -> {
-//            contractManager.appearance(event.getDate(), contract);
-//        });
-//    }
     public Segment processSegmentView(EventView eventView, SegmentView segmentView) {
         segmentView.setEventView(eventView);
         Segment segment = matchFactory.saveSegment(segmentView);
@@ -169,6 +174,18 @@ public class EventFactory {
             List<WorkerView> winners = matchManager.getWinners((Match) segment);
             winners.stream().forEach((w) -> {
                 workerManager.gainPopularity(w);
+            });
+
+            getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {
+                relationshipManager.addRelationshipValue(entry.getKey(), segmentView.getPromotion(), -entry.getValue());
+                newsManager.addNews(new NewsItem(
+                        String.format("%s unhappy with loss", entry.getKey().getShortName()),
+                        String.format("%s is unhappy with %s after their loss to %s",
+                                entry.getKey().getLongName(),
+                                segmentView.getPromotion(),
+                                ModelUtils.andItemsLongName(winners)),
+                        segmentView.getDate(),
+                        segmentView.getPromotion()));
             });
 
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {

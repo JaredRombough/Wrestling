@@ -97,9 +97,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
         NewsItem newsItem = new NewsItem(
                 "Welcome to Open Wrestling",
-                "Have fun!");
-        newsItem.setDate(LocalDate.MIN);
-        newsItem.setPromotion(playerPromotion());
+                "Have fun!",
+                LocalDate.MIN,
+                playerPromotion());
         gameController.getNewsManager().addNews(newsItem);
     }
 

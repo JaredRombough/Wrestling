@@ -6,14 +6,16 @@ import wrestling.model.modelView.PromotionView;
 
 public class NewsItem implements iNewsItem {
 
-    private String summary;
-    private String headline;
-    private LocalDate date;
-    private PromotionView promotion;
+    private final String summary;
+    private final String headline;
+    private final LocalDate date;
+    private final PromotionView promotion;
 
-    public NewsItem(String headline, String summary) {
+    public NewsItem(String headline, String summary, LocalDate date, PromotionView promotion) {
         this.summary = summary;
         this.headline = headline;
+        this.date = date;
+        this.promotion = promotion;
     }
 
     @Override
@@ -26,20 +28,6 @@ public class NewsItem implements iNewsItem {
         return headline;
     }
 
-    /**
-     * @param summary the summary to set
-     */
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    /**
-     * @param headline the headline to set
-     */
-    public void setHeadline(String headline) {
-        this.headline = headline;
-    }
-
     @Override
     public LocalDate getDate() {
         return date;
@@ -49,19 +37,4 @@ public class NewsItem implements iNewsItem {
     public PromotionView getPromotion() {
         return promotion;
     }
-
-    /**
-     * @param date the date to set
-     */
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    /**
-     * @param promotion the promotion to set
-     */
-    public void setPromotion(PromotionView promotion) {
-        this.promotion = promotion;
-    }
-
 }

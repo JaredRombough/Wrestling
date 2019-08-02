@@ -329,15 +329,16 @@ public class ContractManager implements Serializable {
     }
 
     private void addMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
-        NewsItem newsItem = new NewsItem(String.format("%s loses morale", contract.getWorker().getShortName()),
+        NewsItem newsItem = new NewsItem(
+                String.format("%s loses morale", contract.getWorker().getShortName()),
                 String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
                         contract.getWorker().getLongName(),
                         contract.getPromotion().getName(),
                         daysBetween,
-                        penalty)
+                        penalty),
+                date,
+                contract.getPromotion()
         );
-        newsItem.setDate(date);
-        newsItem.setPromotion(contract.getPromotion());
         newsManager.addNews(newsItem);
     }
 }
