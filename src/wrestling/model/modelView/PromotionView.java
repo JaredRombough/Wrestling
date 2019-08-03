@@ -91,6 +91,7 @@ public class PromotionView implements SegmentItem, Serializable {
     /**
      * @return the shortName
      */
+    @Override
     public String getShortName() {
         return shortName;
     }

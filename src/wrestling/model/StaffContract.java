@@ -110,6 +110,7 @@ public class StaffContract implements Serializable, iContract {
     /**
      * @return the lastShowDate
      */
+    @Override
     public LocalDate getLastShowDate() {
         return lastShowDate;
     }

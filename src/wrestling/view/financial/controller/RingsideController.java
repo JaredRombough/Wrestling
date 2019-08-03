@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import wrestling.model.constants.GameConstants;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import static wrestling.model.constants.UIConstants.VIEW_ICON;
 import wrestling.model.modelView.StaffView;

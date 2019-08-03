@@ -22,7 +22,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
-import wrestling.model.Relationship;
 import static wrestling.model.constants.UIConstants.EDIT_ICON;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.modelView.WorkerView;

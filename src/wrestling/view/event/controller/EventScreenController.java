@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -55,10 +53,8 @@ import wrestling.model.segmentEnum.BrowseMode;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.model.segmentEnum.StaffType;
-import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
 import wrestling.model.utility.SegmentUtils;
-import static wrestling.model.utility.SegmentUtils.getMatchLossMoralePenalty;
 import static wrestling.model.utility.SegmentUtils.getMatchObjectors;
 import wrestling.model.utility.StaffUtils;
 import wrestling.model.utility.TestUtils;
@@ -69,7 +65,6 @@ import wrestling.view.utility.ScreenCode;
 import wrestling.view.utility.SortControl;
 import wrestling.view.utility.ViewUtils;
 import wrestling.view.utility.interfaces.ControllerBase;
-import static wrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -120,6 +115,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @FXML
     private ComboBox<BrowseMode> bookingBrowseComboBox;
+    private boolean updatingChallenge = false;
 
     @Override
     public void setCurrent(Object obj) {
@@ -303,7 +299,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentListView.getSelectionModel().selectFirst();
     }
 
-    private boolean updatingChallenge = false;
 
     @Override
     public void updateLabels() {

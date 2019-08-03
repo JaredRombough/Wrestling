@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -45,11 +44,11 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     private TeamType teamType;
 
+
+    boolean toggle = true;
     public int getTeamNumber() {
         return this.teamNumber;
     }
-
-    boolean toggle = true;
 
     public void setTeamNumber(int teamNumber) {
         this.teamNumber = teamNumber;

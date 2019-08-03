@@ -17,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
 import wrestling.model.manager.SegmentManager;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.segmentEnum.SegmentValidation;
 import wrestling.view.utility.LocalDragboard;
 import wrestling.view.utility.ViewUtils;

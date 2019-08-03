@@ -29,8 +29,6 @@ import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.EventRecurrence;
 import wrestling.model.utility.ModelUtils;
-import wrestling.model.utility.StaffUtils;
-import wrestling.view.utility.ViewUtils;
 
 public class EventManager implements Serializable {
 

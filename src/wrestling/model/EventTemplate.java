@@ -254,6 +254,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
     /**
      * @return the rosterSplit
      */
+    @Override
     public WorkerGroup getRosterSplit() {
         return rosterSplit;
     }
@@ -261,6 +262,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
     /**
      * @param rosterSplit the rosterSplit to set
      */
+    @Override
     public void setRosterSplit(WorkerGroup rosterSplit) {
         this.rosterSplit = rosterSplit;
     }

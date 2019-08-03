@@ -2,7 +2,6 @@ package wrestling.model;
 
 import java.io.Serializable;
 import wrestling.model.interfaces.SegmentParams;
-import wrestling.model.modelView.SegmentView;
 import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.segmentEnum.AngleType;
 import wrestling.model.segmentEnum.JoinTeamType;

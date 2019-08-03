@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import wrestling.model.EventTemplate;
 import wrestling.model.TagTeam;
 import wrestling.model.TagTeamWorker;
-import wrestling.model.constants.GameConstants;
 import static wrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
 import static wrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
 import static wrestling.model.constants.GameConstants.MIN_RELATIONSHIP_LEVEL;
@@ -29,10 +28,10 @@ import wrestling.model.controller.GameController;
 import wrestling.model.factory.PersonFactory;
 import wrestling.model.interfaces.iRosterSplit;
 import wrestling.model.modelView.PromotionView;
-import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.ActiveType;
 import wrestling.model.segmentEnum.EventBroadcast;
@@ -603,7 +602,7 @@ public class Import {
                 String id2 = currentHexLine.get(33) + currentHexLine.get(34);
 
                 WorkerView worker1 = null;
-                WorkerView worker2 = null;;
+                WorkerView worker2 = null;
 
                 for (int x = 0; x < allWorkers.size(); x++) {
 

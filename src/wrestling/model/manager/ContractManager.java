@@ -6,7 +6,10 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.List;
 import wrestling.model.Contract;
+import wrestling.model.NewsItem;
 import wrestling.model.StaffContract;
+import static wrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
+import static wrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import wrestling.model.interfaces.iContract;
 import wrestling.model.interfaces.iPerson;
 import wrestling.model.modelView.PromotionView;
@@ -14,11 +17,7 @@ import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ContractUtils;
-import wrestling.model.NewsItem;
-import static wrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
-import static wrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static wrestling.model.utility.ContractUtils.isMoraleCheckDay;
-import static wrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
 
 public class ContractManager implements Serializable {
 

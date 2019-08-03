@@ -6,10 +6,10 @@ import java.util.List;
 import wrestling.model.SegmentItem;
 import wrestling.model.interfaces.Description;
 import wrestling.model.interfaces.iTeamType;
-import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.StaffView;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.TitleView;
+import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.WorkerView;
 
 public enum TeamType implements Description, iTeamType {

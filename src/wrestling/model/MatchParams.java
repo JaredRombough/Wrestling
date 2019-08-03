@@ -31,6 +31,7 @@ public class MatchParams implements SegmentParams {
     /**
      * @return the matchRule
      */
+    @Override
     public MatchRule getMatchRule() {
         return matchRule;
     }

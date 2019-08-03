@@ -1,12 +1,12 @@
 package wrestling.model.segmentEnum;
 
+import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
+import static wrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
 import wrestling.model.interfaces.iSortFilter;
 import wrestling.model.interfaces.iStaffType;
-import static wrestling.model.constants.GameConstants.BROADCAST_TEAM_MODIFIER_WEIGHT;
-import static wrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
-import static wrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
-import static wrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
-import static wrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
 
 public enum StaffType implements iSortFilter, iStaffType {
 

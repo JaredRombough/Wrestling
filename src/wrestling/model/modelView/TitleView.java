@@ -74,6 +74,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
     /**
      * @return the rosterSplit
      */
+    @Override
     public WorkerGroup getRosterSplit() {
         return rosterSplit;
     }
@@ -81,6 +82,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
     /**
      * @param rosterSplit the rosterSplit to set
      */
+    @Override
     public void setRosterSplit(WorkerGroup rosterSplit) {
         this.rosterSplit = rosterSplit;
     }
