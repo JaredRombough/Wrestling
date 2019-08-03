@@ -3,6 +3,7 @@ package wrestling.model.modelView;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import wrestling.model.Angle;
 import wrestling.model.AngleParams;
@@ -105,6 +106,14 @@ public class SegmentView implements Serializable {
             return defaultTeams.get(0);
         }
         return null;
+    }
+
+    public List<WorkerView> getWinners() {
+        List<SegmentTeam> defaultTeams = getTeams(TeamType.WINNER);
+        if (!defaultTeams.isEmpty()) {
+            return defaultTeams.get(0).getWorkers();
+        }
+        return Collections.emptyList();
     }
 
     public SegmentTeam getTeam(WorkerView worker) {

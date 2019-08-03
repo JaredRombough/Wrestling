@@ -92,7 +92,6 @@ public final class GameController implements Serializable {
                 contractManager,
                 eventManager,
                 matchFactory,
-                segmentManager,
                 promotionManager,
                 titleManager,
                 workerManager,

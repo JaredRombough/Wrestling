@@ -2,6 +2,7 @@ package wrestling.model.modelView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import wrestling.model.segmentEnum.OutcomeType;
 import wrestling.model.segmentEnum.PresenceType;
@@ -22,6 +23,12 @@ public class SegmentTeam implements Serializable {
     private OutcomeType outcome;
     private PresenceType presence;
     private ResponseType response;
+
+    public SegmentTeam(WorkerView worker, TeamType type) {
+        this.workers = Arrays.asList(worker);
+        this.type = type;
+        entourage = new ArrayList();
+    }
 
     public SegmentTeam(List<WorkerView> workers, TeamType type) {
         this.workers = workers;

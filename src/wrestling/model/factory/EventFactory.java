@@ -13,6 +13,8 @@ import wrestling.model.Match;
 import wrestling.model.MatchEvent;
 import wrestling.model.NewsItem;
 import wrestling.model.SegmentTemplate;
+import static wrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
+import static wrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
 import wrestling.model.controller.PromotionController;
 import wrestling.model.interfaces.Segment;
 import wrestling.model.interfaces.iEvent;
@@ -21,7 +23,6 @@ import wrestling.model.manager.EventManager;
 import wrestling.model.manager.NewsManager;
 import wrestling.model.manager.PromotionManager;
 import wrestling.model.manager.RelationshipManager;
-import wrestling.model.manager.SegmentManager;
 import wrestling.model.manager.StableManager;
 import wrestling.model.manager.TagTeamManager;
 import wrestling.model.manager.TitleManager;
@@ -41,7 +42,6 @@ import wrestling.model.segmentEnum.ShowType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.segmentEnum.TransactionType;
 import wrestling.model.utility.ModelUtils;
-import wrestling.view.utility.ViewUtils;
 import static wrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory {
@@ -50,7 +50,6 @@ public class EventFactory {
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final SegmentManager matchManager;
     private final MatchFactory matchFactory;
     private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
@@ -62,7 +61,6 @@ public class EventFactory {
             ContractManager contractManager,
             EventManager eventManager,
             MatchFactory matchFactory,
-            SegmentManager matchManager,
             PromotionManager promotionManager,
             TitleManager titleManager,
             WorkerManager workerManager,
@@ -73,7 +71,6 @@ public class EventFactory {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
-        this.matchManager = matchManager;
         this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
@@ -171,9 +168,13 @@ public class EventFactory {
         Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
-            List<WorkerView> winners = matchManager.getWinners((Match) segment);
-            winners.stream().forEach((w) -> {
-                workerManager.gainPopularity(w);
+            List<WorkerView> winners = segmentView.getWinners();
+            winners.stream().forEach((worker) -> {
+                workerManager.gainPopularity(worker);
+                relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_MATCH_WIN);
+                if (!segmentView.getTitleViews().isEmpty()) {
+                    relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
+                }
             });
 
             getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {

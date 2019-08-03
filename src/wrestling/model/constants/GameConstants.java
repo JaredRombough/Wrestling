@@ -26,5 +26,8 @@ public class GameConstants {
     public static final int MIN_RELATIONSHIP_LEVEL = -100;
     public static final int APPEARANCE_MORALE_BONUS = 1;
     public static final int MORALE_PENALTY_DAYS_BETWEEN = 30;
+    public static final int MORALE_BONUS_MATCH_WIN = 1;
+    public static final int MORALE_BONUS_TITLE_MATCH_WIN = 1;
+    
 
 }

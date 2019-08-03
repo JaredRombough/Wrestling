@@ -21,10 +21,7 @@ import wrestling.model.modelView.WorkerGroup;
 import wrestling.model.modelView.TagTeamView;
 import wrestling.model.modelView.WorkerView;
 import wrestling.model.segmentEnum.AngleType;
-import wrestling.model.segmentEnum.JoinTeamType;
 import wrestling.model.segmentEnum.MatchFinish;
-import wrestling.model.segmentEnum.MatchRule;
-import wrestling.model.segmentEnum.ResponseType;
 import wrestling.model.segmentEnum.SegmentType;
 import wrestling.model.segmentEnum.TeamType;
 import wrestling.model.utility.ModelUtils;
@@ -76,17 +73,6 @@ public class SegmentManager implements Serializable {
             }
         }
         return title;
-    }
-
-    public List<WorkerView> getWinners(Match match) {
-        List<WorkerView> winners = new ArrayList<>();
-        for (SegmentWorker matchWorker : segmentWorkers) {
-            if (matchWorker.getSegment().equals(match)
-                    && matchWorker.getTeam() == 0) {
-                winners.add(matchWorker.getWorker());
-            }
-        }
-        return winners;
     }
 
     public List<WorkerView> getWorkers(Segment segment) {
