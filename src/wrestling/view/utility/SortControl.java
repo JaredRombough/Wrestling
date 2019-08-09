@@ -22,6 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import wrestling.model.NewsItem;
 import wrestling.model.SegmentItem;
 import static wrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import static wrestling.model.constants.StringConstants.ALL_STABLES;
@@ -270,11 +271,11 @@ public class SortControl extends ControllerBase implements Initializable {
         return true;
     }
 
-    public boolean isNewsItemFiltered(iNewsItem newsItem) {
+    public boolean isNewsItemFiltered(NewsItem newsItem) {
         if (newsFilter.equals(NewsFilter.ALL)) {
             return false;
         }
-        return !playerPromotion().equals(newsItem.getPromotion());
+        return !newsItem.getPromotions().contains(playerPromotion());
     }
 
     private boolean isActiveFiltered(SegmentItem segmentItem) {

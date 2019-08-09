@@ -270,9 +270,7 @@ public class MatchFactory implements Serializable {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
                 int duration = injuryDays - (medicModifier / 10);
                 if (duration > 0) {
-                    Injury injury = new Injury(dateManager.today(), dateManager.today().plusDays(duration), w, segmentView);
-                    w.setInjury(injury);
-                    injuryManager.addInjury(injury);
+                    injuryManager.createInjury(dateManager.today(), duration, w, segmentView);
                 }
             }
         });

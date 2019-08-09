@@ -16,8 +16,8 @@ import wrestling.model.Contract;
 import wrestling.model.Event;
 import wrestling.model.EventTemplate;
 import wrestling.model.EventWorker;
+import wrestling.model.NewsItem;
 import wrestling.model.Title;
-import wrestling.model.TrainerEvent;
 import static wrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_RATE;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
@@ -130,17 +130,14 @@ public class PromotionController implements Serializable {
     //call this method every day for each ai
     //put the general decision making sequence here
     public void dailyUpdate(PromotionView promotion) {
-
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
             updatePushed(promotion);
         }
-
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
         while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
             signContract(promotion);
             activeRosterSize++;
         }
-
         //book a show if we have one scheduled today
         Event eventToday = eventManager.getEventOnDate(promotion, dateManager.today());
         if (eventToday != null) {
@@ -151,7 +148,6 @@ public class PromotionController implements Serializable {
                 //cancel event
             }
         }
-
     }
 
     //pay everyone
@@ -203,9 +199,13 @@ public class PromotionController implements Serializable {
 
                 }
                 if (success) {
-                    TrainerEvent trainerEvent = new TrainerEvent(worker, trainer, dateManager.today(),
-                            stat, promotion);
-                    newsManager.addNews(trainerEvent);
+                    NewsItem newsItem = new NewsItem(
+                            String.format("%s training", worker.getLongName()),
+                            String.format("%s increased %s working with %s trainer %s.",
+                                    worker.toString(), stat, promotion.getShortName(), trainer.toString()),
+                            dateManager.today(),
+                            promotion);
+                    newsManager.addNews(newsItem);
                 }
             }
         }

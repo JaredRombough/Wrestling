@@ -60,6 +60,6 @@ public final class SegmentUtils {
     }
 
     private static int getWinnerMaxPopularity(SegmentView segment) {
-        return segment.getWinner().getWorkers().stream().max(Comparator.comparing(WorkerView::getPopularity)).get().getPopularity();
+        return segment.getWinners().stream().max(Comparator.comparing(WorkerView::getPopularity)).get().getPopularity();
     }
 }

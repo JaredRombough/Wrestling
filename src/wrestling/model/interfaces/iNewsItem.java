@@ -1,6 +1,7 @@
 package wrestling.model.interfaces;
 
 import java.time.LocalDate;
+import java.util.List;
 import wrestling.model.modelView.PromotionView;
 
 public interface iNewsItem {
@@ -9,6 +10,6 @@ public interface iNewsItem {
 
     public LocalDate getDate();
 
-    public PromotionView getPromotion();
+    public List<PromotionView> getPromotions();
 
 }

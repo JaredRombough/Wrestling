@@ -2,10 +2,15 @@ package wrestling.model.controller;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.Math.random;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import org.apache.commons.lang3.RandomUtils;
 import wrestling.model.EventTemplate;
+import wrestling.model.NewsItem;
+import static wrestling.model.constants.Words.ACTIVITIES;
+import static wrestling.model.constants.Words.BODY_PARTS;
 import wrestling.model.factory.ContractFactory;
 import wrestling.model.factory.EventFactory;
 import wrestling.model.factory.MatchFactory;
@@ -26,6 +31,7 @@ import wrestling.model.manager.TitleManager;
 import wrestling.model.manager.WorkerManager;
 import wrestling.model.modelView.PromotionView;
 import wrestling.model.segmentEnum.EventFrequency;
+import wrestling.view.utility.ViewUtils;
 
 /**
  *
@@ -136,11 +142,10 @@ public final class GameController implements Serializable {
     //only called by MainApp
     public void nextDay() {
 
-        injuryManager.dailyUpdate(dateManager.today());
-
         contractManager.dailyUpdate(dateManager.today());
 
         for (PromotionView promotion : promotionManager.getPromotions()) {
+            injuryManager.dailyUpdate(dateManager.today(), promotion);
             promotionController.trainerUpdate(promotion);
             if (dateManager.isPayDay()) {
                 promotionController.payDay(promotion, dateManager.today());
@@ -153,7 +158,6 @@ public final class GameController implements Serializable {
         if (dateManager.today().getDayOfMonth() == 1) {
             bookEventTemplatesFuture(dateManager.today().minusMonths(1).getMonth());
         }
-
         dateManager.nextDay();
     }
 

@@ -176,19 +176,19 @@ public class EventFactory {
                     relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
                 }
             });
-
-            getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {
-                relationshipManager.addRelationshipValue(entry.getKey(), segmentView.getPromotion(), -entry.getValue());
-                newsManager.addNews(new NewsItem(
-                        String.format("%s unhappy with loss", entry.getKey().getShortName()),
-                        String.format("%s is unhappy with %s after their loss to %s",
-                                entry.getKey().getLongName(),
-                                segmentView.getPromotion(),
-                                ModelUtils.andItemsLongName(winners)),
-                        segmentView.getDate(),
-                        segmentView.getPromotion()));
-            });
-
+            if (!winners.isEmpty()) {
+                getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {
+                    relationshipManager.addRelationshipValue(entry.getKey(), segmentView.getPromotion(), -entry.getValue());
+                    newsManager.addNews(new NewsItem(
+                            String.format("%s unhappy with loss", entry.getKey().getShortName()),
+                            String.format("%s is unhappy with %s after their loss to %s",
+                                    entry.getKey().getLongName(),
+                                    segmentView.getPromotion(),
+                                    ModelUtils.andItemsLongName(winners)),
+                            segmentView.getDate(),
+                            segmentView.getPromotion()));
+                });
+            }
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
