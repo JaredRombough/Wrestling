@@ -95,12 +95,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             }
         });
 
-        NewsItem newsItem = new NewsItem(
-                "Welcome to Open Wrestling",
-                "Have fun!",
-                LocalDate.MIN,
-                playerPromotion());
-        gameController.getNewsManager().addNews(newsItem);
+        gameController.getNewsManager().addWelcomeNewsItem(playerPromotion());
     }
 
     @FXML

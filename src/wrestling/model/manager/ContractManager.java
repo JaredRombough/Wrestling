@@ -323,21 +323,8 @@ public class ContractManager implements Serializable {
         int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
         if (penalty > 0) {
             relationshipManager.addRelationshipValue(contract.getWorker(), contract.getPromotion(), -penalty);
-            addMoraleNewsItem(contract, daysBetween, penalty, date);
+            newsManager.addMoraleNewsItem(contract, daysBetween, penalty, date);
         }
     }
 
-    private void addMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
-        NewsItem newsItem = new NewsItem(
-                String.format("%s loses morale", contract.getWorker().getShortName()),
-                String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
-                        contract.getWorker().getLongName(),
-                        contract.getPromotion().getName(),
-                        daysBetween,
-                        penalty),
-                date,
-                contract.getPromotion()
-        );
-        newsManager.addNews(newsItem);
-    }
 }

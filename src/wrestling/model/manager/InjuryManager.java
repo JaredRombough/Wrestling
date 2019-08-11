@@ -52,35 +52,13 @@ public class InjuryManager implements Serializable {
     public void createInjury(LocalDate startDate, int duration, WorkerView worker, SegmentView segmentView) {
         Injury injury = new Injury(startDate, startDate.plusDays(duration), worker, segmentView.getPromotion());
         addInjury(injury);
-        NewsItem newsItem = new NewsItem(String.format("%s injured", injury.getWorkerView().getLongName()),
-                String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
-                        injury.getWorkerView().getLongName(),
-                        segmentView.getEventView().toString(),
-                        injury.getStartDate().toString(),
-                        injury.getExpiryDate().toString()),
-                injury.getStartDate(),
-                injury.getPromotion());
-        newsManager.addNews(newsItem);
+        newsManager.addMatchInjuryNewsItem(injury, segmentView.getEventView());
     }
 
     public void createRandomInjury(WorkerView worker, LocalDate date, PromotionView promotion) {
-
-        int index1 = RandomUtils.nextInt(0, ACTIVITIES.size());
-        int index2 = RandomUtils.nextInt(0, BODY_PARTS.size());
-
         int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
-
-        String headline = String.format("%s injured", worker.getName());
-
         Injury injury = new Injury(date, date.plusDays(injuryDays), worker, promotion);
-
-        String body = String.format("%s injured their %s while %s today. They are expected to be out until %s.",
-                worker.getLongName(),
-                BODY_PARTS.get(index2),
-                ACTIVITIES.get(index1).toLowerCase(),
-                injury.getExpiryDate());
-
-        newsManager.addNews(new NewsItem(headline, body, date, promotion));
+        newsManager.addRandomInjuryNewsItem(injury);
         addInjury(injury);
     }
 

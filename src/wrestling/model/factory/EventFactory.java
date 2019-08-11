@@ -179,14 +179,7 @@ public class EventFactory {
             if (!winners.isEmpty()) {
                 getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {
                     relationshipManager.addRelationshipValue(entry.getKey(), segmentView.getPromotion(), -entry.getValue());
-                    newsManager.addNews(new NewsItem(
-                            String.format("%s unhappy with loss", entry.getKey().getShortName()),
-                            String.format("%s is unhappy with %s after their loss to %s",
-                                    entry.getKey().getLongName(),
-                                    segmentView.getPromotion(),
-                                    ModelUtils.andItemsLongName(winners)),
-                            segmentView.getDate(),
-                            segmentView.getPromotion()));
+                    newsManager.addJobComplaintNewsItem(entry.getKey(), winners, segmentView.getPromotion(), segmentView.getDate());
                 });
             }
             if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {

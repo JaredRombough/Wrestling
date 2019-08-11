@@ -199,13 +199,7 @@ public class PromotionController implements Serializable {
 
                 }
                 if (success) {
-                    NewsItem newsItem = new NewsItem(
-                            String.format("%s training", worker.getLongName()),
-                            String.format("%s increased %s working with %s trainer %s.",
-                                    worker.toString(), stat, promotion.getShortName(), trainer.toString()),
-                            dateManager.today(),
-                            promotion);
-                    newsManager.addNews(newsItem);
+                    newsManager.addTrainingNewsItem(worker, trainer, promotion, stat, dateManager.today());
                 }
             }
         }
