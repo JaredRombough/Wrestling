@@ -1,6 +1,8 @@
 package wrestling.view;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import wrestling.model.Event;
+import wrestling.model.NewsItem;
 import wrestling.model.manager.EventManager;
 import wrestling.model.modelView.TitleView;
 import wrestling.model.modelView.WorkerView;
@@ -56,7 +59,13 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
         } else if (obj instanceof WorkerView) {
             displayTitle.setText("");
-            newText = gameController.getSegmentManager().getMatchStringForMonths((WorkerView) obj, 3);
+            List<NewsItem> newsItems = gameController.getNewsManager().getNews(obj, gameController.getDateManager().today().minusMonths(12), gameController.getDateManager().today());
+            StringBuilder sb = new StringBuilder();
+            newsItems.forEach(item -> {
+                sb.append(item.getSummary());
+                sb.append("\n");
+            });
+            newText = sb.toString();
         } else {
             newText = obj == null ? "" : obj.toString();
         }

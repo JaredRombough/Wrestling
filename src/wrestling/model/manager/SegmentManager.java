@@ -93,23 +93,6 @@ public class SegmentManager implements Serializable {
         return getMatchWorkers;
     }
 
-    public String getMatchStringForMonths(WorkerView worker, int months) {
-
-        StringBuilder sb = new StringBuilder();
-
-        for (SegmentView segmentView : segmentViews) {
-            if (segmentView.getWorkers().contains(worker)
-                    && segmentView.getDate().isAfter(dateManager.today().minusMonths(months))) {
-                sb.append(getSegmentString(segmentView, true));
-                sb.append("\n");
-            }
-        }
-
-        return sb.length() > 0
-                ? sb.toString() : "No recent matches";
-
-    }
-
     public List<SegmentView> getTopMatches(LocalDate localDate, ChronoUnit unit, int units, int totalMatches) {
 
         LocalDate earliestDate = localDate;
