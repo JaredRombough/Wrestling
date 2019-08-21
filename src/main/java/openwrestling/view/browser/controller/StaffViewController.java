@@ -1,0 +1,89 @@
+package openwrestling.view.browser.controller;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import openwrestling.model.modelView.StaffView;
+import openwrestling.view.results.controller.ResultsCardController;
+import openwrestling.view.utility.GameScreen;
+import openwrestling.view.utility.ScreenCode;
+import openwrestling.view.utility.ViewUtils;
+import openwrestling.view.utility.interfaces.ControllerBase;
+
+public class StaffViewController extends ControllerBase {
+
+    @FXML
+    private Label nameLabel;
+
+    @FXML
+    private Label contractLabel;
+
+    @FXML
+    private Label staffTypeLabel;
+
+    @FXML
+    private Label skillLabel;
+
+    @FXML
+    private Label behaviourLabel;
+
+    @FXML
+    private Label ageLabel;
+
+    @FXML
+    private Label genderLabel;
+
+    @FXML
+    private AnchorPane imageAnchor;
+
+    @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
+    private AnchorPane contractAnchor;
+    private GameScreen contractScreen;
+
+    private StaffView staffView;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
+
+    @Override
+    public void initializeMore() {
+        contractScreen = ViewUtils.loadScreenFromResource(ScreenCode.CONTRACT, mainApp, gameController, contractAnchor);
+    }
+
+    @Override
+    public void setCurrent(Object object) {
+        anchorPane.setVisible(object != null);
+        if (object instanceof StaffView) {
+            this.staffView = (StaffView) object;
+            contractScreen.controller.setCurrent(staffView);
+            updateLabels();
+        }
+    }
+
+    @Override
+    public void updateLabels() {
+        if (staffView != null) {
+            nameLabel.setText(staffView.getName());
+            staffTypeLabel.setText(staffView.getStaffType().toString());
+            skillLabel.setText(Integer.toString(staffView.getSkill()));
+            behaviourLabel.setText(Integer.toString(staffView.getBehaviour()));
+            ageLabel.setText(Integer.toString(staffView.getAge()));
+            genderLabel.setText(staffView.getGender().toString());
+
+            imageAnchor.getChildren().clear();
+            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+            card.controller.setCurrent(staffView);
+            ((ResultsCardController) card.controller).setNameLabelVisibile(false);
+
+            contractScreen.controller.updateLabels();
+        }
+    }
+
+}
