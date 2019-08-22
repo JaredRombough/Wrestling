@@ -1,16 +1,7 @@
 package openwrestling.model.controller;
 
-import java.io.IOException;
-import java.io.Serializable;
-import static java.lang.Math.random;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.YearMonth;
-import org.apache.commons.lang3.RandomUtils;
+import lombok.Getter;
 import openwrestling.model.EventTemplate;
-import openwrestling.model.NewsItem;
-import static openwrestling.model.constants.Words.ACTIVITIES;
-import static openwrestling.model.constants.Words.BODY_PARTS;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
@@ -31,12 +22,14 @@ import openwrestling.model.manager.TitleManager;
 import openwrestling.model.manager.WorkerManager;
 import openwrestling.model.modelView.PromotionView;
 import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.view.utility.ViewUtils;
 
-/**
- *
- * game controller handles game stuff
- */
+import java.io.IOException;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
+
+@Getter
 public final class GameController implements Serializable {
 
     private final ContractFactory contractFactory;
@@ -183,139 +176,6 @@ public final class GameController implements Serializable {
             }
             yearMonth = yearMonth.plusMonths(1);
         }
-    }
-
-    /**
-     * @return the contractFactory
-     */
-    public ContractFactory getContractFactory() {
-        return contractFactory;
-    }
-
-    /**
-     * @return the eventFactory
-     */
-    public EventFactory getEventFactory() {
-        return eventFactory;
-    }
-
-    /**
-     * @return the titleFactory
-     */
-    public TitleFactory getTitleFactory() {
-        return titleFactory;
-    }
-
-    /**
-     * @return the promotionFactory
-     */
-    public PromotionFactory getPromotionFactory() {
-        return promotionFactory;
-    }
-
-    /**
-     * @return the contractController
-     */
-    public ContractManager getContractManager() {
-        return contractManager;
-    }
-
-    /**
-     * @return the promotionEventManager
-     */
-    public EventManager getEventManager() {
-        return eventManager;
-    }
-
-    /**
-     * @return the promotionController
-     */
-    public PromotionController getPromotionController() {
-        return promotionController;
-    }
-
-    /**
-     * @return the dateManager
-     */
-    public DateManager getDateManager() {
-        return dateManager;
-    }
-
-    /**
-     * @return the titleManager
-     */
-    public TitleManager getTitleManager() {
-        return titleManager;
-    }
-
-    /**
-     * @return the workerManager
-     */
-    public WorkerManager getWorkerManager() {
-        return workerManager;
-    }
-
-    /**
-     * @return the promotionManager
-     */
-    public PromotionManager getPromotionManager() {
-        return promotionManager;
-    }
-
-    /**
-     * @return the tagTeamManager
-     */
-    public TagTeamManager getTagTeamManager() {
-        return tagTeamManager;
-    }
-
-    /**
-     * @return the matchFactory
-     */
-    public MatchFactory getMatchFactory() {
-        return matchFactory;
-    }
-
-    /**
-     * @return the matchManager
-     */
-    public SegmentManager getSegmentManager() {
-        return segmentManager;
-    }
-
-    /**
-     * @return the injuryManager
-     */
-    public InjuryManager getInjuryManager() {
-        return injuryManager;
-    }
-
-    /**
-     * @return the newsManager
-     */
-    public NewsManager getNewsManager() {
-        return newsManager;
-    }
-
-    /**
-     * @return the staffManager
-     */
-    public StaffManager getStaffManager() {
-        return staffManager;
-    }
-
-    /**
-     * @return the stableManager
-     */
-    public StableManager getStableManager() {
-        return stableManager;
-    }
-
-    /**
-     * @return the relationshipManager
-     */
-    public RelationshipManager getRelationshipManager() {
-        return relationshipManager;
     }
 
 }

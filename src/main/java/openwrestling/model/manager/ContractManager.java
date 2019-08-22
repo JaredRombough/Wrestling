@@ -1,15 +1,7 @@
 package openwrestling.model.manager;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import static java.time.temporal.ChronoUnit.DAYS;
-import java.util.ArrayList;
-import java.util.List;
 import openwrestling.model.Contract;
-import openwrestling.model.NewsItem;
 import openwrestling.model.StaffContract;
-import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
-import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.modelView.PromotionView;
@@ -17,6 +9,15 @@ import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.WorkerView;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
+import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static openwrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
 public class ContractManager implements Serializable {
