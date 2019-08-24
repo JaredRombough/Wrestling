@@ -1,26 +1,27 @@
 package openwrestling.model.controller;
 
 import lombok.Getter;
+import openwrestling.manager.PromotionManager;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
 import openwrestling.model.factory.PromotionFactory;
 import openwrestling.model.factory.TitleFactory;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.PromotionManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.manager.StableManager;
 import openwrestling.model.manager.StaffManager;
 import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
-import openwrestling.model.manager.WorkerManager;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public final class GameController implements Serializable {
     private final StaffManager staffManager;
     private final StableManager stableManager;
     private final RelationshipManager relationshipManager;
+    private final BankAccountManager bankAccountManager;
 
     private final PromotionController promotionController;
 
@@ -67,8 +69,13 @@ public final class GameController implements Serializable {
         staffManager = new StaffManager();
         stableManager = new StableManager();
         relationshipManager = new RelationshipManager();
+        bankAccountManager = new BankAccountManager();
 
-        contractManager = new ContractManager(promotionManager, titleManager, newsManager, getRelationshipManager());
+        contractManager = new ContractManager(promotionManager,
+                titleManager,
+                newsManager,
+                relationshipManager,
+                bankAccountManager);
 
         tagTeamManager = new TagTeamManager(contractManager);
 
@@ -97,14 +104,16 @@ public final class GameController implements Serializable {
                 tagTeamManager,
                 stableManager,
                 relationshipManager,
-                newsManager);
+                newsManager,
+                bankAccountManager);
 
         promotionFactory = new PromotionFactory(
                 contractFactory,
                 dateManager,
                 promotionManager,
                 workerManager,
-                staffManager);
+                staffManager,
+                bankAccountManager);
 
         promotionController = new PromotionController(
                 contractFactory,
@@ -124,7 +133,7 @@ public final class GameController implements Serializable {
     }
 
     public void initializeGameData() {
-        for (PromotionView promotion : promotionManager.getPromotions()) {
+        for (Promotion promotion : promotionManager.getPromotions()) {
             if (promotion.getEventTemplates().isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
                 eventFactory.createMonthlyEvents(promotion);
             }
@@ -137,7 +146,7 @@ public final class GameController implements Serializable {
 
         contractManager.dailyUpdate(dateManager.today());
 
-        for (PromotionView promotion : promotionManager.getPromotions()) {
+        for (Promotion promotion : promotionManager.getPromotions()) {
             injuryManager.dailyUpdate(dateManager.today(), promotion);
             promotionController.trainerUpdate(promotion);
             if (dateManager.isPayDay()) {

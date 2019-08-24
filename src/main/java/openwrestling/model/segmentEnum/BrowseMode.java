@@ -8,7 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.interfaces.iBrowseMode;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
@@ -29,7 +29,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getWorkerManager().freeAgents(promotion);
         }
 
@@ -50,7 +50,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getStaffManager().getAvailableStaff();
         }
 
@@ -71,7 +71,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return promotion.getFullRoster();
         }
 
@@ -97,7 +97,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return promotion.getAllStaff();
         }
 
@@ -123,7 +123,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return StaffUtils.getStaff(StaffType.REFEREE, promotion);
         }
 
@@ -149,7 +149,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return StaffUtils.getStaff(StaffType.BROADCAST, promotion);
         }
 
@@ -177,7 +177,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getTitleManager().getTitleViews(promotion);
         }
 
@@ -204,7 +204,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getTagTeamManager().getTagTeamViews(promotion);
         }
 
@@ -231,7 +231,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getStableManager().getStables()
                     .stream().filter((stable) -> stable.getOwner().equals(promotion)).collect(Collectors.toList());
         }
@@ -259,7 +259,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getStableManager().getRosterSplits()
                     .stream().filter((split) -> split.getOwner().equals(promotion)).collect(Collectors.toList());
         }
@@ -286,7 +286,7 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List listToBrowse(GameController gameController, PromotionView promotion) {
+        public List listToBrowse(GameController gameController, Promotion promotion) {
             return promotion.getEventTemplates();
         }
 

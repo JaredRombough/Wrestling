@@ -6,13 +6,13 @@ import openwrestling.model.Event;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.SegmentType;
 
 public final class TestUtils {
 
-    public static EventView testEventView(Event event, List<WorkerView> roster, boolean addImages) {
+    public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
 
         if (addImages) {
             String imagePath = "worker%02d.jpg";
@@ -39,7 +39,7 @@ public final class TestUtils {
 
     }
 
-    private static SegmentView testSegment(int numberOfTeams, int teamSize, List<WorkerView> roster) {
+    private static SegmentView testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
         SegmentView segmentView = new SegmentView(SegmentType.MATCH);
         List<SegmentTeam> teams = new ArrayList<>();
 

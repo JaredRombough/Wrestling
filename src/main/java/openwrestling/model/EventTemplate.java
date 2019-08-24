@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.WorkerGroup;
 import openwrestling.model.segmentEnum.EventBroadcast;
@@ -20,7 +20,7 @@ import openwrestling.model.segmentEnum.EventVenueSize;
 
 public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterSplit {
 
-    private PromotionView promotion;
+    private Promotion promotion;
     private LocalDate nextDate;
     private LocalDate bookedUntil;
     private int defaultDuration;
@@ -60,14 +60,14 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
     /**
      * @return the promotion
      */
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(PromotionView promotion) {
+    public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
 

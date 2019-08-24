@@ -66,10 +66,10 @@ import openwrestling.model.controller.GameController;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.RegionWrapper;
@@ -510,7 +510,7 @@ public final class ViewUtils {
         );
     }
 
-    public static boolean releaseWorkerDialog(iPerson person, PromotionView promotion, LocalDate date) {
+    public static boolean releaseWorkerDialog(iPerson person, Promotion promotion, LocalDate date) {
         String prompt;
         iContract contract = person.getContract(promotion);
         if (!person.getContract(promotion).isExclusive()) {
@@ -528,24 +528,24 @@ public final class ViewUtils {
         return ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt);
     }
 
-    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers, String title, String header) {
+    public static ChoiceDialog<Worker> selectWorkerDialog(List<Worker> workers, String title, String header) {
         return selectWorkerDialog(workers, title, header, null);
     }
 
-    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers, String title, String header, WorkerView defaultSelection) {
+    public static ChoiceDialog<Worker> selectWorkerDialog(List<Worker> workers, String title, String header, Worker defaultSelection) {
         return selectWorkerDialog(workers, title, header, null, null);
     }
 
-    public static ChoiceDialog<WorkerView> selectWorkerDialog(List<WorkerView> workers,
-            String title, String header, WorkerView defaultSelection, String emptyName) {
+    public static ChoiceDialog<Worker> selectWorkerDialog(List<Worker> workers,
+                                                          String title, String header, Worker defaultSelection, String emptyName) {
 
         Collections.sort(workers, new NameComparator());
         if (!StringUtils.isEmpty(emptyName)) {
-            WorkerView empty = new WorkerView();
+            Worker empty = new Worker();
             empty.setName(emptyName);
             workers.add(0, empty);
         }
-        ChoiceDialog<WorkerView> dialog;
+        ChoiceDialog<Worker> dialog;
         if (workers.contains(defaultSelection)) {
             dialog = new ChoiceDialog<>(defaultSelection, workers);
         } else {
@@ -577,7 +577,7 @@ public final class ViewUtils {
         };
     }
 
-    public static void updateRosterSplitComboBox(ComboBox comboBox, List<WorkerGroup> allRosterSplits, iRosterSplit item, PromotionView promotion, PromotionView playerPromotion) {
+    public static void updateRosterSplitComboBox(ComboBox comboBox, List<WorkerGroup> allRosterSplits, iRosterSplit item, Promotion promotion, Promotion playerPromotion) {
         List rosterSplits = allRosterSplits.stream()
                 .filter(split -> split.getOwner().equals(promotion))
                 .collect(Collectors.toList());

@@ -1,12 +1,12 @@
 package openwrestling.model;
 
 import java.io.Serializable;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.segmentEnum.ActiveType;
 
 public class Title implements Serializable {
 
-    private PromotionView promotion;
+    private Promotion promotion;
 
     private final int teamSize;
     private String name;
@@ -14,7 +14,7 @@ public class Title implements Serializable {
     private int prestige;
 
     //vacant title
-    public Title(PromotionView promotion, int teamSize, String name) {
+    public Title(Promotion promotion, int teamSize, String name) {
         this.promotion = promotion;
         this.teamSize = teamSize;
         this.name = name;
@@ -29,14 +29,14 @@ public class Title implements Serializable {
     /**
      * @return the promotion
      */
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(PromotionView promotion) {
+    public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
 

@@ -188,7 +188,7 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     private void updateCurrentFundsButton() {
-        financialButton.setText("\uD83D\uDCC8 Funds: $" + gameController.getPromotionManager()
+        financialButton.setText("\uD83D\uDCC8 Funds: $" + gameController.getBankAccountManager()
                 .getBankAccount(playerPromotion()).getFunds());
     }
 

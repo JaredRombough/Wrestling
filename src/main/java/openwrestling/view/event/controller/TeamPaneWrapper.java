@@ -22,7 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.ResponseType;
@@ -136,7 +136,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         targetComboBox.getItems().clear();
 
         if (targets.size() > 1) {
-            List<WorkerView> emptyList = new ArrayList<>();
+            List<Worker> emptyList = new ArrayList<>();
             targets.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
         }
 
@@ -309,7 +309,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public SegmentTeam getSegmentTeam() {
-        List<WorkerView> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
+        List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
 
         SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
         segmentTeam.setEntourage(ModelUtils.getWorkersFromSegmentItems(entouragePaneController.getItems()));
@@ -362,9 +362,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         } else {
             teamPaneController.removeSegmentItem(segmentItem);
             entouragePaneController.removeSegmentItem(segmentItem);
-            if (segmentItem instanceof WorkerView) {
-                WorkerView workerView = (WorkerView) segmentItem;
-                workerView.getEntourage().forEach(item -> entouragePaneController.removeSegmentItem(item));
+            if (segmentItem instanceof Worker) {
+                Worker worker = (Worker) segmentItem;
+                worker.getEntourage().forEach(item -> entouragePaneController.removeSegmentItem(item));
             }
         }
 
@@ -390,9 +390,9 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
     public void addSegmentItem(SegmentItem segmentItem) {
         teamPaneController.addSegmentItem(segmentItem);
-        if (segmentItem instanceof WorkerView) {
-            WorkerView workerView = (WorkerView) segmentItem;
-            workerView.getEntourage().forEach(item -> entouragePaneController.addSegmentItem(item));
+        if (segmentItem instanceof Worker) {
+            Worker worker = (Worker) segmentItem;
+            worker.getEntourage().forEach(item -> entouragePaneController.addSegmentItem(item));
         }
     }
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.Event;
+import openwrestling.model.gameObjects.Worker;
 
 public class EventView implements Serializable {
 
@@ -36,10 +37,10 @@ public class EventView implements Serializable {
         this.segmentViews = segmentViews;
     }
 
-    public List<WorkerView> allWorkers() {
-        List<WorkerView> allWorkers = new ArrayList<>();
+    public List<Worker> allWorkers() {
+        List<Worker> allWorkers = new ArrayList<>();
         for (SegmentView segment : segmentViews) {
-            for (WorkerView worker : segment.getWorkers()) {
+            for (Worker worker : segment.getWorkers()) {
                 if (!allWorkers.contains(worker)) {
                     allWorkers.add(worker);
                 }

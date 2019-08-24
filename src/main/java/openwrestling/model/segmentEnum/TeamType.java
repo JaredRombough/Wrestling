@@ -10,7 +10,7 @@ import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public enum TeamType implements Description, iTeamType {
     CHALLENGER {
@@ -510,7 +510,7 @@ public enum TeamType implements Description, iTeamType {
     }
 
     private static boolean workerDroppable(SegmentItem segmentItem) {
-        return segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView || segmentItem instanceof WorkerGroup;
+        return segmentItem instanceof Worker || segmentItem instanceof TagTeamView || segmentItem instanceof WorkerGroup;
     }
 
 }

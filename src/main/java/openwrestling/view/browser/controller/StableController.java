@@ -14,7 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -44,9 +44,9 @@ public class StableController extends ControllerBase {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        listView.setCellFactory(c -> new ListCell<WorkerView>() {
+        listView.setCellFactory(c -> new ListCell<Worker>() {
             @Override
-            public void updateItem(WorkerView worker, boolean empty) {
+            public void updateItem(Worker worker, boolean empty) {
                 super.updateItem(worker, empty);
                 if (empty) {
                     setText(null);
@@ -81,10 +81,10 @@ public class StableController extends ControllerBase {
 
         addButton.setOnAction(a -> {
 
-            List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
+            List<Worker> workers = new ArrayList<>(playerPromotion().getFullRoster());
             workers.removeAll(workerGroup.getWorkers());
 
-            Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+            Optional<Worker> result = ViewUtils.selectWorkerDialog(
                     workers,
                     workerGroup.getName(),
                     String.format("Select a worker to join %s", workerGroup.getName())

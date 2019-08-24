@@ -1,12 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,11 +16,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
@@ -36,11 +27,18 @@ import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
-/**
- *
- * main browser, to be used for checking data for almost everything
- */
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ResourceBundle;
+
+
 public class BrowserController extends ControllerBase implements Initializable {
 
     @FXML
@@ -98,29 +96,25 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private Label categoryButton;
 
-    private PromotionView currentPromotion;
+    private Promotion currentPromotion;
 
     private BrowseMode currentBrowseMode;
     private SortControl sortControlController;
 
-    private void setCurrentPromotion(PromotionView newPromotion) {
+    private void setCurrentPromotion(Promotion newPromotion) {
         currentPromotion = newPromotion;
         sortControlController.setCurrentPromotion(newPromotion);
 
         if (currentPromotion != null) {
             categoryButton.setText(newPromotion.toString());
 
-            //make sure the combobox is on the correct promotion
-            //in case we have called this from somewhere programatically
             promotionComboBox.getSelectionModel().select(currentPromotion);
 
             currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                     + "Level " + currentPromotion.getLevel()
-                    + "\tPopularity " + currentPromotion.getPopulatirty()
-                    + "\tFunds: " + gameController.getPromotionManager().getBankAccount(currentPromotion).getFunds());
+                    + "\tPopularity " + currentPromotion.getPopularity()
+                    + "\tFunds: " + gameController.getBankAccountManager().getBankAccount(currentPromotion).getFunds());
 
-            //tell the workeroverviewcontroller which promotion we are looking at
-            //other controllers would be notified here too if necessary
             if (displaySubScreen != null && displaySubScreen.controller instanceof WorkerOverviewController) {
                 ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
             }
@@ -191,7 +185,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     }
 
     private List currentListToBrowse() {
-        PromotionView promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
+        Promotion promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
                 ? playerPromotion() : currentPromotion;
         return currentBrowseMode.listToBrowse(gameController, promotion);
     }
@@ -231,10 +225,10 @@ public class BrowserController extends ControllerBase implements Initializable {
         promotionComboBox.getItems().addAll(gameController.getPromotionManager().getPromotions());
 
         // show the promotion acronym
-        Callback cellFactory = (Callback<ListView<PromotionView>, ListCell<PromotionView>>) (ListView<PromotionView> p) -> new ListCell<PromotionView>() {
+        Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
 
             @Override
-            protected void updateItem(PromotionView item, boolean empty) {
+            protected void updateItem(Promotion item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (item == null || empty) {
@@ -248,9 +242,9 @@ public class BrowserController extends ControllerBase implements Initializable {
         promotionComboBox.setCellFactory(cellFactory);
         promotionComboBox.setButtonCell((ListCell) cellFactory.call(null));
 
-        promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PromotionView>() {
+        promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
             @Override
-            public void changed(ObservableValue<? extends PromotionView> observable, PromotionView oldValue, PromotionView newValue) {
+            public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
                 setCurrentPromotion(newValue);
 
             }
@@ -305,7 +299,7 @@ public class BrowserController extends ControllerBase implements Initializable {
             if (gameController.getTagTeamManager().getTagTeamViews(playerPromotion()).contains(tagTeamView)) {
                 setCurrentPromotion(playerPromotion());
             } else {
-                for (PromotionView promotion : gameController.getPromotionManager().getPromotions()) {
+                for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
                     if (gameController.getTagTeamManager().getTagTeamViews(promotion).contains(tagTeamView)) {
                         setCurrentPromotion(playerPromotion());
                         break;

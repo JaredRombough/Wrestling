@@ -6,9 +6,9 @@ import openwrestling.model.Contract;
 import openwrestling.model.StaffContract;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.manager.ContractManager;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
 
 public class ContractFactory {
@@ -19,7 +19,7 @@ public class ContractFactory {
         this.contractManager = contractManager;
     }
 
-    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate) {
+    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate) {
         int duration = 1 + RandomUtils.nextInt(0, 2);
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 1;
@@ -27,19 +27,19 @@ public class ContractFactory {
         createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
-    public void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, int duration) {
+    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate, int duration) {
         createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
-    public void createContract(WorkerView worker, PromotionView promotion, LocalDate startDate, boolean exclusive) {
+    public void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
         createContract(worker, promotion, exclusive, RandomUtils.nextInt(0, 12), startDate);
     }
 
-    public void createContract(WorkerView worker, PromotionView promotion, LocalDate startDate) {
+    public void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
         createContract(worker, promotion, startDate, promotion.getLevel() == 5);
     }
 
-    public iContract createContract(WorkerView worker, PromotionView promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public iContract createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         Contract contract = new Contract(startDate, worker, promotion);
         contract.setExclusive(exclusive);
         contract.setEndDate(ContractUtils.contractEndDate(startDate, duration));
@@ -59,7 +59,7 @@ public class ContractFactory {
         return contract;
     }
 
-    private void createContract(StaffView staff, PromotionView promotion, LocalDate startDate, LocalDate endDate) {
+    private void createContract(StaffView staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
         StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);

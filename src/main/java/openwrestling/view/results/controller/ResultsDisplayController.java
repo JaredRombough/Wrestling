@@ -17,7 +17,7 @@ import openwrestling.model.interfaces.Segment;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
@@ -144,7 +144,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         List<SegmentTeam> defaultTeams = segmentView.getMatchParticipantTeams();
         for (SegmentTeam team : defaultTeams) {
             List<GameScreen> workerCards = new ArrayList<>();
-            for (WorkerView worker : team.getWorkers()) {
+            for (Worker worker : team.getWorkers()) {
                 GameScreen card = ViewUtils.loadScreenFromFXML(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);
@@ -164,7 +164,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         List<SegmentTeam> teams = segmentView.getTeams();
         for (SegmentTeam team : teams) {
             List<GameScreen> workerCards = new ArrayList<>();
-            for (WorkerView worker : team.getWorkers()) {
+            for (Worker worker : team.getWorkers()) {
                 GameScreen card = ViewUtils.loadScreenFromFXML(ScreenCode.RESULTS_CARD, mainApp, gameController);
                 card.controller.setCurrent(worker);
                 workerCards.add(card);

@@ -1,13 +1,13 @@
 package openwrestling.model;
 
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public class TagTeamWorker {
 
     private final TagTeam tagTeam;
-    private final WorkerView worker;
+    private final Worker worker;
 
-    public TagTeamWorker(TagTeam tagTeam, WorkerView worker) {
+    public TagTeamWorker(TagTeam tagTeam, Worker worker) {
         this.tagTeam = tagTeam;
         this.worker = worker;
     }
@@ -22,7 +22,7 @@ public class TagTeamWorker {
     /**
      * @return the worker
      */
-    public WorkerView getWorker() {
+    public Worker getWorker() {
         return worker;
     }
 

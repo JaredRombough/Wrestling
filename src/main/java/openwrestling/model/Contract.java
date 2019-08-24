@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 /**
  *
@@ -17,8 +17,8 @@ import openwrestling.model.modelView.WorkerView;
  */
 public class Contract implements Serializable, iContract {
 
-    private final PromotionView promotion;
-    private final WorkerView worker;
+    private final Promotion promotion;
+    private final Worker worker;
 
     private boolean active;
 
@@ -36,7 +36,7 @@ public class Contract implements Serializable, iContract {
 
     private int monthlyCost;
 
-    public Contract(LocalDate startDate, WorkerView worker, PromotionView promotion) {
+    public Contract(LocalDate startDate, Worker worker, Promotion promotion) {
         active = true;
         lastShowDate = startDate;
         this.startDate = startDate;
@@ -48,7 +48,7 @@ public class Contract implements Serializable, iContract {
      * @return the promotion
      */
     @Override
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 
@@ -56,7 +56,7 @@ public class Contract implements Serializable, iContract {
      * @return the worker
      */
     @Override
-    public WorkerView getWorker() {
+    public Worker getWorker() {
         return worker;
     }
 

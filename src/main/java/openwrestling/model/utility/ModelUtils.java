@@ -9,11 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentTemplate;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
@@ -102,11 +102,11 @@ public final class ModelUtils {
     }
 
     //the maximum popularity worker the promotion can hire
-    public static int maxPopularity(PromotionView promotion) {
+    public static int maxPopularity(Promotion promotion) {
         return promotion.getLevel() * 20;
     }
 
-    public static int getMatchWorkRating(WorkerView worker) {
+    public static int getMatchWorkRating(Worker worker) {
         return getWeightedScore(new Integer[]{
             worker.getFlying(),
             worker.getWrestling(),
@@ -115,7 +115,7 @@ public final class ModelUtils {
         });
     }
 
-    public static int getMatchWorkRating(WorkerView worker, MatchRule matchRule) {
+    public static int getMatchWorkRating(Worker worker, MatchRule matchRule) {
         int flying = worker.getFlying() + (matchRule.getFlyingModifier() * worker.getFlying() / 100);
         int wrestling = worker.getWrestling() + (matchRule.getWrestingModifier() * worker.getWrestling() / 100);
         int striking = worker.getStriking() + (matchRule.getStrikingModifier() * worker.getStriking() / 100);
@@ -144,12 +144,12 @@ public final class ModelUtils {
         return totalScore / denominator;
     }
 
-    public static List<WorkerView> getWorkersFromSegmentItems(List<SegmentItem> segmentItems) {
-        List<WorkerView> workers = new ArrayList<>();
+    public static List<Worker> getWorkersFromSegmentItems(List<SegmentItem> segmentItems) {
+        List<Worker> workers = new ArrayList<>();
 
         segmentItems.forEach((item) -> {
-            if (item instanceof WorkerView) {
-                workers.add((WorkerView) item);
+            if (item instanceof Worker) {
+                workers.add((Worker) item);
             }
         });
         return workers;

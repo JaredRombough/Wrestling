@@ -1,7 +1,6 @@
 package openwrestling.view;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -13,7 +12,7 @@ import openwrestling.model.Event;
 import openwrestling.model.NewsItem;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
 public class SimpleDisplayController extends ControllerBase implements Initializable {
@@ -57,7 +56,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = eventManager.generateSummaryString((Event) obj);
         } else if (obj instanceof TitleView) {
             newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
-        } else if (obj instanceof WorkerView) {
+        } else if (obj instanceof Worker) {
             displayTitle.setText("");
             List<NewsItem> newsItems = gameController.getNewsManager().getNews(obj, gameController.getDateManager().today().minusMonths(12), gameController.getDateManager().today());
             StringBuilder sb = new StringBuilder();

@@ -2,7 +2,7 @@ package openwrestling.model.interfaces;
 
 import java.time.LocalDate;
 import java.util.List;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 
 public interface iNewsItem {
 
@@ -10,6 +10,6 @@ public interface iNewsItem {
 
     public LocalDate getDate();
 
-    public List<PromotionView> getPromotions();
+    public List<Promotion> getPromotions();
 
 }

@@ -1,41 +1,35 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
+
+import openwrestling.file.Database;
+import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.manager.ContractManager;
+import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import openwrestling.model.Contract;
-import openwrestling.model.modelView.PromotionView;
-import openwrestling.model.modelView.WorkerView;
-import openwrestling.model.utility.ModelUtils;
 
 public class WorkerManager implements Serializable {
 
     private final ContractManager contractManager;
-    private final List<WorkerView> workers;
-
-    private transient Logger log = LogManager.getLogger(this.getClass());
+    private final List<Worker> workers;
 
     public WorkerManager(ContractManager contractManager) {
         this.contractManager = contractManager;
-        this.workers = new ArrayList();
+        this.workers = new ArrayList<>();
     }
 
-    public void addWorkers(List<WorkerView> workers) {
-        for (WorkerView worker : workers) {
-            this.workers.add(worker);
-        }
+    public void createWorkers(List<Worker> workers) {
+        this.workers.addAll(workers);
+        Database.createEntityList(workers);
     }
 
-    public void addWorker(WorkerView worker) {
-        workers.add(worker);
-    }
-
-    public List<WorkerView> freeAgents(PromotionView promotion) {
-        List<WorkerView> freeAgents = new ArrayList();
-        for (WorkerView worker : workers) {
+    public List<Worker> freeAgents(Promotion promotion) {
+        List<Worker> freeAgents = new ArrayList<>();
+        for (Worker worker : workers) {
             if (contractManager.canNegotiate(worker, promotion)) {
                 freeAgents.add(worker);
             }
@@ -43,7 +37,7 @@ public class WorkerManager implements Serializable {
         return freeAgents;
     }
 
-    public void gainPopularity(WorkerView worker) {
+    public void gainPopularity(Worker worker) {
 
         int maxPopularity = 0;
 
@@ -76,11 +70,11 @@ public class WorkerManager implements Serializable {
         }
     }
 
-    private void addPopularity(WorkerView worker, int pop) {
+    private void addPopularity(Worker worker, int pop) {
         worker.setPopularity(worker.getPopularity() + pop);
     }
 
-    public void losePopularity(WorkerView worker) {
+    public void losePopularity(Worker worker) {
 
         if (RandomUtils.nextInt(1, 10) == 10
                 && worker.getPopularity() > 0
@@ -89,7 +83,7 @@ public class WorkerManager implements Serializable {
         }
     }
 
-    public List<WorkerView> allWorkers() {
+    public List<Worker> allWorkers() {
         return workers;
     }
 

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.StaffContract;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.segmentEnum.Gender;
@@ -161,7 +162,7 @@ public class StaffView implements Serializable, SegmentItem, iPerson {
     }
 
     @Override
-    public iContract getContract(PromotionView promotion) {
+    public iContract getContract(Promotion promotion) {
         return staffContract != null && staffContract.getPromotion().equals(promotion)
                 ? staffContract : null;
     }

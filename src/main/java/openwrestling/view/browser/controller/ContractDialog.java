@@ -14,9 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.utility.ViewUtils;
 
@@ -29,7 +29,7 @@ public class ContractDialog {
         this.person = person;
         Dialog dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
-        PromotionView playerPromotion = gameController.getPromotionManager().playerPromotion();
+        Promotion playerPromotion = gameController.getPromotionManager().playerPromotion();
 
         Label costLabel = new Label();
         Label endDate = new Label();
@@ -45,7 +45,7 @@ public class ContractDialog {
 
         ComboBox typeComboBox = new ComboBox();
         List<String> exclusiveOpen = new ArrayList<>();
-        if (person instanceof WorkerView) {
+        if (person instanceof Worker) {
             exclusiveOpen.add("Open");
         }
         if (playerPromotion.getLevel() == 5 || person instanceof StaffView) {
@@ -90,9 +90,9 @@ public class ContractDialog {
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.get() == ButtonType.OK) {
-            if (person instanceof WorkerView) {
+            if (person instanceof Worker) {
                 gameController.getContractFactory().createContract(
-                        (WorkerView) person,
+                        (Worker) person,
                         playerPromotion,
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1,
@@ -109,7 +109,7 @@ public class ContractDialog {
 
     private void updateCostLabel(Label label) {
         label.setText(String.format("$%d %s",
-                person instanceof WorkerView ? ContractUtils.calculateWorkerContractCost((WorkerView) person, exclusive)
+                person instanceof Worker ? ContractUtils.calculateWorkerContractCost((Worker) person, exclusive)
                         : ContractUtils.calculateStaffContractCost((StaffView) person),
                 exclusive ? "Monthly" : "per Apperance"));
     }

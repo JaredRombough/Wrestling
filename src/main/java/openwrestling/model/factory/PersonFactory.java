@@ -1,16 +1,17 @@
 package openwrestling.model.factory;
 
+import openwrestling.model.interfaces.iPerson;
+import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segmentEnum.StaffType;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
-import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
-import openwrestling.model.segmentEnum.Gender;
-import openwrestling.model.segmentEnum.StaffType;
 
 public class PersonFactory {
 
@@ -21,7 +22,7 @@ public class PersonFactory {
 
     public static List createWorkers(int numberOfWorkers) {
 
-        ArrayList<WorkerView> workers = new ArrayList<>();
+        ArrayList<Worker> workers = new ArrayList<>();
 
         for (int i = 0; i < numberOfWorkers; i++) {
             workers.add(randomWorker());
@@ -33,7 +34,7 @@ public class PersonFactory {
 
     public static List createRoster(int rosterSize, int rosterLevel) {
 
-        ArrayList<WorkerView> roster = new ArrayList<>();
+        ArrayList<Worker> roster = new ArrayList<>();
 
         for (int i = 0; i < rosterSize; i++) {
             roster.add(randomWorker(rosterLevel));
@@ -42,7 +43,7 @@ public class PersonFactory {
     }
 
     //to generate a random worker at a given popularity level
-    public static WorkerView randomWorker(int level) {
+    public static Worker randomWorker(int level) {
 
         if (level < 1) {
             level = 1;
@@ -50,7 +51,7 @@ public class PersonFactory {
             level = 5;
         }
 
-        WorkerView worker = randomWorker();
+        Worker worker = randomWorker();
 
         //set the popularity to be proportionate to the level requested
         worker.setPopularity((level * 20) - 10 + RandomUtils.nextInt(0, 10));
@@ -63,8 +64,8 @@ public class PersonFactory {
         return worker;
     }
 
-    public static WorkerView randomWorker() {
-        WorkerView worker = newWorker();
+    public static Worker randomWorker() {
+        Worker worker = new Worker();
 
         worker.setPopularity(RandomUtils.nextInt(0, 100));
         worker.setFlying(RandomUtils.nextInt(0, 100));
@@ -123,10 +124,5 @@ public class PersonFactory {
 
         person.setName(nameString);
         person.setShortName(lastName);
-    }
-
-    private static WorkerView newWorker() {
-        WorkerView worker = new WorkerView();
-        return worker;
     }
 }

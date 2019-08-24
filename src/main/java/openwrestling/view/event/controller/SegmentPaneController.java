@@ -32,7 +32,7 @@ import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -271,7 +271,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
     }
 
-    public List<WorkerView> getWorkers() {
+    public List<Worker> getWorkers() {
         return ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
     }
 
@@ -291,7 +291,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         SegmentItem item = segmentItems.get(0);
 
-        if (item instanceof WorkerView || item instanceof TagTeamView) {
+        if (item instanceof Worker || item instanceof TagTeamView) {
 
             GameScreen wrapperToInsert = wrapperToInsert(workerTeamWrappers, emptyOnly);
             if (wrapperToInsert == null) {

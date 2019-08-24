@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.TagTeam;
 import openwrestling.model.TagTeamWorker;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.TagTeamView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public class TagTeamManager implements Serializable {
 
@@ -23,7 +23,7 @@ public class TagTeamManager implements Serializable {
         this.contractManager = contractManager;
     }
 
-    public List<TagTeam> getTagTeams(PromotionView promotion) {
+    public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
         tagTeams.stream().filter((tt) -> (promotion.getFullRoster()
                 .containsAll(getWorkers(tt)))).forEach((tt) -> {
@@ -32,7 +32,7 @@ public class TagTeamManager implements Serializable {
         return teams;
     }
 
-    public List<TagTeamView> getTagTeamViews(PromotionView promotion) {
+    public List<TagTeamView> getTagTeamViews(Promotion promotion) {
         List<TagTeamView> teamViews = new ArrayList<>();
         getTagTeamViews().stream().filter((tagTeamView) -> (promotion.getFullRoster()
                 .containsAll(tagTeamView.getWorkers()))).forEach((tagTeamView) -> {
@@ -41,15 +41,15 @@ public class TagTeamManager implements Serializable {
         return teamViews;
     }
 
-    public List<WorkerView> getWorkers(TagTeam tagTeam) {
-        List<WorkerView> workers = new ArrayList<>();
+    public List<Worker> getWorkers(TagTeam tagTeam) {
+        List<Worker> workers = new ArrayList<>();
         tagTeamWorkers.stream().filter((tagTeamWorker) -> (tagTeamWorker.getTagTeam().equals(tagTeam))).forEach((tagTeamWorker) -> {
             workers.add(tagTeamWorker.getWorker());
         });
         return workers;
     }
 
-    public TagTeamView createTagTeam(String teamName, WorkerView workerA, WorkerView workerB) {
+    public TagTeamView createTagTeam(String teamName, Worker workerA, Worker workerB) {
         TagTeam tagTeam = new TagTeam();
         tagTeam.setName(teamName);
         tagTeams.add(tagTeam);

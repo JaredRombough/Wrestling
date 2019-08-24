@@ -6,10 +6,10 @@ import java.util.List;
 import openwrestling.model.Contract;
 import openwrestling.model.Title;
 import openwrestling.model.TitleWorker;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.TitleReign;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 
 public class TitleManager implements Serializable {
@@ -35,7 +35,7 @@ public class TitleManager implements Serializable {
         titleViews.add(titleView);
     }
 
-    public List<Title> getTitles(PromotionView promotion) {
+    public List<Title> getTitles(Promotion promotion) {
         List<Title> promotionTitles = new ArrayList();
         for (Title title : titles) {
             if (title.getPromotion().equals(promotion)) {
@@ -46,7 +46,7 @@ public class TitleManager implements Serializable {
         return promotionTitles;
     }
 
-    public List<TitleView> getTitleViews(PromotionView promotion) {
+    public List<TitleView> getTitleViews(Promotion promotion) {
         List<TitleView> promotionTitleViews = new ArrayList();
         for (TitleView titleView : titleViews) {
             if (titleView.getTitle().getPromotion().equals(promotion)) {
@@ -57,8 +57,8 @@ public class TitleManager implements Serializable {
         return promotionTitleViews;
     }
 
-    public List<WorkerView> getCurrentChampionWorkers(Title title) {
-        List<WorkerView> workers = new ArrayList<>();
+    public List<Worker> getCurrentChampionWorkers(Title title) {
+        List<Worker> workers = new ArrayList<>();
         for (TitleWorker titleWorker : titleWorkers) {
             if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
                 workers.add(titleWorker.getWorker());
@@ -84,7 +84,7 @@ public class TitleManager implements Serializable {
     //check if we have any outstanding titles from expired contracts
     public void stripTitles(Contract contract) {
         for (Title title : getTitles(contract.getPromotion())) {
-            for (WorkerView worker : getCurrentChampionWorkers(title)) {
+            for (Worker worker : getCurrentChampionWorkers(title)) {
                 if (worker.equals(contract.getWorker())) {
                     stripTitle(title);
                 }
@@ -100,19 +100,19 @@ public class TitleManager implements Serializable {
     }
 
     //here we would update the title's tracker of reigns also        
-    public void titleChange(Title title, List<WorkerView> winner) {
+    public void titleChange(Title title, List<Worker> winner) {
         stripTitle(title);
         awardTitle(title, winner);
     }
 
-    public void awardTitle(Title title, WorkerView winner) {
-        List<WorkerView> workerAsList = new ArrayList<>();
+    public void awardTitle(Title title, Worker winner) {
+        List<Worker> workerAsList = new ArrayList<>();
         workerAsList.add(winner);
         awardTitle(title, workerAsList);
     }
 
-    public void awardTitle(Title title, List<WorkerView> winner) {
-        for (WorkerView worker : winner) {
+    public void awardTitle(Title title, List<Worker> winner) {
+        for (Worker worker : winner) {
             TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
             titleWorkers.add(titleWorker);
 
@@ -130,18 +130,18 @@ public class TitleManager implements Serializable {
     }
 
     //returns a list of titles available for an event
-    public List<Title> getEventTitles(PromotionView promotion, List<WorkerView> eventRoster) {
+    public List<Title> getEventTitles(Promotion promotion, List<Worker> eventRoster) {
 
         List<Title> eventTitles = new ArrayList<>();
 
         for (Title title : getTitles(promotion)) {
-            List<WorkerView> champs = getCurrentChampionWorkers(title);
+            List<Worker> champs = getCurrentChampionWorkers(title);
             if (champs.isEmpty()) {
                 eventTitles.add(title);
             } else {
                 boolean titleWorkersPresent = true;
 
-                for (WorkerView worker : champs) {
+                for (Worker worker : champs) {
                     if (!eventRoster.contains(worker)) {
                         titleWorkersPresent = false;
                     }
@@ -172,7 +172,7 @@ public class TitleManager implements Serializable {
     public String titleReignString(TitleReign titleReign) {
 
         StringBuilder sb = new StringBuilder();
-        List<WorkerView> champWorkers = titleReign.getWorkers();
+        List<Worker> champWorkers = titleReign.getWorkers();
 
         sb.append(ModelUtils.slashNames(champWorkers));
         sb.append("\t\t\t");

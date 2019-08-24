@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iEvent;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.segmentEnum.EventType;
 
 public class Event implements Serializable, iEvent, iDate {
 
-    private final PromotionView promotion;
+    private final Promotion promotion;
 
     private LocalDate date;
     private EventType eventType;
@@ -29,7 +29,7 @@ public class Event implements Serializable, iEvent, iDate {
         this.defaultDuration = eventTemplate.getDefaultDuration();
     }
 
-    public Event(PromotionView promotion, LocalDate date) {
+    public Event(Promotion promotion, LocalDate date) {
         this.promotion = promotion;
         this.date = date;
     }
@@ -50,7 +50,7 @@ public class Event implements Serializable, iEvent, iDate {
     }
 
     @Override
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 

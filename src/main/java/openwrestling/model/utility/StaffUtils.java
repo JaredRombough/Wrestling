@@ -3,13 +3,13 @@ package openwrestling.model.utility;
 import java.util.List;
 import java.util.stream.Collectors;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.StaffType;
 
 public final class StaffUtils {
 
-    public static int getStaffSkillAverage(StaffType staffType, PromotionView promotion) {
+    public static int getStaffSkillAverage(StaffType staffType, Promotion promotion) {
         double total = 0;
         List<StaffView> staffOfType = getStaff(staffType, promotion);
         for (StaffView staff : staffOfType) {
@@ -18,7 +18,7 @@ public final class StaffUtils {
         return (int) Math.ceil(total / staffOfType.size());
     }
 
-    public static int getStaffSkillModifier(StaffType staffType, PromotionView promotion) {
+    public static int getStaffSkillModifier(StaffType staffType, Promotion promotion) {
         double coverage = getStaffCoverage(promotion, staffType);
         double averageSkill = getStaffSkillAverage(staffType, promotion);
         if (coverage > 100) {
@@ -27,11 +27,11 @@ public final class StaffUtils {
         return (int) (coverage / 100 * averageSkill);
     }
 
-    public static List<StaffView> getStaff(StaffType staffType, PromotionView promotion) {
+    public static List<StaffView> getStaff(StaffType staffType, Promotion promotion) {
         return promotion.getAllStaff().stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
 
-    public static int getStaffCoverage(PromotionView promotion, StaffType staffType) {
+    public static int getStaffCoverage(Promotion promotion, StaffType staffType) {
 
         float staffCount = getStaff(staffType, promotion).size();
         float ratio;
@@ -44,7 +44,7 @@ public final class StaffUtils {
         return Math.round(ratio * 100);
     }
 
-    public static int idealStaffCount(PromotionView promotion, StaffType staffType) {
+    public static int idealStaffCount(Promotion promotion, StaffType staffType) {
         if (staffType.equals(StaffType.PRODUCTION)) {
             return promotion.getLevel() * 2;
         }

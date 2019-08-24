@@ -11,29 +11,29 @@ import openwrestling.model.EventTemplate;
 import openwrestling.model.EventWorker;
 import openwrestling.model.Match;
 import openwrestling.model.MatchEvent;
-import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentTemplate;
 import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
 import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
 import openwrestling.model.controller.PromotionController;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
+import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.ContractManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.PromotionManager;
+import openwrestling.manager.PromotionManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.StableManager;
 import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
-import openwrestling.model.manager.WorkerManager;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -56,6 +56,7 @@ public class EventFactory {
     private final StableManager stableManager;
     private final RelationshipManager relationshipManager;
     private final NewsManager newsManager;
+    private final BankAccountManager bankAccountManager;
 
     public EventFactory(
             ContractManager contractManager,
@@ -67,7 +68,8 @@ public class EventFactory {
             TagTeamManager tagTeamManager,
             StableManager stableManager,
             RelationshipManager relationshipManager,
-            NewsManager newsManager) {
+            NewsManager newsManager,
+            BankAccountManager bankAccountManager) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -78,6 +80,7 @@ public class EventFactory {
         this.stableManager = stableManager;
         this.relationshipManager = relationshipManager;
         this.newsManager = newsManager;
+        this.bankAccountManager = bankAccountManager;
     }
 
     public void processEventView(EventView eventView, boolean processSegments, PromotionController promotionController) {
@@ -95,10 +98,10 @@ public class EventFactory {
 
         setEventStats(event, segments);
 
-        promotionManager.getBankAccount(event.getPromotion()).addFunds(
+        bankAccountManager.getBankAccount(event.getPromotion()).addFunds(
                 eventManager.calculateGate(event), TransactionType.GATE, eventView.getEvent().getDate());
 
-        for (WorkerView worker : eventManager.allWorkers(segments)) {
+        for (Worker worker : eventManager.allWorkers(segments)) {
             EventWorker eventWorker = new EventWorker(event, worker);
             eventManager.addEventWorker(eventWorker);
         }
@@ -109,7 +112,7 @@ public class EventFactory {
         promotionController.updateEventTemplate(eventView);
     }
 
-    public void createMonthlyEvents(PromotionView promotion) {
+    public void createMonthlyEvents(Promotion promotion) {
 
         Month month = Month.JANUARY;
         for (int i = 0; i < 12; i++) {
@@ -168,7 +171,7 @@ public class EventFactory {
         Segment segment = matchFactory.saveSegment(segmentView);
         if (segment instanceof Match) {
             eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
-            List<WorkerView> winners = segmentView.getWinners();
+            List<Worker> winners = segmentView.getWinners();
             winners.stream().forEach((worker) -> {
                 workerManager.gainPopularity(worker);
                 relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_MATCH_WIN);
@@ -209,7 +212,7 @@ public class EventFactory {
                         offeree.getWorkers().get(0));
             }
         } else if (JoinTeamType.NEW_STABLE.equals(angleParams.getJoinTeamType())) {
-            List<WorkerView> newMembers = new ArrayList<>();
+            List<Worker> newMembers = new ArrayList<>();
             newMembers.addAll(offerer.getWorkers());
             offerees.forEach(offeree -> {
                 if (ResponseType.YES.equals(offeree.getResponse())) {
@@ -225,7 +228,7 @@ public class EventFactory {
             }
 
         } else if (JoinTeamType.STABLE.equals(angleParams.getJoinTeamType())) {
-            List<WorkerView> newMembers = new ArrayList<>();
+            List<Worker> newMembers = new ArrayList<>();
             offerees.forEach(offeree -> {
                 if (ResponseType.YES.equals(offeree.getResponse())) {
                     newMembers.addAll(offeree.getWorkers());
@@ -235,7 +238,7 @@ public class EventFactory {
         }
     }
 
-    private void processTitleChanges(SegmentView segmentView, List<WorkerView> winners) {
+    private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
         for (TitleView titleView : segmentView.getTitleViews()) {
             boolean change = !winners.equals(titleView.getChampions());
             if (change) {

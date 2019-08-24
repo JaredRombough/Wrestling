@@ -6,12 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
 public class GroupMemberController extends ControllerBase {
 
-    private WorkerView worker;
+    private Worker worker;
 
     @FXML
     private Label nameLabel;
@@ -44,8 +44,8 @@ public class GroupMemberController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        if (object instanceof WorkerView) {
-            worker = (WorkerView) object;
+        if (object instanceof Worker) {
+            worker = (Worker) object;
             updateLabels();
         }
     }

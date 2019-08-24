@@ -1,14 +1,14 @@
 package openwrestling.model.interfaces;
 
 import java.util.List;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.segmentEnum.Gender;
 
 public interface iPerson {
 
     public iContract getContract();
 
-    public iContract getContract(PromotionView promotion);
+    public iContract getContract(Promotion promotion);
 
     public List<? extends iContract> getContracts();
 

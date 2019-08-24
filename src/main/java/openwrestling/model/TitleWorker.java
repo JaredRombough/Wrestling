@@ -1,17 +1,17 @@
 package openwrestling.model;
 
 import java.time.LocalDate;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public class TitleWorker {
     
     private final Title title;
-    private final WorkerView worker;
+    private final Worker worker;
     
     private final LocalDate dayWon;
     private LocalDate dayLost;
     
-    public TitleWorker(Title title, WorkerView worker, LocalDate dayWon) {
+    public TitleWorker(Title title, Worker worker, LocalDate dayWon) {
         this.title = title;
         this.worker = worker;
         this.dayWon = dayWon;
@@ -27,7 +27,7 @@ public class TitleWorker {
     /**
      * @return the worker
      */
-    public WorkerView getWorker() {
+    public Worker getWorker() {
         return worker;
     }
 

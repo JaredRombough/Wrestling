@@ -1,9 +1,9 @@
 package openwrestling.model.interfaces;
 
 import java.time.LocalDate;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 /**
  *
@@ -17,7 +17,7 @@ public interface iContract {
 
     public LocalDate getStartDate();
 
-    public PromotionView getPromotion();
+    public Promotion getPromotion();
 
     public boolean isExclusive();
 
@@ -27,7 +27,7 @@ public interface iContract {
 
     public void setActive(boolean active);
 
-    public WorkerView getWorker();
+    public Worker getWorker();
 
     public StaffView getStaff();
     

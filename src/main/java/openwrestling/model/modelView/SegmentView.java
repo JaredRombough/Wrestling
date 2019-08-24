@@ -9,6 +9,8 @@ import openwrestling.model.Angle;
 import openwrestling.model.AngleParams;
 import openwrestling.model.Match;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -39,8 +41,8 @@ public class SegmentView implements Serializable {
         titleViews = new ArrayList<>();
     }
 
-    public List<WorkerView> getWorkers() {
-        List<WorkerView> workers = new ArrayList<>();
+    public List<Worker> getWorkers() {
+        List<Worker> workers = new ArrayList<>();
         for (SegmentTeam team : teams) {
             workers.addAll(team.getWorkers());
         }
@@ -78,8 +80,8 @@ public class SegmentView implements Serializable {
         return participants;
     }
 
-    public List<WorkerView> getMatchParticipants() {
-        List<WorkerView> participants = new ArrayList<>();
+    public List<Worker> getMatchParticipants() {
+        List<Worker> participants = new ArrayList<>();
         for (SegmentTeam team : teams) {
             if (team.getType().equals(TeamType.WINNER)
                     || team.getType().equals(TeamType.LOSER)
@@ -108,7 +110,7 @@ public class SegmentView implements Serializable {
         return null;
     }
 
-    public List<WorkerView> getWinners() {
+    public List<Worker> getWinners() {
         List<SegmentTeam> defaultTeams = getTeams(TeamType.WINNER);
         if (!defaultTeams.isEmpty()) {
             return defaultTeams.get(0).getWorkers();
@@ -116,7 +118,7 @@ public class SegmentView implements Serializable {
         return Collections.emptyList();
     }
 
-    public SegmentTeam getTeam(WorkerView worker) {
+    public SegmentTeam getTeam(Worker worker) {
         for (SegmentTeam team : getTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team;
@@ -125,7 +127,7 @@ public class SegmentView implements Serializable {
         return null;
     }
 
-    public TeamType getTeamType(WorkerView worker) {
+    public TeamType getTeamType(Worker worker) {
         for (SegmentTeam team : getTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team.getType();
@@ -215,7 +217,7 @@ public class SegmentView implements Serializable {
         return eventView;
     }
 
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return eventView.getEvent().getPromotion();
     }
 

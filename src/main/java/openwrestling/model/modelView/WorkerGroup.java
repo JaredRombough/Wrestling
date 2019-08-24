@@ -2,18 +2,20 @@ package openwrestling.model.modelView;
 
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.SegmentItem;
 
+import lombok.NoArgsConstructor;
+import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+
+@NoArgsConstructor
 public class WorkerGroup implements SegmentItem {
 
     private String name;
-    private List<WorkerView> workers = new ArrayList<>();
-    private PromotionView owner;
+    private List<Worker> workers = new ArrayList<>();
+    private Promotion owner;
 
-    public WorkerGroup() {
-    }
-
-    public WorkerGroup(String name, PromotionView owner) {
+    public WorkerGroup(String name, Promotion owner) {
         this.name = name;
         this.owner = owner;
     }
@@ -35,7 +37,7 @@ public class WorkerGroup implements SegmentItem {
     /**
      * @return the workers
      */
-    public List<WorkerView> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 
@@ -47,21 +49,21 @@ public class WorkerGroup implements SegmentItem {
     /**
      * @param workers the workers to set
      */
-    public void setWorkers(List<WorkerView> workers) {
+    public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }
 
     /**
      * @return the owner
      */
-    public PromotionView getOwner() {
+    public Promotion getOwner() {
         return owner;
     }
 
     /**
      * @param owner the owner to set
      */
-    public void setOwner(PromotionView owner) {
+    public void setOwner(Promotion owner) {
         this.owner = owner;
     }
 

@@ -7,7 +7,7 @@ import openwrestling.model.Match;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.TeamType;
 
@@ -116,9 +116,9 @@ public final class SegmentStringUtils {
 
     private static String getResponseString(List<SegmentTeam> teams, String keyword) {
         String string = "";
-        List<WorkerView> yes = new ArrayList<>();
-        List<WorkerView> no = new ArrayList<>();
-        List<WorkerView> push = new ArrayList<>();
+        List<Worker> yes = new ArrayList<>();
+        List<Worker> no = new ArrayList<>();
+        List<Worker> push = new ArrayList<>();
 
         teams.forEach(team -> {
             if (null != team.getResponse()) {

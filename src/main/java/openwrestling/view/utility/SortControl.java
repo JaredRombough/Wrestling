@@ -29,13 +29,12 @@ import static openwrestling.model.constants.StringConstants.ALL_STABLES;
 import static openwrestling.model.constants.UIConstants.DOWN_ARROW;
 import static openwrestling.model.constants.UIConstants.UP_ARROW;
 import openwrestling.model.interfaces.iBrowseMode;
-import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.Gender;
@@ -84,7 +83,7 @@ public class SortControl extends ControllerBase implements Initializable {
     };
 
     private iBrowseMode browseMode;
-    private PromotionView promotion;
+    private Promotion promotion;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -289,8 +288,8 @@ public class SortControl extends ControllerBase implements Initializable {
     private boolean isGenderFiltered(SegmentItem segmentItem) {
         if (!genderFilter.equals(Gender.ALL)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof WorkerView
-                        && !((WorkerView) subItem).getGender().equals(genderFilter)) {
+                if (subItem instanceof Worker
+                        && !((Worker) subItem).getGender().equals(genderFilter)) {
                     return true;
                 }
             }
@@ -303,9 +302,9 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isStableFiltered(SegmentItem segmentItem) {
-        if (stableFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView)) {
+        if (stableFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeamView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (!stableFilter.getWorkers().contains((WorkerView) subItem)) {
+                if (!stableFilter.getWorkers().contains((Worker) subItem)) {
                     return true;
                 }
             }
@@ -314,11 +313,11 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isRosterSplitFiltered(SegmentItem segmentItem) {
-        if (rosterSplitFilter != null && (segmentItem instanceof WorkerView || segmentItem instanceof TagTeamView || segmentItem instanceof TitleView)) {
+        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeamView || segmentItem instanceof TitleView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (segmentItem instanceof TitleView) {
                     return !Objects.equals(((TitleView) segmentItem).getRosterSplit(), rosterSplitFilter);
-                } else if (!rosterSplitFilter.getWorkers().contains((WorkerView) subItem)) {
+                } else if (!rosterSplitFilter.getWorkers().contains((Worker) subItem)) {
                     return true;
                 }
             }
@@ -346,7 +345,7 @@ public class SortControl extends ControllerBase implements Initializable {
         updateFilters();
     }
 
-    public void setCurrentPromotion(PromotionView promotion) {
+    public void setCurrentPromotion(Promotion promotion) {
         this.promotion = promotion;
         updateWorkerGroups();
         updateFilters();

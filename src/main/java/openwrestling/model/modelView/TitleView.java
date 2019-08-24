@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.Title;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.ActiveType;
 
@@ -28,7 +29,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
         return title;
     }
 
-    public void addReign(List<WorkerView> workers, LocalDate dayWon) {
+    public void addReign(List<Worker> workers, LocalDate dayWon) {
         if (champions != null) {
             champions.setDayLost(dayWon);
         }
@@ -63,7 +64,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
     /**
      * @return the champions
      */
-    public List<WorkerView> getChampions() {
+    public List<Worker> getChampions() {
         return champions.getWorkers();
     }
 

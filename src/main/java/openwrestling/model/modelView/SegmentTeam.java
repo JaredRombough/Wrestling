@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.ResponseType;
@@ -14,8 +16,8 @@ import openwrestling.model.utility.ModelUtils;
 
 public class SegmentTeam implements Serializable {
 
-    private List<WorkerView> workers;
-    private List<WorkerView> entourage;
+    private List<Worker> workers;
+    private List<Worker> entourage;
     private TeamType type;
     private SegmentTeam target;
     private SuccessType success;
@@ -24,13 +26,13 @@ public class SegmentTeam implements Serializable {
     private PresenceType presence;
     private ResponseType response;
 
-    public SegmentTeam(WorkerView worker, TeamType type) {
+    public SegmentTeam(Worker worker, TeamType type) {
         this.workers = Arrays.asList(worker);
         this.type = type;
         entourage = new ArrayList();
     }
 
-    public SegmentTeam(List<WorkerView> workers, TeamType type) {
+    public SegmentTeam(List<Worker> workers, TeamType type) {
         this.workers = workers;
         this.type = type;
         entourage = new ArrayList();
@@ -46,14 +48,14 @@ public class SegmentTeam implements Serializable {
     /**
      * @return the workers
      */
-    public List<WorkerView> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 
     /**
      * @param workers the workers to set
      */
-    public void setWorkers(List<WorkerView> workers) {
+    public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }
 
@@ -159,14 +161,14 @@ public class SegmentTeam implements Serializable {
     /**
      * @return the entourage
      */
-    public List<WorkerView> getEntourage() {
+    public List<Worker> getEntourage() {
         return entourage;
     }
 
     /**
      * @param entourage the entourage to set
      */
-    public void setEntourage(List<WorkerView> entourage) {
+    public void setEntourage(List<Worker> entourage) {
         this.entourage = entourage;
     }
 

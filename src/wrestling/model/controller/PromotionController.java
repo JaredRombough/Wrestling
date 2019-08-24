@@ -115,9 +115,9 @@ public class PromotionController implements Serializable {
         int maxPop = 100;
         int maxLevel = 5;
         int basePop = 10;
-        promotion.setPopularity(promotion.getPopulatirty() + increment);
+        promotion.setPopularity(promotion.getPopularity() + increment);
 
-        if (promotion.getPopulatirty() >= maxPop) {
+        if (promotion.getPopularity() >= maxPop) {
             if (promotion.getLevel() != maxLevel) {
                 promotion.setLevel(promotion.getLevel() + increment);
                 promotion.setPopularity(basePop);

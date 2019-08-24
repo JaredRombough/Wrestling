@@ -61,7 +61,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
         LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
-        return gameController.getPromotionManager().getBankAccount(playerPromotion())
+        return gameController.getBankAccountManager().getBankAccount(playerPromotion())
                 .getTransactionTotal(
                         type,
                         startDate);
@@ -103,7 +103,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
     }
 
     private int totalText(int monthsAgo) {
-        return gameController.getPromotionManager().getBankAccount(playerPromotion())
+        return gameController.getBankAccountManager().getBankAccount(playerPromotion())
                 .getMonthlyNet(gameController.getDateManager().today().minusMonths(monthsAgo));
     }
 

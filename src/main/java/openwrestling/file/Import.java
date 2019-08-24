@@ -27,12 +27,12 @@ import static openwrestling.model.constants.GameConstants.MIN_RELATIONSHIP_LEVEL
 import openwrestling.model.controller.GameController;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
@@ -48,14 +48,14 @@ public class Import {
 
     private File importFolder;
 
-    private final List<PromotionView> allPromotions = new ArrayList<>();
+    private final List<Promotion> allPromotions = new ArrayList<>();
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
 
-    private final List<WorkerView> allWorkers = new ArrayList<>();
+    private final List<Worker> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
     private final List<String> managerIDs = new ArrayList<>();
-    private final List<WorkerView> otherWorkers = new ArrayList<>();
+    private final List<Worker> otherWorkers = new ArrayList<>();
     private final List<String> otherWorkerPromotions = new ArrayList<>();
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
@@ -98,9 +98,9 @@ public class Import {
                 throw ex;
             }
             processOther();
-            gameController.getPromotionManager().addPromotions(allPromotions);
+            gameController.getPromotionManager().createPromotions(allPromotions);
             gameController.getEventManager().addEventTemplates(eventTemplates);
-            gameController.getWorkerManager().addWorkers(allWorkers);
+            gameController.getWorkerManager().createWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
 
@@ -115,7 +115,7 @@ public class Import {
 
     }
 
-    private PromotionView getPromotionFromKey(int key) {
+    private Promotion getPromotionFromKey(int key) {
         for (int i = 0; i < promotionKeys.size(); i++) {
             if (promotionKeys.get(i).equals(key)) {
                 return allPromotions.get(i);
@@ -149,7 +149,7 @@ public class Import {
 
     private void processOther() {
         otherPromotionNames.stream().map((s) -> {
-            PromotionView p = gameController.getPromotionFactory().newPromotion();
+            Promotion p = gameController.getPromotionFactory().newPromotion();
             p.setName(s);
             p.setShortName(s);
             return p;
@@ -281,7 +281,7 @@ public class Import {
 
             if (counter == lineLength) {
 
-                PromotionView promotion = gameController.getPromotionFactory().newPromotion();
+                Promotion promotion = gameController.getPromotionFactory().newPromotion();
 
                 counter = 0;
 
@@ -468,7 +468,7 @@ public class Import {
                         break;
                 }
 
-                for (PromotionView p : allPromotions) {
+                for (Promotion p : allPromotions) {
                     checkForStaffContract(p, staff, currentHexLine);
                 }
 
@@ -511,7 +511,7 @@ public class Import {
 
             if (counter == lineLength) {
 
-                WorkerView worker = PersonFactory.randomWorker();
+                Worker worker = PersonFactory.randomWorker();
 
                 worker.setName(currentLine.substring(3, 27).trim());
                 worker.setShortName(currentLine.substring(28, 38).trim());
@@ -563,7 +563,7 @@ public class Import {
 
                 //look for extra promotions
                 //sign contracts for workers that match with promotion keys
-                for (PromotionView p : allPromotions) {
+                for (Promotion p : allPromotions) {
                     checkForWorkerContract(p, worker, currentHexLine, currentLine);
                 }
 
@@ -601,8 +601,8 @@ public class Import {
                 String id1 = currentHexLine.get(31) + currentHexLine.get(32);
                 String id2 = currentHexLine.get(33) + currentHexLine.get(34);
 
-                WorkerView worker1 = null;
-                WorkerView worker2 = null;
+                Worker worker1 = null;
+                Worker worker2 = null;
 
                 for (int x = 0; x < allWorkers.size(); x++) {
 
@@ -655,7 +655,7 @@ public class Import {
         }
     }
 
-    private void checkForWorkerContract(PromotionView promotion, WorkerView worker, List<String> currentHexLine, String currentLine) {
+    private void checkForWorkerContract(Promotion promotion, Worker worker, List<String> currentHexLine, String currentLine) {
         boolean exclusive = hexStringToLetter(currentHexLine.get(71)).equals("W");
 
         int a = hexStringToInt(currentHexLine.get(65));
@@ -677,7 +677,7 @@ public class Import {
 
     }
 
-    private void checkForRosterSplit(PromotionView promotion, WorkerView worker, String groupName) {
+    private void checkForRosterSplit(Promotion promotion, Worker worker, String groupName) {
         final String trimmedName = groupName.trim();
         if (trimmedName.equalsIgnoreCase("NONE")) {
             return;
@@ -697,7 +697,7 @@ public class Import {
         }
     }
 
-    private void checkForStaffContract(PromotionView p, StaffView s, List<String> currentHexLine) {
+    private void checkForStaffContract(Promotion p, StaffView s, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
             getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today());
         }
@@ -709,7 +709,7 @@ public class Import {
 
         String fileString = DatatypeConverter.printHexBinary(data);
         String currentLine = "";
-        PromotionView promotion = null;
+        Promotion promotion = null;
         Month month = null;
         int counter = 0;
         int lineLength = 47;
@@ -753,7 +753,7 @@ public class Import {
         }
     }
 
-    private void assignRosterSplit(iRosterSplit item, PromotionView promotion, String name) {
+    private void assignRosterSplit(iRosterSplit item, Promotion promotion, String name) {
         for (WorkerGroup rosterSplit : gameController.getStableManager().getRosterSplits()) {
             if (rosterSplit.getOwner().equals(promotion)
                     && name.toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
@@ -840,7 +840,7 @@ public class Import {
                     for (int w = 0; w < workerIDs.size(); w++) {
 
                         //list to hold the title holder(s) we find
-                        List<WorkerView> titleHolders = new ArrayList<>();
+                        List<Worker> titleHolders = new ArrayList<>();
 
                         if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
 
@@ -866,7 +866,7 @@ public class Import {
         }
     }
 
-    public void updateOtherPromotions(List<PromotionView> promotions, File importFolder) {
+    public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {
 
         List<String> advancedImportData = new ArrayList();
         String path = "";
@@ -888,7 +888,7 @@ public class Import {
             advancedImportData = new ArrayList();
         }
 
-        for (PromotionView promotion : promotions) {
+        for (Promotion promotion : promotions) {
             for (int i = 0; i < advancedImportData.size(); i++) {
                 if (advancedImportData.get(i).equals(promotion.getName())
                         && advancedImportData.size() >= i + 3) {

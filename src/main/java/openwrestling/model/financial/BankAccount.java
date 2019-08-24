@@ -3,17 +3,17 @@ package openwrestling.model.financial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.segmentEnum.TransactionType;
 
 public class BankAccount {
 
-    private final PromotionView promotion;
+    private final Promotion promotion;
     private int funds;
 
     private List<Transaction> transactions = new ArrayList<>();
 
-    public BankAccount(PromotionView promotion) {
+    public BankAccount(Promotion promotion) {
         this.promotion = promotion;
         funds = 0;
     }
@@ -88,7 +88,7 @@ public class BankAccount {
     /**
      * @return the promotion
      */
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 

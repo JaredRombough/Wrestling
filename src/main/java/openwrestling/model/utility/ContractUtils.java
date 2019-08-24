@@ -9,9 +9,9 @@ import java.util.List;
 import openwrestling.model.StaffContract;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public final class ContractUtils {
 
@@ -19,7 +19,7 @@ public final class ContractUtils {
         return DAYS.between(contract.getStartDate(), today) % 30 == 0;
     }
 
-    public static int calculateWorkerContractCost(WorkerView worker, boolean exclusive) {
+    public static int calculateWorkerContractCost(Worker worker, boolean exclusive) {
         int unitCost;
 
         List<Integer> pricePoints = new ArrayList<>();
@@ -85,8 +85,8 @@ public final class ContractUtils {
         int monthlyCost = 0;
         if (person instanceof StaffView) {
             monthlyCost = calculateStaffContractCost((StaffView) person);
-        } else if (person instanceof WorkerView) {
-            monthlyCost = calculateWorkerContractCost((WorkerView) person, true);
+        } else if (person instanceof Worker) {
+            monthlyCost = calculateWorkerContractCost((Worker) person, true);
         }
 
         int fee = monthlyCost * (startDate.lengthOfMonth() - startDate.getDayOfMonth()) / startDate.lengthOfMonth();
@@ -105,10 +105,10 @@ public final class ContractUtils {
         return startDate.plusMonths(months + 1).withDayOfMonth(1).minusDays(1);
     }
 
-    public static int getWorkerPayrollForMonth(LocalDate date, PromotionView promotion) {
+    public static int getWorkerPayrollForMonth(LocalDate date, Promotion promotion) {
         int total = 0;
 
-        for (WorkerView worker : promotion.getFullRoster()) {
+        for (Worker worker : promotion.getFullRoster()) {
             iContract contract = worker.getContract(promotion);
             if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
                 total += contract.getMonthlyCost();
@@ -117,7 +117,7 @@ public final class ContractUtils {
         return total;
     }
 
-    public static int getStaffPayrollForMonth(LocalDate date, PromotionView promotion) {
+    public static int getStaffPayrollForMonth(LocalDate date, Promotion promotion) {
         int total = 0;
 
         for (StaffView staff : promotion.getAllStaff()) {
@@ -129,7 +129,7 @@ public final class ContractUtils {
         return total;
     }
 
-    public static String getTermsString(WorkerView worker, PromotionView promotion) {
+    public static String getTermsString(Worker worker, Promotion promotion) {
         iContract contract = worker.getContract(promotion);
         if (contract.isExclusive()) {
             return String.format("$%d monthly", contract.getMonthlyCost());

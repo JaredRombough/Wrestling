@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
@@ -43,15 +43,15 @@ public final class SegmentUtils {
         return (popularityDiff * (popularityDiff + 1)) / 2;
     }
 
-    public static HashMap<WorkerView, Integer> getMatchMoralePenalties(SegmentView segment) {
-        HashMap<WorkerView, Integer> objections = new HashMap<>();
+    public static HashMap<Worker, Integer> getMatchMoralePenalties(SegmentView segment) {
+        HashMap<Worker, Integer> objections = new HashMap<>();
         int winnerPopularity = getWinnerMaxPopularity(segment);
         getMatchObjectors(segment).forEach(objector -> objections.put(objector, getMatchLossMoralePenalty(winnerPopularity, objector.getPopularity())));
 
         return objections;
     }
 
-    public static List<WorkerView> getMatchObjectors(SegmentView segment) {
+    public static List<Worker> getMatchObjectors(SegmentView segment) {
         int winnerPopularity = getWinnerMaxPopularity(segment);
         return segment.getTeams(TeamType.LOSER).stream()
                 .flatMap(team -> team.getWorkers().stream())
@@ -60,6 +60,6 @@ public final class SegmentUtils {
     }
 
     private static int getWinnerMaxPopularity(SegmentView segment) {
-        return segment.getWinners().stream().max(Comparator.comparing(WorkerView::getPopularity)).get().getPopularity();
+        return segment.getWinners().stream().max(Comparator.comparing(Worker::getPopularity)).get().getPopularity();
     }
 }

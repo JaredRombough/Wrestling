@@ -1,17 +1,17 @@
 package openwrestling.model;
 
 import openwrestling.model.interfaces.Segment;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public class SegmentWorker {
 
     private final Segment segment;
-    private final WorkerView worker;
+    private final Worker worker;
 
     private final int team;
 
     public SegmentWorker(Segment segment,
-            WorkerView worker,
+            Worker worker,
             int team) {
         this.segment = segment;
         this.worker = worker;
@@ -28,7 +28,7 @@ public class SegmentWorker {
     /**
      * @return the worker
      */
-    public WorkerView getWorker() {
+    public Worker getWorker() {
         return worker;
     }
 

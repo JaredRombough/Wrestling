@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import openwrestling.model.manager.BankAccountManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.financial.BankAccount;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.PromotionManager;
+import openwrestling.manager.PromotionManager;
 import openwrestling.model.manager.StaffManager;
-import openwrestling.model.manager.WorkerManager;
-import openwrestling.model.modelView.PromotionView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.manager.WorkerManager;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.StaffUtils;
 
@@ -30,24 +32,28 @@ public class PromotionFactory {
     private final PromotionManager promotionManager;
     private final WorkerManager workerManager;
     private final StaffManager staffManager;
+    private final BankAccountManager bankAccountManager;
 
     public PromotionFactory(
             ContractFactory contractFactory,
             DateManager dateManager,
             PromotionManager promotionManager,
             WorkerManager workerManager,
-            StaffManager staffManager) {
+            StaffManager staffManager,
+            BankAccountManager bankAccountManager) {
         this.contractFactory = contractFactory;
         this.dateManager = dateManager;
         this.promotionManager = promotionManager;
         this.workerManager = workerManager;
         this.staffManager = staffManager;
+        this.bankAccountManager = bankAccountManager;
     }
 
     public void preparePromotions() throws IOException {
         int numberOfPromotions = 20;
         int startingFunds = 10000;
         double[] levelRatios = {0.3, 0.2, 0.2, 0.2, 0.1};
+        List<Promotion> promotionsToAdd = new ArrayList<>();
         List<String> promotionNames = new ArrayList<>();
         promotionNames.addAll(PROMOTION_NAMES);
         Collections.shuffle(promotionNames);
@@ -58,7 +64,7 @@ public class PromotionFactory {
             int currentLevel = 5 - ArrayUtils.indexOf(levelRatios, ratio);
 
             for (int i = 0; i < target; i++) {
-                PromotionView promotion = newPromotion();
+                Promotion promotion = newPromotion();
                 promotion.setLevel(currentLevel);
                 promotion.setName(promotionNames.get(name).trim());
                 String[] words = promotion.getName().split(" ");
@@ -72,16 +78,18 @@ public class PromotionFactory {
                 int rosterSize = 10 + (currentLevel * 10);
 
                 //add funds (this could be based on promotion level)
-                promotionManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
+                bankAccountManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
 
                 //assign workers based on promotion level
+                List<Worker> workersToAdd = new ArrayList<>();
                 for (int j = 0; j < rosterSize; j++) {
-                    WorkerView worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                    Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
                     contractFactory.createContract(worker, promotion, dateManager.today());
                     if (j < rosterSize / 2) {
-                        workerManager.addWorker(PersonFactory.randomWorker(promotion.getLevel()));
+                        workersToAdd.add(PersonFactory.randomWorker(promotion.getLevel()));
                     }
                 }
+                workerManager.createWorkers(workersToAdd);
 
                 for (StaffType staffType : StaffType.values()) {
                     int ideal = StaffUtils.idealStaffCount(promotion, staffType);
@@ -97,17 +105,18 @@ public class PromotionFactory {
                     }
                 }
                 staffManager.addStaff(promotion.getAllStaff());
-                workerManager.addWorkers(promotion.getFullRoster());
-                promotionManager.addPromotion(promotion);
+                workerManager.createWorkers(promotion.getFullRoster());
+                promotionsToAdd.add(promotion);
             }
         }
+        promotionManager.createPromotions(promotionsToAdd);
     }
 
-    public PromotionView newPromotion() {
-        PromotionView promotion = new PromotionView();
+    public Promotion newPromotion() {
+        Promotion promotion = new Promotion();
         BankAccount bankAccount = new BankAccount(promotion);
         bankAccount.addFunds(1000000);
-        promotionManager.addBankAccount(bankAccount);
+        bankAccountManager.addBankAccount(bankAccount);
         return promotion;
     }
 

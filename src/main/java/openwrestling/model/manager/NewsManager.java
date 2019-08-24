@@ -4,21 +4,20 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static java.util.Arrays.asList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.Injury;
 import openwrestling.model.NewsItem;
-import openwrestling.model.SegmentItem;
+
 import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 
 public class NewsManager implements Serializable {
@@ -34,7 +33,7 @@ public class NewsManager implements Serializable {
         return newsItems;
     }
 
-    public void addWelcomeNewsItem(PromotionView promotion) {
+    public void addWelcomeNewsItem(Promotion promotion) {
         NewsItem newsItem = new NewsItem(
                 "Welcome to Open Wrestling",
                 "Have fun!",
@@ -43,8 +42,8 @@ public class NewsManager implements Serializable {
         addNews(newsItem);
     }
 
-    public void addJobComplaintNewsItem(WorkerView worker, List<WorkerView> winners, PromotionView promotion, LocalDate date) {
-        List<WorkerView> workers = new ArrayList<>(winners);
+    public void addJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
+        List<Worker> workers = new ArrayList<>(winners);
         workers.add(worker);
         NewsItem newsItem = new NewsItem(
                 String.format("%s unhappy with loss", worker.getShortName()),
@@ -73,7 +72,7 @@ public class NewsManager implements Serializable {
         addNews(newsItem);
     }
 
-    public void addTrainingNewsItem(WorkerView worker, StaffView trainer, PromotionView promotion, String stat, LocalDate date) {
+    public void addTrainingNewsItem(Worker worker, StaffView trainer, Promotion promotion, String stat, LocalDate date) {
         NewsItem newsItem = new NewsItem(
                 String.format("%s training", worker.getLongName()),
                 String.format("%s increased %s working with %s trainer %s.",
@@ -85,28 +84,28 @@ public class NewsManager implements Serializable {
     }
 
     public void addMatchInjuryNewsItem(Injury injury, EventView event) {
-        NewsItem newsItem = new NewsItem(String.format("%s injured", injury.getWorkerView().getLongName()),
+        NewsItem newsItem = new NewsItem(String.format("%s injured", injury.getWorker().getLongName()),
                 String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
-                        injury.getWorkerView().getLongName(),
+                        injury.getWorker().getLongName(),
                         event.toString(),
                         injury.getStartDate().toString(),
                         injury.getExpiryDate().toString()),
                 injury.getStartDate(),
                 injury.getPromotion(),
-                injury.getWorkerView());
+                injury.getWorker());
         addNews(newsItem);
     }
 
     public void addRandomInjuryNewsItem(Injury injury) {
         int index1 = RandomUtils.nextInt(0, ACTIVITIES.size());
         int index2 = RandomUtils.nextInt(0, BODY_PARTS.size());
-        String headline = String.format("%s injured", injury.getWorkerView().getName());
+        String headline = String.format("%s injured", injury.getWorker().getName());
         String body = String.format("%s injured their %s while %s today. They are expected to be out until %s.",
-                injury.getWorkerView().getLongName(),
+                injury.getWorker().getLongName(),
                 BODY_PARTS.get(index2),
                 ACTIVITIES.get(index1).toLowerCase(),
                 injury.getExpiryDate(),
-                injury.getWorkerView());
+                injury.getWorker());
         NewsItem newsItem = new NewsItem(headline, body, injury.getStartDate(), injury.getPromotion());
         addNews(newsItem);
     }

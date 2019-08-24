@@ -24,9 +24,9 @@ import openwrestling.model.MatchEvent;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.utility.ModelUtils;
 
@@ -148,7 +148,7 @@ public class EventManager implements Serializable {
 
     }
 
-    public List<Event> getEvents(PromotionView promotion) {
+    public List<Event> getEvents(Promotion promotion) {
         List<Event> promotionEvents = new ArrayList();
         events.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
             promotionEvents.add(event);
@@ -224,7 +224,7 @@ public class EventManager implements Serializable {
                         ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
-    public List<EventView> getEventViews(PromotionView promotion) {
+    public List<EventView> getEventViews(Promotion promotion) {
         List<EventView> promotionEvents = new ArrayList();
         eventViews.stream().filter((eventView)
                 -> (eventView.getEvent().getPromotion().equals(promotion))).forEach((event) -> {
@@ -233,7 +233,7 @@ public class EventManager implements Serializable {
         return promotionEvents;
     }
 
-    public Event getNextEvent(PromotionView promotion, LocalDate startDate) {
+    public Event getNextEvent(Promotion promotion, LocalDate startDate) {
         Event event = null;
         int futureDaysToSearch = 180;
         LocalDate currentDate = startDate;
@@ -247,7 +247,7 @@ public class EventManager implements Serializable {
         return event;
     }
 
-    public Event getEventOnDate(PromotionView promotion, LocalDate date) {
+    public Event getEventOnDate(Promotion promotion, LocalDate date) {
         for (Event event : events) {
             if (event.getDate().equals(date)
                     && event.getPromotion().equals(promotion)) {
@@ -276,7 +276,7 @@ public class EventManager implements Serializable {
         return eventsOnDate;
     }
 
-    public int eventsAfterDate(PromotionView promotion, LocalDate date) {
+    public int eventsAfterDate(Promotion promotion, LocalDate date) {
         int futureEvents = 0;
         futureEvents = events.stream().filter((Event event) -> {
             return event.getPromotion().equals(promotion)
@@ -298,7 +298,7 @@ public class EventManager implements Serializable {
     //so if a worker is in two different segments he is only on the list
     //one time. useful for cost calculation so we don't pay people
     //twice for the same show
-    public List<WorkerView> allWorkers(List<Segment> segments) {
+    public List<Worker> allWorkers(List<Segment> segments) {
 
         List allWorkers = new ArrayList<>();
         for (Segment currentSegment : segments) {
@@ -309,14 +309,14 @@ public class EventManager implements Serializable {
 
         //this should take the list of workers generated above
         //and convert it to a set, removing duplicates
-        Set<WorkerView> allWorkersSet = new LinkedHashSet<>(allWorkers);
+        Set<Worker> allWorkersSet = new LinkedHashSet<>(allWorkers);
         //convert the set back to a list with no duplicates
         allWorkers = new ArrayList<>(allWorkersSet);
 
         return allWorkers;
     }
 
-    public List<WorkerView> allWorkers(Event event) {
+    public List<Worker> allWorkers(Event event) {
         List allWorkers = new ArrayList<>();
         for (EventWorker eventWorker : eventWorkers) {
             if (eventWorker.getEvent().equals(event)) {
@@ -330,17 +330,17 @@ public class EventManager implements Serializable {
     public int calculateCost(iEvent event) {
         int currentCost = 0;
 
-        for (WorkerView worker : allWorkers(getMatches(event))) {
+        for (Worker worker : allWorkers(getMatches(event))) {
             currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
         }
         return currentCost;
     }
 
     //dynamic current cost calculation to be called while the player is booking
-    public int calculateCost(List<Segment> segments, PromotionView promotion) {
+    public int calculateCost(List<Segment> segments, Promotion promotion) {
         int currentCost = 0;
 
-        for (WorkerView worker : allWorkers(segments)) {
+        for (Worker worker : allWorkers(segments)) {
             currentCost += contractManager.getContract(worker, promotion).getAppearanceCost();
         }
         return currentCost;
@@ -375,7 +375,7 @@ public class EventManager implements Serializable {
     }
 
     //gross profit for the event
-    public int calculateGate(List<Segment> segments, PromotionView promotion) {
+    public int calculateGate(List<Segment> segments, Promotion promotion) {
 
         int ticketPrice = 0;
 
@@ -427,7 +427,7 @@ public class EventManager implements Serializable {
 
         //how many workers are draws?
         int draws = 0;
-        for (WorkerView worker : allWorkers(getMatches(event))) {
+        for (Worker worker : allWorkers(getMatches(event))) {
 
             if (worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10) {
                 draws++;
@@ -439,7 +439,7 @@ public class EventManager implements Serializable {
         return attendance;
     }
 
-    public int calculateAttendance(List<Segment> segments, PromotionView promotion) {
+    public int calculateAttendance(List<Segment> segments, Promotion promotion) {
         int attendance = 0;
 
         switch (promotion.getLevel()) {
@@ -464,7 +464,7 @@ public class EventManager implements Serializable {
 
         //how many workers are draws?
         int draws = 0;
-        for (WorkerView worker : allWorkers(segments)) {
+        for (Worker worker : allWorkers(segments)) {
 
             if (worker.getPopularity() > ModelUtils.maxPopularity(promotion) - 10) {
                 draws++;
@@ -479,8 +479,8 @@ public class EventManager implements Serializable {
     private String futureEventString(Event event) {
         StringBuilder sb = new StringBuilder();
         sb.append("Workers booked:");
-        List<WorkerView> workers = allWorkers(event);
-        for (WorkerView worker : workers) {
+        List<Worker> workers = allWorkers(event);
+        for (Worker worker : workers) {
             sb.append("\n");
             sb.append(worker.getName());
         }
@@ -525,7 +525,7 @@ public class EventManager implements Serializable {
     }
 
     //checks if a worker is booked at all on a given date
-    public boolean isBooked(WorkerView worker, LocalDate date) {
+    public boolean isBooked(Worker worker, LocalDate date) {
         boolean isBooked = false;
 
         for (EventWorker eventWorker : eventWorkers) {
@@ -539,7 +539,7 @@ public class EventManager implements Serializable {
         return isBooked;
     }
 
-    private EventWorker getBooking(WorkerView worker, LocalDate date) {
+    private EventWorker getBooking(Worker worker, LocalDate date) {
         EventWorker workerBooking = null;
         for (EventWorker eventWorker : eventWorkers) {
             if (eventWorker.getEvent().getDate().equals(date)
@@ -553,7 +553,7 @@ public class EventManager implements Serializable {
 
     //checks if a worker is booked on a certain date
     //returns false if the booking is with the given promotion
-    public boolean isAvailable(WorkerView worker, LocalDate date, PromotionView promotion) {
+    public boolean isAvailable(Worker worker, LocalDate date, Promotion promotion) {
         EventWorker eventWorker = getBooking(worker, date);
         if (eventWorker == null) {
             return false;
@@ -564,9 +564,9 @@ public class EventManager implements Serializable {
         return eventWorker.getWorker().getInjury() == null;
     }
 
-    public List<WorkerView> getAvailableRoster(PromotionView promotion, LocalDate date) {
+    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
 
-        List<WorkerView> roster = new ArrayList<>();
+        List<Worker> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {
             if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());
@@ -577,9 +577,9 @@ public class EventManager implements Serializable {
         return roster;
     }
 
-    public List<WorkerView> getUnavailableRoster(PromotionView promotion, LocalDate date) {
+    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
 
-        List<WorkerView> roster = new ArrayList<>();
+        List<Worker> roster = new ArrayList<>();
         for (Contract contract : contractManager.getContracts(promotion)) {
             if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
                 roster.add(contract.getWorker());

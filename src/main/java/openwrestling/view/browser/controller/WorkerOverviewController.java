@@ -23,8 +23,8 @@ import javafx.scene.layout.GridPane;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import static openwrestling.model.constants.UIConstants.EDIT_ICON;
-import openwrestling.model.modelView.PromotionView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.results.controller.ResultsCardController;
 import openwrestling.view.utility.GameScreen;
@@ -103,14 +103,14 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private AnchorPane imageAnchor;
 
     @FXML
-    private ListView<WorkerView> managedListView;
+    private ListView<Worker> managedListView;
 
     @FXML
     private Button entourageButton;
     private ChangeListener<Boolean> entourageButtonHoverListener;
 
     @FXML
-    private ListView<WorkerView> entourageListView;
+    private ListView<Worker> entourageListView;
 
     @FXML
     private AnchorPane contractAnchor;
@@ -120,13 +120,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private AnchorPane feedAnchor;
     private GameScreen feedPaneScreen;
 
-    private WorkerView worker;
-    private PromotionView promotion;
+    private Worker worker;
+    private Promotion promotion;
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof WorkerView) {
-            WorkerView newWorker = (WorkerView) obj;
+        if (obj instanceof Worker) {
+            Worker newWorker = (Worker) obj;
 
             worker = newWorker;
 
@@ -137,7 +137,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         }
     }
 
-    public void setPromotion(PromotionView promotion) {
+    public void setPromotion(Promotion promotion) {
         if (!Objects.equals(this.promotion, promotion)) {
             this.promotion = promotion;
             updateLabels();
@@ -175,10 +175,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         entourageButtonHoverListener = ViewUtils.buttonHoverListener(entourageButton);
 
         entourageButton.setOnAction(a -> {
-            List<WorkerView> workers = new ArrayList<>(promotion.getFullRoster());
+            List<Worker> workers = new ArrayList<>(promotion.getFullRoster());
             workers.removeAll(worker.getEntourage());
             workers.remove(worker);
-            Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+            Optional<Worker> result = ViewUtils.selectWorkerDialog(
                     workers,
                     resx.getString("JoinEntourageTitle"),
                     String.format(resx.getString("JoinEntourageText"), worker.getName())
@@ -190,9 +190,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             });
         });
 
-        entourageListView.setCellFactory(c -> new ListCell<WorkerView>() {
+        entourageListView.setCellFactory(c -> new ListCell<Worker>() {
             @Override
-            public void updateItem(WorkerView client, boolean empty) {
+            public void updateItem(Worker client, boolean empty) {
                 super.updateItem(client, empty);
                 if (empty) {
                     setText(null);
@@ -221,9 +221,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
         });
 
-        managedListView.setCellFactory(c -> new ListCell<WorkerView>() {
+        managedListView.setCellFactory(c -> new ListCell<Worker>() {
             @Override
-            public void updateItem(WorkerView client, boolean empty) {
+            public void updateItem(Worker client, boolean empty) {
                 super.updateItem(client, empty);
                 if (empty) {
                     setText(null);
@@ -355,9 +355,9 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
             managerButton.setOnAction(a -> {
-                List<WorkerView> workers = new ArrayList<>(playerPromotion().getFullRoster());
+                List<Worker> workers = new ArrayList<>(playerPromotion().getFullRoster());
                 workers.remove(worker);
-                Optional<WorkerView> result = ViewUtils.selectWorkerDialog(
+                Optional<Worker> result = ViewUtils.selectWorkerDialog(
                         workers,
                         "Select Manager",
                         String.format("Select a manager for %s", worker.getName()),
@@ -378,7 +378,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managerButton.setVisible(false);
             managedLabel.setVisible(false);
         }
-        List<WorkerView> managed = new ArrayList<>(promotion.getFullRoster().stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
+        List<Worker> managed = new ArrayList<>(promotion.getFullRoster().stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
         if (!managed.isEmpty()) {
             managedLabel.setVisible(true);
             managedListView.setVisible(true);

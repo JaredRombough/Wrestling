@@ -3,7 +3,6 @@ package openwrestling.model.factory;
 import java.io.Serializable;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.Injury;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentWorker;
 import static openwrestling.model.constants.GameConstants.BASE_INJURY_RATE;
@@ -22,12 +21,12 @@ import openwrestling.model.interfaces.Segment;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.MatchLength;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -56,7 +55,7 @@ public class MatchFactory implements Serializable {
         processInjuries(segmentView);
         matchManager.addSegmentView(segmentView);
         for (SegmentTeam team : segmentView.getTeams()) {
-            for (WorkerView worker : team.getWorkers()) {
+            for (Worker worker : team.getWorkers()) {
                 matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
             }
         }
@@ -122,7 +121,7 @@ public class MatchFactory implements Serializable {
 
         for (SegmentTeam team : segmentView.getTeams()) {
             int teamPopTotal = 0;
-            for (WorkerView worker : team.getWorkers()) {
+            for (Worker worker : team.getWorkers()) {
                 teamPopTotal += worker.getPopularity();
             }
 
@@ -130,7 +129,7 @@ public class MatchFactory implements Serializable {
 
             if (!team.getEntourage().isEmpty()) {
                 int entouragePopTotal = 0;
-                for (WorkerView entourage : team.getEntourage()) {
+                for (Worker entourage : team.getEntourage()) {
                     entouragePopTotal += entourage.getPopularity();
                 }
                 int entourageAvg = entouragePopTotal / team.getEntourage().size();
@@ -180,10 +179,10 @@ public class MatchFactory implements Serializable {
             for (SegmentItem item : segmentView.getBroadcastTeam()) {
                 if (item instanceof StaffView) {
                     broadCastTeamTotal += ((StaffView) item).getSkill();
-                } else if (item instanceof WorkerView) {
+                } else if (item instanceof Worker) {
                     broadCastTeamTotal += ModelUtils.getWeightedScore(new Integer[]{
-                        ((WorkerView) item).getCharisma(),
-                        ((WorkerView) item).getPopularity()
+                        ((Worker) item).getCharisma(),
+                        ((Worker) item).getPopularity()
                     });
                 }
             }
@@ -204,7 +203,7 @@ public class MatchFactory implements Serializable {
         int totalTeamScore = 0;
         int entourageTotalScore = 0;
 
-        for (WorkerView worker : team.getWorkers()) {
+        for (Worker worker : team.getWorkers()) {
             switch (team.getType()) {
                 case OFFERER:
                 case OFFEREE:
@@ -229,7 +228,7 @@ public class MatchFactory implements Serializable {
             }
         }
 
-        for (WorkerView worker : team.getEntourage()) {
+        for (Worker worker : team.getEntourage()) {
             switch (team.getType()) {
                 case OFFERER:
                 case OFFEREE:
@@ -261,9 +260,9 @@ public class MatchFactory implements Serializable {
     }
 
     private void processInjuries(SegmentView segmentView) {
-        List<WorkerView> matchWorkers = segmentView.getMatchParticipants();
+        List<Worker> matchWorkers = segmentView.getMatchParticipants();
         matchWorkers.stream().forEach((w) -> {
-            PromotionView promotion = segmentView.getPromotion();
+            Promotion promotion = segmentView.getPromotion();
             int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion);
             int injuryRate = BASE_INJURY_RATE - segmentView.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
             if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {

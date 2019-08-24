@@ -48,7 +48,7 @@ import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.SegmentValidation;
@@ -173,7 +173,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         StringBuilder objectionString = new StringBuilder();
 
         getSegmentViews().stream().forEach(segment -> {
-            List<WorkerView> objectors = getMatchObjectors(segment);
+            List<Worker> objectors = getMatchObjectors(segment);
             if (!objectors.isEmpty()) {
                 objectionString.append(String.format("%s %s not happy about losing their match against %s.",
                         ModelUtils.andItemsLongName(objectors),
@@ -362,18 +362,18 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         int currentCost = 0;
 
-        for (WorkerView worker : allWorkers()) {
+        for (Worker worker : allWorkers()) {
             currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
 
         }
         return currentCost;
     }
 
-    private List<WorkerView> allWorkers() {
-        List<WorkerView> allWorkers = new ArrayList<>();
+    private List<Worker> allWorkers() {
+        List<Worker> allWorkers = new ArrayList<>();
         for (SegmentPaneController segmentPaneController : getSegmentPaneControllers()) {
 
-            for (WorkerView worker : segmentPaneController.getWorkers()) {
+            for (Worker worker : segmentPaneController.getWorkers()) {
                 if (!allWorkers.contains(worker)) {
                     allWorkers.add(worker);
                 }
@@ -695,10 +695,10 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private boolean filterInjured(SegmentItem segmentItem) {
-        if (!(segmentItem instanceof WorkerView)) {
+        if (!(segmentItem instanceof Worker)) {
             return false;
         }
-        return ((WorkerView) segmentItem).getInjury() != null;
+        return ((Worker) segmentItem).getInjury() != null;
 
     }
 

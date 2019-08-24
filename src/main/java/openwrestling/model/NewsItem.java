@@ -4,30 +4,30 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.modelView.PromotionView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 
 public class NewsItem implements iNewsItem {
 
     private final String summary;
     private final String headline;
     private final LocalDate date;
-    private final List<PromotionView> promotions = new ArrayList();
-    private final List<WorkerView> workers = new ArrayList();
+    private final List<Promotion> promotions = new ArrayList();
+    private final List<Worker> workers = new ArrayList();
 
-    public NewsItem(String headline, String summary, LocalDate date, PromotionView promotion) {
+    public NewsItem(String headline, String summary, LocalDate date, Promotion promotion) {
         this.summary = summary;
         this.headline = headline;
         this.date = date;
         this.promotions.add(promotion);
     }
 
-    public NewsItem(String headline, String summary, LocalDate date, PromotionView promotion, WorkerView worker) {
+    public NewsItem(String headline, String summary, LocalDate date, Promotion promotion, Worker worker) {
         this(headline, summary, date, promotion);
         this.workers.add(worker);
     }
 
-    public NewsItem(String headline, String summary, LocalDate date, PromotionView promotion, List<WorkerView> workers) {
+    public NewsItem(String headline, String summary, LocalDate date, Promotion promotion, List<Worker> workers) {
         this(headline, summary, date, promotion);
         this.workers.addAll(workers);
     }
@@ -48,14 +48,14 @@ public class NewsItem implements iNewsItem {
     }
 
     @Override
-    public List<PromotionView> getPromotions() {
+    public List<Promotion> getPromotions() {
         return promotions;
     }
 
     /**
      * @return the workers
      */
-    public List<WorkerView> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 }

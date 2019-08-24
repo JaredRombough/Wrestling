@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import openwrestling.file.Database;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,6 +60,8 @@ public class MainApp extends Application {
     private GameScreen currentScreen;
     private double currentStageWidth;
     private double currentStageHeight;
+
+    public static String dbURL;
 
     public static void main(String[] args) {
         launch(args);
@@ -113,6 +116,9 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
+        dbURL = Database.createNewDatabase("newRandom");
+        Database.connect(dbURL);
+
         randomGame = true;
         try {
             gameController = new GameController(true);
@@ -130,6 +136,9 @@ public class MainApp extends Application {
 
     //starts a new game from imported data
     public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
+        dbURL = Database.createNewDatabase("newImport");
+        Database.connect(dbURL);
+
         randomGame = false;
         this.dataFolder = dataFolder;
         this.picsFolder = picsFolder;

@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import org.apache.logging.log4j.Logger;
 import openwrestling.MainApp;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 
 public abstract class ControllerBase implements Initializable {
 
@@ -30,7 +30,7 @@ public abstract class ControllerBase implements Initializable {
     
     public void focusLost() {};
     
-    public PromotionView playerPromotion() {
+    public Promotion playerPromotion() {
         return gameController.getPromotionManager().playerPromotion();
     }
     

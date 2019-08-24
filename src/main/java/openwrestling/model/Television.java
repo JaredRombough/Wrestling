@@ -1,13 +1,13 @@
 package openwrestling.model;
 
 import java.time.DayOfWeek;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 
 public class Television {
 
     private DayOfWeek day;
     private String name;
-    private PromotionView promotion;
+    private Promotion promotion;
     private int duration;
 
     /**
@@ -41,14 +41,14 @@ public class Television {
     /**
      * @return the promotion
      */
-    public PromotionView getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 
     /**
      * @param promotion the promotion to set
      */
-    public void setPromotion(PromotionView promotion) {
+    public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
 

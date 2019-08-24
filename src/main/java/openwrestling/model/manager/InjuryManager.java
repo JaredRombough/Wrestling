@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.Injury;
-import openwrestling.model.NewsItem;
+
 import static openwrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
-import static openwrestling.model.constants.Words.ACTIVITIES;
-import static openwrestling.model.constants.Words.BODY_PARTS;
-import openwrestling.model.modelView.PromotionView;
+
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 
 public class InjuryManager implements Serializable {
 
@@ -23,10 +22,10 @@ public class InjuryManager implements Serializable {
         this.newsManager = newsManager;
     }
 
-    public void dailyUpdate(LocalDate date, PromotionView promotion) {
+    public void dailyUpdate(LocalDate date, Promotion promotion) {
         for (Injury injury : injuries) {
             if (injury.getPromotion().equals(promotion) && injury.getExpiryDate().equals(date)) {
-                WorkerView worker = injury.getWorkerView();
+                Worker worker = injury.getWorker();
                 worker.setInjury(null);
             }
         }
@@ -49,13 +48,13 @@ public class InjuryManager implements Serializable {
         return injuries;
     }
 
-    public void createInjury(LocalDate startDate, int duration, WorkerView worker, SegmentView segmentView) {
+    public void createInjury(LocalDate startDate, int duration, Worker worker, SegmentView segmentView) {
         Injury injury = new Injury(startDate, startDate.plusDays(duration), worker, segmentView.getPromotion());
         addInjury(injury);
         newsManager.addMatchInjuryNewsItem(injury, segmentView.getEventView());
     }
 
-    public void createRandomInjury(WorkerView worker, LocalDate date, PromotionView promotion) {
+    public void createRandomInjury(Worker worker, LocalDate date, Promotion promotion) {
         int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
         Injury injury = new Injury(date, date.plusDays(injuryDays), worker, promotion);
         newsManager.addRandomInjuryNewsItem(injury);
@@ -64,7 +63,7 @@ public class InjuryManager implements Serializable {
 
     private void addInjury(Injury injury) {
         injuries.add(injury);
-        injury.getWorkerView().setInjury(injury);
+        injury.getWorker().setInjury(injury);
     }
 
 }

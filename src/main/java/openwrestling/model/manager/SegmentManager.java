@@ -19,7 +19,7 @@ import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.modelView.WorkerView;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -75,8 +75,8 @@ public class SegmentManager implements Serializable {
         return title;
     }
 
-    public List<WorkerView> getWorkers(Segment segment) {
-        List<WorkerView> workers = new ArrayList<>();
+    public List<Worker> getWorkers(Segment segment) {
+        List<Worker> workers = new ArrayList<>();
         for (SegmentWorker matchWorker : segmentWorkers) {
             if (matchWorker.getSegment().equals(segment)) {
                 workers.add(matchWorker.getWorker());
@@ -259,7 +259,7 @@ public class SegmentManager implements Serializable {
         if (teamsSize > 1) {
 
             for (int t = 0; t < teamsSize; t++) {
-                List<WorkerView> team = teams.get(t).getWorkers();
+                List<Worker> team = teams.get(t).getWorkers();
 
                 matchString += generateTeamName(team, false, teams.get(t).getType());
 
@@ -298,7 +298,7 @@ public class SegmentManager implements Serializable {
         if (teamsSize > 1) {
 
             for (int t = 0; t < teamsSize; t++) {
-                List<WorkerView> team = teams.get(t).getWorkers();
+                List<Worker> team = teams.get(t).getWorkers();
 
                 matchString += generateTeamName(team, verbose, teams.get(t).getType());
 

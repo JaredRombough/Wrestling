@@ -1,14 +1,20 @@
-package openwrestling.model.modelView;
+package openwrestling.model.gameObjects;
+
+import lombok.Getter;
+import lombok.Setter;
+import openwrestling.model.EventTemplate;
+import openwrestling.model.SegmentItem;
+import openwrestling.model.modelView.StaffView;
+import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.utility.StaffUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.EventTemplate;
-import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.StaffType;
-import openwrestling.model.utility.StaffUtils;
 
-public class PromotionView implements SegmentItem, Serializable {
+@Getter
+@Setter
+public class Promotion extends GameObject implements SegmentItem, Serializable {
 
     private static int serialNumber = 0;
 
@@ -19,20 +25,17 @@ public class PromotionView implements SegmentItem, Serializable {
     private int popularity;
     private int level;
 
-    private final List<WorkerView> fullRoster;
+    private final List<Worker> fullRoster;
     private final List<StaffView> allStaff;
     private List<StaffView> defaultBroadcastTeam;
     private List<EventTemplate> eventTemplates;
 
-    public PromotionView() {
+    public Promotion() {
 
         fullRoster = new ArrayList<>();
         allStaff = new ArrayList<>();
         defaultBroadcastTeam = new ArrayList<>();
         eventTemplates = new ArrayList<>();
-
-        name = "Promotion #" + serialNumber;
-        shortName = "PRO" + serialNumber;
 
         //default popularity of 50 for now
         popularity = 50;
@@ -40,25 +43,10 @@ public class PromotionView implements SegmentItem, Serializable {
         serialNumber++;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setPromotionID(int promotionID) {
-        this.promotionID = promotionID;
-    }
-
     public int indexNumber() {
         return promotionID;
     }
 
-    public int getPopulatirty() {
-        return popularity;
-    }
 
     public void setPopularity(int popularity) {
         if (popularity > 100) {
@@ -88,57 +76,15 @@ public class PromotionView implements SegmentItem, Serializable {
         return name;
     }
 
-    /**
-     * @return the shortName
-     */
-    @Override
-    public String getShortName() {
-        return shortName;
-    }
 
-    /**
-     * @param shortName the shortName to set
-     */
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    /**
-     * @return the imagePath
-     */
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    /**
-     * @param imagePath the imagePath to set
-     */
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    /**
-     * @return the fullRoster
-     */
-    public List<WorkerView> getFullRoster() {
-        return fullRoster;
-    }
-
-    public void addToRoster(WorkerView worker) {
+    public void addToRoster(Worker worker) {
         fullRoster.add(worker);
     }
 
-    public void removeFromRoster(WorkerView worker) {
+    public void removeFromRoster(Worker worker) {
         if (fullRoster.contains(worker)) {
             fullRoster.remove(worker);
         }
-    }
-
-    /**
-     * @return the allStaff
-     */
-    public List<StaffView> getAllStaff() {
-        return allStaff;
     }
 
     public StaffView getOwner() {
@@ -158,26 +104,6 @@ public class PromotionView implements SegmentItem, Serializable {
         });
     }
 
-    /**
-     * @return the defaultBroadcastTeam
-     */
-    public List<StaffView> getDefaultBroadcastTeam() {
-        return defaultBroadcastTeam;
-    }
-
-    /**
-     * @param defaultBroadcastTeam the defaultBroadcastTeam to set
-     */
-    public void setDefaultBroadcastTeam(List<StaffView> defaultBroadcastTeam) {
-        this.defaultBroadcastTeam = defaultBroadcastTeam;
-    }
-
-    /**
-     * @return the eventTemplates
-     */
-    public List<EventTemplate> getEventTemplates() {
-        return eventTemplates;
-    }
 
     public void addEventTemplate(EventTemplate template) {
         eventTemplates.add(template);

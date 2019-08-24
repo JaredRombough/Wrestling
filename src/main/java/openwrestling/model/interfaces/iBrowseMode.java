@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.view.utility.ScreenCode;
 
 public interface iBrowseMode {
@@ -16,5 +16,5 @@ public interface iBrowseMode {
 
     public List<EnumSet> getSortFilters();
 
-    public List<SegmentItem> listToBrowse(GameController gameController, PromotionView promotion);
+    public List<SegmentItem> listToBrowse(GameController gameController, Promotion promotion);
 }

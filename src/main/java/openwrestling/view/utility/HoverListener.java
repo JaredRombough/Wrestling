@@ -4,12 +4,12 @@ import java.util.Objects;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 
 public class HoverListener implements EventHandler<MouseEvent> {
 
-    private PromotionView promotion;
-    private PromotionView playerPromotion;
+    private Promotion promotion;
+    private Promotion playerPromotion;
     private Button button;
 
     @Override

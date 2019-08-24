@@ -56,7 +56,7 @@ public class PromotionView implements SegmentItem, Serializable {
         return promotionID;
     }
 
-    public int getPopulatirty() {
+    public int getPopularity() {
         return popularity;
     }
 

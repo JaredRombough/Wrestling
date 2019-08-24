@@ -11,7 +11,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.VBox;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.modelView.PromotionView;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.StaffUtils;
@@ -25,7 +25,7 @@ public class EditBroadcastTeamDialog {
     private List<StaffView> broadcastStaff;
     private StaffView empty;
 
-    public Dialog<List<StaffView>> getDialog(GameController gameController, PromotionView promotion, List<StaffView> defaultTeam) {
+    public Dialog<List<StaffView>> getDialog(GameController gameController, Promotion promotion, List<StaffView> defaultTeam) {
         Dialog<List<StaffView>> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         dialog.setTitle("Edit Broadcst Team");
