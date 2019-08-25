@@ -7,8 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.modelView.Entourage;
 import openwrestling.model.segmentEnum.Gender;
+
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -77,5 +78,7 @@ public class WorkerEntity extends Entity {
 
 //    @ForeignCollectionField
 //    private Collection<Worker> entourage;
+
+    private Collection<StableWorkerEntity> workerGroups;
 
 }

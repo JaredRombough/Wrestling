@@ -341,7 +341,7 @@ public final class ViewUtils {
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
                 TitleView newTitleView = gameController.getTitleFactory().createTitle(
-                        gameController.getPromotionManager().playerPromotion(), titleName.getText());
+                        gameController.getPromotionManager().getPlayerPromotion(), titleName.getText());
                 return newTitleView;
             }
             return null;

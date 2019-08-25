@@ -29,7 +29,7 @@ public class ContractDialog {
         this.person = person;
         Dialog dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
-        Promotion playerPromotion = gameController.getPromotionManager().playerPromotion();
+        Promotion playerPromotion = gameController.getPromotionManager().getPlayerPromotion();
 
         Label costLabel = new Label();
         Label endDate = new Label();

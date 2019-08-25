@@ -23,7 +23,7 @@ import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.StableManager;
+import openwrestling.manager.StableManager;
 import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
 import openwrestling.manager.WorkerManager;

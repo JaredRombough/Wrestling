@@ -11,10 +11,13 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import openwrestling.MainApp;
 import openwrestling.entities.Entity;
 import openwrestling.entities.PromotionEntity;
+import openwrestling.entities.StableEntity;
+import openwrestling.entities.StableWorkerEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.WorkerGroup;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,9 +31,11 @@ import java.util.stream.Collectors;
 
 public class Database {
 
-    private static Map<Class<? extends GameObject>, Class<? extends Entity>> classMap = new HashMap<>() {{
+    public static Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
         put(Promotion.class, PromotionEntity.class);
         put(Worker.class, WorkerEntity.class);
+        put(WorkerGroup.class, StableEntity.class);
+        put(WorkerGroup.class, StableEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -72,16 +77,36 @@ public class Database {
         return connection;
     }
 
-    public static void createEntityList(List<? extends GameObject> gameObjects) {
-        if (gameObjects.isEmpty()) {
+    public static void insertEntityList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
+        if (toInsert.isEmpty()) {
             return;
         }
 
-        ConnectionSource connectionSource = null;
         try {
-            connectionSource = new JdbcConnectionSource(MainApp.dbURL);
+            Dao dao = DaoManager.createDao(connectionSource, toInsert.get(0).getClass());
 
-            Class<? extends Entity> targetClass = classMap.get(gameObjects.get(0).getClass());
+            dao.callBatchTasks((Callable<Void>) () -> {
+                for (Entity entity : toInsert) {
+                    System.out.println(entity);
+                    dao.create(entity);
+                }
+                return null;
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<? extends GameObject> insertList(List<? extends GameObject> gameObjects) {
+        if (gameObjects.isEmpty()) {
+            return gameObjects;
+        }
+
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(MainApp.dbURL);
+
+            Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
 
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
             MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -94,24 +119,35 @@ public class Database {
             dao.callBatchTasks((Callable<Void>) () -> {
                 for (Entity entity : toInsert) {
                     dao.create(entity);
+                    insertEntityList(entity.childrenToInsert(), connectionSource);
                 }
                 return null;
             });
 
+            return toInsert.stream()
+                    .map(entity -> mapper.map(entity, gameObjects.get(0).getClass()))
+                    .collect(Collectors.toList());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return gameObjects;
     }
 
     private static void createTables(String url) {
         try {
+
             ConnectionSource connectionSource = new JdbcConnectionSource(url);
-            Dao<WorkerEntity, String> workerDao = DaoManager.createDao(connectionSource, WorkerEntity.class);
-            Dao<PromotionEntity, String> promotionDao = DaoManager.createDao(connectionSource, PromotionEntity.class);
-            TableUtils.dropTable(workerDao, true);
-            TableUtils.dropTable(promotionDao, true);
-            TableUtils.createTable(connectionSource, WorkerEntity.class);
-            TableUtils.createTable(connectionSource, PromotionEntity.class);
+
+            List<Class> classes = List.of(WorkerEntity.class, PromotionEntity.class, StableEntity.class, StableWorkerEntity.class);
+
+            for (Class entityClass : classes) {
+                Dao dao = DaoManager.createDao(connectionSource, entityClass);
+                TableUtils.dropTable(dao, true);
+                TableUtils.createTable(connectionSource, entityClass);
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -17,7 +17,7 @@ import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.manager.StableManager;
+import openwrestling.manager.StableManager;
 import openwrestling.model.manager.StaffManager;
 import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
@@ -134,7 +134,7 @@ public final class GameController implements Serializable {
 
     public void initializeGameData() {
         for (Promotion promotion : promotionManager.getPromotions()) {
-            if (promotion.getEventTemplates().isEmpty() && !promotion.equals(promotionManager.playerPromotion())) {
+            if (promotion.getEventTemplates().isEmpty() && !promotion.equals(promotionManager.getPlayerPromotion())) {
                 eventFactory.createMonthlyEvents(promotion);
             }
         }
@@ -152,7 +152,7 @@ public final class GameController implements Serializable {
             if (dateManager.isPayDay()) {
                 promotionController.payDay(promotion, dateManager.today());
             }
-            if (!promotionManager.playerPromotion().equals(promotion)) {
+            if (!promotionManager.getPlayerPromotion().equals(promotion)) {
                 promotionController.dailyUpdate(promotion);
             }
         }

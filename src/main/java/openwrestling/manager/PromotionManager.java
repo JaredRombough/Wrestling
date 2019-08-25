@@ -26,7 +26,7 @@ public class PromotionManager implements Serializable {
         for (Promotion promotion : promotions) {
             this.promotions.add(promotion);
         }
-        Database.createEntityList(promotions);
+        Database.insertList(promotions);
     }
 
 }

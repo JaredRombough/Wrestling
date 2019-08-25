@@ -22,9 +22,10 @@ public class WorkerManager implements Serializable {
         this.workers = new ArrayList<>();
     }
 
-    public void createWorkers(List<Worker> workers) {
-        this.workers.addAll(workers);
-        Database.createEntityList(workers);
+    public List<Worker> createWorkers(List<Worker> workers) {
+        List savedWorkers = Database.insertList(workers);
+        this.workers.addAll(savedWorkers);
+        return savedWorkers;
     }
 
     public List<Worker> freeAgents(Promotion promotion) {

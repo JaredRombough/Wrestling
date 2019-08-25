@@ -31,7 +31,7 @@ public abstract class ControllerBase implements Initializable {
     public void focusLost() {};
     
     public Promotion playerPromotion() {
-        return gameController.getPromotionManager().playerPromotion();
+        return gameController.getPromotionManager().getPlayerPromotion();
     }
     
     public LocalDate today() {

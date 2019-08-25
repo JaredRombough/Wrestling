@@ -52,7 +52,7 @@ public class Import {
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
 
-    private final List<Worker> allWorkers = new ArrayList<>();
+    private List<Worker> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
     private final List<String> managerIDs = new ArrayList<>();
     private final List<Worker> otherWorkers = new ArrayList<>();
@@ -62,6 +62,7 @@ public class Import {
     private final List<TagTeamView> allTagTeamViews = new ArrayList<>();
 
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
+    private final List<WorkerGroup> stablesToAdd = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
@@ -100,9 +101,9 @@ public class Import {
             processOther();
             gameController.getPromotionManager().createPromotions(allPromotions);
             gameController.getEventManager().addEventTemplates(eventTemplates);
-            gameController.getWorkerManager().createWorkers(allWorkers);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
+            gameController.getStableManager().createStables(stablesToAdd);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -392,7 +393,7 @@ public class Import {
                     }
                 }
 
-                gameController.getStableManager().addStable(stable);
+               stablesToAdd.add(stable);
 
                 counter = 0;
                 currentLine = "";
@@ -405,6 +406,7 @@ public class Import {
                 counter++;
             }
         }
+
     }
 
     private void staffDat() throws IOException {
@@ -577,6 +579,7 @@ public class Import {
 
             }
         }
+        allWorkers = gameController.getWorkerManager().createWorkers(allWorkers);
     }
 
     private void relateDat() throws IOException {
@@ -879,11 +882,11 @@ public class Import {
                 advancedImportData.add(line);
             }
         } catch (FileNotFoundException ex) {
-            logger.log(Level.ERROR, "Advanced Import file not found at " + path, ex);
+            logger.log(Level.ERROR, "Advanced Import file not found at " + path);
             logger.log(Level.ERROR, "Proceding without advanced import");
             advancedImportData = new ArrayList();
         } catch (IOException ex) {
-            logger.log(Level.ERROR, "Advanced Import file read error", ex);
+            logger.log(Level.ERROR, "Advanced Import file read error");
             logger.log(Level.ERROR, "Proceding without advanced import");
             advancedImportData = new ArrayList();
         }

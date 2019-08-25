@@ -8,6 +8,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import openwrestling.manager.StableManager;
 import openwrestling.model.AngleParams;
 import openwrestling.model.Match;
 import openwrestling.model.MatchTitle;

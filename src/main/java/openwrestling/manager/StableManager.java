@@ -1,7 +1,9 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import openwrestling.file.Database;
 import openwrestling.model.modelView.WorkerGroup;
 
 public class StableManager {
@@ -23,6 +25,11 @@ public class StableManager {
 
     public void addStable(WorkerGroup stable) {
         stables.add(stable);
+    }
+
+    public void createStables(List<WorkerGroup> stables) {
+        this.stables.addAll(stables);
+        Database.insertList(stables);
     }
 
     /**

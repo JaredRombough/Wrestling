@@ -27,7 +27,7 @@ public class CreateTagTeamDialog {
         Dialog<TagTeamView> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
-        List<Worker> workers = gameController.getPromotionManager().playerPromotion().getFullRoster();
+        List<Worker> workers = gameController.getPromotionManager().getPlayerPromotion().getFullRoster();
         Collections.sort(workers, new NameComparator());
         ComboBox<Worker> workerA = new ComboBox(FXCollections.observableArrayList(workers));
         ComboBox<Worker> workerB = new ComboBox(FXCollections.observableArrayList(workers));
@@ -38,12 +38,12 @@ public class CreateTagTeamDialog {
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         workerA.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) -> {
             if (newValue != null && newValue != oldValue && workerB.getItems().contains(newValue)) {
-                updateCreateTeamComboBox(newValue, new ArrayList(workers), workerB);
+                updateCreateTeamComboBox(newValue, new ArrayList<>(workers), workerB);
             }
         });
         workerB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Worker> observable, Worker oldValue, Worker newValue) -> {
             if (newValue != null && newValue != oldValue && workerA.getItems().contains(newValue)) {
-                updateCreateTeamComboBox(newValue, new ArrayList(workers), workerA);
+                updateCreateTeamComboBox(newValue, new ArrayList<>(workers), workerA);
             }
         });
         workerA.getSelectionModel().selectFirst();

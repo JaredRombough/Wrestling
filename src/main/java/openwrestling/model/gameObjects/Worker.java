@@ -18,7 +18,7 @@ import java.util.Objects;
 @Setter
 public class Worker extends GameObject implements Serializable, SegmentItem, iPerson {
 
-    private static int workerID = 0;
+    private long workerID;
     private String name;
     private String shortName;
     private String imageString;
