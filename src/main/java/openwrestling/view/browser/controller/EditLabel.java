@@ -1,22 +1,25 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.lang3.StringUtils;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class EditLabel extends ControllerBase implements Initializable {
 
@@ -56,8 +59,8 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeamView) {
                     TagTeamView tagTeamView = (TagTeamView) object;
                     tagTeamView.getTagTeam().setName(ViewUtils.editTextDialog(tagTeamView.getTagTeam().getName()));
-                } else if (segmentItem instanceof WorkerGroup) {
-                    WorkerGroup stable = (WorkerGroup) object;
+                } else if (segmentItem instanceof Stable) {
+                    Stable stable = (Stable) object;
                     stable.setName(ViewUtils.editTextDialog(stable.getName()));
                 }
                 updateLabels();
@@ -83,13 +86,15 @@ public class EditLabel extends ControllerBase implements Initializable {
                     boolean stableMode = BrowseMode.STABLES.equals(browseMode);
                     String groupName = ViewUtils.editTextDialog("", String.format("%s name:", stableMode ? "Stable" : "Roster split"));
                     if (StringUtils.isNotBlank(groupName)) {
-                        WorkerGroup workerGroup = new WorkerGroup(groupName, playerPromotion());
                         if (stableMode) {
-                            gameController.getStableManager().addStable(workerGroup);
+                            Stable stable = new Stable(groupName, playerPromotion());
+                            gameController.getStableManager().addStable(stable);
+                            mainApp.show(ScreenCode.BROWSER, stable);
                         } else {
-                            gameController.getStableManager().addRosterSplit(workerGroup);
+                            RosterSplit rosterSplit = new RosterSplit(groupName, playerPromotion());
+                            gameController.getRosterSplitManager().addList(List.of(rosterSplit));
+                            mainApp.show(ScreenCode.BROWSER, rosterSplit);
                         }
-                        mainApp.show(ScreenCode.BROWSER, workerGroup);
                     }
                 }
 

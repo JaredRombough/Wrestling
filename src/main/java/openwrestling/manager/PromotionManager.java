@@ -22,11 +22,10 @@ public class PromotionManager implements Serializable {
         playerPromotion = promotion;
     }
 
-    public void createPromotions(List<Promotion> promotions) {
-        for (Promotion promotion : promotions) {
-            this.promotions.add(promotion);
-        }
-        Database.insertList(promotions);
+    public List<Promotion> createPromotions(List<Promotion> promotions) {
+        List saved = Database.insertList(promotions);
+        this.promotions.addAll(saved);
+        return saved;
     }
 
 }

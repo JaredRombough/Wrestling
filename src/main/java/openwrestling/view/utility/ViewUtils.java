@@ -54,6 +54,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javax.imageio.ImageIO;
+
+import openwrestling.model.gameObjects.RosterSplit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +70,7 @@ import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ContractUtils;
@@ -577,7 +579,7 @@ public final class ViewUtils {
         };
     }
 
-    public static void updateRosterSplitComboBox(ComboBox comboBox, List<WorkerGroup> allRosterSplits, iRosterSplit item, Promotion promotion, Promotion playerPromotion) {
+    public static void updateRosterSplitComboBox(ComboBox comboBox, List<RosterSplit> allRosterSplits, iRosterSplit item, Promotion promotion, Promotion playerPromotion) {
         List rosterSplits = allRosterSplits.stream()
                 .filter(split -> split.getOwner().equals(promotion))
                 .collect(Collectors.toList());
@@ -590,8 +592,8 @@ public final class ViewUtils {
             comboBox.getSelectionModel().selectFirst();
         }
         comboBox.setOnAction(e -> {
-            if (comboBox.getSelectionModel().getSelectedItem() instanceof WorkerGroup) {
-                item.setRosterSplit((WorkerGroup) comboBox.getSelectionModel().getSelectedItem());
+            if (comboBox.getSelectionModel().getSelectedItem() instanceof Stable) {
+                item.setRosterSplit((RosterSplit) comboBox.getSelectionModel().getSelectedItem());
             }
         });
     }

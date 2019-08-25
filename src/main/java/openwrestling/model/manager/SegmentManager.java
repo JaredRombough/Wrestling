@@ -20,7 +20,7 @@ import openwrestling.model.interfaces.Segment;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TagTeamView;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.MatchFinish;
@@ -232,7 +232,7 @@ public class SegmentManager implements Serializable {
                     return tagTeam;
                 }
             } else if (segmentItems.size() > 1 && !TeamType.OFFEREE.equals(teamType) && !TeamType.OFFERER.equals(teamType)) {
-                for (WorkerGroup stable : stableManager.getStables()) {
+                for (Stable stable : stableManager.getStables()) {
                     if (stable.getWorkers().containsAll(segmentItems)) {
                         return stable.getName();
                     }

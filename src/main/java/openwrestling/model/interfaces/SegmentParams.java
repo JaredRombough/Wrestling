@@ -1,6 +1,6 @@
 package openwrestling.model.interfaces;
 
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.MatchRule;
 
@@ -10,7 +10,7 @@ public interface SegmentParams {
         return MatchRule.DEFAULT;
     }
 
-    default WorkerGroup getJoinStable() {
+    default Stable getJoinStable() {
         return null;
     }
 

@@ -1,12 +1,17 @@
 package openwrestling.entities;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import openwrestling.model.gameObjects.Contract;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,7 +38,14 @@ public class PromotionEntity extends Entity {
 
     @DatabaseField
     private int level;
-//    private List<WorkerView> fullRoster;
+
+    @ForeignCollectionField(eager = true)
+    public ForeignCollection<ContractEntity> contractEntities;
+
+
+
+//    public List<ContractEntity> contracts;
+
 //    private List<StaffView> allStaff;
 //    private List<StaffView> defaultBroadcastTeam;
 //    private List<EventTemplate> eventTemplates;

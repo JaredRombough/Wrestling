@@ -260,7 +260,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getStableManager().getRosterSplits()
+            return gameController.getRosterSplitManager().getRosterSplits()
                     .stream().filter((split) -> split.getOwner().equals(promotion)).collect(Collectors.toList());
         }
 

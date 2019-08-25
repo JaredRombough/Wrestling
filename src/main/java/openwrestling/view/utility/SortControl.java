@@ -1,14 +1,5 @@
 package openwrestling.view.utility;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -20,27 +11,39 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
-import static openwrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
-import static openwrestling.model.constants.StringConstants.ALL_STABLES;
-import static openwrestling.model.constants.UIConstants.DOWN_ARROW;
-import static openwrestling.model.constants.UIConstants.UP_ARROW;
-import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iBrowseMode;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.Gender;
 import openwrestling.model.segmentEnum.NewsFilter;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static openwrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
+import static openwrestling.model.constants.StringConstants.ALL_STABLES;
+import static openwrestling.model.constants.UIConstants.DOWN_ARROW;
+import static openwrestling.model.constants.UIConstants.UP_ARROW;
 
 public class SortControl extends ControllerBase implements Initializable {
 
@@ -64,13 +67,13 @@ public class SortControl extends ControllerBase implements Initializable {
     private StaffType staffTypeFilter;
     private NewsFilter newsFilter;
 
-    private WorkerGroup stableFilter;
-    private WorkerGroup rosterSplitFilter;
+    private Stable stableFilter;
+    private RosterSplit rosterSplitFilter;
     private ComboBox stablesCombobox;
     private ComboBox rosterSplitCombobox;
 
-    private List<WorkerGroup> stables;
-    private List<WorkerGroup> rosterSplits;
+    private List<Stable> stables;
+    private List<RosterSplit> rosterSplits;
 
     private EventHandler<ActionEvent> updateAction;
 
@@ -107,7 +110,7 @@ public class SortControl extends ControllerBase implements Initializable {
         reverseButton.setOnAction(e -> {
             reverseButton.setText(
                     reverseButton.getText().equals(UP_ARROW)
-                    ? DOWN_ARROW : UP_ARROW);
+                            ? DOWN_ARROW : UP_ARROW);
             updateAction.handle(new ActionEvent());
         });
     }
@@ -134,12 +137,15 @@ public class SortControl extends ControllerBase implements Initializable {
             staffTypeFilter = (StaffType) obj;
         } else if (obj instanceof NewsFilter) {
             newsFilter = (NewsFilter) obj;
-        } else if (obj instanceof WorkerGroup) {
-            WorkerGroup workerGroup = (WorkerGroup) obj;
-            if (stables != null && stables.contains(workerGroup)) {
-                stableFilter = workerGroup;
-            } else {
-                rosterSplitFilter = workerGroup;
+        } else if (obj instanceof Stable) {
+            Stable stable = (Stable) obj;
+            if (stables != null && stables.contains(stable)) {
+                stableFilter = stable;
+            }
+        } else if (obj instanceof RosterSplit) {
+            RosterSplit stable = (RosterSplit) obj;
+            if (rosterSplits != null && rosterSplits.contains(stable)) {
+                rosterSplitFilter = stable;
             }
         } else if (obj instanceof String) {
             String string = (String) obj;
@@ -198,7 +204,7 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     }
 
-    private void addWorkerGroupFilter(List<WorkerGroup> list, ComboBox comboBox, String noFilterString) {
+    private void addWorkerGroupFilter(List list, ComboBox comboBox, String noFilterString) {
         List<Object> listForComobBox = new ArrayList<>(list);
         listForComobBox.add(0, noFilterString);
         Object selected = comboBox.getSelectionModel().getSelectedItem();
@@ -317,7 +323,7 @@ public class SortControl extends ControllerBase implements Initializable {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (segmentItem instanceof TitleView) {
                     return !Objects.equals(((TitleView) segmentItem).getRosterSplit(), rosterSplitFilter);
-                } else if (!rosterSplitFilter.getWorkers().contains((Worker) subItem)) {
+                } else if (!rosterSplitFilter.getWorkers().contains(subItem)) {
                     return true;
                 }
             }
@@ -360,7 +366,7 @@ public class SortControl extends ControllerBase implements Initializable {
                 .filter(s -> s.getOwner().equals(promotion))
                 .collect(Collectors.toList());
 
-        rosterSplits = gameController.getStableManager().getRosterSplits().stream()
+        rosterSplits = gameController.getRosterSplitManager().getRosterSplits().stream()
                 .filter(s -> s.getOwner().equals(promotion))
                 .collect(Collectors.toList());
     }

@@ -32,7 +32,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -119,7 +119,7 @@ public class EventFactory {
 
             EventTemplate template = new EventTemplate();
             template.setPromotion(promotion);
-            template.setMonth(month);
+            template.setMonth(month.getValue());
             template.setName(promotion.getShortName() + " "
                     + month.toString().substring(0, 1).toUpperCase()
                     + month.toString().toLowerCase().substring(1)
@@ -221,7 +221,7 @@ public class EventFactory {
             });
 
             if (newMembers.size() > 1) {
-                WorkerGroup stable = new WorkerGroup(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
+                Stable stable = new Stable(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
                 stable.setWorkers(newMembers);
                 stableManager.addStable(stable);
                 segmentView.setNewStable(stable);

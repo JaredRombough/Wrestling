@@ -2,6 +2,9 @@ package openwrestling.model.controller;
 
 import lombok.Getter;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.RosterSplitManager;
+import openwrestling.manager.StableManager;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
@@ -17,11 +20,9 @@ import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.manager.StableManager;
 import openwrestling.model.manager.StaffManager;
 import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 
 import java.io.IOException;
@@ -53,6 +54,7 @@ public final class GameController implements Serializable {
     private final StableManager stableManager;
     private final RelationshipManager relationshipManager;
     private final BankAccountManager bankAccountManager;
+    private final RosterSplitManager rosterSplitManager;
 
     private final PromotionController promotionController;
 
@@ -70,6 +72,7 @@ public final class GameController implements Serializable {
         stableManager = new StableManager();
         relationshipManager = new RelationshipManager();
         bankAccountManager = new BankAccountManager();
+        rosterSplitManager = new RosterSplitManager();
 
         contractManager = new ContractManager(promotionManager,
                 titleManager,
@@ -158,15 +161,15 @@ public final class GameController implements Serializable {
         }
 
         if (dateManager.today().getDayOfMonth() == 1) {
-            bookEventTemplatesFuture(dateManager.today().minusMonths(1).getMonth());
+            bookEventTemplatesFuture(dateManager.today().minusMonths(1).getMonth().getValue());
         }
         dateManager.nextDay();
     }
 
-    public void bookEventTemplatesFuture(Month month) {
+    public void bookEventTemplatesFuture(int month) {
         YearMonth thisMonthNextYear = YearMonth.of(dateManager.today().plusYears(1).getYear(), month);
         for (EventTemplate eventTemplate : eventManager.getActiveEventTemplatesFuture(thisMonthNextYear)) {
-            if (eventTemplate.getMonth().equals(month)) {
+            if (eventTemplate.getMonth() == month) {
                 promotionController.bookEventTemplate(eventTemplate,
                         thisMonthNextYear);
             }
@@ -178,7 +181,7 @@ public final class GameController implements Serializable {
         YearMonth yearMonth = YearMonth.of(startDate.getYear(), startDate.getMonth());
         for (int i = 0; i < 12; i++) {
             for (EventTemplate eventTemplate : eventManager.getEventTemplates()) {
-                if (eventTemplate.getMonth().equals(yearMonth.getMonth())
+                if (eventTemplate.getMonth() == yearMonth.getMonth().getValue()
                         || eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
                     promotionController.bookEventTemplate(eventTemplate, yearMonth);
                 }

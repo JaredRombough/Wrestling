@@ -31,7 +31,7 @@ import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
@@ -671,7 +671,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             offers.add(JoinTeamType.NEW_STABLE);
 
             if (!offerer.getSegmentItems().isEmpty()) {
-                for (WorkerGroup stable : gameController.getStableManager().getStables()) {
+                for (Stable stable : gameController.getStableManager().getStables()) {
                     if (stable.getWorkers().containsAll(offerer.getSegmentItems())
                             && !offerees.stream()
                             .filter(offeree -> !offeree.getSegmentItems().isEmpty() && stable.getWorkers().containsAll(offeree.getSegmentItems()))

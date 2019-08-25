@@ -2,7 +2,7 @@ package openwrestling.model;
 
 import java.io.Serializable;
 import openwrestling.model.interfaces.SegmentParams;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.PresenceType;
@@ -16,7 +16,7 @@ public class AngleParams implements Serializable, SegmentParams {
     private PresenceType presenceType;
     private PromoType promoType;
     private ShowType showType;
-    private WorkerGroup joinStable;
+    private Stable joinStable;
     private SegmentTemplate challengeSegment;
 
     public AngleParams() {
@@ -103,14 +103,14 @@ public class AngleParams implements Serializable, SegmentParams {
      * @return the joinStable
      */
     @Override
-    public WorkerGroup getJoinStable() {
+    public Stable getJoinStable() {
         return joinStable;
     }
 
     /**
      * @param joinStable the joinStable to set
      */
-    public void setJoinStable(WorkerGroup joinStable) {
+    public void setJoinStable(Stable joinStable) {
         this.joinStable = joinStable;
     }
 

@@ -210,7 +210,7 @@ public class BookShowController extends ControllerBase implements Initializable 
                 template.setEventFrequency(frequency.getValue());
                 template.setDefaultDuration((int) duration.getValue());
                 template.setPromotion(playerPromotion());
-                template.setMonth(currentDate.getMonth());
+                template.setMonth(currentDate.getMonth().getValue());
                 template.setDayOfWeek(currentDate.getDayOfWeek());
                 template.setEventsLeft(52);
                 return template;

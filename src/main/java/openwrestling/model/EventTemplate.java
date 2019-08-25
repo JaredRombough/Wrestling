@@ -7,12 +7,13 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import openwrestling.model.gameObjects.RosterSplit;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.WorkerGroup;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
@@ -31,10 +32,10 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
     private EventVenueSize eventVenueSize;
     private int eventsLeft;
     private DayOfWeek dayOfWeek;
-    private Month month;
+    private int month;
     private List<StaffView> defaultBroadcastTeam;
     private final List<SegmentTemplate> segmentTemplates;
-    private WorkerGroup rosterSplit;
+    private RosterSplit rosterSplit;
 
     public EventTemplate() {
         bookedUntil = LocalDate.MIN;
@@ -47,7 +48,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
         dayOfWeek = Arrays.asList(
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
                         RandomUtils.nextInt(0, 2));
-        month = Month.JANUARY;
+        month = 1;
         defaultBroadcastTeam = new ArrayList<>();
         segmentTemplates = new ArrayList<>();
     }
@@ -158,14 +159,14 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
     /**
      * @return the month
      */
-    public Month getMonth() {
+    public int getMonth() {
         return month;
     }
 
     /**
      * @param month the month to set
      */
-    public void setMonth(Month month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
@@ -255,7 +256,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
      * @return the rosterSplit
      */
     @Override
-    public WorkerGroup getRosterSplit() {
+    public RosterSplit getRosterSplit() {
         return rosterSplit;
     }
 
@@ -263,7 +264,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
      * @param rosterSplit the rosterSplit to set
      */
     @Override
-    public void setRosterSplit(WorkerGroup rosterSplit) {
+    public void setRosterSplit(RosterSplit rosterSplit) {
         this.rosterSplit = rosterSplit;
     }
 

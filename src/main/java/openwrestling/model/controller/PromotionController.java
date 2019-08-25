@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Event;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.EventWorker;
@@ -451,7 +451,7 @@ public class PromotionController implements Serializable {
     private LocalDate generateEventTemplateStartDate(EventTemplate eventTemplate) {
         LocalDate date = dateManager.today();
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-            while (!date.getMonth().equals(eventTemplate.getMonth())) {
+            while (date.getMonth().getValue() != eventTemplate.getMonth()) {
                 date = date.plusMonths(1);
             }
             date = date.with(TemporalAdjusters.dayOfWeekInMonth(

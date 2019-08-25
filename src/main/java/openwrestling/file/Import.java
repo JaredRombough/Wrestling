@@ -1,5 +1,32 @@
 package openwrestling.file;
 
+import openwrestling.model.EventTemplate;
+import openwrestling.model.TagTeam;
+import openwrestling.model.TagTeamWorker;
+import openwrestling.model.controller.GameController;
+import openwrestling.model.factory.PersonFactory;
+import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iRosterSplit;
+import openwrestling.model.modelView.StaffView;
+import openwrestling.model.modelView.TagTeamView;
+import openwrestling.model.modelView.TitleView;
+import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segmentEnum.EventBroadcast;
+import openwrestling.model.segmentEnum.EventFrequency;
+import openwrestling.model.segmentEnum.EventRecurrence;
+import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.utility.ContractUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,32 +40,9 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.xml.bind.DatatypeConverter;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import openwrestling.model.EventTemplate;
-import openwrestling.model.TagTeam;
-import openwrestling.model.TagTeamWorker;
-import static openwrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
-import static openwrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
-import static openwrestling.model.constants.GameConstants.MIN_RELATIONSHIP_LEVEL;
-import openwrestling.model.controller.GameController;
-import openwrestling.model.factory.PersonFactory;
-import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TagTeamView;
-import openwrestling.model.modelView.TitleView;
-import openwrestling.model.modelView.WorkerGroup;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.ActiveType;
-import openwrestling.model.segmentEnum.EventBroadcast;
-import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventRecurrence;
-import openwrestling.model.segmentEnum.Gender;
-import openwrestling.model.segmentEnum.StaffType;
+import java.util.Objects;
+
+import static openwrestling.model.constants.GameConstants.*;
 
 public class Import {
 
@@ -62,7 +66,9 @@ public class Import {
     private final List<TagTeamView> allTagTeamViews = new ArrayList<>();
 
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
-    private final List<WorkerGroup> stablesToAdd = new ArrayList<>();
+    private final List<Stable> stablesToAdd = new ArrayList<>();
+    private final List<RosterSplit> rosterSplitsToAdd = new ArrayList<>();
+    private final List<Contract> contractsToAdd = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
@@ -99,11 +105,39 @@ public class Import {
                 throw ex;
             }
             processOther();
+            allPromotions.forEach(promotion -> {
+                promotion.setFullRoster(updateWorkers(promotion.getFullRoster()));
+            });
+
             gameController.getPromotionManager().createPromotions(allPromotions);
+            System.out.println("contracts" + contractsToAdd.size());
+            gameController.getContractManager().addContracts(contractsToAdd);
             gameController.getEventManager().addEventTemplates(eventTemplates);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
             gameController.getStableManager().createStables(stablesToAdd);
+            List<RosterSplit> updated = new ArrayList<>();
+
+            rosterSplitsToAdd.stream().forEach(rosterSplit -> {
+                RosterSplit rosterSplit1 = RosterSplit.builder()
+                        .name(rosterSplit.getName())
+                        .owner(rosterSplit.getOwner())
+                        .workers(new ArrayList<>())
+                        .build();
+
+                rosterSplit.getWorkers().forEach(worker -> {
+                    Worker toAdd = allWorkers.stream().filter(allWorker ->
+                            Objects.equals(allWorker.getName(), worker.getName()) &&
+                                    Objects.equals(allWorker.getShortName(), worker.getShortName()) &&
+                                    Objects.equals(allWorker.getAge(), worker.getAge()) &&
+                                    Objects.equals(allWorker.getStriking(), worker.getStriking()))
+                            .findFirst()
+                            .orElse(null);
+                    rosterSplit1.getWorkers().add(toAdd);
+                });
+                updated.add(rosterSplit1);
+            });
+            gameController.getRosterSplitManager().addList(updated);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -114,6 +148,22 @@ public class Import {
 
         return sb.toString();
 
+    }
+
+    private List<Worker> updateWorkers(List<Worker> workers) {
+        List<Worker> updated = new ArrayList<>();
+
+        workers.forEach(worker -> {
+            Worker toAdd = allWorkers.stream().filter(allWorker ->
+                    Objects.equals(allWorker.getName(), worker.getName()) &&
+                            Objects.equals(allWorker.getShortName(), worker.getShortName()) &&
+                            Objects.equals(allWorker.getAge(), worker.getAge()) &&
+                            Objects.equals(allWorker.getStriking(), worker.getStriking()))
+                    .findFirst()
+                    .orElse(null);
+            updated.add(toAdd);
+        });
+        return updated;
     }
 
     private Promotion getPromotionFromKey(int key) {
@@ -169,10 +219,16 @@ public class Import {
             p.setPromotionID(allPromotions.size());
             allPromotions.add(p);
             return p;
-        }).forEach((p) -> {
+        }).forEach((promotion) -> {
             for (int i = 0; i < otherWorkers.size(); i++) {
-                if (otherWorkerPromotions.get(i).equals(p.getName())) {
-                    getGameController().getContractFactory().createContract(otherWorkers.get(i), p, getGameController().getDateManager().today(), false);
+                if (otherWorkerPromotions.get(i).equals(promotion.getName())) {
+                    contractsToAdd.add(Contract.builder()
+                            .worker(otherWorkers.get(i))
+                            .promotion(promotion)
+                            .exclusive(false)
+                            .startDate(getGameController().getDateManager().today())
+                            .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
+                            .build());
                 }
             }
         });
@@ -381,7 +437,7 @@ public class Import {
             String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
 
             if (counter == lineLength) {
-                WorkerGroup stable = new WorkerGroup();
+                Stable stable = new Stable();
                 stable.setName(currentLine.substring(1, 24).trim());
                 stable.setOwner(getPromotionFromKey(hexStringToInt(currentHexLine.get(26))));
 
@@ -393,7 +449,7 @@ public class Import {
                     }
                 }
 
-               stablesToAdd.add(stable);
+                stablesToAdd.add(stable);
 
                 counter = 0;
                 currentLine = "";
@@ -439,7 +495,7 @@ public class Import {
                 staff.setImageString(currentLine.substring(34, 53).trim());
                 staff.setGender(
                         currentStringLine.get(28).equals("ÿ")
-                        ? Gender.MALE : Gender.FEMALE);
+                                ? Gender.MALE : Gender.FEMALE);
                 staff.setAge(hexStringToInt(currentHexLine.get(32)));
                 staff.setSkill(hexStringToInt(currentHexLine.get(67)));
                 staff.setBehaviour(hexStringToInt(currentHexLine.get(71)));
@@ -527,7 +583,7 @@ public class Import {
                 worker.setAge(hexStringToInt(currentHexLine.get(42)));
                 worker.setGender(
                         currentStringLine.get(293).equals("ÿ")
-                        ? Gender.FEMALE : Gender.MALE);
+                                ? Gender.FEMALE : Gender.MALE);
 
                 boolean fullTime;
                 boolean mainRoster;
@@ -664,19 +720,26 @@ public class Import {
         int a = hexStringToInt(currentHexLine.get(65));
         int b = hexStringToInt(currentHexLine.get(65));
         int c = hexStringToInt(currentHexLine.get(65));
-        String groupName = "";
+        String rosterSplitName = "";
 
         if (promotion.indexNumber() == a) {
-            groupName = currentLine.substring(91, 100);
+            rosterSplitName = currentLine.substring(91, 100);
         } else if (promotion.indexNumber() == b) {
-            groupName = currentLine.substring(101, 110);
+            rosterSplitName = currentLine.substring(101, 110);
         } else if (promotion.indexNumber() == c) {
-            groupName = currentLine.substring(111, 120);
+            rosterSplitName = currentLine.substring(111, 120);
         } else {
             return;
         }
-        checkForRosterSplit(promotion, worker, groupName);
-        getGameController().getContractFactory().createContract(worker, promotion, getGameController().getDateManager().today(), exclusive);
+        checkForRosterSplit(promotion, worker, rosterSplitName);
+
+        contractsToAdd.add(Contract.builder()
+                .worker(worker)
+                .promotion(promotion)
+                .exclusive(exclusive)
+                .startDate(getGameController().getDateManager().today())
+                .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
+                .build());
 
     }
 
@@ -685,18 +748,18 @@ public class Import {
         if (trimmedName.equalsIgnoreCase("NONE")) {
             return;
         }
-        WorkerGroup existingGroup = gameController.getStableManager().getRosterSplits().stream()
+        RosterSplit existingGroup = rosterSplitsToAdd.stream()
                 .filter(group -> group.getOwner().equals(promotion) && group.getName().equals(trimmedName))
                 .findFirst().orElse(null);
 
         if (existingGroup != null) {
             existingGroup.getWorkers().add(worker);
         } else {
-            WorkerGroup newGroup = new WorkerGroup();
+            RosterSplit newGroup = new RosterSplit();
             newGroup.setName(trimmedName);
             newGroup.setOwner(promotion);
             newGroup.getWorkers().add(worker);
-            gameController.getStableManager().addRosterSplit(newGroup);
+            rosterSplitsToAdd.add(newGroup);
         }
     }
 
@@ -744,7 +807,7 @@ public class Import {
                 EventTemplate eventTemplate = new EventTemplate();
                 eventTemplate.setName(currentLine.substring(1, 32).trim());
                 eventTemplate.setPromotion(promotion);
-                eventTemplate.setMonth(month);
+                eventTemplate.setMonth(month.getValue());
                 eventTemplate.setEventBroadcast(EventBroadcast.NONE);
                 eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
                 assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), eventTemplate.getName());
@@ -757,7 +820,7 @@ public class Import {
     }
 
     private void assignRosterSplit(iRosterSplit item, Promotion promotion, String name) {
-        for (WorkerGroup rosterSplit : gameController.getStableManager().getRosterSplits()) {
+        for (RosterSplit rosterSplit : gameController.getRosterSplitManager().getRosterSplits()) {
             if (rosterSplit.getOwner().equals(promotion)
                     && name.toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
                 item.setRosterSplit(rosterSplit);

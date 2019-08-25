@@ -105,7 +105,7 @@ public class TitleViewController extends ControllerBase implements Initializable
             });
 
             updateRosterSplitComboBox(rosterSplitComboBox,
-                    gameController.getStableManager().getRosterSplits(),
+                    gameController.getRosterSplitManager().getRosterSplits(),
                     titleView,
                     titleView.getTitle().getPromotion(),
                     playerPromotion());

@@ -10,11 +10,11 @@ import openwrestling.view.utility.ScreenCode;
 
 public interface iBrowseMode {
 
-    public ObservableList comparators();
+    ObservableList comparators();
 
-    public ScreenCode subScreenCode();
+    ScreenCode subScreenCode();
 
-    public List<EnumSet> getSortFilters();
+    List<EnumSet> getSortFilters();
 
-    public List<SegmentItem> listToBrowse(GameController gameController, Promotion promotion);
+    List<SegmentItem> listToBrowse(GameController gameController, Promotion promotion);
 }

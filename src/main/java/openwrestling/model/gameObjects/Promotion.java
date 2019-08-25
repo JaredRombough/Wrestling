@@ -1,5 +1,7 @@
 package openwrestling.model.gameObjects;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import openwrestling.model.EventTemplate;
@@ -11,9 +13,12 @@ import openwrestling.model.utility.StaffUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Promotion extends GameObject implements SegmentItem, Serializable {
 
     private static int serialNumber = 0;
@@ -25,7 +30,7 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     private int popularity;
     private int level;
 
-    private final List<Worker> fullRoster;
+    private List<Worker> fullRoster;
     private final List<StaffView> allStaff;
     private List<StaffView> defaultBroadcastTeam;
     private List<EventTemplate> eventTemplates;
@@ -107,5 +112,11 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
 
     public void addEventTemplate(EventTemplate template) {
         eventTemplates.add(template);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Promotion &&
+                Objects.equals(((Promotion) object).getPromotionID(), promotionID);
     }
 }

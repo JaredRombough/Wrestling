@@ -3,7 +3,7 @@ package openwrestling.model.manager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Title;
 import openwrestling.model.TitleWorker;
 import openwrestling.model.gameObjects.Promotion;

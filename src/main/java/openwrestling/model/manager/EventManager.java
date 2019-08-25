@@ -15,7 +15,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Event;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.EventWorker;

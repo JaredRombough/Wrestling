@@ -2,7 +2,6 @@ package openwrestling.model.gameObjects;
 
 import lombok.Getter;
 import lombok.Setter;
-import openwrestling.model.Contract;
 import openwrestling.model.Injury;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iContract;
@@ -96,5 +95,10 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
         getEntourage().add(manager);
     }
 
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Worker &&
+                Objects.equals(((Worker) object).getWorkerID(), workerID);
+    }
 
 }

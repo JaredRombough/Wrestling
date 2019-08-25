@@ -1,6 +1,8 @@
 package openwrestling.entities;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +12,7 @@ import lombok.Setter;
 import openwrestling.model.segmentEnum.Gender;
 
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -64,8 +67,10 @@ public class WorkerEntity extends Entity {
     @DatabaseField
     private int minimumPopularity;
 
-//    @ForeignCollectionField
-//    private Collection<Contract> contracts;
+    @ForeignCollectionField(eager = true)
+    public ForeignCollection<ContractEntity> contractEntities;
+//
+//    public List<ContractEntity> contracts;
 
 //    @DatabaseField(foreign = true)
 //    private Injury injury;
@@ -79,6 +84,7 @@ public class WorkerEntity extends Entity {
 //    @ForeignCollectionField
 //    private Collection<Worker> entourage;
 
-    private Collection<StableWorkerEntity> workerGroups;
+    @ForeignCollectionField(eager = true)
+     public Collection<StableWorkerEntity> workerGroups;
 
 }

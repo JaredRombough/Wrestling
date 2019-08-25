@@ -127,7 +127,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
             });
 
             updateRosterSplitComboBox(rosterSplitComboBox,
-                    gameController.getStableManager().getRosterSplits(),
+                    gameController.getRosterSplitManager().getRosterSplits(),
                     eventTemplate,
                     eventTemplate.getPromotion(),
                     playerPromotion());

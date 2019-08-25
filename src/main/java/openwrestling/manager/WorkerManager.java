@@ -1,7 +1,7 @@
 package openwrestling.manager;
 
 import openwrestling.file.Database;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.ContractManager;

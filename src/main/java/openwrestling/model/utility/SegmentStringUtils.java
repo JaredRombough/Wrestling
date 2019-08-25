@@ -6,7 +6,7 @@ import openwrestling.model.AngleParams;
 import openwrestling.model.Match;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.TeamType;
@@ -86,7 +86,7 @@ public final class SegmentStringUtils {
                 string += " to form a new stable";
                 break;
             default:
-                WorkerGroup stable = segmentView.getSegment().getSegmentParams().getJoinStable();
+                Stable stable = segmentView.getSegment().getSegmentParams().getJoinStable();
                 if (stable != null) {
                     if (string.contains(stable.getName())) {
                         string += " to join them";

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.Title;
+import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.ActiveType;
@@ -15,7 +16,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
     private final Title title;
     private final List<TitleReign> titleReigns;
     private TitleReign champions;
-    private WorkerGroup rosterSplit;
+    private RosterSplit rosterSplit;
 
     public TitleView(Title title) {
         this.title = title;
@@ -76,7 +77,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
      * @return the rosterSplit
      */
     @Override
-    public WorkerGroup getRosterSplit() {
+    public RosterSplit getRosterSplit() {
         return rosterSplit;
     }
 
@@ -84,7 +85,7 @@ public class TitleView implements SegmentItem, Serializable, iRosterSplit {
      * @param rosterSplit the rosterSplit to set
      */
     @Override
-    public void setRosterSplit(WorkerGroup rosterSplit) {
+    public void setRosterSplit(RosterSplit rosterSplit) {
         this.rosterSplit = rosterSplit;
     }
 

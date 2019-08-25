@@ -10,6 +10,7 @@ import openwrestling.model.AngleParams;
 import openwrestling.model.Match;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -27,7 +28,7 @@ public class SegmentView implements Serializable {
     private EventView eventView;
     private StaffView referee;
     private List<? extends SegmentItem> broadcastTeam;
-    private WorkerGroup newStable;
+    private Stable newStable;
 
     public SegmentView(SegmentType segmentType) {
         this.segmentType = segmentType;
@@ -263,14 +264,14 @@ public class SegmentView implements Serializable {
     /**
      * @return the newStable
      */
-    public WorkerGroup getNewStable() {
+    public Stable getNewStable() {
         return newStable;
     }
 
     /**
      * @param newStable the newStable to set
      */
-    public void setNewStable(WorkerGroup newStable) {
+    public void setNewStable(Stable newStable) {
         this.newStable = newStable;
     }
 

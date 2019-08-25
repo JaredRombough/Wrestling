@@ -1,11 +1,11 @@
 package openwrestling.model.interfaces;
 
-import openwrestling.model.modelView.WorkerGroup;
+import openwrestling.model.gameObjects.RosterSplit;
 
 public interface iRosterSplit {
 
-    public WorkerGroup getRosterSplit();
+    RosterSplit getRosterSplit();
 
-    public void setRosterSplit(WorkerGroup rosterSplit);
+    void setRosterSplit(RosterSplit rosterSplit);
 
 }

@@ -2,7 +2,7 @@ package openwrestling.model.factory;
 
 import java.time.LocalDate;
 import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.StaffContract;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.manager.ContractManager;

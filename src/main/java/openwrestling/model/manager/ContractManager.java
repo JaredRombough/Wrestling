@@ -1,7 +1,8 @@
 package openwrestling.model.manager;
 
+import openwrestling.file.Database;
 import openwrestling.manager.PromotionManager;
-import openwrestling.model.Contract;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.StaffContract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
@@ -70,6 +71,12 @@ public class ContractManager implements Serializable {
 
     public void addContract(StaffContract contract) {
         staffContracts.add(contract);
+    }
+
+    public List<Contract> addContracts(List<Contract> contract) {
+        List saved = Database.insertList(contract);
+        this.contracts.addAll(saved);
+        return saved;
     }
 
     public List<Contract> getContracts(Promotion promotion) {
