@@ -2,6 +2,7 @@ package openwrestling.view.start.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,6 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.ViewUtils;
@@ -52,11 +54,9 @@ public class StartGameScreenController extends ControllerBase implements Initial
 
     @Override
     public void initializeMore() {
-        //now that we have the game controller we can set the promotions to the listview
         ObservableList<Promotion> promotionsObservableList = FXCollections.observableArrayList();
 
         for (Promotion current : gameController.getPromotionManager().getPromotions()) {
-            //dont' want the player to pick the free agents. probably want a cleaner solution though.
             if (!current.getName().equals("All Workers")) {
                 promotionsObservableList.add(current);
             }
@@ -69,29 +69,26 @@ public class StartGameScreenController extends ControllerBase implements Initial
     }
 
     private void initializePromotionsListView() {
-        promotionListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
+        promotionListView.getSelectionModel().selectedItemProperty().addListener((ChangeListener<Promotion>) (observable, oldValue, newValue) -> {
+            updateWorkersListView(newValue);
+            ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+                    promotionImageBorder,
+                    imageView);
 
-            @Override
-            public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
-                updateWorkersListView(newValue);
-                ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
-                        promotionImageBorder,
-                        imageView);
-
-            }
         });
 
         promotionListView.getSelectionModel().selectFirst();
     }
 
     private void updateWorkersListView(Promotion newValue) {
+        List<Worker> roster = gameController.getWorkerManager().selectRoster(newValue);
         currentPromotionName.setText(newValue.toString().trim());
         currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
-                + "Workers: " + newValue.getFullRoster().size() + "\n"
-                + "Average Popularity: " + gameController.getContractManager().averageWorkerPopularity(newValue));
+                + "Workers: " + roster.size() + "\n"
+                + "Average Popularity: " + gameController.getWorkerManager().averageWorkerPopularity(newValue));
 
         ObservableList<Worker> rosterList = FXCollections.observableArrayList();
-        for (Worker current : newValue.getFullRoster()) {
+        for (Worker current : roster) {
             rosterList.add(current);
         }
         workersListView.setItems(rosterList);
@@ -101,7 +98,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
     }
 
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException, ClassNotFoundException {
+    private void handleButtonAction(ActionEvent event) throws IOException {
 
         if (event.getSource().equals(startGameButton)) {
             setControlsDisable(true);

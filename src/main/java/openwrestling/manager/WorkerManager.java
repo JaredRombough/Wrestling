@@ -1,10 +1,9 @@
 package openwrestling.manager;
 
-import openwrestling.file.Database;
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.ContractManager;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -20,6 +19,30 @@ public class WorkerManager implements Serializable {
     public WorkerManager(ContractManager contractManager) {
         this.contractManager = contractManager;
         this.workers = new ArrayList<>();
+    }
+
+    public List<Worker> selectRoster(Promotion promotion) {
+        List<Worker> roster = new ArrayList<>();
+        contractManager.getContracts().forEach(contract -> {
+            if(contract.isActive() && contract.getPromotion().getPromotionID() == promotion.getPromotionID()) {
+                roster.add(contract.getWorker());
+            }
+        });
+        return roster;
+    }
+
+    public int averageWorkerPopularity(Promotion promotion) {
+        int totalPop = 0;
+        int averagePop = 0;
+        List<Worker> roster = selectRoster(promotion);
+        if (!roster.isEmpty()) {
+            for (Worker worker : roster) {
+                totalPop += worker.getPopularity();
+            }
+            averagePop = totalPop / roster.size();
+        }
+
+        return averagePop;
     }
 
     public List<Worker> createWorkers(List<Worker> workers) {

@@ -23,7 +23,7 @@ public class Contract extends GameObject implements Serializable, iContract {
     private Promotion promotion;
     private Worker worker;
 
-    private boolean active;
+    private boolean active = true;
 
     private LocalDate startDate;
 
@@ -56,14 +56,6 @@ public class Contract extends GameObject implements Serializable, iContract {
     @Override
     public iPerson getPerson() {
         return worker;
-    }
-
-    /**
-     * @return the lastShowDate
-     */
-    @Override
-    public LocalDate getLastShowDate() {
-        return lastShowDate;
     }
 
 }

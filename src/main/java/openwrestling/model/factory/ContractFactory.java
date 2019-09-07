@@ -4,8 +4,7 @@ import java.time.LocalDate;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.StaffContract;
-import openwrestling.model.interfaces.iContract;
-import openwrestling.model.manager.ContractManager;
+import openwrestling.manager.ContractManager;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.gameObjects.Worker;
@@ -31,15 +30,15 @@ public class ContractFactory {
         createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
-    public void createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
-        createContract(worker, promotion, exclusive, RandomUtils.nextInt(0, 12), startDate);
+    public Contract createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {
+        return createContract(worker, promotion, exclusive, RandomUtils.nextInt(0, 12), startDate);
     }
 
-    public void createContract(Worker worker, Promotion promotion, LocalDate startDate) {
-        createContract(worker, promotion, startDate, promotion.getLevel() == 5);
+    public Contract createContract(Worker worker, Promotion promotion, LocalDate startDate) {
+        return createContract(worker, promotion, startDate, promotion.getLevel() == 5);
     }
 
-    public iContract createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
+    public Contract createContract(Worker worker, Promotion promotion, boolean exclusive, int duration, LocalDate startDate) {
         Contract contract = new Contract(startDate, worker, promotion);
         contract.setExclusive(exclusive);
         contract.setEndDate(ContractUtils.contractEndDate(startDate, duration));
@@ -53,7 +52,7 @@ public class ContractFactory {
         }
 
         contractManager.addContract(contract);
-        promotion.addToRoster(worker);
+        //promotion.addToRoster(worker);
         worker.addContract(contract);
 
         return contract;

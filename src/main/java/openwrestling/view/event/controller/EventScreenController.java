@@ -37,6 +37,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import openwrestling.manager.WorkerManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import openwrestling.MainApp;
@@ -270,7 +271,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         mainApp.setRootLayoutButtonDisable(true);
         boolean testing = false;
         if (testing) {
-            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), playerPromotion().getFullRoster(), mainApp.isRandomGame()));
+            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), gameController.getWorkerManager().selectRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
             mainApp.show(ScreenCode.RESULTS, new EventView(getCurrentEvent(), removeEmpty(getSegmentViews())));
         }

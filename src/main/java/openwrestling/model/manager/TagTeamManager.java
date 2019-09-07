@@ -3,6 +3,9 @@ package openwrestling.model.manager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import openwrestling.manager.ContractManager;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.TagTeam;
 import openwrestling.model.TagTeamWorker;
 import openwrestling.model.gameObjects.Promotion;
@@ -14,18 +17,21 @@ public class TagTeamManager implements Serializable {
     private final List<TagTeam> tagTeams;
     private final List<TagTeamWorker> tagTeamWorkers;
     private final ContractManager contractManager;
+    private final WorkerManager workerManager;
     private final List<TagTeamView> tagTeamViews;
 
-    public TagTeamManager(ContractManager contractManager) {
+    public TagTeamManager(ContractManager contractManager, WorkerManager workerManager) {
         tagTeams = new ArrayList<>();
         tagTeamWorkers = new ArrayList<>();
         tagTeamViews = new ArrayList<>();
         this.contractManager = contractManager;
+        this.workerManager = workerManager;
     }
 
     public List<TagTeam> getTagTeams(Promotion promotion) {
         List<TagTeam> teams = new ArrayList<>();
-        tagTeams.stream().filter((tt) -> (promotion.getFullRoster()
+        List<Worker> roster = workerManager.selectRoster(promotion);
+        tagTeams.stream().filter((tt) -> (roster
                 .containsAll(getWorkers(tt)))).forEach((tt) -> {
             teams.add(tt);
         });
@@ -34,7 +40,8 @@ public class TagTeamManager implements Serializable {
 
     public List<TagTeamView> getTagTeamViews(Promotion promotion) {
         List<TagTeamView> teamViews = new ArrayList<>();
-        getTagTeamViews().stream().filter((tagTeamView) -> (promotion.getFullRoster()
+        List<Worker> roster = workerManager.selectRoster(promotion);
+        getTagTeamViews().stream().filter((tagTeamView) -> (roster
                 .containsAll(tagTeamView.getWorkers()))).forEach((tagTeamView) -> {
             teamViews.add(tagTeamView);
         });

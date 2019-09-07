@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import openwrestling.manager.WorkerManager;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.Injury;
 
@@ -16,10 +18,12 @@ import openwrestling.model.gameObjects.Worker;
 public class InjuryManager implements Serializable {
 
     private final NewsManager newsManager;
+    private final WorkerManager workerManager;
     private final List<Injury> injuries = new ArrayList();
 
-    public InjuryManager(NewsManager newsManager) {
+    public InjuryManager(NewsManager newsManager, WorkerManager workerManager) {
         this.newsManager = newsManager;
+        this.workerManager = workerManager;
     }
 
     public void dailyUpdate(LocalDate date, Promotion promotion) {
@@ -32,8 +36,9 @@ public class InjuryManager implements Serializable {
         injuries.removeIf(injury -> injury.getExpiryDate().equals(date));
 
         if (randomInjury()) {
-            int workerIndex = RandomUtils.nextInt(0, promotion.getFullRoster().size());
-            createRandomInjury(promotion.getFullRoster().get(workerIndex), date, promotion);
+            List<Worker> roster = workerManager.selectRoster(promotion);
+            int workerIndex = RandomUtils.nextInt(0, roster.size());
+            createRandomInjury(roster.get(workerIndex), date, promotion);
         }
     }
 

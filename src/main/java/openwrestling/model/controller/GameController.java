@@ -13,7 +13,7 @@ import openwrestling.model.factory.PromotionFactory;
 import openwrestling.model.factory.TitleFactory;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.model.manager.ContractManager;
+import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.InjuryManager;
@@ -28,7 +28,6 @@ import openwrestling.model.segmentEnum.EventFrequency;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.YearMonth;
 
 @Getter
@@ -80,11 +79,11 @@ public final class GameController implements Serializable {
                 relationshipManager,
                 bankAccountManager);
 
-        tagTeamManager = new TagTeamManager(contractManager);
-
+        workerManager = new WorkerManager(contractManager);
+        tagTeamManager = new TagTeamManager(contractManager, workerManager);
         segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
-
-        injuryManager = new InjuryManager(newsManager);
+        injuryManager = new InjuryManager(newsManager, workerManager);
+        contractFactory = new ContractFactory(contractManager);
 
         eventManager = new EventManager(
                 contractManager,
@@ -92,10 +91,9 @@ public final class GameController implements Serializable {
                 segmentManager);
 
         titleFactory = new TitleFactory(titleManager);
-        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager);
+        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager);
 
-        workerManager = new WorkerManager(contractManager);
-        contractFactory = new ContractFactory(contractManager);
+
 
         eventFactory = new EventFactory(
                 contractManager,
@@ -116,7 +114,8 @@ public final class GameController implements Serializable {
                 promotionManager,
                 workerManager,
                 staffManager,
-                bankAccountManager);
+                bankAccountManager,
+                contractManager);
 
         promotionController = new PromotionController(
                 contractFactory,

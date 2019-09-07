@@ -1,11 +1,15 @@
 package openwrestling.model.utility;
 
 import java.time.LocalDate;
+
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.StaffContract;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
@@ -105,10 +109,9 @@ public final class ContractUtils {
         return startDate.plusMonths(months + 1).withDayOfMonth(1).minusDays(1);
     }
 
-    public static int getWorkerPayrollForMonth(LocalDate date, Promotion promotion) {
+    public static int getWorkerPayrollForMonth(LocalDate date, Promotion promotion, List<Worker> roster) {
         int total = 0;
-
-        for (Worker worker : promotion.getFullRoster()) {
+        for (Worker worker : roster) {
             iContract contract = worker.getContract(promotion);
             if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
                 total += contract.getMonthlyCost();

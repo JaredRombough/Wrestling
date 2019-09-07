@@ -18,7 +18,7 @@ import openwrestling.model.controller.PromotionController;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.model.manager.ContractManager;
+import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.manager.PromotionManager;

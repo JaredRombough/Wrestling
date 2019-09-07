@@ -61,7 +61,7 @@ public class DepartmentController extends ControllerBase {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
 
-            double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType);
+            double coverage = StaffUtils.getStaffCoverage(playerPromotion(), staffType, gameController.getWorkerManager().selectRoster(playerPromotion()));
             progressBar.setProgress(coverage / 100);
 
             ratioLabel.setText(coverage > 100 ? "100%+" : String.format("%.0f%%", coverage));
@@ -69,7 +69,7 @@ public class DepartmentController extends ControllerBase {
             int avgSkill = StaffUtils.getStaffSkillAverage(staffType, playerPromotion());
             averageSkillLabel.setText(String.format("%d", avgSkill));
 
-            modifierLabel.setText("" + StaffUtils.getStaffSkillModifier(staffType, playerPromotion()));
+            modifierLabel.setText("" + StaffUtils.getStaffSkillModifier(staffType, playerPromotion(),  gameController.getWorkerManager().selectRoster(playerPromotion())));
         }
     }
 

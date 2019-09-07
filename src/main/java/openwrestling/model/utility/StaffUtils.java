@@ -2,8 +2,11 @@ package openwrestling.model.utility;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.StaffType;
 
@@ -18,8 +21,8 @@ public final class StaffUtils {
         return (int) Math.ceil(total / staffOfType.size());
     }
 
-    public static int getStaffSkillModifier(StaffType staffType, Promotion promotion) {
-        double coverage = getStaffCoverage(promotion, staffType);
+    public static int getStaffSkillModifier(StaffType staffType, Promotion promotion, List<Worker> roster) {
+        double coverage = getStaffCoverage(promotion, staffType, roster);
         double averageSkill = getStaffSkillAverage(staffType, promotion);
         if (coverage > 100) {
             return (int) averageSkill;
@@ -31,7 +34,7 @@ public final class StaffUtils {
         return promotion.getAllStaff().stream().filter(staff -> staff.getStaffType().equals(staffType)).collect(Collectors.toList());
     }
 
-    public static int getStaffCoverage(Promotion promotion, StaffType staffType) {
+    public static int getStaffCoverage(Promotion promotion, StaffType staffType, List<Worker> roster) {
 
         float staffCount = getStaff(staffType, promotion).size();
         float ratio;
@@ -39,19 +42,19 @@ public final class StaffUtils {
             ratio = staffCount / (promotion.getLevel() * 2);
         } else {
             float staffCoverage = staffCount * staffType.workerRatio();
-            ratio = staffCoverage / promotion.getFullRoster().size();
+            ratio = staffCoverage / roster.size();
         }
         return Math.round(ratio * 100);
     }
 
-    public static int idealStaffCount(Promotion promotion, StaffType staffType) {
+    public static int idealStaffCount(Promotion promotion, StaffType staffType, List<Worker> roster) {
         if (staffType.equals(StaffType.PRODUCTION)) {
             return promotion.getLevel() * 2;
         }
         if (staffType.workerRatio() == 0) {
             return 0;
         }
-        float ideal = promotion.getFullRoster().size() / staffType.workerRatio();
+        float ideal = roster.size() / staffType.workerRatio();
         return (int) Math.ceil(ideal);
     }
 

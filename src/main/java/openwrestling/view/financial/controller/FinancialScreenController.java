@@ -78,7 +78,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
         }
 
         addSheetLabel(-1,
-                ContractUtils.getWorkerPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
+                ContractUtils.getWorkerPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion(), gameController.getWorkerManager().selectRoster(playerPromotion())),
                 WORKER_EXPENSE_ROW);
 
         addSheetLabel(-1,

@@ -2,6 +2,8 @@ package openwrestling.model.factory;
 
 import java.io.Serializable;
 import java.util.List;
+
+import openwrestling.manager.WorkerManager;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentWorker;
@@ -42,11 +44,13 @@ public class MatchFactory implements Serializable {
     private final SegmentManager matchManager;
     private final DateManager dateManager;
     private final InjuryManager injuryManager;
+    private final WorkerManager workerManager;
 
-    public MatchFactory(SegmentManager matchManager, DateManager dateManager, InjuryManager injuryManager) {
+    public MatchFactory(SegmentManager matchManager, DateManager dateManager, InjuryManager injuryManager, WorkerManager workerManager) {
         this.matchManager = matchManager;
         this.dateManager = dateManager;
         this.injuryManager = injuryManager;
+        this.workerManager = workerManager;
     }
 
     public Segment saveSegment(SegmentView segmentView) {
@@ -263,7 +267,7 @@ public class MatchFactory implements Serializable {
         List<Worker> matchWorkers = segmentView.getMatchParticipants();
         matchWorkers.stream().forEach((w) -> {
             Promotion promotion = segmentView.getPromotion();
-            int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion);
+            int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion, workerManager.selectRoster(promotion));
             int injuryRate = BASE_INJURY_RATE - segmentView.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
             if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);

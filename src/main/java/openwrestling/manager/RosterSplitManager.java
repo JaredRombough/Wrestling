@@ -1,6 +1,6 @@
 package openwrestling.manager;
 
-import openwrestling.file.Database;
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.RosterSplit;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package openwrestling.file;
+package openwrestling.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -9,7 +9,6 @@ import com.j256.ormlite.table.TableUtils;
 import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.converter.builtin.PassThroughConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
@@ -31,7 +30,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +40,12 @@ import java.util.stream.Collectors;
 public class Database {
 
     private static String dbUrl;
+
+    private static MapperFactory getMapperFactory() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
+        return mapperFactory;
+    }
 
     public static Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
         put(Promotion.class, PromotionEntity.class);
@@ -59,7 +63,7 @@ public class Database {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database has been created." + url);
+                System.out.println("A new database has been created. " + url);
                 dbUrl = url;
             }
 
@@ -111,24 +115,36 @@ public class Database {
         }
     }
 
+    public static List selectList(GameObjectQuery gameObjectQuery) {
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(Database.dbUrl);
+            MapperFacade mapper = Database.getMapperFactory().getMapperFacade();
+            List<WorkerEntity> results = gameObjectQuery.getQueryBuilder(connectionSource).query();
+            List<Worker> roster = new ArrayList<>();
+            results.forEach(entity -> roster.add(mapper.map(entity, Worker.class)));
+            return roster;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return List.of();
+    }
+
     public static List selectAll(Class sourceClass) {
         try {
             Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
-            MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-            mapperFactory.getConverterFactory().registerConverter(new PassThroughConverter(LocalDate.class));
-            MapperFacade mapper = mapperFactory.getMapperFacade();
-            List entites = dao.queryForAll();
+            MapperFacade mapper = getMapperFactory().getMapperFacade();
+            List entities = dao.queryForAll();
             List targets = new ArrayList();
 
-            entites.stream().forEach(entity -> targets.add(mapper.map(entity, sourceClass)));
+            entities.stream().forEach(entity -> targets.add(mapper.map(entity, sourceClass)));
             return targets;
         } catch (Exception e) {
-
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return List.of();
     }
 
     public static <T extends GameObject> T insertGameObject(GameObject gameObject) {
@@ -147,9 +163,9 @@ public class Database {
             Class sourceClass = gameObjects.get(0).getClass();
 
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
-            MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-            mapperFactory.getConverterFactory().registerConverter(new PassThroughConverter(LocalDate.class));
-            BoundMapperFacade mapper2 = mapperFactory.getMapperFacade(gameObjects.get(0).getClass(), targetClass);
+
+            BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(gameObjects.get(0).getClass(), targetClass);
+
             List toInsert = gameObjects.stream().map(gameObject -> {
                 Object entity = null;
                 try {
@@ -174,13 +190,13 @@ public class Database {
 
                     }
                 }
-                Object result = mapper2.map(gameObject, entity);
+                Object result = boundedMapper.map(gameObject, entity);
 
                 return result;
             })
                     .collect(Collectors.toList());
 
-            MapperFacade mapper = mapperFactory.getMapperFacade();
+            MapperFacade mapper = getMapperFactory().getMapperFacade();
             List toReturn = new ArrayList();
             dao.callBatchTasks((Callable<Void>) () -> {
                 for (Object object : toInsert) {

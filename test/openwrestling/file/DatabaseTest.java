@@ -1,5 +1,7 @@
 package openwrestling.file;
 
+import openwrestling.database.Database;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
@@ -8,8 +10,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.randomPromotion;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DatabaseTest {
@@ -53,20 +57,65 @@ public class DatabaseTest {
         assertThat(worker1.getWorkerID()).isNotEqualTo(worker.getWorkerID());
     }
 
+    @Test
+    public void roster() {
+        Worker worker = Database.insertGameObject(PersonFactory.randomWorker());
+        Worker worker2 = Database.insertGameObject(PersonFactory.randomWorker());
+        Worker worker3 = Database.insertGameObject(PersonFactory.randomWorker());
+        Promotion promotion = Database.insertGameObject(randomPromotion());
+        Promotion promotion2 = Database.insertGameObject(randomPromotion());
+
+        Contract contract1 = Contract.builder().promotion(promotion).worker(worker).build();
+        Contract contract2 = Contract.builder().promotion(promotion).worker(worker2).build();
+        Contract contract3 = Contract.builder().promotion(promotion2).worker(worker3).build();
+
+        Database.insertList(List.of(contract1, contract2, contract3));
+
+        List<Worker> promotionRoster = WorkerManager.selectRoster(promotion);
+        List<Worker> promotion2Roster = WorkerManager.selectRoster(promotion2);
+
+        assertThat(promotionRoster).hasSize(2);
+        Worker rosterWorker = promotionRoster.stream()
+                .filter(w -> w.getWorkerID() == worker.getWorkerID()).findFirst().orElse(null);
+        Worker rosterWorker2 = promotionRoster.stream()
+                .filter(w -> w.getWorkerID() == worker2.getWorkerID()).findFirst().orElse(null);
+
+        assertThat(rosterWorker).isNotNull();
+        assertThat(rosterWorker.getName()).isEqualTo(worker.getName());
+        assertThat(rosterWorker2).isNotNull();
+        assertThat(rosterWorker2.getName()).isEqualTo(worker2.getName());
+
+        assertThat(promotion2Roster).hasSize(1);
+        Worker rosterWorker3 = promotion2Roster.stream()
+                .filter(w -> w.getWorkerID() == worker3.getWorkerID()).findFirst().orElse(null);
+
+        assertThat(rosterWorker3).isNotNull();
+        assertThat(rosterWorker3.getName()).isEqualTo(worker3.getName());
+    }
+
 
     @Test
     public void contract() {
         Worker worker = Database.insertGameObject(PersonFactory.randomWorker());
         Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
 
-        Contract contract =  Database.insertGameObject(Contract.builder().promotion(promotion).worker(worker).build());
+        LocalDate startDate = LocalDate.now();
+        Contract contract = Database.insertGameObject(
+                Contract.builder()
+                        .promotion(promotion)
+                        .worker(worker)
+                        .startDate(startDate)
+                        .build()
+        );
+
+        assertThat(contract.getStartDate()).isEqualTo(startDate);
 
         List<Contract> contracts = Database.selectAll(Contract.class);
-
 
         assertThat(contracts).hasSize(1);
         Contract savedContract = contracts.get(0);
         assertThat(savedContract.getContractID()).isEqualTo(contract.getContractID());
+        assertThat(savedContract.getStartDate()).isEqualTo(startDate);
         assertThat(savedContract.getWorker()).isNotNull();
         assertThat(savedContract.getWorker().getWorkerID()).isEqualTo(worker.getWorkerID());
         assertThat(savedContract.getWorker().getName()).isEqualTo(worker.getName());

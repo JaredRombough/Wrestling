@@ -1,7 +1,7 @@
 package openwrestling.manager;
 
 import lombok.Getter;
-import openwrestling.file.Database;
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
 
 import java.io.Serializable;

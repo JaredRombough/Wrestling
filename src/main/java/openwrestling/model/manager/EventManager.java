@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import openwrestling.manager.ContractManager;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

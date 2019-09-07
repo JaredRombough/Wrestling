@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
@@ -73,7 +74,7 @@ public class TagTeamViewController extends ControllerBase implements Initializab
         if (tagTeamView != null) {
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
-                    playerPromotion().getFullRoster().containsAll(tagTeamView.getWorkers()),
+                    gameController.getWorkerManager().selectRoster(playerPromotion()).containsAll(tagTeamView.getWorkers()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     tagTeamView.getTagTeam().getActiveType());
             comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {

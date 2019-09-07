@@ -3,7 +3,7 @@ package openwrestling.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import openwrestling.file.Database;
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Stable;
 
 public class StableManager {

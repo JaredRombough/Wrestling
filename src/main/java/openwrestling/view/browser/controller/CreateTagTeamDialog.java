@@ -13,6 +13,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.gameObjects.Worker;
@@ -27,7 +28,7 @@ public class CreateTagTeamDialog {
         Dialog<TagTeamView> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
-        List<Worker> workers = gameController.getPromotionManager().getPlayerPromotion().getFullRoster();
+        List<Worker> workers = gameController.getWorkerManager().selectRoster(gameController.getPromotionManager().getPlayerPromotion());
         Collections.sort(workers, new NameComparator());
         ComboBox<Worker> workerA = new ComboBox(FXCollections.observableArrayList(workers));
         ComboBox<Worker> workerB = new ComboBox(FXCollections.observableArrayList(workers));

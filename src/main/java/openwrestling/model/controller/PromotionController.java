@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Event;
@@ -21,7 +22,7 @@ import static openwrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_R
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
-import openwrestling.model.manager.ContractManager;
+import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
@@ -90,7 +91,8 @@ public class PromotionController implements Serializable {
 
         if (diff > 0) {
             int i = 0;
-            for (Worker worker : promotion.getFullRoster()) {
+            List<Worker> roster = workerManager.selectRoster(promotion);
+            for (Worker worker :roster) {
                 if (!pushList.contains(worker) && worker.isFullTime()) {
                     contractManager.getContract(worker, promotion).setPushed(true);
                 }
@@ -140,7 +142,8 @@ public class PromotionController implements Serializable {
         //book a show if we have one scheduled today
         Event eventToday = eventManager.getEventOnDate(promotion, dateManager.today());
         if (eventToday != null) {
-            if (promotion.getFullRoster().size() >= 2) {
+            List<Worker> roster = workerManager.selectRoster(promotion);
+            if (roster.size() >= 2) {
                 bookEvent(eventToday, promotion);
 
             } else {
@@ -164,7 +167,8 @@ public class PromotionController implements Serializable {
     public void trainerUpdate(Promotion promotion) {
         for (StaffView trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
             if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {
-                Worker worker = promotion.getFullRoster().get(RandomUtils.nextInt(0, promotion.getFullRoster().size() - 1));
+                List<Worker> roster = workerManager.selectRoster(promotion);
+                Worker worker = roster.get(RandomUtils.nextInt(0, roster.size() - 1));
                 Map<String, Integer> properties = new HashMap<>();
                 properties.put("striking", worker.getStriking());
                 properties.put("flying", worker.getFlying());
@@ -282,7 +286,8 @@ public class PromotionController implements Serializable {
         eventManager.addEvent(event);
 
         //book the roster for the date
-        for (Worker worker : promotion.getFullRoster()) {
+        List<Worker> roster = workerManager.selectRoster(promotion);
+        for (Worker worker : roster) {
             if (!eventManager.isBooked(worker, eventDate)) {
                 eventManager.addEventWorker(new EventWorker(event, worker));
             }
@@ -458,7 +463,6 @@ public class PromotionController implements Serializable {
                     RandomUtils.nextInt(1, 4),
                     eventTemplate.getDayOfWeek()));
             eventTemplate.setNextDate(date);
-            System.out.println(date + " " + eventTemplate.getName());
             bookNextEvent(eventTemplate, date);
         }
         return date;
@@ -545,7 +549,7 @@ public class PromotionController implements Serializable {
     private List<Worker> getEventMatchRoster(Promotion promotion) {
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = promotion.getFullRoster();
+        List<Worker> eventRoster = workerManager.selectRoster(promotion);
         List<Worker> unavailable = new ArrayList<>();
 
         //go through the event roster and check for workers already booked

@@ -30,14 +30,12 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     private int popularity;
     private int level;
 
-    private List<Worker> fullRoster;
     private final List<StaffView> allStaff;
     private List<StaffView> defaultBroadcastTeam;
     private List<EventTemplate> eventTemplates;
 
     public Promotion() {
 
-        fullRoster = new ArrayList<>();
         allStaff = new ArrayList<>();
         defaultBroadcastTeam = new ArrayList<>();
         eventTemplates = new ArrayList<>();
@@ -79,17 +77,6 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-
-    public void addToRoster(Worker worker) {
-        fullRoster.add(worker);
-    }
-
-    public void removeFromRoster(Worker worker) {
-        if (fullRoster.contains(worker)) {
-            fullRoster.remove(worker);
-        }
     }
 
     public StaffView getOwner() {

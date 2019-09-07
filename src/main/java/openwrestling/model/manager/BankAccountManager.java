@@ -1,6 +1,5 @@
 package openwrestling.model.manager;
 
-import openwrestling.file.Database;
 import openwrestling.model.financial.BankAccount;
 import openwrestling.model.gameObjects.Promotion;
 

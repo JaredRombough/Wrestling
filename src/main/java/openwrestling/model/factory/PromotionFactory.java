@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.manager.BankAccountManager;
+import openwrestling.manager.ContractManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,7 @@ public class PromotionFactory {
     private final WorkerManager workerManager;
     private final StaffManager staffManager;
     private final BankAccountManager bankAccountManager;
+    private final ContractManager contractManager;
 
     public PromotionFactory(
             ContractFactory contractFactory,
@@ -40,20 +43,26 @@ public class PromotionFactory {
             PromotionManager promotionManager,
             WorkerManager workerManager,
             StaffManager staffManager,
-            BankAccountManager bankAccountManager) {
+            BankAccountManager bankAccountManager,
+            ContractManager contractManager) {
         this.contractFactory = contractFactory;
         this.dateManager = dateManager;
         this.promotionManager = promotionManager;
         this.workerManager = workerManager;
         this.staffManager = staffManager;
         this.bankAccountManager = bankAccountManager;
+        this.contractManager = contractManager;
     }
 
     public void preparePromotions() throws IOException {
         int numberOfPromotions = 20;
         int startingFunds = 10000;
         double[] levelRatios = {0.3, 0.2, 0.2, 0.2, 0.1};
+
         List<Promotion> promotionsToAdd = new ArrayList<>();
+        List<Contract> contractsToAdd = new ArrayList<>();
+        List<Worker> workersToAdd = new ArrayList<>();
+
         List<String> promotionNames = new ArrayList<>();
         promotionNames.addAll(PROMOTION_NAMES);
         Collections.shuffle(promotionNames);
@@ -81,18 +90,19 @@ public class PromotionFactory {
                 bankAccountManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
 
                 //assign workers based on promotion level
-                List<Worker> workersToAdd = new ArrayList<>();
+
+
                 for (int j = 0; j < rosterSize; j++) {
                     Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
-                    contractFactory.createContract(worker, promotion, dateManager.today());
+                    contractsToAdd.add(contractFactory.createContract(worker, promotion, dateManager.today()));
                     if (j < rosterSize / 2) {
                         workersToAdd.add(PersonFactory.randomWorker(promotion.getLevel()));
                     }
                 }
-                workerManager.createWorkers(workersToAdd);
+
 
                 for (StaffType staffType : StaffType.values()) {
-                    int ideal = StaffUtils.idealStaffCount(promotion, staffType);
+                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
                     int rand = RandomUtils.nextInt(0, 6);
                     if (rand == 1) {
                         ideal += 1;
@@ -105,11 +115,13 @@ public class PromotionFactory {
                     }
                 }
                 staffManager.addStaff(promotion.getAllStaff());
-                workerManager.createWorkers(promotion.getFullRoster());
+                //workerManager.createWorkers(promotion.getFullRoster());
                 promotionsToAdd.add(promotion);
             }
         }
+        workerManager.createWorkers(workersToAdd);
         promotionManager.createPromotions(promotionsToAdd);
+        contractManager.createContracts(contractsToAdd);
     }
 
     public Promotion newPromotion() {

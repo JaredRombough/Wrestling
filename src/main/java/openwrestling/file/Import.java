@@ -105,20 +105,20 @@ public class Import {
                 throw ex;
             }
             processOther();
-            allPromotions.forEach(promotion -> {
-                promotion.setFullRoster(updateWorkers(promotion.getFullRoster()));
-            });
 
             gameController.getPromotionManager().createPromotions(allPromotions);
-            System.out.println("contracts" + contractsToAdd.size());
-            gameController.getContractManager().addContracts(contractsToAdd);
+
+            contractsToAdd.stream().forEach(contract -> {
+                contract.setWorker(getMatchingWorker(contract.getWorker()));
+            });
+            gameController.getContractManager().createContracts(contractsToAdd);
             gameController.getEventManager().addEventTemplates(eventTemplates);
             gameController.getTagTeamManager().addTagTeams(allTagTeams);
             gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
             gameController.getStableManager().createStables(stablesToAdd);
             List<RosterSplit> updated = new ArrayList<>();
 
-            rosterSplitsToAdd.stream().forEach(rosterSplit -> {
+            rosterSplitsToAdd.forEach(rosterSplit -> {
                 RosterSplit rosterSplit1 = RosterSplit.builder()
                         .name(rosterSplit.getName())
                         .owner(rosterSplit.getOwner())
@@ -126,11 +126,7 @@ public class Import {
                         .build();
 
                 rosterSplit.getWorkers().forEach(worker -> {
-                    Worker toAdd = allWorkers.stream().filter(allWorker ->
-                            Objects.equals(allWorker.getName(), worker.getName()) &&
-                                    Objects.equals(allWorker.getShortName(), worker.getShortName()) &&
-                                    Objects.equals(allWorker.getAge(), worker.getAge()) &&
-                                    Objects.equals(allWorker.getStriking(), worker.getStriking()))
+                    Worker toAdd = allWorkers.stream().filter(allWorker -> workersMatch(allWorker, worker))
                             .findFirst()
                             .orElse(null);
                     rosterSplit1.getWorkers().add(toAdd);
@@ -150,20 +146,17 @@ public class Import {
 
     }
 
-    private List<Worker> updateWorkers(List<Worker> workers) {
-        List<Worker> updated = new ArrayList<>();
+    private Worker getMatchingWorker(Worker worker) {
+        return allWorkers.stream().filter(allWorker -> workersMatch(allWorker, worker))
+                .findFirst()
+                .orElse(null);
+    }
 
-        workers.forEach(worker -> {
-            Worker toAdd = allWorkers.stream().filter(allWorker ->
-                    Objects.equals(allWorker.getName(), worker.getName()) &&
-                            Objects.equals(allWorker.getShortName(), worker.getShortName()) &&
-                            Objects.equals(allWorker.getAge(), worker.getAge()) &&
-                            Objects.equals(allWorker.getStriking(), worker.getStriking()))
-                    .findFirst()
-                    .orElse(null);
-            updated.add(toAdd);
-        });
-        return updated;
+    private boolean workersMatch(Worker worker1, Worker worker2) {
+        return Objects.equals(worker1.getName(), worker2.getName()) &&
+                Objects.equals(worker1.getShortName(), worker2.getShortName()) &&
+                Objects.equals(worker1.getAge(), worker2.getAge()) &&
+                Objects.equals(worker1.getStriking(), worker2.getStriking());
     }
 
     private Promotion getPromotionFromKey(int key) {
@@ -226,6 +219,7 @@ public class Import {
                             .worker(otherWorkers.get(i))
                             .promotion(promotion)
                             .exclusive(false)
+                            .active(true)
                             .startDate(getGameController().getDateManager().today())
                             .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
                             .build());
@@ -274,11 +268,7 @@ public class Import {
                         duration = 120;
                         break;
                     case "G":
-                        duration = 60;
-                        break;
                     case "E":
-                        duration = 60;
-                        break;
                     case "L":
                         duration = 60;
                         break;
@@ -737,6 +727,7 @@ public class Import {
                 .worker(worker)
                 .promotion(promotion)
                 .exclusive(exclusive)
+                .active(true)
                 .startDate(getGameController().getDateManager().today())
                 .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
                 .build());

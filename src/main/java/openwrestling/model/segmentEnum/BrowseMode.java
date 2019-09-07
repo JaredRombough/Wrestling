@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.gameObjects.Promotion;
@@ -72,7 +73,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return promotion.getFullRoster();
+            return gameController.getWorkerManager().selectRoster(promotion);
         }
 
         @Override

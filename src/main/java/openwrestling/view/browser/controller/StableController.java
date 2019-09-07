@@ -13,6 +13,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.WorkerGroup;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.BrowseMode;
@@ -81,7 +82,7 @@ public class StableController extends ControllerBase {
 
         addButton.setOnAction(a -> {
 
-            List<Worker> workers = new ArrayList<>(playerPromotion().getFullRoster());
+            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(playerPromotion()));
             workers.removeAll(workerGroup.getWorkers());
 
             Optional<Worker> result = ViewUtils.selectWorkerDialog(
