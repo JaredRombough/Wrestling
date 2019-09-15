@@ -8,7 +8,7 @@ import openwrestling.model.EventTemplate;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.modelView.TagTeamView;
+import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.ScreenCode;
@@ -56,9 +56,9 @@ public class EditLabel extends ControllerBase implements Initializable {
                     EventTemplate eventTemplate = (EventTemplate) object;
                     eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
                     gameController.getEventManager().updateEventName(eventTemplate);
-                } else if (segmentItem instanceof TagTeamView) {
-                    TagTeamView tagTeamView = (TagTeamView) object;
-                    tagTeamView.getTagTeam().setName(ViewUtils.editTextDialog(tagTeamView.getTagTeam().getName()));
+                } else if (segmentItem instanceof TagTeam) {
+                    TagTeam tagTeam = (TagTeam) object;
+                    tagTeam.setName(ViewUtils.editTextDialog(tagTeam.getName()));
                 } else if (segmentItem instanceof Stable) {
                     Stable stable = (Stable) object;
                     stable.setName(ViewUtils.editTextDialog(stable.getName()));
@@ -79,7 +79,7 @@ public class EditLabel extends ControllerBase implements Initializable {
                 Optional<? extends SegmentItem> optionalResult = Optional.empty();
                 if (segmentItem instanceof TitleView || BrowseMode.TITLES.equals(browseMode)) {
                     optionalResult = ViewUtils.createTitleViewDialog(gameController).showAndWait();
-                } else if (segmentItem instanceof TagTeamView || BrowseMode.TAG_TEAMS.equals(browseMode)) {
+                } else if (segmentItem instanceof TagTeam || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
                     optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
                 } else if (BrowseMode.STABLES.equals(browseMode) || BrowseMode.ROSTER_SPLIT.equals(browseMode)) {
@@ -92,7 +92,7 @@ public class EditLabel extends ControllerBase implements Initializable {
                             mainApp.show(ScreenCode.BROWSER, stable);
                         } else {
                             RosterSplit rosterSplit = new RosterSplit(groupName, playerPromotion());
-                            gameController.getRosterSplitManager().addList(List.of(rosterSplit));
+                            gameController.getRosterSplitManager().createRosterSplits(List.of(rosterSplit));
                             mainApp.show(ScreenCode.BROWSER, rosterSplit);
                         }
                     }

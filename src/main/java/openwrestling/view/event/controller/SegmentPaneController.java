@@ -1,14 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,20 +10,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.model.AngleParams;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.MatchParams;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -53,6 +42,18 @@ import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.DateComparator;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class SegmentPaneController extends ControllerBase implements Initializable {
 
@@ -291,7 +292,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         SegmentItem item = segmentItems.get(0);
 
-        if (item instanceof Worker || item instanceof TagTeamView) {
+        if (item instanceof Worker || item instanceof TagTeam) {
 
             GameScreen wrapperToInsert = wrapperToInsert(workerTeamWrappers, emptyOnly);
             if (wrapperToInsert == null) {

@@ -14,12 +14,12 @@ import javafx.scene.layout.VBox;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
@@ -308,7 +308,7 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isStableFiltered(SegmentItem segmentItem) {
-        if (stableFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeamView)) {
+        if (stableFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (!stableFilter.getWorkers().contains((Worker) subItem)) {
                     return true;
@@ -319,7 +319,7 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isRosterSplitFiltered(SegmentItem segmentItem) {
-        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeamView || segmentItem instanceof TitleView)) {
+        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof TitleView)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                 if (segmentItem instanceof TitleView) {
                     return !Objects.equals(((TitleView) segmentItem).getRosterSplit(), rosterSplitFilter);

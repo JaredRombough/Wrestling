@@ -1,7 +1,9 @@
 package openwrestling.model.factory;
 
+import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StableManager;
+import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.Event;
 import openwrestling.model.Match;
@@ -9,11 +11,9 @@ import openwrestling.model.Title;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;

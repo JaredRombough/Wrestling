@@ -1,10 +1,10 @@
 package openwrestling.model.factory;
 
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import openwrestling.manager.ContractManager;
+import openwrestling.manager.PromotionManager;
+import openwrestling.manager.StableManager;
+import openwrestling.manager.TagTeamManager;
+import openwrestling.manager.WorkerManager;
 import openwrestling.model.AngleParams;
 import openwrestling.model.Event;
 import openwrestling.model.EventTemplate;
@@ -12,28 +12,21 @@ import openwrestling.model.EventWorker;
 import openwrestling.model.Match;
 import openwrestling.model.MatchEvent;
 import openwrestling.model.SegmentTemplate;
-import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
-import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
 import openwrestling.model.controller.PromotionController;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.manager.PromotionManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.manager.StableManager;
-import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.modelView.EventView;
-import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -42,6 +35,15 @@ import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ModelUtils;
+
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
+import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
 import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory {

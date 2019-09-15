@@ -1,8 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,19 +10,22 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.modelView.TagTeamView;
+import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NameComparator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CreateTagTeamDialog {
 
     private boolean createDialogUpdating = false;
 
-    public Dialog<TagTeamView> getDialog(GameController gameController) {
-        Dialog<TagTeamView> dialog = new Dialog<>();
+    public Dialog<TagTeam> getDialog(GameController gameController) {
+        Dialog<TagTeam> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
         List<Worker> workers = gameController.getWorkerManager().selectRoster(gameController.getPromotionManager().getPlayerPromotion());
@@ -66,11 +66,11 @@ public class CreateTagTeamDialog {
 
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                TagTeamView newTagTeamView = gameController.getTagTeamManager().createTagTeam(
+                TagTeam newTagTeam = gameController.getTagTeamManager().createTagTeam(
                         tagTeamName.getText(),
                         workerA.getSelectionModel().getSelectedItem(),
                         workerB.getSelectionModel().getSelectedItem());
-                return newTagTeamView;
+                return newTagTeam;
             }
             return null;
         });

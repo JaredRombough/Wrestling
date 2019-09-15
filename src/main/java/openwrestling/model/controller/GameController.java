@@ -1,9 +1,11 @@
 package openwrestling.model.controller;
 
 import lombok.Getter;
+import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RosterSplitManager;
 import openwrestling.manager.StableManager;
+import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.factory.ContractFactory;
@@ -13,7 +15,6 @@ import openwrestling.model.factory.PromotionFactory;
 import openwrestling.model.factory.TitleFactory;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.InjuryManager;
@@ -21,7 +22,6 @@ import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.manager.StaffManager;
-import openwrestling.model.manager.TagTeamManager;
 import openwrestling.model.manager.TitleManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 
@@ -80,7 +80,7 @@ public final class GameController implements Serializable {
                 bankAccountManager);
 
         workerManager = new WorkerManager(contractManager);
-        tagTeamManager = new TagTeamManager(contractManager, workerManager);
+        tagTeamManager = new TagTeamManager(workerManager);
         segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
         injuryManager = new InjuryManager(newsManager, workerManager);
         contractFactory = new ContractFactory(contractManager);
@@ -92,7 +92,6 @@ public final class GameController implements Serializable {
 
         titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager);
-
 
 
         eventFactory = new EventFactory(

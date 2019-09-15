@@ -1,5 +1,27 @@
 package openwrestling.model.manager;
 
+import openwrestling.manager.StableManager;
+import openwrestling.manager.TagTeamManager;
+import openwrestling.model.AngleParams;
+import openwrestling.model.Match;
+import openwrestling.model.MatchTitle;
+import openwrestling.model.SegmentItem;
+import openwrestling.model.SegmentWorker;
+import openwrestling.model.Title;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.Segment;
+import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.segmentEnum.AngleType;
+import openwrestling.model.segmentEnum.MatchFinish;
+import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.utility.ModelUtils;
+import openwrestling.model.utility.SegmentStringUtils;
+import openwrestling.view.utility.ViewUtils;
+
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,27 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import openwrestling.manager.StableManager;
-import openwrestling.model.AngleParams;
-import openwrestling.model.Match;
-import openwrestling.model.MatchTitle;
-import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentWorker;
-import openwrestling.model.Title;
-import openwrestling.model.interfaces.Segment;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.TagTeamView;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
-import openwrestling.model.utility.ModelUtils;
 import static openwrestling.model.utility.ModelUtils.slashShortNames;
-import openwrestling.model.utility.SegmentStringUtils;
-import openwrestling.view.utility.ViewUtils;
 
 public class SegmentManager implements Serializable {
 
@@ -245,9 +247,9 @@ public class SegmentManager implements Serializable {
     }
 
     public String getTagTeamName(List<? extends SegmentItem> segmentItems) {
-        for (TagTeamView tagTeamView : tagTeamManager.getTagTeamViews()) {
-            if (tagTeamView.getSegmentItems().containsAll(segmentItems)) {
-                return tagTeamView.getTagTeam().getName();
+        for (TagTeam tagTeam : tagTeamManager.getTagTeams()) {
+            if (tagTeam.getSegmentItems().containsAll(segmentItems)) {
+                return tagTeam.getName();
             }
         }
         return String.format("");

@@ -72,7 +72,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     TAG_TEAM_VIEW {
         @Override
         public String resourcePath() {
-            return "view/browser/TagTeamView.fxml";
+            return "view/browser/TagTeam.fxml";
         }
 
         @Override

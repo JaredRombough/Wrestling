@@ -1,11 +1,17 @@
 package openwrestling.file;
 
 import openwrestling.database.Database;
+import openwrestling.manager.ContractManager;
+import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.manager.BankAccountManager;
+import openwrestling.model.manager.NewsManager;
+import openwrestling.model.manager.RelationshipManager;
+import openwrestling.model.manager.TitleManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +21,7 @@ import java.util.List;
 
 import static openwrestling.TestUtils.randomPromotion;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class DatabaseTest {
 
@@ -65,14 +72,22 @@ public class DatabaseTest {
         Promotion promotion = Database.insertGameObject(randomPromotion());
         Promotion promotion2 = Database.insertGameObject(randomPromotion());
 
-        Contract contract1 = Contract.builder().promotion(promotion).worker(worker).build();
-        Contract contract2 = Contract.builder().promotion(promotion).worker(worker2).build();
-        Contract contract3 = Contract.builder().promotion(promotion2).worker(worker3).build();
+        ContractManager contractManager = new ContractManager(
+                mock(PromotionManager.class),
+                mock(TitleManager.class),
+                mock(NewsManager.class),
+                mock(RelationshipManager.class),
+                mock(BankAccountManager.class));
+        WorkerManager workerManager = new WorkerManager(contractManager);
 
-        Database.insertList(List.of(contract1, contract2, contract3));
+        Contract contract1 = Contract.builder().promotion(promotion).worker(worker).active(true).build();
+        Contract contract2 = Contract.builder().promotion(promotion).worker(worker2).active(true).build();
+        Contract contract3 = Contract.builder().promotion(promotion2).worker(worker3).active(true).build();
 
-        List<Worker> promotionRoster = WorkerManager.selectRoster(promotion);
-        List<Worker> promotion2Roster = WorkerManager.selectRoster(promotion2);
+        contractManager.createContracts(List.of(contract1, contract2, contract3));
+
+        List<Worker> promotionRoster = workerManager.selectRoster(promotion);
+        List<Worker> promotion2Roster = workerManager.selectRoster(promotion2);
 
         assertThat(promotionRoster).hasSize(2);
         Worker rosterWorker = promotionRoster.stream()

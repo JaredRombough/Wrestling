@@ -19,7 +19,7 @@ import javafx.util.Callback;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.TagTeamView;
+import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.RefreshSkin;
@@ -294,19 +294,19 @@ public class BrowserController extends ControllerBase implements Initializable {
             EventTemplate template = (EventTemplate) obj;
             setCurrentPromotion(template.getPromotion());
             selectSegmentItem(BrowseMode.EVENTS, template);
-        } else if (obj instanceof TagTeamView) {
-            TagTeamView tagTeamView = (TagTeamView) obj;
-            if (gameController.getTagTeamManager().getTagTeamViews(playerPromotion()).contains(tagTeamView)) {
+        } else if (obj instanceof TagTeam) {
+            TagTeam tagTeam = (TagTeam) obj;
+            if (gameController.getTagTeamManager().getTagTeams(playerPromotion()).contains(tagTeam)) {
                 setCurrentPromotion(playerPromotion());
             } else {
                 for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
-                    if (gameController.getTagTeamManager().getTagTeamViews(promotion).contains(tagTeamView)) {
+                    if (gameController.getTagTeamManager().getTagTeams(promotion).contains(tagTeam)) {
                         setCurrentPromotion(playerPromotion());
                         break;
                     }
                 }
             }
-            selectSegmentItem(BrowseMode.TAG_TEAMS, tagTeamView);
+            selectSegmentItem(BrowseMode.TAG_TEAMS, tagTeam);
         } else if (obj instanceof BrowseParams) {
             BrowseParams params = (BrowseParams) obj;
             setCurrentPromotion(params.promotion);

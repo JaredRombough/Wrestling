@@ -1,18 +1,16 @@
 package openwrestling.file;
 
 import openwrestling.model.EventTemplate;
-import openwrestling.model.TagTeam;
-import openwrestling.model.TagTeamWorker;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
@@ -63,7 +61,6 @@ public class Import {
     private final List<String> otherWorkerPromotions = new ArrayList<>();
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
-    private final List<TagTeamView> allTagTeamViews = new ArrayList<>();
 
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
     private final List<Stable> stablesToAdd = new ArrayList<>();
@@ -113,8 +110,7 @@ public class Import {
             });
             gameController.getContractManager().createContracts(contractsToAdd);
             gameController.getEventManager().addEventTemplates(eventTemplates);
-            gameController.getTagTeamManager().addTagTeams(allTagTeams);
-            gameController.getTagTeamManager().addTagTeamViews(allTagTeamViews);
+            gameController.getTagTeamManager().createTagTeams(allTagTeams);
             gameController.getStableManager().createStables(stablesToAdd);
             List<RosterSplit> updated = new ArrayList<>();
 
@@ -133,7 +129,7 @@ public class Import {
                 });
                 updated.add(rosterSplit1);
             });
-            gameController.getRosterSplitManager().addList(updated);
+            gameController.getRosterSplitManager().createRosterSplits(updated);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -378,29 +374,23 @@ public class Import {
 
             if (counter == lineLength) {
 
-                TagTeam team = new TagTeam();
-                TagTeamView tagTeamView = new TagTeamView();
+                TagTeam tagTeam = new TagTeam();
                 String id1 = currentHexLine.get(26) + currentHexLine.get(27);
                 String id2 = currentHexLine.get(28) + currentHexLine.get(29);
 
-                team.setName(currentLine.substring(1, 18).trim());
+                tagTeam.setName(currentLine.substring(1, 18).trim());
                 for (int x = 0; x < allWorkers.size(); x++) {
 
                     if (workerIDs.get(x).equals(id1)
                             || workerIDs.get(x).equals(id2)) {
-                        TagTeamWorker tagTeamWorker = new TagTeamWorker(team, allWorkers.get(x));
-                        gameController.getTagTeamManager().addTagTeamWorker(tagTeamWorker);
-                        tagTeamView.addWorker(tagTeamWorker.getWorker());
+                        tagTeam.addWorker(allWorkers.get(x));
                     }
                 }
-                team.setExperience(hexStringToInt(currentHexLine.get(55)));
-                team.setActiveType(currentHexLine.get(57).equals("FF")
+                tagTeam.setExperience(hexStringToInt(currentHexLine.get(55)));
+                tagTeam.setActiveType(currentHexLine.get(57).equals("FF")
                         ? ActiveType.ACTIVE : ActiveType.INACTIVE);
 
-                tagTeamView.setTagTeam(team);
-
-                allTagTeamViews.add(tagTeamView);
-                allTagTeams.add(team);
+                allTagTeams.add(tagTeam);
 
                 counter = 0;
                 currentLine = "";

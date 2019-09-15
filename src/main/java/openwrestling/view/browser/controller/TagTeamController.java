@@ -1,8 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,8 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.manager.WorkerManager;
-import openwrestling.model.modelView.TagTeamView;
+import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
@@ -20,9 +16,13 @@ import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
-public class TagTeamViewController extends ControllerBase implements Initializable {
+import java.net.URL;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 
-    private TagTeamView tagTeamView;
+public class TagTeamController extends ControllerBase implements Initializable {
+
+    private TagTeam tagTeam;
 
     @FXML
     private AnchorPane imageAnchor1;
@@ -56,31 +56,31 @@ public class TagTeamViewController extends ControllerBase implements Initializab
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof TagTeamView) {
-            this.tagTeamView = (TagTeamView) obj;
+        if (obj instanceof TagTeam) {
+            this.tagTeam = (TagTeam) obj;
         } else {
-            this.tagTeamView = null;
+            this.tagTeam = null;
         }
-        gridPane.setVisible(this.tagTeamView != null);
-        imageAnchor1.setVisible(this.tagTeamView != null);
-        imageAnchor2.setVisible(this.tagTeamView != null);
+        gridPane.setVisible(this.tagTeam != null);
+        imageAnchor1.setVisible(this.tagTeam != null);
+        imageAnchor2.setVisible(this.tagTeam != null);
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
-        editLabel.setCurrent(tagTeamView);
+        editLabel.setCurrent(tagTeam);
 
-        if (tagTeamView != null) {
+        if (tagTeam != null) {
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
-                    gameController.getWorkerManager().selectRoster(playerPromotion()).containsAll(tagTeamView.getWorkers()),
+                    gameController.getWorkerManager().selectRoster(playerPromotion()).containsAll(tagTeam.getWorkers()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
-                    tagTeamView.getTagTeam().getActiveType());
+                    tagTeam.getActiveType());
             comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {
                 @Override
                 public void changed(ObservableValue<? extends ActiveType> observable, ActiveType oldValue, ActiveType newValue) {
-                    tagTeamView.getTagTeam().setActiveType(newValue);
+                    tagTeam.setActiveType(newValue);
                 }
             });
 
@@ -88,10 +88,10 @@ public class TagTeamViewController extends ControllerBase implements Initializab
             imageAnchor2.getChildren().clear();
             GameScreen card1 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor1);
             GameScreen card2 = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor2);
-            card1.controller.setCurrent(tagTeamView.getWorkers().get(0));
-            card2.controller.setCurrent(tagTeamView.getWorkers().get(1));
+            card1.controller.setCurrent(tagTeam.getWorkers().get(0));
+            card2.controller.setCurrent(tagTeam.getWorkers().get(1));
 
-            experienceLabel.setText(Integer.toString(tagTeamView.getTagTeam().getExperience()));
+            experienceLabel.setText(Integer.toString(tagTeam.getExperience()));
 
         } else {
             editLabel.setCurrent(BrowseMode.TAG_TEAMS);

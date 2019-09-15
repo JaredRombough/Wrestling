@@ -1,16 +1,17 @@
 package openwrestling.model.segmentEnum;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Description;
 import openwrestling.model.interfaces.iTeamType;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TagTeamView;
 import openwrestling.model.modelView.TitleView;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.Worker;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public enum TeamType implements Description, iTeamType {
     CHALLENGER {
@@ -510,7 +511,7 @@ public enum TeamType implements Description, iTeamType {
     }
 
     private static boolean workerDroppable(SegmentItem segmentItem) {
-        return segmentItem instanceof Worker || segmentItem instanceof TagTeamView || segmentItem instanceof Stable;
+        return segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof Stable;
     }
 
 }
