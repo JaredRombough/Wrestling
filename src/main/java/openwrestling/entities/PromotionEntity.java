@@ -25,6 +25,9 @@ public class PromotionEntity extends Entity {
     private int promotionID;
 
     @DatabaseField
+    private int importKey;
+
+    @DatabaseField
     private String name;
 
     @DatabaseField

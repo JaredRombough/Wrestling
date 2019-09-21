@@ -1,5 +1,6 @@
 package openwrestling.file;
 
+import lombok.Getter;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.factory.PersonFactory;
@@ -40,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static openwrestling.file.ImportUtils.*;
 import static openwrestling.model.constants.GameConstants.*;
 
 public class Import {
@@ -51,6 +53,7 @@ public class Import {
     private File importFolder;
 
     private final List<Promotion> allPromotions = new ArrayList<>();
+    @Getter
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> otherPromotionNames = new ArrayList<>();
 
@@ -85,7 +88,7 @@ public class Import {
         if (sb.length() == 0) {
             try {
                 gameController = new GameController(false);
-                promotionsDat();
+                promotionsDat(importFolder);
                 workersDat();
                 setManagers();
                 teamsDat();
@@ -162,29 +165,6 @@ public class Import {
             }
         }
         return null;
-    }
-
-    private int hexStringToInt(String hexValueString) {
-        return Integer.parseInt(hexValueString, 16);
-    }
-
-    private String hexStringToLetter(String hexValueString) {
-        //take the characters in two positions, since they combine to make
-        //up one hex value that we have to translate
-        String letter = "";
-        //translate the hex value string to an int value
-        int intLetter = hexStringToInt(hexValueString);
-
-        //only keep numbers that translate to an ascii alphabet value
-        //otherwise just put a blank in our string
-        //this will need to be more complex if we import more than just names
-        if (intLetter >= 0 && intLetter <= 499) {
-            letter += String.valueOf((char) (intLetter));
-        } else {
-            letter += " ";
-        }
-
-        return letter;
     }
 
     private void processOther() {
@@ -293,61 +273,27 @@ public class Import {
         }
     }
 
-    private void promotionsDat() throws IOException {
+    List<Promotion> promotionsDat(File importFolder) {
+        List<Promotion> promotions = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "promos", 397);
 
-        Path path = Paths.get(importFolder.getPath() + "\\promos.dat");
-        byte[] data = Files.readAllBytes(path);
+        hexLines.forEach(hexLine -> {
+            Promotion promotion = new Promotion();
+            //TODO create bank accounts for imported promotions
+            String textLine = hexLineToTextString(hexLine);
 
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        int counter = 0;
-        int level = 0;
-        int lineLength = 397;
-        for (int i = 0; i < fileString.length(); i += 2) {
+            promotionKeys.add(hexStringToInt(hexLine.get(1)));
 
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+            promotion.setImportKey(hexStringToInt(hexLine.get(1)));
+            promotion.setName(textLine.substring(3, 43).trim());
+            promotion.setShortName(textLine.substring(43, 49).trim());
+            promotion.setImagePath(textLine.substring(49, 65).trim());
+            promotion.setLevel(6 - hexStringToInt(hexLine.get(89)));
 
-            currentLine += hexStringToLetter(hexValueString);
-
-            //track the key number for this promotion
-            if (counter == 1) {
-                promotionKeys.add(hexStringToInt(hexValueString));
-            } else if (counter == 89) {
-                level = hexStringToInt(hexValueString);
-                if (level == 6) {
-                    level = 5;
-                }
-            }
-
-            counter++;
-
-            if (counter == lineLength) {
-
-                Promotion promotion = gameController.getPromotionFactory().newPromotion();
-
-                counter = 0;
-
-                //trim the line to get the promotion name etc
-                promotion.setPromotionID(promotionKeys.get(promotionKeys.size() - 1));
-                promotion.setName(currentLine.substring(3, 43).trim());
-                promotion.setShortName(currentLine.substring(43, 49).trim());
-                promotion.setImagePath(currentLine.substring(49, 65).trim());
-                promotion.setLevel(6 - level);
-
-                //game model easier to manage if we only have 5 levels
-                if (promotion.getLevel() == 0) {
-                    promotion.setLevel(1);
-                }
-
-                allPromotions.add(promotion);
-
-                //reset the line for the next loop
-                currentLine = "";
-                level = 0;
-
-            }
-        }
+            allPromotions.add(promotion);
+            promotions.add(promotion);
+        });
+        return promotions;
     }
 
     private void teamsDat() throws IOException {
