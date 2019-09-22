@@ -26,6 +26,9 @@ public class WorkerEntity extends Entity {
     private long workerID;
 
     @DatabaseField
+    private long importKey;
+
+    @DatabaseField
     private String name;
 
     @DatabaseField

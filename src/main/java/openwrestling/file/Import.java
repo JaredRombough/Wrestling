@@ -20,6 +20,7 @@ import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.Gender;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ContractUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -35,11 +36,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static openwrestling.file.ImportUtils.*;
 import static openwrestling.model.constants.GameConstants.*;
@@ -88,11 +91,25 @@ public class Import {
         if (sb.length() == 0) {
             try {
                 gameController = new GameController(false);
-                promotionsDat(importFolder);
-                workersDat();
-                setManagers();
-                teamsDat();
-                stablesDat();
+
+                List<Promotion> promotions = promotionsDat(importFolder, "promos");
+                promotions = gameController.getPromotionManager().createPromotions(promotions);
+                List<Worker> workers = workersDat(importFolder);
+                workers = gameController.getWorkerManager().createWorkers(workers);
+                List<RosterSplit> rosterSplits = rosterSplits(importFolder, "promos", promotions);
+                rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
+                List<Contract> contracts = contracts(importFolder, workers, promotions, gameController.getDateManager().today());
+                contracts = gameController.getContractManager().createContracts(contracts);
+                List<TagTeam> tagTeams = teamsDat(importFolder, workers);
+                tagTeams = gameController.getTagTeamManager().createTagTeams(tagTeams);
+                List<Stable> stables = stablesDat(importFolder, workers, promotions);
+                stables = gameController.getStableManager().createStables(stables);
+//                allPromotions.addAll(promotionsDat(importFolder, "promos"));
+//                workersDat(importFolder);
+//                gameController.getWorkerManager().createWorkers(allWorkers);
+//                setManagers();
+//                teamsDat();
+//                stablesDat();
                 beltDat();
                 tvDat();
                 eventDat();
@@ -104,7 +121,7 @@ public class Import {
                 logger.log(Level.ERROR, ex);
                 throw ex;
             }
-            processOther();
+//            processOther();
 
             gameController.getPromotionManager().createPromotions(allPromotions);
 
@@ -273,9 +290,39 @@ public class Import {
         }
     }
 
-    List<Promotion> promotionsDat(File importFolder) {
+    List<RosterSplit> rosterSplits(File importFolder, String fileName, List<Promotion> promotions) {
+        List<RosterSplit> rosterSplits = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, fileName, 397);
+
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
+            List<String> rosterSplitNames = List.of(
+                    textLine.substring(271, 281),
+                    textLine.substring(281, 291),
+                    textLine.substring(291, 301),
+                    textLine.substring(301, 311)
+            );
+            rosterSplitNames.forEach(name -> {
+                if (!"None".equals(name.trim())) {
+                    Promotion promotion = promotions.stream()
+                            .filter(promotion1 -> promotion1.getImportKey() == hexStringToInt(hexLine.get(1)))
+                            .findFirst()
+                            .orElse(null);
+                    rosterSplits.add(
+                            RosterSplit.builder()
+                                    .name(name.trim())
+                                    .owner(promotion)
+                                    .build()
+                    );
+                }
+            });
+        });
+        return rosterSplits;
+    }
+
+    List<Promotion> promotionsDat(File importFolder, String fileName) {
         List<Promotion> promotions = new ArrayList<>();
-        List<List<String>> hexLines = getHexLines(importFolder, "promos", 397);
+        List<List<String>> hexLines = getHexLines(importFolder, fileName, 397);
 
         hexLines.forEach(hexLine -> {
             Promotion promotion = new Promotion();
@@ -290,105 +337,68 @@ public class Import {
             promotion.setImagePath(textLine.substring(49, 65).trim());
             promotion.setLevel(6 - hexStringToInt(hexLine.get(89)));
 
-            allPromotions.add(promotion);
             promotions.add(promotion);
         });
         return promotions;
     }
 
-    private void teamsDat() throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\teams.dat");
-        byte[] data = Files.readAllBytes(path);
+    List<TagTeam> teamsDat(File importFolder, List<Worker> workers) {
+        List<TagTeam> tagTeams = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "teams", 59);
 
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        List<String> currentHexLine = new ArrayList<>();
-        List<String> currentStringLine = new ArrayList<>();
-        int counter = 0;
-        int lineLength = 59;
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
 
-        for (int i = 0; i < fileString.length(); i += 2) {
+            TagTeam tagTeam = new TagTeam();
+            int id1 = hexStringToInt(hexLine.get(26) + hexLine.get(27));
+            int id2 = hexStringToInt(hexLine.get(28) + hexLine.get(29));
 
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            currentLine += hexStringToLetter(hexValueString);
-            currentHexLine.add(hexValueString);
-            currentStringLine.add(hexStringToLetter(hexValueString));
-
-            counter++;
-
-            if (counter == lineLength) {
-
-                TagTeam tagTeam = new TagTeam();
-                String id1 = currentHexLine.get(26) + currentHexLine.get(27);
-                String id2 = currentHexLine.get(28) + currentHexLine.get(29);
-
-                tagTeam.setName(currentLine.substring(1, 18).trim());
-                for (int x = 0; x < allWorkers.size(); x++) {
-
-                    if (workerIDs.get(x).equals(id1)
-                            || workerIDs.get(x).equals(id2)) {
-                        tagTeam.addWorker(allWorkers.get(x));
-                    }
+            tagTeam.setName(textLine.substring(1, 18).trim());
+            workers.forEach(worker -> {
+                if (worker.getImportKey() == id1 ||
+                        worker.getImportKey() == id2) {
+                    tagTeam.addWorker(worker);
                 }
-                tagTeam.setExperience(hexStringToInt(currentHexLine.get(55)));
-                tagTeam.setActiveType(currentHexLine.get(57).equals("FF")
-                        ? ActiveType.ACTIVE : ActiveType.INACTIVE);
+            });
 
-                allTagTeams.add(tagTeam);
+            tagTeam.setExperience(hexStringToInt(hexLine.get(55)));
+            tagTeam.setActiveType(hexLine.get(57).equals("FF")
+                    ? ActiveType.ACTIVE : ActiveType.INACTIVE);
 
-                counter = 0;
-                currentLine = "";
-                currentHexLine = new ArrayList<>();
-                currentStringLine = new ArrayList<>();
+            tagTeams.add(tagTeam);
 
-            }
-        }
+
+        });
+        return tagTeams;
     }
 
-    private void stablesDat() throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\stables.dat");
-        byte[] data = Files.readAllBytes(path);
+    List<Stable> stablesDat(File importFolder, List<Worker> workers, List<Promotion> promotions) {
+        List<Stable> stables = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "stables", 70);
 
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        List<String> currentHexLine = new ArrayList<>();
-        List<String> currentStringLine = new ArrayList<>();
-        int counter = 0;
-        int lineLength = 69;
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
+            Stable stable = new Stable();
+            stable.setName(textLine.substring(1, 24).trim());
+            stable.setOwner(
+                    promotions.stream()
+                            .filter(promotion -> promotion.getImportKey() == hexStringToInt(hexLine.get(26)))
+                            .findFirst()
+                            .orElse(null)
+            );
 
-        for (int i = 0; i < fileString.length(); i += 2) {
-
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            if (counter == lineLength) {
-                Stable stable = new Stable();
-                stable.setName(currentLine.substring(1, 24).trim());
-                stable.setOwner(getPromotionFromKey(hexStringToInt(currentHexLine.get(26))));
-
-                for (int f = 28; f < currentHexLine.size() - 1; f += 2) {
-                    String id1 = currentHexLine.get(f) + currentHexLine.get(f + 1);
-                    if (workerIDs.indexOf(id1) > -1
-                            && !stable.getWorkers().contains(allWorkers.get(workerIDs.indexOf(id1)))) {
-                        stable.getWorkers().add(allWorkers.get(workerIDs.indexOf(id1)));
-                    }
-                }
-
-                stablesToAdd.add(stable);
-
-                counter = 0;
-                currentLine = "";
-                currentHexLine = new ArrayList<>();
-                currentStringLine = new ArrayList<>();
-            } else {
-                currentLine += hexStringToLetter(hexValueString);
-                currentHexLine.add(hexValueString);
-                currentStringLine.add(hexStringToLetter(hexValueString));
-                counter++;
+            for (int f = 28; f < hexLine.size() - 1; f += 2) {
+                int id = hexStringToInt(hexLine.get(f) + hexLine.get(f + 1));
+                Optional<Worker> worker = workers.stream().filter(worker1 -> worker1.getImportKey() == id).findFirst();
+                worker.ifPresent(worker1 -> {
+                    stable.getWorkers().add(worker1);
+                });
             }
-        }
 
+            stables.add(stable);
+
+        });
+        return stables;
     }
 
     private void staffDat() throws IOException {
@@ -469,100 +479,94 @@ public class Import {
         gameController.getStaffManager().addStaff(staffViews);
     }
 
-    private void workersDat() throws IOException {
-
-        Path path = Paths.get(importFolder.getPath() + "\\wrestler.dat");
-        byte[] data = Files.readAllBytes(path);
-
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        List<String> currentHexLine = new ArrayList<>();
-        List<String> currentStringLine = new ArrayList<>();
-        int counter = 0;
-        int lineLength = 307;
+    List<Worker> workersDat(File importFolder) {
+        List<Worker> workers = new ArrayList<>();
         int rosterPositionIndex = 82;
 
-        for (int i = 0; i < fileString.length(); i += 2) {
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
 
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
+        hexLines.forEach(hexLine -> {
+            Worker worker = PersonFactory.randomWorker();
 
-            currentLine += hexStringToLetter(hexValueString);
-            currentHexLine.add(hexValueString);
-            currentStringLine.add(hexStringToLetter(hexValueString));
+            String currentLine = hexLineToTextString(hexLine);
 
-            counter++;
+            workerIDs.add(hexLine.get(1) + hexLine.get(2));
+            worker.setImportKey(hexStringToInt(hexLine.get(1) + hexLine.get(2)));
 
-            if (counter == lineLength) {
+            worker.setName(currentLine.substring(3, 27).trim());
+            worker.setShortName(currentLine.substring(28, 38).trim());
+            worker.setImageString(currentLine.substring(45, 65).trim());
+            worker.setFlying(hexStringToInt(hexLine.get(151)));
+            worker.setStriking(hexStringToInt(hexLine.get(147)));
+            worker.setWrestling(hexStringToInt(hexLine.get(149)));
+            worker.setPopularity(hexStringToInt(hexLine.get(157)));
+            worker.setCharisma(hexStringToInt(hexLine.get(159)));
+            worker.setBehaviour(hexStringToInt(hexLine.get(255)));
+            worker.setAge(hexStringToInt(hexLine.get(42)));
+            worker.setGender(
+                    currentLine.charAt(293) == 'ÿ'
+                            ? Gender.FEMALE : Gender.MALE);
 
-                Worker worker = PersonFactory.randomWorker();
+            boolean fullTime;
+            boolean mainRoster;
 
-                worker.setName(currentLine.substring(3, 27).trim());
-                worker.setShortName(currentLine.substring(28, 38).trim());
-                worker.setImageString(currentLine.substring(45, 65).trim());
-                worker.setFlying(hexStringToInt(currentHexLine.get(151)));
-                worker.setStriking(hexStringToInt(currentHexLine.get(147)));
-                worker.setWrestling(hexStringToInt(currentHexLine.get(149)));
-                worker.setPopularity(hexStringToInt(currentHexLine.get(157)));
-                worker.setCharisma(hexStringToInt(currentHexLine.get(159)));
-                worker.setBehaviour(hexStringToInt(currentHexLine.get(255)));
-                worker.setAge(hexStringToInt(currentHexLine.get(42)));
-                worker.setGender(
-                        currentStringLine.get(293).equals("ÿ")
-                                ? Gender.FEMALE : Gender.MALE);
-
-                boolean fullTime;
-                boolean mainRoster;
-
-                switch (currentHexLine.get(rosterPositionIndex)) {
-                    case "07":
-                        //development
-                        fullTime = true;
-                        mainRoster = false;
-                        break;
-                    case "19":
-                        //non-wrestler
-                        fullTime = false;
-                        mainRoster = true;
-                        break;
-                    default:
-                        //shouldn't happen
-                        fullTime = true;
-                        mainRoster = true;
-                        break;
-                }
-
-                worker.setFullTime(fullTime);
-                worker.setMainRoster(mainRoster);
-
-                String otherPromotionName = (currentStringLine.get(76) + currentStringLine.get(77)).trim();
-                if (!otherPromotionName.trim().isEmpty()) {
-                    otherWorkers.add(worker);
-                    otherWorkerPromotions.add(otherPromotionName);
-                    if (!otherPromotionNames.contains(otherPromotionName)) {
-                        otherPromotionNames.add(otherPromotionName);
-                    }
-
-                }
-
-                //look for extra promotions
-                //sign contracts for workers that match with promotion keys
-                for (Promotion p : allPromotions) {
-                    checkForWorkerContract(p, worker, currentHexLine, currentLine);
-                }
-
-                allWorkers.add(worker);
-                workerIDs.add(currentHexLine.get(1) + currentHexLine.get(2));
-                managerIDs.add(currentHexLine.get(121) + currentHexLine.get(122));
-                counter = 0;
-                currentLine = "";
-                currentHexLine = new ArrayList<>();
-                currentStringLine = new ArrayList<>();
-
+            switch (hexLine.get(rosterPositionIndex)) {
+                case "07":
+                    //development
+                    fullTime = true;
+                    mainRoster = false;
+                    break;
+                case "19":
+                    //non-wrestler
+                    fullTime = false;
+                    mainRoster = true;
+                    break;
+                default:
+                    //shouldn't happen
+                    fullTime = true;
+                    mainRoster = true;
+                    break;
             }
-        }
-        allWorkers = gameController.getWorkerManager().createWorkers(allWorkers);
+
+            worker.setFullTime(fullTime);
+            worker.setMainRoster(mainRoster);
+
+            workers.add(worker);
+        });
+        return workers;
     }
+
+    List<Contract> contracts(File importFolder, List<Worker> workers, List<Promotion> promotions, LocalDate gameStartDate) {
+        List<Contract> contracts = new ArrayList<>();
+
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
+
+        hexLines.forEach(hexLine -> {
+            Worker worker = workers.stream()
+                    .filter(worker1 -> worker1.getImportKey() == hexStringToInt(hexLine.get(1) + hexLine.get(2)))
+                    .findFirst()
+                    .orElse(null);
+            int a = hexStringToInt(hexLine.get(65));
+            int b = hexStringToInt(hexLine.get(67));
+            int c = hexStringToInt(hexLine.get(69));
+            int[] promoKeys = new int[]{a, b, c};
+            boolean exclusive = hexStringToLetter(hexLine.get(71)).equals("W");
+            promotions.stream()
+                    .filter(promotion -> ArrayUtils.contains(promoKeys, promotion.getImportKey()))
+                    .forEach(promotion -> {
+                        contracts.add(Contract.builder()
+                                .worker(worker)
+                                .promotion(promotion)
+                                .exclusive(exclusive)
+                                .active(true)
+                                .startDate(gameStartDate)
+                                .endDate(ContractUtils.contractEndDate(gameStartDate, RandomUtils.nextInt(0, 12)))
+                                .build());
+                    });
+        });
+        return contracts;
+    }
+
 
     private void relateDat() throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\relate.dat");
@@ -637,56 +641,6 @@ public class Import {
             if (workerIDs.indexOf(managerIDs.get(i)) > -1) {
                 allWorkers.get(i).setManager(allWorkers.get(workerIDs.indexOf(managerIDs.get(i))));
             }
-        }
-    }
-
-    private void checkForWorkerContract(Promotion promotion, Worker worker, List<String> currentHexLine, String currentLine) {
-        boolean exclusive = hexStringToLetter(currentHexLine.get(71)).equals("W");
-
-        int a = hexStringToInt(currentHexLine.get(65));
-        int b = hexStringToInt(currentHexLine.get(65));
-        int c = hexStringToInt(currentHexLine.get(65));
-        String rosterSplitName = "";
-
-        if (promotion.indexNumber() == a) {
-            rosterSplitName = currentLine.substring(91, 100);
-        } else if (promotion.indexNumber() == b) {
-            rosterSplitName = currentLine.substring(101, 110);
-        } else if (promotion.indexNumber() == c) {
-            rosterSplitName = currentLine.substring(111, 120);
-        } else {
-            return;
-        }
-        checkForRosterSplit(promotion, worker, rosterSplitName);
-
-        contractsToAdd.add(Contract.builder()
-                .worker(worker)
-                .promotion(promotion)
-                .exclusive(exclusive)
-                .active(true)
-                .startDate(getGameController().getDateManager().today())
-                .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
-                .build());
-
-    }
-
-    private void checkForRosterSplit(Promotion promotion, Worker worker, String groupName) {
-        final String trimmedName = groupName.trim();
-        if (trimmedName.equalsIgnoreCase("NONE")) {
-            return;
-        }
-        RosterSplit existingGroup = rosterSplitsToAdd.stream()
-                .filter(group -> group.getOwner().equals(promotion) && group.getName().equals(trimmedName))
-                .findFirst().orElse(null);
-
-        if (existingGroup != null) {
-            existingGroup.getWorkers().add(worker);
-        } else {
-            RosterSplit newGroup = new RosterSplit();
-            newGroup.setName(trimmedName);
-            newGroup.setOwner(promotion);
-            newGroup.getWorkers().add(worker);
-            rosterSplitsToAdd.add(newGroup);
         }
     }
 

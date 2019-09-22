@@ -53,6 +53,7 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
+        worker.setWorkerID(123);
         Database.insertGameObject(worker);
         List<Worker> workers = Database.selectAll(Worker.class);
         assertThat(workers).hasSize(1);

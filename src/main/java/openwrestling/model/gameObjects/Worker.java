@@ -22,6 +22,8 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
     private String shortName;
     private String imageString;
 
+    private int importKey;
+
     private int striking;
     private int flying;
     private int wrestling;

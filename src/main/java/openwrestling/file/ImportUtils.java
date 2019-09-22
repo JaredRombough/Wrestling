@@ -70,7 +70,8 @@ public class ImportUtils {
     }
 
     static String hexLineToTextString(List<String> hexLine) {
-        return StringUtils.join(hexLine.stream().map(ImportUtils::hexStringToLetter).collect(Collectors.toList()));
+        List<String> toLetters = hexLine.stream().map(ImportUtils::hexStringToLetter).collect(Collectors.toList());
+        return StringUtils.join(toLetters, null);
     }
 
 

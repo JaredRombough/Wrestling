@@ -1,10 +1,10 @@
 package openwrestling.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Stable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StableManager {
 
@@ -25,9 +25,10 @@ public class StableManager {
         stables.add(stable);
     }
 
-    public void createStables(List<Stable> stables) {
-        this.stables.addAll(stables);
-        Database.insertList(stables);
+    public List<Stable> createStables(List<Stable> stables) {
+        List saved = Database.insertList(stables);
+        this.stables.addAll(saved);
+        return this.stables;
     }
 
 }
