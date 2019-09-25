@@ -5,6 +5,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.Gender;
@@ -155,5 +156,13 @@ public class ImportTest {
             assertThat(stable.getWorkers()).isNotEmpty();
             assertThat(stable.getOwner()).isNotNull();
         });
+    }
+
+    @Test
+    public void beltsDat() {
+        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
+        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<Title> titles = testImport.beltDat(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
+        assertThat(titles).hasSize(69);
     }
 }

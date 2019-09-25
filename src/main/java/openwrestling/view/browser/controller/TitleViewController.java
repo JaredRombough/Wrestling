@@ -16,8 +16,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.model.modelView.TitleReign;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.TitleReign;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
@@ -28,7 +28,7 @@ import openwrestling.view.utility.interfaces.ControllerBase;
 
 public class TitleViewController extends ControllerBase implements Initializable {
 
-    private TitleView titleView;
+    private Title title;
 
     @FXML
     private AnchorPane activeTypeAnchorPane;
@@ -78,42 +78,42 @@ public class TitleViewController extends ControllerBase implements Initializable
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof TitleView) {
-            this.titleView = (TitleView) obj;
+        if (obj instanceof Title) {
+            this.title = (Title) obj;
         } else {
-            this.titleView = null;
+            this.title = null;
         }
-        gridPane.setVisible(this.titleView != null);
+        gridPane.setVisible(this.title != null);
         updateLabels();
     }
 
     @Override
     public void updateLabels() {
-        editLabel.setCurrent(titleView);
+        editLabel.setCurrent(title);
 
-        if (titleView != null) {
+        if (title != null) {
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
-                    playerPromotion().equals(titleView.getTitle().getPromotion()),
+                    playerPromotion().equals(title.getPromotion()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
-                    titleView.getActiveType());
+                    title.getActiveType());
             comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {
                 @Override
                 public void changed(ObservableValue<? extends ActiveType> observable, ActiveType oldValue, ActiveType newValue) {
-                    titleView.getTitle().setActiveType(newValue);
+                    title.setActiveType(newValue);
                 }
             });
 
             updateRosterSplitComboBox(rosterSplitComboBox,
                     gameController.getRosterSplitManager().getRosterSplits(),
-                    titleView,
-                    titleView.getTitle().getPromotion(),
+                    title,
+                    title.getPromotion(),
                     playerPromotion());
 
-            prestigeLabel.setText(String.valueOf(titleView.getTitle().getPrestige()));
+            prestigeLabel.setText(String.valueOf(title.getPrestige()));
 
             Comparator<TitleReign> comparator = Comparator.comparingInt(TitleReign::getSequenceNumber).reversed();
-            ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(titleView.getTitleReigns());
+            ObservableList<TitleReign> titleReigns = FXCollections.observableArrayList(title.getTitleReigns());
             FXCollections.sort(titleReigns, comparator);
             listView.setItems(titleReigns);
         } else {

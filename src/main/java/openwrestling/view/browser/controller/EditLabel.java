@@ -9,7 +9,7 @@ import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
@@ -49,9 +49,9 @@ public class EditLabel extends ControllerBase implements Initializable {
         if (segmentItem != null) {
             label.setText(segmentItem.getLongName());
             editButton.setOnAction(e -> {
-                if (segmentItem instanceof TitleView) {
-                    TitleView titleView = (TitleView) object;
-                    titleView.getTitle().setName(ViewUtils.editTextDialog(titleView.getTitle().getName()));
+                if (segmentItem instanceof Title) {
+                    Title title = (Title) object;
+                    title.setName(ViewUtils.editTextDialog(title.getName()));
                 } else if (segmentItem instanceof EventTemplate) {
                     EventTemplate eventTemplate = (EventTemplate) object;
                     eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));
@@ -77,7 +77,7 @@ public class EditLabel extends ControllerBase implements Initializable {
                 mainApp.show(ScreenCode.CALENDAR);
             } else {
                 Optional<? extends SegmentItem> optionalResult = Optional.empty();
-                if (segmentItem instanceof TitleView || BrowseMode.TITLES.equals(browseMode)) {
+                if (segmentItem instanceof Title || BrowseMode.TITLES.equals(browseMode)) {
                     optionalResult = ViewUtils.createTitleViewDialog(gameController).showAndWait();
                 } else if (segmentItem instanceof TagTeam || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();

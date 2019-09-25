@@ -1,14 +1,16 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import static java.time.temporal.ChronoUnit.DAYS;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import openwrestling.model.modelView.TitleReign;
+import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class TitleReignController extends ControllerBase implements Initializable {
 
@@ -46,14 +48,14 @@ public class TitleReignController extends ControllerBase implements Initializabl
                 : ModelUtils.slashNames(titleReign.getWorkers()));
         dateWonLabel.setText(titleReign.getDayWon().toString());
         dateLostLabel.setText(titleReign.getDayLostString());
-        numberOfDaysLabel.setText(Long.toString(getNumberOfDays()) + " Days");
+        numberOfDaysLabel.setText(getNumberOfDays() + " Days");
     }
 
     private long getNumberOfDays() {
-        if (titleReign.getDateLost() == null) {
+        if (titleReign.getDayLost() == null) {
             return DAYS.between(titleReign.getDayWon(), gameController.getDateManager().today());
         } else {
-            return DAYS.between(titleReign.getDayWon(), titleReign.getDateLost());
+            return DAYS.between(titleReign.getDayWon(), titleReign.getDayLost());
         }
     }
 }

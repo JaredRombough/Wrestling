@@ -1,16 +1,5 @@
 package openwrestling.view.utility;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -53,25 +42,18 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javax.imageio.ImageIO;
-
-import openwrestling.model.gameObjects.RosterSplit;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import openwrestling.MainApp;
 import openwrestling.model.Relationship;
 import openwrestling.model.SegmentItem;
-import static openwrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 import openwrestling.model.controller.GameController;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.TitleView;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.RegionWrapper;
@@ -85,16 +67,35 @@ import openwrestling.view.utility.comparators.WorkerPopularityComparator;
 import openwrestling.view.utility.comparators.WorkerStrikingComparator;
 import openwrestling.view.utility.comparators.WorkerWrestlingComparator;
 import openwrestling.view.utility.comparators.WorkrateComparator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static openwrestling.model.constants.StringConstants.ALL_ROSTER_SPLITS;
 
 public final class ViewUtils {
 
     public static ComboBox updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
-            Object[] objects, Object object) {
+                                                Object[] objects, Object object) {
         return updatePlayerComboBox(anchorPane, isPlayerPromotion, Arrays.asList(objects), object);
     }
 
     public static ComboBox updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
-            List objects, Object object) {
+                                                List objects, Object object) {
         anchorPane.getChildren().clear();
 
         ComboBox comboBox = new ComboBox();
@@ -257,7 +258,7 @@ public final class ViewUtils {
     }
 
     public static Dialog generateRelationshipDialog(SegmentItem segmentItem, List<Relationship> relationships) {
-        Dialog<TitleView> dialog = new Dialog<>();
+        Dialog<Title> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
 
         dialog.setTitle("Relationships");
@@ -317,8 +318,8 @@ public final class ViewUtils {
         return editTextDialog(string, "Edit this value");
     }
 
-    public static Dialog<TitleView> createTitleViewDialog(GameController gameController) {
-        Dialog<TitleView> dialog = new Dialog<>();
+    public static Dialog<Title> createTitleViewDialog(GameController gameController) {
+        Dialog<Title> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField titleName = new TextField();
         VBox vBox = new VBox(8);
@@ -342,9 +343,12 @@ public final class ViewUtils {
 
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                TitleView newTitleView = gameController.getTitleFactory().createTitle(
-                        gameController.getPromotionManager().getPlayerPromotion(), titleName.getText());
-                return newTitleView;
+                Title newTitle = Title.builder().
+                        promotion(gameController.getPromotionManager().getPlayerPromotion())
+                        .name(titleName.getText())
+                        .build();
+                gameController.getTitleManager().createTitle(newTitle);
+                return newTitle;
             }
             return null;
         });
@@ -524,8 +528,8 @@ public final class ViewUtils {
                     person.getName(),
                     promotion.getShortName(),
                     ContractUtils.calculateTerminationFee(contract, date) > 0
-                    ? "$" + ContractUtils.calculateTerminationFee(contract, date)
-                    : "no additional cost");
+                            ? "$" + ContractUtils.calculateTerminationFee(contract, date)
+                            : "no additional cost");
         }
         return ViewUtils.generateConfirmationDialogue("Really terminate this contract?", prompt);
     }

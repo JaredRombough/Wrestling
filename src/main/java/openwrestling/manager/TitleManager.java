@@ -1,42 +1,75 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
+
+import lombok.Getter;
+import openwrestling.database.Database;
+import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.TitleReign;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.manager.DateManager;
+import openwrestling.model.utility.ModelUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.gameObjects.Contract;
-import openwrestling.model.Title;
-import openwrestling.model.TitleWorker;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.TitleReign;
-import openwrestling.model.modelView.TitleView;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.utility.ModelUtils;
+import java.util.Optional;
 
 public class TitleManager implements Serializable {
 
+    @Getter
     private final List<Title> titles;
-    private final List<TitleWorker> titleWorkers;
-    private final List<TitleView> titleViews;
+    @Getter
+    private final List<TitleReign> titleReigns;
 
     private final DateManager dateManager;
 
     public TitleManager(DateManager dateManager) {
-        titles = new ArrayList<>();
-        titleWorkers = new ArrayList<>();
-        this.titleViews = new ArrayList<>();
+        this.titles = new ArrayList<>();
+        this.titleReigns = new ArrayList<>();
         this.dateManager = dateManager;
     }
 
-    public void addTitle(Title title) {
-        titles.add(title);
+    public void createTitle(Title title) {
+        createTitles(List.of(title));
     }
 
-    public void addTitleView(TitleView titleView) {
-        titleViews.add(titleView);
+    public List<Title> createTitles(List<Title> titles) {
+        List saved = Database.insertList(titles);
+        List<TitleReign> titleReigns = new ArrayList<>();
+
+        saved.forEach(obj -> {
+            Title title = (Title) obj;
+            if (title.getChampionTitleReign() != null) {
+                title.getChampionTitleReign().setTitle(title);
+                titleReigns.add(title.getChampionTitleReign());
+            } else {
+                TitleReign titleReign = TitleReign.builder()
+                        .dayWon(dateManager.today())
+                        .sequenceNumber(1)
+                        .title(title)
+                        .build();
+                titleReigns.add(titleReign);
+            }
+        });
+
+        List savedReigns = Database.insertList(titleReigns);
+
+        saved.forEach(obj -> {
+            Title title = (Title) obj;
+            title.setChampionTitleReign(
+                    (TitleReign) savedReigns.stream()
+                            .filter(tileReign -> ((TitleReign) tileReign).getTitle().getTitleID() == title.getTitleID())
+                            .findFirst().orElse(null)
+            );
+        });
+        this.titleReigns.addAll(savedReigns);
+        this.titles.addAll(saved);
+        return saved;
     }
 
-    public List<Title> getTitles(Promotion promotion) {
-        List<Title> promotionTitles = new ArrayList();
+    public List<Title> getTitleViews(Promotion promotion) {
+        List<Title> promotionTitles = new ArrayList<>();
         for (Title title : titles) {
             if (title.getPromotion().equals(promotion)) {
                 promotionTitles.add(title);
@@ -46,44 +79,24 @@ public class TitleManager implements Serializable {
         return promotionTitles;
     }
 
-    public List<TitleView> getTitleViews(Promotion promotion) {
-        List<TitleView> promotionTitleViews = new ArrayList();
-        for (TitleView titleView : titleViews) {
-            if (titleView.getTitle().getPromotion().equals(promotion)) {
-                promotionTitleViews.add(titleView);
-            }
-        }
-
-        return promotionTitleViews;
-    }
-
     public List<Worker> getCurrentChampionWorkers(Title title) {
         List<Worker> workers = new ArrayList<>();
-        for (TitleWorker titleWorker : titleWorkers) {
-            if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
-                workers.add(titleWorker.getWorker());
-            }
-        }
-        return workers;
-    }
+        Optional<TitleReign> current = titleReigns.stream()
+                .filter(titleReign -> titleReign.getSequenceNumber() == title.getSequenceNumber())
+                .findFirst();
 
-    public List<TitleWorker> getCurrentChampionTitleWorkers(Title title) {
-        List<TitleWorker> workers = new ArrayList<>();
-        for (TitleWorker titleWorker : titleWorkers) {
-            if (titleWorker.getTitle().equals(title) && titleWorker.getDayLost() == null) {
-                workers.add(titleWorker);
-            }
-        }
+        current.ifPresent(titleReign -> workers.addAll(titleReign.getWorkers()));
+
         return workers;
     }
 
     public boolean isVacant(Title title) {
-        return getCurrentChampionTitleWorkers(title).isEmpty();
+        return getCurrentChampionWorkers(title).isEmpty();
     }
 
     //check if we have any outstanding titles from expired contracts
     public void stripTitles(Contract contract) {
-        for (Title title : getTitles(contract.getPromotion())) {
+        for (Title title : getTitleViews(contract.getPromotion())) {
             for (Worker worker : getCurrentChampionWorkers(title)) {
                 if (worker.equals(contract.getWorker())) {
                     stripTitle(title);
@@ -93,10 +106,11 @@ public class TitleManager implements Serializable {
     }
 
     public void stripTitle(Title title) {
-        List<TitleWorker> currentChamps = getCurrentChampionTitleWorkers(title);
-        for (TitleWorker titleWorker : currentChamps) {
-            titleWorker.setDayLost(dateManager.today());
-        }
+        //TODO strip title in db
+//        List<TitleWorker> currentChamps = getCurrentChampionTitleWorkers(title);
+//        for (TitleWorker titleWorker : currentChamps) {
+//            titleWorker.setDayLost(dateManager.today());
+//        }
     }
 
     //here we would update the title's tracker of reigns also        
@@ -112,21 +126,13 @@ public class TitleManager implements Serializable {
     }
 
     public void awardTitle(Title title, List<Worker> winner) {
+        //TODO award title in db
         for (Worker worker : winner) {
-            TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
-            titleWorkers.add(titleWorker);
+//            TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
+//            titleWorkers.add(titleWorker);
 
         }
-        getTitleView(title).addReign(winner, dateManager.today());
-    }
-
-    public TitleView getTitleView(Title title) {
-        for (TitleView titleView : titleViews) {
-            if (titleView.getTitle().equals(title)) {
-                return titleView;
-            }
-        }
-        return null;
+        title.addReign(winner, dateManager.today());
     }
 
     //returns a list of titles available for an event
@@ -134,7 +140,7 @@ public class TitleManager implements Serializable {
 
         List<Title> eventTitles = new ArrayList<>();
 
-        for (Title title : getTitles(promotion)) {
+        for (Title title : getTitleViews(promotion)) {
             List<Worker> champs = getCurrentChampionWorkers(title);
             if (champs.isEmpty()) {
                 eventTitles.add(title);
@@ -158,9 +164,8 @@ public class TitleManager implements Serializable {
 
         StringBuilder sb = new StringBuilder();
 
-        TitleView titleView = getTitleView(title);
 
-        for (TitleReign titleReign : titleView.getTitleReigns()) {
+        for (TitleReign titleReign : title.getTitleReigns()) {
             sb.append(titleReignString(titleReign));
             sb.append("\n");
         }
@@ -178,7 +183,7 @@ public class TitleManager implements Serializable {
         sb.append("\t\t\t");
         sb.append(titleReign.getDayWon() == null ? "????" : titleReign.getDayWon());
         sb.append("\tto\t");
-        sb.append(titleReign.getDateLost() == null ? "present" : titleReign.getDateLost());
+        sb.append(titleReign.getDayLost() == null ? "present" : titleReign.getDayLost());
 
         return sb.toString();
     }

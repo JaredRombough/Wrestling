@@ -9,10 +9,11 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
@@ -43,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static openwrestling.file.ImportUtils.*;
 import static openwrestling.model.constants.GameConstants.*;
@@ -96,6 +98,7 @@ public class Import {
                 promotions = gameController.getPromotionManager().createPromotions(promotions);
                 List<Worker> workers = workersDat(importFolder);
                 workers = gameController.getWorkerManager().createWorkers(workers);
+                //TODO set managers
                 List<RosterSplit> rosterSplits = rosterSplits(importFolder, "promos", promotions);
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
                 List<Contract> contracts = contracts(importFolder, workers, promotions, gameController.getDateManager().today());
@@ -104,17 +107,13 @@ public class Import {
                 tagTeams = gameController.getTagTeamManager().createTagTeams(tagTeams);
                 List<Stable> stables = stablesDat(importFolder, workers, promotions);
                 stables = gameController.getStableManager().createStables(stables);
-//                allPromotions.addAll(promotionsDat(importFolder, "promos"));
-//                workersDat(importFolder);
-//                gameController.getWorkerManager().createWorkers(allWorkers);
-//                setManagers();
-//                teamsDat();
-//                stablesDat();
-                beltDat();
-                tvDat();
-                eventDat();
-                staffDat();
-                relateDat();
+                List<Title> titles = beltDat(importFolder, promotions, workers, gameController.getDateManager().today());
+                titles = gameController.getTitleManager().createTitles(titles);
+
+//                tvDat();
+//                eventDat();
+//                staffDat();
+//                relateDat();
             } catch (Exception ex) {
 
                 sb.append(ex);
@@ -710,107 +709,40 @@ public class Import {
         }
     }
 
-    private void beltDat() throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\belt.dat");
-        byte[] data = Files.readAllBytes(path);
+    List<Title> beltDat(File importFolder, List<Promotion> promotions, List<Worker> workers, LocalDate dayWon) {
+        List<Title> titles = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "belt", 457);
 
-        String workerId = new String();
-        String workerId2 = new String();
-        String titleName = new String();
+        hexLines.forEach(hexline -> {
+            String textLine = hexLineToTextString(hexline);
+            int workerID1 = hexStringToInt(hexline.get(35) + hexline.get(36));
+            int workerID2 = hexStringToInt(hexline.get(37) + hexline.get(38));
+            int promotionKey = hexStringToInt(hexline.get(33));
+            List<Worker> champions = workers.stream()
+                    .filter(worker -> worker.getImportKey() == workerID1 || worker.getImportKey() == workerID2)
+                    .collect(Collectors.toList());
+            Promotion promotion = promotions.stream()
+                    .filter(p -> p.getImportKey() == promotionKey)
+                    .findFirst()
+                    .orElse(null);
+            Title title = Title.builder()
+                    .name(textLine.substring(1, 31).trim())
+                    .promotion(promotion)
+                    .prestige(hexStringToInt(hexline.get(43)))
+                    .build();
 
-        List<String> titleNames = new ArrayList<>();
-        List<String> beltWorkerIDs = new ArrayList<>();
-        List<String> beltWorkerIDs2 = new ArrayList<>();
-        List<Integer> titlePromotionKeys = new ArrayList<>();
-        List<Integer> titlePrestigeInts = new ArrayList<>();
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-
-        int counter = 0;
-        int lineLength = 457;
-        int promotionKeyIndex = 33;
-        int prestigeIndex = 43;
-        int worker1IdIndex1 = 35;
-        int worker1IdIndex2 = 36;
-        int worker2IdIndex1 = 37;
-        int worker2IdIndex2 = 38;
-
-        for (int i = 0; i < fileString.length(); i += 2) {
-
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            currentLine += hexStringToLetter(hexValueString);
-
-            if (counter == promotionKeyIndex) {
-                titlePromotionKeys.add(hexStringToInt(hexValueString));
-            } else if (counter == worker1IdIndex1 || counter == worker1IdIndex2) {
-                workerId += hexValueString;
-            } else if (counter == worker2IdIndex1 || counter == worker2IdIndex2) {
-                workerId2 += hexValueString;
-            } else if (counter == prestigeIndex) {
-                titlePrestigeInts.add(hexStringToInt(hexValueString));
+            if (!champions.isEmpty()) {
+                TitleReign titleReign = TitleReign.builder()
+                        .workers(champions)
+                        .dayWon(dayWon)
+                        .sequenceNumber(1)
+                        .build();
+                title.setChampionTitleReign(titleReign);
             }
 
-            counter++;
-
-            if (counter == lineLength) {
-
-                counter = 0;
-
-                currentLine = currentLine.substring(1, 31).trim();
-                titleName += currentLine;
-
-                //reset the line for the next loop
-                currentLine = "";
-
-                beltWorkerIDs.add(workerId);
-                beltWorkerIDs2.add(workerId2);
-                titleNames.add(titleName);
-                workerId = "";
-                workerId2 = "";
-                titleName = "";
-
-            }
-        }
-
-        //go through the promotions
-        for (int p = 0; p < allPromotions.size(); p++) {
-
-            //go through the titles
-            for (int t = 0; t < titleNames.size(); t++) {
-
-                //if promotion matches title
-                if (titlePromotionKeys.get(t).equals(allPromotions.get(p).indexNumber())) {
-
-                    //go through the workers
-                    for (int w = 0; w < workerIDs.size(); w++) {
-
-                        //list to hold the title holder(s) we find
-                        List<Worker> titleHolders = new ArrayList<>();
-
-                        if (workerIDs.get(w).equals(beltWorkerIDs.get(t))) {
-
-                            titleHolders.add(allWorkers.get(w));
-
-                            //check for a tag team partner
-                            for (int w2 = 0; w2 < workerIDs.size(); w2++) {
-                                if (workerIDs.get(w2).equals(beltWorkerIDs2.get(t))) {
-
-                                    titleHolders.add(allWorkers.get(w2));
-                                    break;
-                                }
-                            }
-
-                            //create the title
-                            TitleView titleView = getGameController().getTitleFactory().createTitle(allPromotions.get(p), titleHolders, titleNames.get(t));
-                            titleView.getTitle().setPrestige(titlePrestigeInts.get(t));
-                            assignRosterSplit(titleView, titleView.getTitle().getPromotion(), titleView.getLongName());
-                        }
-                    }
-                }
-            }
-        }
+            titles.add(title);
+        });
+        return titles;
     }
 
     public void updateOtherPromotions(List<Promotion> promotions, File importFolder) {

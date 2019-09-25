@@ -11,6 +11,7 @@ import openwrestling.model.Match;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -23,7 +24,7 @@ public class SegmentView implements Serializable {
     private List<SegmentTeam> teams;
     private LocalDate date;
     private Segment segment;
-    private final List<TitleView> titleViews;
+    private final List<Title> titles;
     private final SegmentType segmentType;
     private EventView eventView;
     private StaffView referee;
@@ -39,7 +40,7 @@ public class SegmentView implements Serializable {
         }
         teams = new ArrayList<>();
         broadcastTeam = new ArrayList<>();
-        titleViews = new ArrayList<>();
+        titles = new ArrayList<>();
     }
 
     public List<Worker> getWorkers() {
@@ -56,7 +57,7 @@ public class SegmentView implements Serializable {
             segmentItems.addAll(team.getWorkers());
             segmentItems.addAll(team.getEntourage());
         }
-        segmentItems.addAll(titleViews);
+        segmentItems.addAll(titles);
         segmentItems.addAll(broadcastTeam);
         segmentItems.add(referee);
         return segmentItems;
@@ -189,19 +190,19 @@ public class SegmentView implements Serializable {
     /**
      * @return the title
      */
-    public List<TitleView> getTitleViews() {
-        return titleViews;
+    public List<Title> getTitles() {
+        return titles;
     }
 
     /**
      * @param title the title to set
      */
-    public void addTitle(TitleView title) {
-        this.titleViews.add(title);
+    public void addTitle(Title title) {
+        this.titles.add(title);
     }
 
-    public void addTitles(List<TitleView> titleViews) {
-        this.titleViews.addAll(titleViews);
+    public void addTitles(List<Title> titles) {
+        this.titles.addAll(titles);
     }
 
     /**

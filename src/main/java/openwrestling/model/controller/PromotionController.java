@@ -12,12 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import openwrestling.model.gameObjects.Title;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Event;
 import openwrestling.model.EventTemplate;
 import openwrestling.model.EventWorker;
-import openwrestling.model.Title;
 import static openwrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_RATE;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
@@ -26,7 +26,7 @@ import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.TitleManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.gameObjects.Promotion;
@@ -414,7 +414,7 @@ public class PromotionController implements Serializable {
 
                 SegmentView segmentView = new SegmentView(SegmentType.MATCH);
                 segmentView.setTeams(matchTeams);
-                segmentView.addTitle(titleManager.getTitleView(title));
+                segmentView.addTitle(title);
                 segments.add(segmentView);
             }
         }

@@ -4,21 +4,20 @@ import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.Event;
 import openwrestling.model.Match;
-import openwrestling.model.Title;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.TitleManager;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.TitleView;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import org.junit.Before;
@@ -97,9 +96,13 @@ public class EventFactoryTest {
 
     @Test
     public void processEventView_increaseTitleWinnerMorale() {
-        TitleView titleView = new TitleView(new Title(promotion, 1, "title"));
-        titleView.addReign(Collections.emptyList(), LocalDate.now());
-        segmentView.addTitle(titleView);
+        Title title = Title.builder()
+                .promotion(promotion)
+                .sequenceNumber(1)
+                .name("title")
+                .build();
+        title.addReign(Collections.emptyList(), LocalDate.now());
+        segmentView.addTitle(title);
 
         eventFactory.processSegmentView(eventView, segmentView);
 

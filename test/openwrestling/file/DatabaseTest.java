@@ -3,6 +3,7 @@ package openwrestling.file;
 import openwrestling.database.Database;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
@@ -11,7 +12,6 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.TitleManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -139,5 +139,6 @@ public class DatabaseTest {
         assertThat(savedContract.getPromotion().getName()).isEqualTo(promotion.getName());
         assertThat(savedContract.getPromotion().getPromotionID()).isEqualTo(promotion.getPromotionID());
     }
+
 
 }

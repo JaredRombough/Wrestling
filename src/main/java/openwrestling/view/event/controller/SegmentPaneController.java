@@ -21,7 +21,7 @@ import openwrestling.model.interfaces.iSegmentLength;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -327,8 +327,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         SegmentItem item = segmentItems.get(0);
 
-        if (item instanceof TitleView) {
-            addTitleView((TitleView) segmentItems.get(0));
+        if (item instanceof Title) {
+            addTitleView((Title) segmentItems.get(0));
             return true;
         }
 
@@ -340,10 +340,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return false;
     }
 
-    public void addTitleView(TitleView titleView) {
-        titlesController.addSegmentItem(titleView);
+    public void addTitleView(Title title) {
+        titlesController.addSegmentItem(title);
         titlesController.updateLabels();
-        addTeam(titleView.getChampions(), true);
+        addTeam(title.getChampions(), true);
     }
 
     private GameScreen wrapperToInsert(List<GameScreen> workerTeamWrappers, boolean onlyEmpty) {
@@ -581,7 +581,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return segmentTeams;
     }
 
-    private List<TitleView> getTitles() {
+    private List<Title> getTitles() {
         return ModelUtils.getTitleViewsFromSegmentItems(((TeamPaneWrapper) titlesWrapper.controller).getSegmentItems());
     }
 

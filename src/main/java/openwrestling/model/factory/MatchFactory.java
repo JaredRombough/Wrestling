@@ -27,7 +27,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.MatchLength;
@@ -146,13 +146,13 @@ public class MatchFactory implements Serializable {
 
         int crowdRating = totalPop / teamCount;
 
-        if (!segmentView.getTitleViews().isEmpty()) {
+        if (!segmentView.getTitles().isEmpty()) {
             int titleTotal = 0;
-            for (TitleView title : segmentView.getTitleViews()) {
+            for (Title title : segmentView.getTitles()) {
                 titleTotal += title.getPrestige();
             }
 
-            int titleAvg = titleTotal / segmentView.getTitleViews().size();
+            int titleAvg = titleTotal / segmentView.getTitles().size();
             crowdRating = modifyRating(crowdRating, titleAvg, TITLE_MODIFIER_WEIGHT);
         }
 

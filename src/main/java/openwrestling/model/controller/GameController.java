@@ -12,7 +12,6 @@ import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
 import openwrestling.model.factory.PromotionFactory;
-import openwrestling.model.factory.TitleFactory;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.DateManager;
@@ -22,7 +21,7 @@ import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.manager.StaffManager;
-import openwrestling.model.manager.TitleManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 
 import java.io.IOException;
@@ -36,7 +35,6 @@ public final class GameController implements Serializable {
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
     private final PromotionFactory promotionFactory;
-    private final TitleFactory titleFactory;
     private final MatchFactory matchFactory;
 
     private final DateManager dateManager;
@@ -90,7 +88,6 @@ public final class GameController implements Serializable {
                 dateManager,
                 segmentManager);
 
-        titleFactory = new TitleFactory(titleManager);
         matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager);
 
 

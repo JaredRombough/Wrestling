@@ -4,7 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.LocalDragboard;
@@ -39,10 +39,10 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
                 segmentPaneController.setRef((StaffView) segmentItem);
             }
 
-            if (segmentItem instanceof TitleView) {
-                TitleView titleView = (TitleView) segmentItem;
-                if (!titleView.getChampions().isEmpty()) {
-                    segmentPaneController.addTeam(((TitleView) segmentItem).getChampions(), true);
+            if (segmentItem instanceof Title) {
+                Title title = (Title) segmentItem;
+                if (!title.getChampions().isEmpty()) {
+                    segmentPaneController.addTeam(((Title) segmentItem).getChampions(), true);
                 }
             }
 

@@ -22,11 +22,11 @@ import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.TitleManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -177,7 +177,7 @@ public class EventFactory {
             winners.stream().forEach((worker) -> {
                 workerManager.gainPopularity(worker);
                 relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_MATCH_WIN);
-                if (!segmentView.getTitleViews().isEmpty()) {
+                if (!segmentView.getTitles().isEmpty()) {
                     relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
                 }
             });
@@ -187,7 +187,7 @@ public class EventFactory {
                     newsManager.addJobComplaintNewsItem(entry.getKey(), winners, segmentView.getPromotion(), segmentView.getDate());
                 });
             }
-            if (!segmentView.getTitleViews().isEmpty() && !winners.isEmpty()) {
+            if (!segmentView.getTitles().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(segmentView, winners);
             }
         } else {
@@ -241,10 +241,10 @@ public class EventFactory {
     }
 
     private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
-        for (TitleView titleView : segmentView.getTitleViews()) {
-            boolean change = !winners.equals(titleView.getChampions());
+        for (Title title : segmentView.getTitles()) {
+            boolean change = !winners.equals(title.getChampions());
             if (change) {
-                titleManager.titleChange(titleView.getTitle(), winners);
+                titleManager.titleChange(title, winners);
             }
         }
     }

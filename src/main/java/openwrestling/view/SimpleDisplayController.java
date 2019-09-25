@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import openwrestling.model.Event;
 import openwrestling.model.NewsItem;
 import openwrestling.model.manager.EventManager;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
@@ -54,8 +54,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
 
         if (obj instanceof Event) {
             newText = eventManager.generateSummaryString((Event) obj);
-        } else if (obj instanceof TitleView) {
-            newText = gameController.getTitleManager().getTitleReignStrings(((TitleView) obj).getTitle());
+        } else if (obj instanceof Title) {
+            newText = gameController.getTitleManager().getTitleReignStrings(((Title) obj));
         } else if (obj instanceof Worker) {
             displayTitle.setText("");
             List<NewsItem> newsItems = gameController.getNewsManager().getNews(obj, gameController.getDateManager().today().minusMonths(12), gameController.getDateManager().today());

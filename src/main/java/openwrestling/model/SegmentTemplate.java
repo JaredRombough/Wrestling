@@ -3,12 +3,12 @@ package openwrestling.model;
 import java.util.ArrayList;
 import java.util.List;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 
 public class SegmentTemplate {
 
     private EventTemplate eventTemplate;
-    private final List<TitleView> titleView = new ArrayList();
+    private final List<Title> title = new ArrayList();
     private final List<SegmentTeam> segmentTeams = new ArrayList();
     private Event sourceEvent;
 
@@ -29,8 +29,8 @@ public class SegmentTemplate {
     /**
      * @return the titleView
      */
-    public List<TitleView> getTitleViews() {
-        return titleView;
+    public List<Title> getTitleViews() {
+        return title;
     }
 
     /**

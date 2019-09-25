@@ -2,7 +2,6 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.manager.PromotionManager;
 import openwrestling.model.StaffContract;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
@@ -12,7 +11,6 @@ import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.TitleManager;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;

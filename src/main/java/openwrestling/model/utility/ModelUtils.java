@@ -12,7 +12,7 @@ import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -155,15 +155,15 @@ public final class ModelUtils {
         return workers;
     }
 
-    public static List<TitleView> getTitleViewsFromSegmentItems(List<SegmentItem> segmentItems) {
-        List<TitleView> titleViews = new ArrayList<>();
+    public static List<Title> getTitleViewsFromSegmentItems(List<SegmentItem> segmentItems) {
+        List<Title> titles = new ArrayList<>();
 
         segmentItems.forEach((item) -> {
-            if (item instanceof TitleView) {
-                titleViews.add((TitleView) item);
+            if (item instanceof Title) {
+                titles.add((Title) item);
             }
         });
-        return titleViews;
+        return titles;
     }
 
     public static boolean teamIsPresent(List<? extends SegmentItem> workers, List<GameScreen> workerTeamWrappers) {

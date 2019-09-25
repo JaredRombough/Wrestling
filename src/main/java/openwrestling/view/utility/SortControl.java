@@ -20,7 +20,7 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.Gender;
@@ -319,10 +319,10 @@ public class SortControl extends ControllerBase implements Initializable {
     }
 
     private boolean isRosterSplitFiltered(SegmentItem segmentItem) {
-        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof TitleView)) {
+        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof Title)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (segmentItem instanceof TitleView) {
-                    return !Objects.equals(((TitleView) segmentItem).getRosterSplit(), rosterSplitFilter);
+                if (segmentItem instanceof Title) {
+                    return !Objects.equals(((Title) segmentItem).getRosterSplit(), rosterSplitFilter);
                 } else if (!rosterSplitFilter.getWorkers().contains(subItem)) {
                     return true;
                 }

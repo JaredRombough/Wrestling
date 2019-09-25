@@ -23,8 +23,8 @@ public final class SegmentStringUtils {
             return "Empty Match";
         }
 
-        if (!segmentView.getTitleViews().isEmpty()) {
-            string += ModelUtils.andItemsLongName(segmentView.getTitleViews());
+        if (!segmentView.getTitles().isEmpty()) {
+            string += ModelUtils.andItemsLongName(segmentView.getTitles());
             string += " ";
         }
 

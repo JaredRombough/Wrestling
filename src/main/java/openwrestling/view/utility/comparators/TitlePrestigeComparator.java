@@ -1,15 +1,15 @@
 package openwrestling.view.utility.comparators;
 
 import java.util.Comparator;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 
-public class TitlePrestigeComparator implements Comparator<TitleView> {
+public class TitlePrestigeComparator implements Comparator<Title> {
 
     @Override
-    public int compare(TitleView titleView1, TitleView titleView2) {
-        if (titleView1 != null && titleView2 != null) {
+    public int compare(Title title1, Title title2) {
+        if (title1 != null && title2 != null) {
 
-            return -Integer.valueOf(titleView1.getPrestige()).compareTo(titleView2.getPrestige());
+            return -Integer.valueOf(title1.getPrestige()).compareTo(title2.getPrestige());
         }
 
         return 0;

@@ -19,6 +19,9 @@ import openwrestling.entities.StableEntity;
 import openwrestling.entities.StableWorkerEntity;
 import openwrestling.entities.TagTeamEntity;
 import openwrestling.entities.TagTeamWorkerEntity;
+import openwrestling.entities.TitleEntity;
+import openwrestling.entities.TitleReignEntity;
+import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.GameObject;
@@ -26,6 +29,8 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
 
 import java.lang.reflect.Field;
@@ -57,6 +62,8 @@ public class Database {
         put(RosterSplit.class, RosterSplitEntity.class);
         put(Contract.class, ContractEntity.class);
         put(TagTeam.class, TagTeamEntity.class);
+        put(Title.class, TitleEntity.class);
+        put(TitleReign.class, TitleReignEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -234,7 +241,10 @@ public class Database {
                     RosterSplitWorkerEntity.class,
                     ContractEntity.class,
                     TagTeamEntity.class,
-                    TagTeamWorkerEntity.class);
+                    TagTeamWorkerEntity.class,
+                    TitleEntity.class,
+                    TitleReignEntity.class,
+                    TitleReignWorkerEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

@@ -7,7 +7,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Description;
 import openwrestling.model.interfaces.iTeamType;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -429,7 +429,7 @@ public enum TeamType implements Description, iTeamType {
 
         @Override
         public boolean droppable(SegmentItem segmentItem) {
-            return segmentItem instanceof TitleView;
+            return segmentItem instanceof Title;
         }
 
         @Override

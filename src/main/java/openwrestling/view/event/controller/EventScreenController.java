@@ -37,7 +37,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import openwrestling.manager.WorkerManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import openwrestling.MainApp;
@@ -48,7 +47,7 @@ import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.modelView.StaffView;
-import openwrestling.model.modelView.TitleView;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -244,13 +243,13 @@ public class EventScreenController extends ControllerBase implements Initializab
                             gameController.getSegmentManager().getVsMatchString(challengeMatch)));
                 }
             }
-            for (TitleView titleView : segmentView.getTitleViews()) {
-                if (!titleView.getChampions().isEmpty()
-                        && !ModelUtils.teamIsPresent(titleView.getChampions(),
+            for (Title title : segmentView.getTitles()) {
+                if (!title.getChampions().isEmpty()
+                        && !ModelUtils.teamIsPresent(title.getChampions(),
                                 segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
                     warnings.append(String.format("The %s Title is not being defended by %s.\n",
-                            titleView.getShortName(),
-                            ModelUtils.slashNames(titleView.getChampions())));
+                            title.getShortName(),
+                            ModelUtils.slashNames(title.getChampions())));
                 }
 
             }
