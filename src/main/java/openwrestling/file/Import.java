@@ -60,19 +60,12 @@ public class Import {
     private final List<Promotion> allPromotions = new ArrayList<>();
     @Getter
     private final List<Integer> promotionKeys = new ArrayList<>();
-    private final List<String> otherPromotionNames = new ArrayList<>();
-
-    private List<Worker> allWorkers = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
-    private final List<String> managerIDs = new ArrayList<>();
-    private final List<Worker> otherWorkers = new ArrayList<>();
-    private final List<String> otherWorkerPromotions = new ArrayList<>();
 
     private final List<TagTeam> allTagTeams = new ArrayList<>();
 
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
     private final List<Stable> stablesToAdd = new ArrayList<>();
-    private final List<RosterSplit> rosterSplitsToAdd = new ArrayList<>();
     private final List<Contract> contractsToAdd = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
@@ -107,10 +100,11 @@ public class Import {
                 tagTeams = gameController.getTagTeamManager().createTagTeams(tagTeams);
                 List<Stable> stables = stablesDat(importFolder, workers, promotions);
                 stables = gameController.getStableManager().createStables(stables);
-                List<Title> titles = beltDat(importFolder, promotions, workers, gameController.getDateManager().today());
+                List<Title> titles = beltDat(importFolder, promotions, workers, gameController.getDateManager().today(), rosterSplits);
                 titles = gameController.getTitleManager().createTitles(titles);
+                List<EventTemplate> tvTemplates = tvDat(importFolder, promotions, rosterSplits);
+                tvTemplates = gameController.getEventManager().createEventTemplates(tvTemplates);
 
-//                tvDat();
 //                eventDat();
 //                staffDat();
 //                relateDat();
@@ -123,32 +117,7 @@ public class Import {
 //            processOther();
 
             gameController.getPromotionManager().createPromotions(allPromotions);
-
-            contractsToAdd.stream().forEach(contract -> {
-                contract.setWorker(getMatchingWorker(contract.getWorker()));
-            });
-            gameController.getContractManager().createContracts(contractsToAdd);
             gameController.getEventManager().addEventTemplates(eventTemplates);
-            gameController.getTagTeamManager().createTagTeams(allTagTeams);
-            gameController.getStableManager().createStables(stablesToAdd);
-            List<RosterSplit> updated = new ArrayList<>();
-
-            rosterSplitsToAdd.forEach(rosterSplit -> {
-                RosterSplit rosterSplit1 = RosterSplit.builder()
-                        .name(rosterSplit.getName())
-                        .owner(rosterSplit.getOwner())
-                        .workers(new ArrayList<>())
-                        .build();
-
-                rosterSplit.getWorkers().forEach(worker -> {
-                    Worker toAdd = allWorkers.stream().filter(allWorker -> workersMatch(allWorker, worker))
-                            .findFirst()
-                            .orElse(null);
-                    rosterSplit1.getWorkers().add(toAdd);
-                });
-                updated.add(rosterSplit1);
-            });
-            gameController.getRosterSplitManager().createRosterSplits(updated);
 
             //for statistical evaluation of data only
             /* boolean evaluate = false;
@@ -159,12 +128,6 @@ public class Import {
 
         return sb.toString();
 
-    }
-
-    private Worker getMatchingWorker(Worker worker) {
-        return allWorkers.stream().filter(allWorker -> workersMatch(allWorker, worker))
-                .findFirst()
-                .orElse(null);
     }
 
     private boolean workersMatch(Worker worker1, Worker worker2) {
@@ -182,111 +145,87 @@ public class Import {
         }
         return null;
     }
+//
+//    private void processOther() {
+//        otherPromotionNames.stream().map((s) -> {
+//            Promotion p = gameController.getPromotionFactory().newPromotion();
+//            p.setName(s);
+//            p.setShortName(s);
+//            return p;
+//        }).map((p) -> {
+//            //calculate promotion level
+//            int totalPop = 0;
+//            int totalWorkers = 0;
+//            for (int i = 0; i < otherWorkers.size(); i++) {
+//                if (otherWorkerPromotions.get(i).equals(p.getName())) {
+//                    totalPop += otherWorkers.get(i).getPopularity();
+//                    totalWorkers++;
+//                }
+//            }
+//            int avgPop = totalPop / totalWorkers;
+//            p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
+//            p.setPromotionID(allPromotions.size());
+//            allPromotions.add(p);
+//            return p;
+//        }).forEach((promotion) -> {
+//            for (int i = 0; i < otherWorkers.size(); i++) {
+//                if (otherWorkerPromotions.get(i).equals(promotion.getName())) {
+//                    contractsToAdd.add(Contract.builder()
+//                            .worker(otherWorkers.get(i))
+//                            .promotion(promotion)
+//                            .exclusive(false)
+//                            .active(true)
+//                            .startDate(getGameController().getDateManager().today())
+//                            .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
+//                            .build());
+//                }
+//            }
+//        });
+//
+//        updateOtherPromotions(allPromotions, importFolder);
+//    }
 
-    private void processOther() {
-        otherPromotionNames.stream().map((s) -> {
-            Promotion p = gameController.getPromotionFactory().newPromotion();
-            p.setName(s);
-            p.setShortName(s);
-            return p;
-        }).map((p) -> {
-            //calculate promotion level
-            int totalPop = 0;
-            int totalWorkers = 0;
-            for (int i = 0; i < otherWorkers.size(); i++) {
-                if (otherWorkerPromotions.get(i).equals(p.getName())) {
-                    totalPop += otherWorkers.get(i).getPopularity();
-                    totalWorkers++;
-                }
-            }
-            int avgPop = totalPop / totalWorkers;
-            p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
-            p.setPromotionID(allPromotions.size());
-            allPromotions.add(p);
-            return p;
-        }).forEach((promotion) -> {
-            for (int i = 0; i < otherWorkers.size(); i++) {
-                if (otherWorkerPromotions.get(i).equals(promotion.getName())) {
-                    contractsToAdd.add(Contract.builder()
-                            .worker(otherWorkers.get(i))
-                            .promotion(promotion)
-                            .exclusive(false)
-                            .active(true)
-                            .startDate(getGameController().getDateManager().today())
-                            .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
-                            .build());
-                }
-            }
-        });
+    List<EventTemplate> tvDat(File importFolder, List<Promotion> promotions, List<RosterSplit> rosterSplits) {
+        List<EventTemplate> eventTemplates = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "tv", 51);
 
-        updateOtherPromotions(allPromotions, importFolder);
-    }
-
-    private void tvDat() throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\tv.dat");
-        byte[] data = Files.readAllBytes(path);
-        int timeSlotIndex = 32;
         int promotionKeyIndex = 21;
 
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        List<String> currentHexLine = new ArrayList<>();
-        List<String> currentStringLine = new ArrayList<>();
-        int counter = 0;
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
 
-        for (int i = 0; i < fileString.length(); i += 2) {
+            EventTemplate eventTemplate = new EventTemplate();
+            eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
+            eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
+            eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
+            eventTemplate.setEventsLeft(RandomUtils.nextInt(30, 60));
+            eventTemplate.setName(textLine.substring(1, 21).trim());
 
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            currentLine += hexStringToLetter(hexValueString);
-            currentHexLine.add(hexValueString);
-            currentStringLine.add(hexStringToLetter(hexValueString));
-
-            counter++;
-
-            if (counter == 51) {
-
-                EventTemplate eventTemplate = new EventTemplate();
-                eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
-                eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
-                eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
-                eventTemplate.setEventsLeft(RandomUtils.nextInt(30, 60));
-                eventTemplate.setName(currentLine.substring(1, 21).trim());
-
-                int duration = 0;
-                switch (currentStringLine.get(timeSlotIndex)) {
-                    case "P":
-                        duration = 120;
-                        break;
-                    case "G":
-                    case "E":
-                    case "L":
-                        duration = 60;
-                        break;
-                }
-                eventTemplate.setDefaultDuration(duration);
-
-                eventTemplate.setDayOfWeek(DayOfWeek.valueOf(
-                        currentLine.substring(22, 32).toUpperCase().trim()));
-
-                int key = hexStringToInt(currentHexLine.get(promotionKeyIndex));
-                for (int x = 0; x < promotionKeys.size(); x++) {
-                    if (promotionKeys.get(x) == key) {
-                        eventTemplate.setPromotion(allPromotions.get(x));
-                    }
-                }
-
-                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), eventTemplate.getName());
-                eventTemplates.add(eventTemplate);
-
-                counter = 0;
-                currentLine = "";
-                currentHexLine = new ArrayList<>();
-                currentStringLine = new ArrayList<>();
-
+            int duration = 0;
+            switch (hexStringToLetter(hexLine.get(32))) {
+                case "P":
+                    duration = 120;
+                    break;
+                case "G":
+                case "E":
+                case "L":
+                    duration = 60;
+                    break;
             }
-        }
+            eventTemplate.setDefaultDuration(duration);
+
+            eventTemplate.setDayOfWeek(DayOfWeek.valueOf(
+                    textLine.substring(22, 32).toUpperCase().trim()));
+
+            int key = hexStringToInt(hexLine.get(promotionKeyIndex));
+            Promotion promotion = promotions.stream().filter(promo -> promo.getImportKey() == key).findFirst().orElse(null);
+            eventTemplate.setPromotion(promotion);
+
+            assignRosterSplit(eventTemplate, promotion, rosterSplits);
+
+            eventTemplates.add(eventTemplate);
+        });
+        return eventTemplates;
     }
 
     List<RosterSplit> rosterSplits(File importFolder, String fileName, List<Promotion> promotions) {
@@ -567,7 +506,7 @@ public class Import {
     }
 
 
-    private void relateDat() throws IOException {
+    private void relateDat(List<Worker> workers) throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\relate.dat");
         byte[] data = Files.readAllBytes(path);
 
@@ -592,12 +531,12 @@ public class Import {
                 Worker worker1 = null;
                 Worker worker2 = null;
 
-                for (int x = 0; x < allWorkers.size(); x++) {
+                for (int x = 0; x < workers.size(); x++) {
 
                     if (workerIDs.get(x).equals(id1)) {
-                        worker1 = allWorkers.get(x);
+                        worker1 = workers.get(x);
                     } else if (workerIDs.get(x).equals(id2)) {
-                        worker2 = allWorkers.get(x);
+                        worker2 = workers.get(x);
                     }
                     if (worker1 != null && worker2 != null) {
                         int level;
@@ -635,13 +574,13 @@ public class Import {
         }
     }
 
-    private void setManagers() {
-        for (int i = 0; i < workerIDs.size(); i++) {
-            if (workerIDs.indexOf(managerIDs.get(i)) > -1) {
-                allWorkers.get(i).setManager(allWorkers.get(workerIDs.indexOf(managerIDs.get(i))));
-            }
-        }
-    }
+//    private void setManagers(List<Worker>workers) {
+//        for (int i = 0; i < workerIDs.size(); i++) {
+//            if (workerIDs.indexOf(managerIDs.get(i)) > -1) {
+//                workers.get(i).setManager(workers.get(workerIDs.indexOf(managerIDs.get(i))));
+//            }
+//        }
+//    }
 
     private void checkForStaffContract(Promotion p, StaffView s, List<String> currentHexLine) {
         if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
@@ -649,7 +588,7 @@ public class Import {
         }
     }
 
-    private void eventDat() throws IOException {
+    private void eventDat(List<RosterSplit> rosterSplits) throws IOException {
         Path path = Paths.get(importFolder.getPath() + "\\event.dat");
         byte[] data = Files.readAllBytes(path);
 
@@ -690,7 +629,7 @@ public class Import {
                 eventTemplate.setMonth(month.getValue());
                 eventTemplate.setEventBroadcast(EventBroadcast.NONE);
                 eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
-                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), eventTemplate.getName());
+                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), rosterSplits);
                 eventTemplates.add(eventTemplate);
                 currentLine = "";
                 counter = 0;
@@ -699,17 +638,16 @@ public class Import {
         }
     }
 
-    private void assignRosterSplit(iRosterSplit item, Promotion promotion, String name) {
-        for (RosterSplit rosterSplit : gameController.getRosterSplitManager().getRosterSplits()) {
-            if (rosterSplit.getOwner().equals(promotion)
-                    && name.toLowerCase().contains(rosterSplit.getName().toLowerCase())) {
-                item.setRosterSplit(rosterSplit);
-                break;
-            }
-        }
+    private void assignRosterSplit(iRosterSplit item, Promotion promotion, List<RosterSplit> rosterSplits) {
+        RosterSplit rosterSplit = rosterSplits.stream().filter(rs ->
+                rs.getOwner().getPromotionID() == promotion.getPromotionID() &&
+                        item.toString().contains(rs.getName())
+        ).findFirst().orElse(null);
+        item.setRosterSplit(rosterSplit);
     }
 
-    List<Title> beltDat(File importFolder, List<Promotion> promotions, List<Worker> workers, LocalDate dayWon) {
+    List<Title> beltDat(File importFolder, List<Promotion> promotions, List<Worker> workers, LocalDate dayWon, List<RosterSplit> rosterSplits) {
+        //TODO set roster splits
         List<Title> titles = new ArrayList<>();
         List<List<String>> hexLines = getHexLines(importFolder, "belt", 457);
 
@@ -739,6 +677,8 @@ public class Import {
                         .build();
                 title.setChampionTitleReign(titleReign);
             }
+
+            assignRosterSplit(title, promotion, rosterSplits);
 
             titles.add(title);
         });

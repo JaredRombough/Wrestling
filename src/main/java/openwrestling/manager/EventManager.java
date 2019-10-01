@@ -1,36 +1,40 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
+
+import openwrestling.database.Database;
+import openwrestling.manager.ContractManager;
+import openwrestling.model.Event;
+import openwrestling.model.EventTemplate;
+import openwrestling.model.EventWorker;
+import openwrestling.model.Match;
+import openwrestling.model.MatchEvent;
+import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.Segment;
+import openwrestling.model.interfaces.iEvent;
+import openwrestling.model.manager.DateManager;
+import openwrestling.model.manager.SegmentManager;
+import openwrestling.model.modelView.EventView;
+import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.segmentEnum.EventRecurrence;
+import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import static java.time.temporal.TemporalAdjusters.firstInMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import openwrestling.manager.ContractManager;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import openwrestling.model.gameObjects.Contract;
-import openwrestling.model.Event;
-import openwrestling.model.EventTemplate;
-import openwrestling.model.EventWorker;
-import openwrestling.model.Match;
-import openwrestling.model.MatchEvent;
-import openwrestling.model.interfaces.Segment;
-import openwrestling.model.interfaces.iEvent;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.EventRecurrence;
-import openwrestling.model.utility.ModelUtils;
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 public class EventManager implements Serializable {
 
@@ -73,6 +77,12 @@ public class EventManager implements Serializable {
         if (!events.contains(event)) {
             events.add(event);
         }
+    }
+
+    public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
+        List saved = Database.insertList(eventTemplates);
+        this.eventTemplates.addAll(saved);
+        return saved;
     }
 
     public void addEventView(EventView eventView) {
@@ -124,19 +134,19 @@ public class EventManager implements Serializable {
     public void cancelEvent(Event eventToCancel) {
         EventTemplate template = eventToCancel.getEventTemplate();
 
-        for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext();) {
+        for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext(); ) {
             MatchEvent matchEvent = iter.next();
             if (matchEvent.getEvent().equals(eventToCancel)) {
                 iter.remove();
             }
         }
-        for (Iterator<EventWorker> iter = eventWorkers.listIterator(); iter.hasNext();) {
+        for (Iterator<EventWorker> iter = eventWorkers.listIterator(); iter.hasNext(); ) {
             EventWorker eventWorker = iter.next();
             if (eventWorker.getEvent().equals(eventToCancel)) {
                 iter.remove();
             }
         }
-        for (Iterator<Event> iter = events.listIterator(); iter.hasNext();) {
+        for (Iterator<Event> iter = events.listIterator(); iter.hasNext(); ) {
             Event event = iter.next();
             if (event.equals(eventToCancel)) {
                 iter.remove();
@@ -223,7 +233,7 @@ public class EventManager implements Serializable {
 
         return eventTemplate.getEventsLeft()
                 - Math.toIntExact(
-                        ChronoUnit.WEEKS.between(presentLast, futureFirst));
+                ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
     public List<EventView> getEventViews(Promotion promotion) {

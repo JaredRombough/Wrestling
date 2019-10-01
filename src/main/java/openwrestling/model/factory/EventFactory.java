@@ -19,7 +19,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.model.manager.EventManager;
+import openwrestling.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.manager.TitleManager;

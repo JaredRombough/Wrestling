@@ -24,7 +24,7 @@ import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
 import openwrestling.manager.ContractManager;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.EventManager;
+import openwrestling.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;

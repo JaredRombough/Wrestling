@@ -12,7 +12,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.BankAccountManager;
-import openwrestling.model.manager.EventManager;
+import openwrestling.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.modelView.EventView;

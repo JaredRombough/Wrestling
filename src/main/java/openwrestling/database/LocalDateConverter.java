@@ -12,6 +12,9 @@ public class LocalDateConverter extends BidirectionalConverter<LocalDate, Date> 
 
     @Override
     public Date convertTo(LocalDate source, Type<Date> destinationType, MappingContext context) {
+        if (LocalDate.MIN.equals(source)) {
+            return new Date(Long.MIN_VALUE);
+        }
         return java.util.Date.from(source.atStartOfDay()
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -19,6 +22,9 @@ public class LocalDateConverter extends BidirectionalConverter<LocalDate, Date> 
 
     @Override
     public LocalDate convertFrom(Date source, Type<LocalDate> destinationType, MappingContext context) {
+        if (source.getTime() == Long.MIN_VALUE) {
+            return LocalDate.MIN;
+        }
         return source.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();

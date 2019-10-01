@@ -12,6 +12,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
+import openwrestling.entities.EventTemplateEntity;
 import openwrestling.entities.PromotionEntity;
 import openwrestling.entities.RosterSplitEntity;
 import openwrestling.entities.RosterSplitWorkerEntity;
@@ -23,6 +24,7 @@ import openwrestling.entities.TitleEntity;
 import openwrestling.entities.TitleReignEntity;
 import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.WorkerEntity;
+import openwrestling.model.EventTemplate;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
@@ -64,6 +66,7 @@ public class Database {
         put(TagTeam.class, TagTeamEntity.class);
         put(Title.class, TitleEntity.class);
         put(TitleReign.class, TitleReignEntity.class);
+        put(EventTemplate.class, EventTemplateEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -244,7 +247,8 @@ public class Database {
                     TagTeamWorkerEntity.class,
                     TitleEntity.class,
                     TitleReignEntity.class,
-                    TitleReignWorkerEntity.class);
+                    TitleReignWorkerEntity.class,
+                    EventTemplateEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

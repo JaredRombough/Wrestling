@@ -15,7 +15,7 @@ import openwrestling.model.factory.PromotionFactory;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.EventManager;
+import openwrestling.manager.EventManager;
 import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;

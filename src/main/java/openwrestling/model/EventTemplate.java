@@ -1,25 +1,33 @@
 package openwrestling.model;
 
-import java.io.Serializable;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
-import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.EventVenueSize;
+import org.apache.commons.lang3.RandomUtils;
 
-public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterSplit {
+import java.io.Serializable;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+public class EventTemplate extends GameObject implements Serializable, iDate, SegmentItem, iRosterSplit {
 
     private Promotion promotion;
     private LocalDate nextDate;
@@ -47,7 +55,7 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
         eventsLeft = 1;
         dayOfWeek = Arrays.asList(
                 DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
-                        RandomUtils.nextInt(0, 2));
+                RandomUtils.nextInt(0, 2));
         month = 1;
         defaultBroadcastTeam = new ArrayList<>();
         segmentTemplates = new ArrayList<>();
@@ -58,214 +66,9 @@ public class EventTemplate implements Serializable, iDate, SegmentItem, iRosterS
         return name;
     }
 
-    /**
-     * @return the promotion
-     */
-    public Promotion getPromotion() {
-        return promotion;
-    }
-
-    /**
-     * @param promotion the promotion to set
-     */
-    public void setPromotion(Promotion promotion) {
-        this.promotion = promotion;
-    }
-
-    /**
-     * @return the nextDate
-     */
-    public LocalDate getBookedUntil() {
-        return bookedUntil;
-    }
-
-    /**
-     * @param bookedUntil the nextDate to set
-     */
-    public void setBookedUntil(LocalDate bookedUntil) {
-        this.bookedUntil = bookedUntil;
-    }
-
-    /**
-     * @return the defaultDuration
-     */
-    public int getDefaultDuration() {
-        return defaultDuration;
-    }
-
-    /**
-     * @param defaultDuration the defaultDuration to set
-     */
-    public void setDefaultDuration(int defaultDuration) {
-        this.defaultDuration = defaultDuration;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the eventFrequency
-     */
-    public EventFrequency getEventFrequency() {
-        return eventFrequency;
-    }
-
-    /**
-     * @param eventFrequency the eventFrequency to set
-     */
-    public void setEventFrequency(EventFrequency eventFrequency) {
-        this.eventFrequency = eventFrequency;
-    }
-
-    /**
-     * @return the eventBroadcast
-     */
-    public EventBroadcast getEventBroadcast() {
-        return eventBroadcast;
-    }
-
-    /**
-     * @param eventBroadcast the eventBroadcast to set
-     */
-    public void setEventBroadcast(EventBroadcast eventBroadcast) {
-        this.eventBroadcast = eventBroadcast;
-    }
-
-    /**
-     * @return the dayOfWeek
-     */
-    public DayOfWeek getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    /**
-     * @param dayOfWeek the dayOfWeek to set
-     */
-    public void setDayOfWeek(DayOfWeek dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
-    /**
-     * @return the month
-     */
-    public int getMonth() {
-        return month;
-    }
-
-    /**
-     * @param month the month to set
-     */
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    /**
-     * @return the eventRecurrence
-     */
-    public EventRecurrence getEventRecurrence() {
-        return eventRecurrence;
-    }
-
-    /**
-     * @param eventRecurrence the eventRecurrence to set
-     */
-    public void setEventRecurrence(EventRecurrence eventRecurrence) {
-        this.eventRecurrence = eventRecurrence;
-    }
-
-    /**
-     * @return the eventsLeft
-     */
-    public int getEventsLeft() {
-        return eventsLeft;
-    }
-
-    /**
-     * @param eventsLeft the eventsLeft to set
-     */
-    public void setEventsLeft(int eventsLeft) {
-        this.eventsLeft = eventsLeft;
-    }
-
     @Override
     public LocalDate getDate() {
         return nextDate;
-    }
-
-    /**
-     * @return the nextDate
-     */
-    public LocalDate getNextDate() {
-        return nextDate;
-    }
-
-    /**
-     * @param nextDate the nextDate to set
-     */
-    public void setNextDate(LocalDate nextDate) {
-        this.nextDate = nextDate;
-    }
-
-    /**
-     * @return the eventVenueSize
-     */
-    public EventVenueSize getEventVenueSize() {
-        return eventVenueSize;
-    }
-
-    /**
-     * @param eventVenueSize the eventVenueSize to set
-     */
-    public void setEventVenueSize(EventVenueSize eventVenueSize) {
-        this.eventVenueSize = eventVenueSize;
-    }
-
-    /**
-     * @return the defaultBroadcastTeam
-     */
-    public List<StaffView> getDefaultBroadcastTeam() {
-        return defaultBroadcastTeam;
-    }
-
-    /**
-     * @param defaultBroadcastTeam the defaultBroadcastTeam to set
-     */
-    public void setDefaultBroadcastTeam(List<StaffView> defaultBroadcastTeam) {
-        this.defaultBroadcastTeam = defaultBroadcastTeam;
-    }
-
-    /**
-     * @return the segmentTemplates
-     */
-    public List<SegmentTemplate> getSegmentTemplates() {
-        return segmentTemplates;
-    }
-
-    /**
-     * @return the rosterSplit
-     */
-    @Override
-    public RosterSplit getRosterSplit() {
-        return rosterSplit;
-    }
-
-    /**
-     * @param rosterSplit the rosterSplit to set
-     */
-    @Override
-    public void setRosterSplit(RosterSplit rosterSplit) {
-        this.rosterSplit = rosterSplit;
     }
 
 }

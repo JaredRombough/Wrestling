@@ -10,7 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import openwrestling.model.Event;
 import openwrestling.model.NewsItem;
-import openwrestling.model.manager.EventManager;
+import openwrestling.manager.EventManager;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.interfaces.ControllerBase;
