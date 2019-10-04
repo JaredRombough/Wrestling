@@ -1,5 +1,6 @@
 package openwrestling.file;
 
+import openwrestling.model.EventTemplate;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
@@ -162,7 +163,21 @@ public class ImportTest {
     public void beltsDat() {
         List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
         List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Title> titles = testImport.beltDat(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
+        List<RosterSplit> rosterSplits = testImport.rosterSplits(TEST_DATA_FOLDER,
+                "promos",
+                promotions);
+        List<Title> titles = testImport.beltDat(TEST_DATA_FOLDER, promotions, workers, LocalDate.now(), rosterSplits);
         assertThat(titles).hasSize(69);
+    }
+
+
+    @Test
+    public void eventDat() {
+        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
+        List<RosterSplit> rosterSplits = testImport.rosterSplits(TEST_DATA_FOLDER,
+                "promos",
+                promotions);
+        List<EventTemplate> eventTemplates = testImport.eventDat(TEST_DATA_FOLDER, rosterSplits, promotions);
+        assertThat(eventTemplates).hasSize(68);
     }
 }

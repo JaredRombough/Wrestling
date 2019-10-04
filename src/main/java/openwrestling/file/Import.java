@@ -104,8 +104,9 @@ public class Import {
                 titles = gameController.getTitleManager().createTitles(titles);
                 List<EventTemplate> tvTemplates = tvDat(importFolder, promotions, rosterSplits);
                 tvTemplates = gameController.getEventManager().createEventTemplates(tvTemplates);
+                List<EventTemplate> eventTemplates = eventDat(importFolder, rosterSplits, promotions);
+                eventTemplates = gameController.getEventManager().createEventTemplates(eventTemplates);
 
-//                eventDat();
 //                staffDat();
 //                relateDat();
             } catch (Exception ex) {
@@ -223,6 +224,34 @@ public class Import {
 
             assignRosterSplit(eventTemplate, promotion, rosterSplits);
 
+            eventTemplates.add(eventTemplate);
+        });
+        return eventTemplates;
+    }
+
+    List<EventTemplate> eventDat(File importFolder, List<RosterSplit> rosterSplits, List<Promotion> promotions) {
+        List<EventTemplate> eventTemplates = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "event", 47);
+
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
+            EventTemplate eventTemplate = new EventTemplate();
+
+            Month month;
+            int monthInt = hexStringToInt(hexLine.get(35));
+            if (monthInt < 1 || monthInt > 12) {
+                logger.log(Level.WARN, String.format("Invalid month of %d for %s", monthInt, textLine.substring(1, 31).trim()));
+                month = Month.of(1);
+            } else {
+                month = Month.of(monthInt);
+            }
+            eventTemplate.setMonth(month.getValue());
+
+            eventTemplate.setName(textLine.substring(1, 32).trim());
+            eventTemplate.setPromotion(promotions.stream().filter(promotion -> promotion.getImportKey() == hexStringToInt(hexLine.get(33))).findFirst().orElse(null));
+            eventTemplate.setEventBroadcast(EventBroadcast.NONE);
+            eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
+            assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), rosterSplits);
             eventTemplates.add(eventTemplate);
         });
         return eventTemplates;
@@ -588,55 +617,6 @@ public class Import {
         }
     }
 
-    private void eventDat(List<RosterSplit> rosterSplits) throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\event.dat");
-        byte[] data = Files.readAllBytes(path);
-
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        Promotion promotion = null;
-        Month month = null;
-        int counter = 0;
-        int lineLength = 47;
-        int promotionKeyIndex = 34;
-        int monthValueIndex = 36;
-
-        for (int i = 0; i < fileString.length(); i += 2) {
-
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-            currentLine += hexStringToLetter(hexValueString);
-            counter++;
-
-            if (counter == promotionKeyIndex) {
-                promotion = getPromotionFromKey(hexStringToInt(hexValueString));
-            }
-
-            if (counter == monthValueIndex) {
-                int monthInt = hexStringToInt(hexValueString);
-                if (monthInt < 1 || monthInt > 12) {
-                    logger.log(Level.WARN, String.format("Invalid month of %d for %s", monthInt, currentLine.substring(1, 32).trim()));
-                    month = Month.of(1);
-                } else {
-                    month = Month.of(monthInt);
-                }
-
-            }
-
-            if (counter == lineLength) {
-                EventTemplate eventTemplate = new EventTemplate();
-                eventTemplate.setName(currentLine.substring(1, 32).trim());
-                eventTemplate.setPromotion(promotion);
-                eventTemplate.setMonth(month.getValue());
-                eventTemplate.setEventBroadcast(EventBroadcast.NONE);
-                eventTemplate.setEventFrequency(EventFrequency.ANNUAL);
-                assignRosterSplit(eventTemplate, eventTemplate.getPromotion(), rosterSplits);
-                eventTemplates.add(eventTemplate);
-                currentLine = "";
-                counter = 0;
-
-            }
-        }
-    }
 
     private void assignRosterSplit(iRosterSplit item, Promotion promotion, List<RosterSplit> rosterSplits) {
         RosterSplit rosterSplit = rosterSplits.stream().filter(rs ->
