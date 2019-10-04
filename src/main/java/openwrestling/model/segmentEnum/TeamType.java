@@ -6,7 +6,7 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Description;
 import openwrestling.model.interfaces.iTeamType;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 
 import java.util.Arrays;
@@ -450,7 +450,7 @@ public enum TeamType implements Description, iTeamType {
 
         @Override
         public boolean droppable(SegmentItem segmentItem) {
-            return segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.REFEREE);
+            return segmentItem instanceof StaffMember && ((StaffMember) segmentItem).getStaffType().equals(StaffType.REFEREE);
         }
 
         @Override
@@ -471,7 +471,7 @@ public enum TeamType implements Description, iTeamType {
 
         @Override
         public boolean droppable(SegmentItem segmentItem) {
-            return workerDroppable(segmentItem) || (segmentItem instanceof StaffView && ((StaffView) segmentItem).getStaffType().equals(StaffType.BROADCAST));
+            return workerDroppable(segmentItem) || (segmentItem instanceof StaffMember && ((StaffMember) segmentItem).getStaffType().equals(StaffType.BROADCAST));
         }
 
         @Override

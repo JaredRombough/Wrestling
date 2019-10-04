@@ -26,7 +26,7 @@ import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
@@ -181,8 +181,8 @@ public class MatchFactory implements Serializable {
         if (!segmentView.getBroadcastTeam().isEmpty()) {
             int broadCastTeamTotal = 0;
             for (SegmentItem item : segmentView.getBroadcastTeam()) {
-                if (item instanceof StaffView) {
-                    broadCastTeamTotal += ((StaffView) item).getSkill();
+                if (item instanceof StaffMember) {
+                    broadCastTeamTotal += ((StaffMember) item).getSkill();
                 } else if (item instanceof Worker) {
                     broadCastTeamTotal += ModelUtils.getWeightedScore(new Integer[]{
                         ((Worker) item).getCharisma(),

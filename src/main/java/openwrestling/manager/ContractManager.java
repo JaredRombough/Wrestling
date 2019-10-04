@@ -2,16 +2,16 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.model.StaffContract;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffContract;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 
@@ -78,9 +78,15 @@ public class ContractManager implements Serializable {
         staffContracts.add(contract);
     }
 
-    public List<Contract> createContracts(List<Contract> contract) {
-        List saved = Database.insertList(contract);
+    public List<Contract> createContracts(List<Contract> contracts) {
+        List saved = Database.insertList(contracts);
         this.contracts.addAll(saved);
+        return saved;
+    }
+
+    public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
+        List saved = Database.insertList(contracts);
+        this.staffContracts.addAll(saved);
         return saved;
     }
 
@@ -99,7 +105,7 @@ public class ContractManager implements Serializable {
     public List<? extends iContract> getContracts(iPerson person) {
         return person instanceof Worker
                 ? getContracts((Worker) person)
-                : getContracts((StaffView) person);
+                : getContracts((StaffMember) person);
     }
 
     public List<Contract> getContracts(Worker worker) {
@@ -113,7 +119,7 @@ public class ContractManager implements Serializable {
         return workerContracts;
     }
 
-    public List<StaffContract> getContracts(StaffView staff) {
+    public List<StaffContract> getContracts(StaffMember staff) {
         List<StaffContract> contractsForStaff = new ArrayList<>();
         for (StaffContract contract : staffContracts) {
             if (contract.isActive() && contract.getStaff().equals(staff)) {
@@ -210,7 +216,7 @@ public class ContractManager implements Serializable {
         }
     }
 
-    public void buyOutContracts(StaffView staff, Promotion newExclusivePromotion, LocalDate buyOutDate) {
+    public void buyOutContracts(StaffMember staff, Promotion newExclusivePromotion, LocalDate buyOutDate) {
         //'buy out' any the other contracts the worker has
         for (StaffContract c : getContracts(staff)) {
             if (!c.getPromotion().equals(newExclusivePromotion)) {

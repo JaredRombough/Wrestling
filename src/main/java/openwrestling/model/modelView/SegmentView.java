@@ -11,6 +11,7 @@ import openwrestling.model.Match;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
@@ -27,7 +28,7 @@ public class SegmentView implements Serializable {
     private final List<Title> titles;
     private final SegmentType segmentType;
     private EventView eventView;
-    private StaffView referee;
+    private StaffMember referee;
     private List<? extends SegmentItem> broadcastTeam;
     private Stable newStable;
 
@@ -233,14 +234,14 @@ public class SegmentView implements Serializable {
     /**
      * @return the referee
      */
-    public StaffView getReferee() {
+    public StaffMember getReferee() {
         return referee;
     }
 
     /**
      * @param referee the referee to set
      */
-    public void setReferee(StaffView referee) {
+    public void setReferee(StaffMember referee) {
         this.referee = referee;
     }
 

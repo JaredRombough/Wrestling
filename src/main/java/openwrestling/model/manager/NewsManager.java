@@ -16,7 +16,7 @@ import static openwrestling.model.constants.Words.BODY_PARTS;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 
@@ -72,7 +72,7 @@ public class NewsManager implements Serializable {
         addNews(newsItem);
     }
 
-    public void addTrainingNewsItem(Worker worker, StaffView trainer, Promotion promotion, String stat, LocalDate date) {
+    public void addTrainingNewsItem(Worker worker, StaffMember trainer, Promotion promotion, String stat, LocalDate date) {
         NewsItem newsItem = new NewsItem(
                 String.format("%s training", worker.getLongName()),
                 String.format("%s increased %s working with %s trainer %s.",

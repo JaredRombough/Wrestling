@@ -3,7 +3,7 @@ package openwrestling.view.event.controller;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.StaffUtils;
@@ -36,7 +36,7 @@ public class SegmentItemDragDropHandler implements EventHandler<DragEvent> {
             segmentItem.getSegmentItems().forEach(item -> teamPaneWrapper.addSegmentItem(item, teamType));
 
             if (StaffUtils.isRef(segmentItem)) {
-                segmentPaneController.setRef((StaffView) segmentItem);
+                segmentPaneController.setRef((StaffMember) segmentItem);
             }
 
             if (segmentItem instanceof Title) {

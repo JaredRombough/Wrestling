@@ -18,6 +18,8 @@ import openwrestling.entities.RosterSplitEntity;
 import openwrestling.entities.RosterSplitWorkerEntity;
 import openwrestling.entities.StableEntity;
 import openwrestling.entities.StableWorkerEntity;
+import openwrestling.entities.StaffContractEntity;
+import openwrestling.entities.StaffMemberEntity;
 import openwrestling.entities.TagTeamEntity;
 import openwrestling.entities.TagTeamWorkerEntity;
 import openwrestling.entities.TitleEntity;
@@ -30,6 +32,8 @@ import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StaffContract;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
@@ -67,6 +71,8 @@ public class Database {
         put(Title.class, TitleEntity.class);
         put(TitleReign.class, TitleReignEntity.class);
         put(EventTemplate.class, EventTemplateEntity.class);
+        put(StaffMember.class, StaffMemberEntity.class);
+        put(StaffContract.class, StaffContractEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -248,7 +254,9 @@ public class Database {
                     TitleEntity.class,
                     TitleReignEntity.class,
                     TitleReignWorkerEntity.class,
-                    EventTemplateEntity.class);
+                    EventTemplateEntity.class,
+                    StaffMemberEntity.class,
+                    StaffContractEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

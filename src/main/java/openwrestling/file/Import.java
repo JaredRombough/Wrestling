@@ -8,12 +8,13 @@ import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StaffContract;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.modelView.StaffView;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
@@ -62,11 +63,7 @@ public class Import {
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
 
-    private final List<TagTeam> allTagTeams = new ArrayList<>();
-
     private final List<EventTemplate> eventTemplates = new ArrayList<>();
-    private final List<Stable> stablesToAdd = new ArrayList<>();
-    private final List<Contract> contractsToAdd = new ArrayList<>();
 
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
@@ -106,7 +103,10 @@ public class Import {
                 tvTemplates = gameController.getEventManager().createEventTemplates(tvTemplates);
                 List<EventTemplate> eventTemplates = eventDat(importFolder, rosterSplits, promotions);
                 eventTemplates = gameController.getEventManager().createEventTemplates(eventTemplates);
-
+                List<StaffMember> staffMembers = staffDat(importFolder);
+                staffMembers = gameController.getStaffManager().creatStaffMembers(staffMembers);
+                List<StaffContract> staffContracts = staffContracts(importFolder, promotions, staffMembers, gameController.getDateManager().today());
+                staffContracts = gameController.getContractManager().createStaffContracts(staffContracts);
 //                staffDat();
 //                relateDat();
             } catch (Exception ex) {
@@ -138,14 +138,7 @@ public class Import {
                 Objects.equals(worker1.getStriking(), worker2.getStriking());
     }
 
-    private Promotion getPromotionFromKey(int key) {
-        for (int i = 0; i < promotionKeys.size(); i++) {
-            if (promotionKeys.get(i).equals(key)) {
-                return allPromotions.get(i);
-            }
-        }
-        return null;
-    }
+
 //
 //    private void processOther() {
 //        otherPromotionNames.stream().map((s) -> {
@@ -368,82 +361,78 @@ public class Import {
         return stables;
     }
 
-    private void staffDat() throws IOException {
-        List<StaffView> staffViews = new ArrayList<>();
+    List<StaffMember> staffDat(File importFolder) {
+        List<StaffMember> staffMembers = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "staff", 79);
 
-        Path path = Paths.get(importFolder.getPath() + "\\staff.dat");
-        byte[] data = Files.readAllBytes(path);
-
-        String fileString = DatatypeConverter.printHexBinary(data);
-        String currentLine = "";
-        List<String> currentHexLine = new ArrayList<>();
-        List<String> currentStringLine = new ArrayList<>();
-        int counter = 0;
-        int lineLength = 79;
-
-        for (int i = 0; i < fileString.length(); i += 2) {
-
-            //combine the two characters into one string
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            currentLine += hexStringToLetter(hexValueString);
-            currentHexLine.add(hexValueString);
-            currentStringLine.add(hexStringToLetter(hexValueString));
-
-            counter++;
-
-            if (counter == lineLength) {
-                StaffView staff = new StaffView();
-                staff.setName(currentLine.substring(3, 27).trim());
-                staff.setImageString(currentLine.substring(34, 53).trim());
-                staff.setGender(
-                        currentStringLine.get(28).equals("ÿ")
-                                ? Gender.MALE : Gender.FEMALE);
-                staff.setAge(hexStringToInt(currentHexLine.get(32)));
-                staff.setSkill(hexStringToInt(currentHexLine.get(67)));
-                staff.setBehaviour(hexStringToInt(currentHexLine.get(71)));
-                switch (hexStringToInt(currentHexLine.get(65))) {
-                    case 1:
-                        staff.setStaffType(StaffType.OWNER);
-                        break;
-                    case 2:
-                        staff.setStaffType(StaffType.BROADCAST);
-                        break;
-                    case 3:
-                        staff.setStaffType(StaffType.REFEREE);
-                        break;
-                    case 4:
-                        staff.setStaffType(StaffType.PRODUCTION);
-                        break;
-                    case 5:
-                        staff.setStaffType(StaffType.MEDICAL);
-                        break;
-                    case 6:
-                        staff.setStaffType(StaffType.CREATIVE);
-                        break;
-                    case 7:
-                        staff.setStaffType(StaffType.ROAD_AGENT);
-                        break;
-                    case 8:
-                        staff.setStaffType(StaffType.TRAINER);
-                        break;
-                }
-
-                for (Promotion p : allPromotions) {
-                    checkForStaffContract(p, staff, currentHexLine);
-                }
-
-                staffViews.add(staff);
-
-                counter = 0;
-                currentLine = "";
-                currentHexLine = new ArrayList<>();
-                currentStringLine = new ArrayList<>();
+        hexLines.forEach(hexLine -> {
+            String textLine = hexLineToTextString(hexLine);
+            StaffMember staff = new StaffMember();
+            staff.setName(textLine.substring(3, 27).trim());
+            staff.setImageString(textLine.substring(34, 53).trim());
+            staff.setGender(
+                    textLine.charAt(28) == 'ÿ'
+                            ? Gender.MALE : Gender.FEMALE);
+            staff.setAge(hexStringToInt(hexLine.get(32)));
+            staff.setSkill(hexStringToInt(hexLine.get(67)));
+            staff.setBehaviour(hexStringToInt(hexLine.get(71)));
+            switch (hexStringToInt(hexLine.get(65))) {
+                case 1:
+                    staff.setStaffType(StaffType.OWNER);
+                    break;
+                case 2:
+                    staff.setStaffType(StaffType.BROADCAST);
+                    break;
+                case 3:
+                    staff.setStaffType(StaffType.REFEREE);
+                    break;
+                case 4:
+                    staff.setStaffType(StaffType.PRODUCTION);
+                    break;
+                case 5:
+                    staff.setStaffType(StaffType.MEDICAL);
+                    break;
+                case 6:
+                    staff.setStaffType(StaffType.CREATIVE);
+                    break;
+                case 7:
+                    staff.setStaffType(StaffType.ROAD_AGENT);
+                    break;
+                case 8:
+                    staff.setStaffType(StaffType.TRAINER);
+                    break;
             }
+            staff.setImportKey(hexStringToInt(hexLine.get(1) + hexLine.get(2)));
 
-        }
+            staffMembers.add(staff);
+        });
+        return staffMembers;
+    }
 
-        gameController.getStaffManager().addStaff(staffViews);
+
+    List<StaffContract> staffContracts(File importFolder, List<Promotion> promotions, List<StaffMember> staffMembers, LocalDate startDate) {
+        List<StaffContract> staffContracts = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "staff", 79);
+
+        hexLines.forEach(hexLine -> {
+            StaffMember staffMember = staffMembers.stream()
+                    .filter(staff -> staff.getImportKey() == hexStringToInt(hexLine.get(1) + hexLine.get(2)))
+                    .findFirst()
+                    .orElse(null);
+            Optional<Promotion> promotion = promotions.stream().filter(promo -> promo.getImportKey() == hexStringToInt(hexLine.get(54))).findFirst();
+            promotion.ifPresent(promo -> {
+                StaffContract staffContract = StaffContract.builder()
+                        .staff(staffMember)
+                        .promotion(promo)
+                        .active(true)
+                        .biWeeklyCost(ContractUtils.calculateStaffContractCost(staffMember))
+                        .startDate(startDate)
+                        .endDate(ContractUtils.contractEndDate(startDate, 12))
+                        .build();
+                staffContracts.add(staffContract);
+            });
+        });
+        return staffContracts;
     }
 
     List<Worker> workersDat(File importFolder) {
@@ -610,13 +599,6 @@ public class Import {
 //            }
 //        }
 //    }
-
-    private void checkForStaffContract(Promotion p, StaffView s, List<String> currentHexLine) {
-        if (p.indexNumber() == (hexStringToInt(currentHexLine.get(54)))) {
-            getGameController().getContractFactory().createContract(s, p, getGameController().getDateManager().today());
-        }
-    }
-
 
     private void assignRosterSplit(iRosterSplit item, Promotion promotion, List<RosterSplit> rosterSplits) {
         RosterSplit rosterSplit = rosterSplits.stream().filter(rs ->

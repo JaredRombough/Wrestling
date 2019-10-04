@@ -32,7 +32,7 @@ import openwrestling.model.modelView.EventView;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
@@ -159,13 +159,13 @@ public class PromotionController implements Serializable {
             contractManager.payDay(date, c);
         }
 
-        for (StaffView staff : promotion.getAllStaff()) {
+        for (StaffMember staff : promotion.getAllStaff()) {
             contractManager.payDay(date, staff.getStaffContract());
         }
     }
 
     public void trainerUpdate(Promotion promotion) {
-        for (StaffView trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
+        for (StaffMember trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
             if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {
                 List<Worker> roster = workerManager.selectRoster(promotion);
                 Worker worker = roster.get(RandomUtils.nextInt(0, roster.size() - 1));

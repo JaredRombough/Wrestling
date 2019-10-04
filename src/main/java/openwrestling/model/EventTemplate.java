@@ -9,7 +9,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
@@ -41,7 +41,7 @@ public class EventTemplate extends GameObject implements Serializable, iDate, Se
     private int eventsLeft;
     private DayOfWeek dayOfWeek;
     private int month;
-    private List<StaffView> defaultBroadcastTeam;
+    private List<StaffMember> defaultBroadcastTeam;
     private final List<SegmentTemplate> segmentTemplates;
     private RosterSplit rosterSplit;
 

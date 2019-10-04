@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
 import openwrestling.model.EventTemplate;
 import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
 import static openwrestling.model.constants.UIConstants.EDIT_ICON;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.utility.ModelUtils;
@@ -78,14 +78,14 @@ public class EventTemplateController extends ControllerBase implements Initializ
         editBroadcastTeamButton.setText(EDIT_ICON);
         editBroadcastTeamButton.setOnAction(e -> {
             EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-            Optional<List<StaffView>> optionalResult = dialog.getDialog(
+            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
                     gameController,
                     playerPromotion(),
                     eventTemplate.getDefaultBroadcastTeam().isEmpty()
                             ? playerPromotion().getDefaultBroadcastTeam()
                             : eventTemplate.getDefaultBroadcastTeam()
             ).showAndWait();
-            optionalResult.ifPresent((List<StaffView> broadcastTeam) -> {
+            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
                 eventTemplate.setDefaultBroadcastTeam(broadcastTeam);
                 updateLabels();
             });

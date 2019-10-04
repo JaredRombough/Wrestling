@@ -46,7 +46,7 @@ import openwrestling.model.SegmentTemplate;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.BrowseMode;
@@ -731,8 +731,8 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void autoUpdateRefs() {
-        List<StaffView> refs = new ArrayList(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
-        Collections.sort(refs, Comparator.comparingInt(StaffView::getSkill));
+        List<StaffMember> refs = new ArrayList(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
+        Collections.sort(refs, Comparator.comparingInt(StaffMember::getSkill));
         if (!refs.isEmpty()) {
             for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
                 SegmentPaneController controller = segmentPaneControllers.get(i);

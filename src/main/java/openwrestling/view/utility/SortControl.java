@@ -19,7 +19,7 @@ import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iBrowseMode;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.BrowseMode;
@@ -334,8 +334,8 @@ public class SortControl extends ControllerBase implements Initializable {
     private boolean isStaffTypeFiltered(SegmentItem segmentItem) {
         if (!staffTypeFilter.equals(StaffType.ALL)) {
             for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof StaffView
-                        && !((StaffView) subItem).getStaffType().equals(staffTypeFilter)) {
+                if (subItem instanceof StaffMember
+                        && !((StaffMember) subItem).getStaffType().equals(staffTypeFilter)) {
                     return true;
                 }
             }

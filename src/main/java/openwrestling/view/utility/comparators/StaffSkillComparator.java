@@ -1,15 +1,15 @@
 package openwrestling.view.utility.comparators;
 
 import java.util.Comparator;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 
-public class StaffSkillComparator implements Comparator<StaffView> {
+public class StaffSkillComparator implements Comparator<StaffMember> {
 
     @Override
-    public int compare(StaffView staffView1, StaffView staffView2) {
-        if (staffView1 != null && staffView2 != null) {
+    public int compare(StaffMember staffMember1, StaffMember staffMember2) {
+        if (staffMember1 != null && staffMember2 != null) {
 
-            return -Integer.valueOf(staffView1.getSkill()).compareTo(staffView2.getSkill());
+            return -Integer.valueOf(staffMember1.getSkill()).compareTo(staffMember2.getSkill());
         }
 
         return 0;

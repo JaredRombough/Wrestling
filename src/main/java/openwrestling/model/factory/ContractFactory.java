@@ -3,10 +3,10 @@ package openwrestling.model.factory;
 import java.time.LocalDate;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.gameObjects.Contract;
-import openwrestling.model.StaffContract;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.manager.ContractManager;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
 
@@ -18,7 +18,7 @@ public class ContractFactory {
         this.contractManager = contractManager;
     }
 
-    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate) {
+    public void createContract(StaffMember staff, Promotion promotion, LocalDate startDate) {
         int duration = 1 + RandomUtils.nextInt(0, 2);
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 1;
@@ -26,7 +26,7 @@ public class ContractFactory {
         createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
-    public void createContract(StaffView staff, Promotion promotion, LocalDate startDate, int duration) {
+    public void createContract(StaffMember staff, Promotion promotion, LocalDate startDate, int duration) {
         createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
@@ -58,7 +58,7 @@ public class ContractFactory {
         return contract;
     }
 
-    private void createContract(StaffView staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
+    private void createContract(StaffMember staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
         StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);

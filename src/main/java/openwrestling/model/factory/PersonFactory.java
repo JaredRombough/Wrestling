@@ -1,7 +1,7 @@
 package openwrestling.model.factory;
 
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.Gender;
 import openwrestling.model.segmentEnum.StaffType;
@@ -85,8 +85,8 @@ public class PersonFactory {
         return worker;
     }
 
-    public static StaffView randomStaff(int level, StaffType staffType) {
-        StaffView staff = new StaffView();
+    public static StaffMember randomStaff(int level, StaffType staffType) {
+        StaffMember staff = new StaffMember();
 
         staff.setStaffType(staffType);
         staff.setBehaviour(RandomUtils.nextInt(0, 100));

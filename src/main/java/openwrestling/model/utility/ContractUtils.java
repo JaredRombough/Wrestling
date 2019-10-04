@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import openwrestling.manager.WorkerManager;
-import openwrestling.model.StaffContract;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 
 public final class ContractUtils {
@@ -49,7 +48,7 @@ public final class ContractUtils {
         return roundMoney(unitCost);
     }
 
-    public static int calculateStaffContractCost(StaffView staff) {
+    public static int calculateStaffContractCost(StaffMember staff) {
 
         int unitCost;
 
@@ -87,8 +86,8 @@ public final class ContractUtils {
 
     public static int calculateSigningFee(iPerson person, LocalDate startDate) {
         int monthlyCost = 0;
-        if (person instanceof StaffView) {
-            monthlyCost = calculateStaffContractCost((StaffView) person);
+        if (person instanceof StaffMember) {
+            monthlyCost = calculateStaffContractCost((StaffMember) person);
         } else if (person instanceof Worker) {
             monthlyCost = calculateWorkerContractCost((Worker) person, true);
         }
@@ -123,7 +122,7 @@ public final class ContractUtils {
     public static int getStaffPayrollForMonth(LocalDate date, Promotion promotion) {
         int total = 0;
 
-        for (StaffView staff : promotion.getAllStaff()) {
+        for (StaffMember staff : promotion.getAllStaff()) {
             StaffContract contract = staff.getStaffContract();
             if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
                 total += contract.getMonthlyCost();

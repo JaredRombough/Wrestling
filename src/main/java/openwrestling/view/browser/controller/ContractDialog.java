@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.utility.ViewUtils;
@@ -48,7 +48,7 @@ public class ContractDialog {
         if (person instanceof Worker) {
             exclusiveOpen.add("Open");
         }
-        if (playerPromotion.getLevel() == 5 || person instanceof StaffView) {
+        if (playerPromotion.getLevel() == 5 || person instanceof StaffMember) {
             exclusiveOpen.add("Exclusive");
         }
         typeComboBox.getItems().addAll(exclusiveOpen);
@@ -97,8 +97,8 @@ public class ContractDialog {
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1,
                         gameController.getDateManager().today());
-            } else if (person instanceof StaffView) {
-                gameController.getContractFactory().createContract((StaffView) person,
+            } else if (person instanceof StaffMember) {
+                gameController.getContractFactory().createContract((StaffMember) person,
                         playerPromotion,
                         gameController.getDateManager().today(),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1);
@@ -110,7 +110,7 @@ public class ContractDialog {
     private void updateCostLabel(Label label) {
         label.setText(String.format("$%d %s",
                 person instanceof Worker ? ContractUtils.calculateWorkerContractCost((Worker) person, exclusive)
-                        : ContractUtils.calculateStaffContractCost((StaffView) person),
+                        : ContractUtils.calculateStaffContractCost((StaffMember) person),
                 exclusive ? "Monthly" : "per Apperance"));
     }
 

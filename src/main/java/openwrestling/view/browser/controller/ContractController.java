@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.utility.ScreenCode;
@@ -45,7 +45,7 @@ public class ContractController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        if (object instanceof Worker || object instanceof StaffView) {
+        if (object instanceof Worker || object instanceof StaffMember) {
             person = (iPerson) object;
             updateLabels();
         }

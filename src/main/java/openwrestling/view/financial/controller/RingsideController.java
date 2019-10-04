@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import static openwrestling.model.constants.UIConstants.EDIT_ICON;
 import static openwrestling.model.constants.UIConstants.VIEW_ICON;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
@@ -102,12 +102,12 @@ public class RingsideController extends ControllerBase {
         if (staffType.equals(StaffType.BROADCAST)) {
             editButton.setOnAction(e -> {
                 EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-                Optional<List<StaffView>> optionalResult = dialog.getDialog(
+                Optional<List<StaffMember>> optionalResult = dialog.getDialog(
                         gameController,
                         playerPromotion(),
                         playerPromotion().getDefaultBroadcastTeam()
                 ).showAndWait();
-                optionalResult.ifPresent((List<StaffView> broadcastTeam) -> {
+                optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
                     playerPromotion().setDefaultBroadcastTeam(broadcastTeam);
                     updateLabels();
                 });

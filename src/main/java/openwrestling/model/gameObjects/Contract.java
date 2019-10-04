@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.modelView.StaffView;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -49,7 +48,7 @@ public class Contract extends GameObject implements Serializable, iContract {
 
 
     @Override
-    public StaffView getStaff() {
+    public StaffMember getStaff() {
         return null;
     }
 

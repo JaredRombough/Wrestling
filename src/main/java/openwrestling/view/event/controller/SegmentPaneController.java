@@ -20,7 +20,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
@@ -333,7 +333,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         }
 
         if (StaffUtils.isRef(item)) {
-            setRef((StaffView) item);
+            setRef((StaffMember) item);
             return true;
         }
 
@@ -613,9 +613,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return segmentType;
     }
 
-    private StaffView getRef() {
+    private StaffMember getRef() {
         return refsController != null && !refsController.getSegmentItems().isEmpty()
-                ? (StaffView) refsController.getSegmentItems().get(0)
+                ? (StaffMember) refsController.getSegmentItems().get(0)
                 : null;
     }
 
@@ -626,14 +626,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     /**
      * @param ref the ref to set
      */
-    public void setRefAuto(StaffView ref) {
+    public void setRefAuto(StaffMember ref) {
         refsController.setSegmentItems(Collections.singletonList(ref));
     }
 
     /**
      * @param ref the ref to set
      */
-    public void setRef(StaffView ref) {
+    public void setRef(StaffMember ref) {
         refsController.setAutoSet(false);
         refsController.setSegmentItems(Collections.singletonList(ref));
         eventScreenController.autoUpdateRefs();

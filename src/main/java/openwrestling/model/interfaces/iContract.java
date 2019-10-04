@@ -2,7 +2,7 @@ package openwrestling.model.interfaces;
 
 import java.time.LocalDate;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.StaffView;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 
 /**
@@ -29,7 +29,7 @@ public interface iContract {
 
     public Worker getWorker();
 
-    public StaffView getStaff();
+    public StaffMember getStaff();
     
     public LocalDate getLastShowDate();
     
