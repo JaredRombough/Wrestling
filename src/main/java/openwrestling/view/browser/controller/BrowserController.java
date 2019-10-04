@@ -16,7 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;

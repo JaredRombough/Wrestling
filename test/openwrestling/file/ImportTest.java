@@ -1,6 +1,6 @@
 package openwrestling.file;
 
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;

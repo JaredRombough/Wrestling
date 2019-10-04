@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import openwrestling.model.EventTemplate;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.StaffUtils;

@@ -25,7 +25,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import openwrestling.model.Event;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.view.utility.ScreenCode;

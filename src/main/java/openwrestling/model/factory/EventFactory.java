@@ -7,7 +7,7 @@ import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.AngleParams;
 import openwrestling.model.Event;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.EventWorker;
 import openwrestling.model.Match;
 import openwrestling.model.MatchEvent;

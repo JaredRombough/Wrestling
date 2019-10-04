@@ -16,7 +16,7 @@ import openwrestling.model.gameObjects.Title;
 import org.apache.commons.lang3.RandomUtils;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.Event;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.EventWorker;
 import static openwrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_RATE;
 import openwrestling.model.factory.ContractFactory;

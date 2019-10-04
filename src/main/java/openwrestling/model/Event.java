@@ -2,6 +2,8 @@ package openwrestling.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import openwrestling.model.gameObjects.EventTemplate;
 import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iEvent;

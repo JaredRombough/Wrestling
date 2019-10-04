@@ -26,7 +26,7 @@ import openwrestling.entities.TitleEntity;
 import openwrestling.entities.TitleReignEntity;
 import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.WorkerEntity;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;

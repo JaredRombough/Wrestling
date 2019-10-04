@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import openwrestling.model.AngleParams;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.MatchParams;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Stable;

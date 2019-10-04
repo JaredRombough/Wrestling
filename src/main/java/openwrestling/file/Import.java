@@ -1,7 +1,7 @@
 package openwrestling.file;
 
 import lombok.Getter;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;

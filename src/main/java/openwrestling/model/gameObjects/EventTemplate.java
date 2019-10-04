@@ -1,9 +1,11 @@
-package openwrestling.model;
+package openwrestling.model.gameObjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import openwrestling.model.SegmentItem;
+import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;

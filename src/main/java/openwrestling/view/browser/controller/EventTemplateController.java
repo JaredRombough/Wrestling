@@ -13,7 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
 import static openwrestling.model.constants.UIConstants.EDIT_ICON;
 import openwrestling.model.gameObjects.StaffMember;

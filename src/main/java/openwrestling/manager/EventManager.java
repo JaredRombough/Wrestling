@@ -1,9 +1,8 @@
 package openwrestling.manager;
 
 import openwrestling.database.Database;
-import openwrestling.manager.ContractManager;
 import openwrestling.model.Event;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.EventWorker;
 import openwrestling.model.Match;
 import openwrestling.model.MatchEvent;

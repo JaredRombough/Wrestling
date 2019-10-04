@@ -1,10 +1,9 @@
 package openwrestling.manager;
 
 import openwrestling.database.Database;
-import openwrestling.model.EventTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
