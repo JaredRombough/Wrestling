@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import openwrestling.model.financial.BankAccount;
 import openwrestling.model.manager.DateManager;
 import openwrestling.manager.PromotionManager;
-import openwrestling.model.manager.StaffManager;
+import openwrestling.manager.StaffManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;

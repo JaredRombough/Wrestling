@@ -20,7 +20,7 @@ import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.manager.StaffManager;
+import openwrestling.manager.StaffManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 

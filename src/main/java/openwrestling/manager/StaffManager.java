@@ -1,4 +1,4 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
