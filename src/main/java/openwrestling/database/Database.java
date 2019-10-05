@@ -26,8 +26,9 @@ import openwrestling.entities.TitleEntity;
 import openwrestling.entities.TitleReignEntity;
 import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.WorkerEntity;
-import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.entities.WorkerRelationshipEntity;
 import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
@@ -38,6 +39,7 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.WorkerRelationship;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -73,6 +75,7 @@ public class Database {
         put(EventTemplate.class, EventTemplateEntity.class);
         put(StaffMember.class, StaffMemberEntity.class);
         put(StaffContract.class, StaffContractEntity.class);
+        put(WorkerRelationship.class, WorkerRelationshipEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -171,7 +174,7 @@ public class Database {
         return (T) insertList(List.of(gameObject)).get(0);
     }
 
-    public static List<? extends GameObject> insertList(List<? extends GameObject> gameObjects) {
+    public static <T extends GameObject> List<T> insertList(List<T> gameObjects) {
         if (gameObjects.isEmpty()) {
             return gameObjects;
         }
@@ -256,7 +259,8 @@ public class Database {
                     TitleReignWorkerEntity.class,
                     EventTemplateEntity.class,
                     StaffMemberEntity.class,
-                    StaffContractEntity.class);
+                    StaffContractEntity.class,
+                    WorkerRelationshipEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

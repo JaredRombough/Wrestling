@@ -2,11 +2,10 @@ package openwrestling.model.manager;
 
 import java.util.List;
 
-import openwrestling.model.manager.RelationshipManager;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import openwrestling.model.Relationship;
+import openwrestling.model.gameObjects.Relationship;
 import openwrestling.model.SegmentItem;
 import static openwrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
 import openwrestling.model.factory.PersonFactory;

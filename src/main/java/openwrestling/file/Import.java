@@ -1,10 +1,10 @@
 package openwrestling.file;
 
 import lombok.Getter;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
@@ -14,6 +14,7 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
@@ -28,15 +29,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
@@ -107,8 +104,9 @@ public class Import {
                 staffMembers = gameController.getStaffManager().creatStaffMembers(staffMembers);
                 List<StaffContract> staffContracts = staffContracts(importFolder, promotions, staffMembers, gameController.getDateManager().today());
                 staffContracts = gameController.getContractManager().createStaffContracts(staffContracts);
-//                staffDat();
-//                relateDat();
+                List<WorkerRelationship> relationships = relateDat(importFolder, workers);
+                relationships = gameController.getRelationshipManager().createWorkerRelationships(relationships);
+
             } catch (Exception ex) {
 
                 sb.append(ex);
@@ -524,72 +522,49 @@ public class Import {
     }
 
 
-    private void relateDat(List<Worker> workers) throws IOException {
-        Path path = Paths.get(importFolder.getPath() + "\\relate.dat");
-        byte[] data = Files.readAllBytes(path);
+    List<WorkerRelationship> relateDat(File importFolder, List<Worker> workers) {
+        List<WorkerRelationship> relationships = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "relate", 37);
 
-        String fileString = DatatypeConverter.printHexBinary(data);
-        List<String> currentHexLine = new ArrayList<>();
-        int counter = 0;
-        int lineLength = 37;
+        hexLines.forEach(hexLine -> {
+            int id1 = hexStringToInt(hexLine.get(31) + hexLine.get(32));
+            int id2 = hexStringToInt(hexLine.get(33) + hexLine.get(34));
 
-        for (int i = 0; i < fileString.length(); i += 2) {
+            List<Worker> relationshipWorkers = workers.stream()
+                    .filter(worker -> worker.getImportKey() == id1 || worker.getImportKey() == id2)
+                    .collect(Collectors.toList());
 
-            String hexValueString = new StringBuilder().append(fileString.charAt(i)).append(fileString.charAt(i + 1)).toString();
-
-            currentHexLine.add(hexValueString);
-
-            counter++;
-
-            if (counter == lineLength) {
-
-                String id1 = currentHexLine.get(31) + currentHexLine.get(32);
-                String id2 = currentHexLine.get(33) + currentHexLine.get(34);
-
-                Worker worker1 = null;
-                Worker worker2 = null;
-
-                for (int x = 0; x < workers.size(); x++) {
-
-                    if (workerIDs.get(x).equals(id1)) {
-                        worker1 = workers.get(x);
-                    } else if (workerIDs.get(x).equals(id2)) {
-                        worker2 = workers.get(x);
-                    }
-                    if (worker1 != null && worker2 != null) {
-                        int level;
-                        switch (hexStringToInt(currentHexLine.get(35))) {
-                            case 0:
-                                level = MAX_RELATIONSHIP_LEVEL;
-                                break;
-                            case 1:
-                                level = MAX_RELATIONSHIP_LEVEL;
-                                break;
-                            case 2:
-                                level = MIN_RELATIONSHIP_LEVEL;
-                                break;
-                            case 3:
-                                level = MIN_RELATIONSHIP_LEVEL + 50;
-                                break;
-                            case 4:
-                                level = MAX_RELATIONSHIP_LEVEL - 50;
-                                break;
-                            case 5:
-                                level = MAX_RELATIONSHIP_LEVEL;
-                                break;
-                            default:
-                                level = DEFAULT_RELATIONSHIP_LEVEL;
-                                break;
-                        }
-                        gameController.getRelationshipManager().setRelationshipLevel(worker1, worker2, level);
+            if (relationshipWorkers.size() == 2) {
+                int level;
+                switch (hexStringToInt(hexLine.get(35))) {
+                    case 0:
+                        level = MAX_RELATIONSHIP_LEVEL;
                         break;
-                    }
+                    case 1:
+                        level = MAX_RELATIONSHIP_LEVEL;
+                        break;
+                    case 2:
+                        level = MIN_RELATIONSHIP_LEVEL;
+                        break;
+                    case 3:
+                        level = MIN_RELATIONSHIP_LEVEL + 50;
+                        break;
+                    case 4:
+                        level = MAX_RELATIONSHIP_LEVEL - 50;
+                        break;
+                    case 5:
+                        level = MAX_RELATIONSHIP_LEVEL;
+                        break;
+                    default:
+                        level = DEFAULT_RELATIONSHIP_LEVEL;
+                        break;
                 }
-
-                counter = 0;
-                currentHexLine = new ArrayList<>();
+                relationships.add(new WorkerRelationship(relationshipWorkers.get(0), relationshipWorkers.get(1), level));
             }
-        }
+
+        });
+
+        return relationships;
     }
 
 //    private void setManagers(List<Worker>workers) {

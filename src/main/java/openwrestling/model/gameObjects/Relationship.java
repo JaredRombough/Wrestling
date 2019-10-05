@@ -1,31 +1,30 @@
-package openwrestling.model;
+package openwrestling.model.gameObjects;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import openwrestling.model.SegmentItem;
 
 import java.util.Objects;
+
 import static openwrestling.model.constants.GameConstants.MAX_RELATIONSHIP_LEVEL;
 import static openwrestling.model.constants.GameConstants.MIN_RELATIONSHIP_LEVEL;
 
-public class Relationship {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public abstract class Relationship extends GameObject {
 
-    private final SegmentItem segmentItem1;
-    private final SegmentItem segmentItem2;
+    private SegmentItem segmentItem1;
+    private SegmentItem segmentItem2;
     private int level;
-
-    public Relationship(SegmentItem segmentItem, SegmentItem otherSegmentItem, int level) {
-        this.segmentItem1 = segmentItem;
-        this.segmentItem2 = otherSegmentItem;
-        this.level = level;
-    }
 
     public void modifyValue(int diff) {
         setLevel(level + diff);
     }
 
-    /**
-     * @return the level
-     */
-    public int getLevel() {
-        return level;
-    }
 
     /**
      * @param level the level to set
@@ -38,20 +37,6 @@ public class Relationship {
         } else {
             this.level = level;
         }
-    }
-
-    /**
-     * @return the segmentItem
-     */
-    public SegmentItem getSegmentItem1() {
-        return segmentItem1;
-    }
-
-    /**
-     * @return the otherSegmentItem
-     */
-    public SegmentItem getSegmentItem2() {
-        return segmentItem2;
     }
 
     public SegmentItem getOtherSegmentItem(SegmentItem segmentItem) {

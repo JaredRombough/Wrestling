@@ -1,13 +1,14 @@
 package openwrestling.file;
 
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.Gender;
 import org.junit.Before;
@@ -179,5 +180,13 @@ public class ImportTest {
                 promotions);
         List<EventTemplate> eventTemplates = testImport.eventDat(TEST_DATA_FOLDER, rosterSplits, promotions);
         assertThat(eventTemplates).hasSize(68);
+    }
+
+    @Test
+    public void relateDat() {
+        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<WorkerRelationship> workerRelationships = testImport.relateDat(TEST_DATA_FOLDER,
+                workers);
+        assertThat(workerRelationships).hasSize(69);
     }
 }

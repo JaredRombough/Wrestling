@@ -43,7 +43,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import openwrestling.MainApp;
-import openwrestling.model.Relationship;
+import openwrestling.model.gameObjects.Relationship;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.Promotion;
