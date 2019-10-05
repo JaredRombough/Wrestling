@@ -85,7 +85,6 @@ public class Import {
                 promotions = gameController.getPromotionManager().createPromotions(promotions);
                 List<Worker> workers = workersDat(importFolder);
                 workers = gameController.getWorkerManager().createWorkers(workers);
-                //TODO set managers
                 List<RosterSplit> rosterSplits = rosterSplits(importFolder, "promos", promotions);
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
                 List<Contract> contracts = contracts(importFolder, workers, promotions, gameController.getDateManager().today());
@@ -284,7 +283,6 @@ public class Import {
 
         hexLines.forEach(hexLine -> {
             Promotion promotion = new Promotion();
-            //TODO create bank accounts for imported promotions
             String textLine = hexLineToTextString(hexLine);
 
             promotionKeys.add(hexStringToInt(hexLine.get(1)));
@@ -584,7 +582,6 @@ public class Import {
     }
 
     List<Title> beltDat(File importFolder, List<Promotion> promotions, List<Worker> workers, LocalDate dayWon, List<RosterSplit> rosterSplits) {
-        //TODO set roster splits
         List<Title> titles = new ArrayList<>();
         List<List<String>> hexLines = getHexLines(importFolder, "belt", 457);
 

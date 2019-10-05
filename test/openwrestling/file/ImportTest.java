@@ -187,6 +187,6 @@ public class ImportTest {
         List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
         List<WorkerRelationship> workerRelationships = testImport.relateDat(TEST_DATA_FOLDER,
                 workers);
-        assertThat(workerRelationships).hasSize(69);
+        assertThat(workerRelationships).hasSize(2842);
     }
 }

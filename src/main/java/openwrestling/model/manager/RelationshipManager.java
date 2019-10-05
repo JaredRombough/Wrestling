@@ -59,7 +59,6 @@ public class RelationshipManager {
     }
 
     private Relationship createRelationship(SegmentItem segmentItem, SegmentItem segmentItem2, int value) {
-        //TODO worker/promotion relationship
 //        Relationship relationship = new Relationship(segmentItem, segmentItem2, value);
 //
 //        if (!relationshipMap.containsKey(segmentItem)) {

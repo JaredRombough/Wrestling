@@ -106,7 +106,6 @@ public class TitleManager implements Serializable {
     }
 
     public void stripTitle(Title title) {
-        //TODO strip title in db
 //        List<TitleWorker> currentChamps = getCurrentChampionTitleWorkers(title);
 //        for (TitleWorker titleWorker : currentChamps) {
 //            titleWorker.setDayLost(dateManager.today());
@@ -126,7 +125,6 @@ public class TitleManager implements Serializable {
     }
 
     public void awardTitle(Title title, List<Worker> winner) {
-        //TODO award title in db
         for (Worker worker : winner) {
 //            TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
 //            titleWorkers.add(titleWorker);
