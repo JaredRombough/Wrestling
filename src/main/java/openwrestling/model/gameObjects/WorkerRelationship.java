@@ -1,7 +1,9 @@
 package openwrestling.model.gameObjects;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 
@@ -10,6 +12,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class WorkerRelationship extends Relationship {
 
     private Worker worker1;

@@ -3,6 +3,7 @@ package openwrestling.model.manager;
 import openwrestling.database.Database;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Relationship;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
 
 import java.util.Collections;
@@ -29,11 +30,27 @@ public class RelationshipManager {
         }
     }
 
+    public void setWorkerRelationshipLevel(Worker worker, Worker worker2, int value) {
+        if (hasRelationship(worker, worker2)) {
+            relationshipMap.get(worker).get(worker2).setLevel(value);
+        } else {
+            createWorkerRelationship(WorkerRelationship.builder().worker1(worker).worker2(worker2).level(value).build());
+        }
+    }
+
     public void addRelationshipValue(SegmentItem segmentItem, SegmentItem segmentItem2, int addValue) {
         if (!hasRelationship(segmentItem, segmentItem2)) {
             createRelationship(segmentItem, segmentItem2, DEFAULT_RELATIONSHIP_LEVEL + addValue);
         } else {
             setRelationshipLevel(segmentItem, segmentItem2, getRelationshipLevel(segmentItem, segmentItem2) + addValue);
+        }
+    }
+
+    public void addWorkerRelationshipValue(Worker segmentItem, Worker segmentItem2, int addValue) {
+        if (!hasRelationship(segmentItem, segmentItem2)) {
+            createWorkerRelationship(WorkerRelationship.builder().worker1(segmentItem).worker2(segmentItem2).level(DEFAULT_RELATIONSHIP_LEVEL + addValue).build());
+        } else {
+            setWorkerRelationshipLevel(segmentItem, segmentItem2, getRelationshipLevel(segmentItem, segmentItem2) + addValue);
         }
     }
 
@@ -44,8 +61,19 @@ public class RelationshipManager {
         return createRelationship(segmentItem, segmentItem2, DEFAULT_RELATIONSHIP_LEVEL);
     }
 
+    public WorkerRelationship getWorkerRelationship(Worker segmentItem, Worker segmentItem2) {
+        if (hasRelationship(segmentItem, segmentItem2)) {
+            return (WorkerRelationship)relationshipMap.get(segmentItem).get(segmentItem2);
+        }
+        return createWorkerRelationship(WorkerRelationship.builder().worker1(segmentItem).worker2(segmentItem2).level(DEFAULT_RELATIONSHIP_LEVEL).build());
+    }
+
     public int getRelationshipLevel(SegmentItem segmentItem, SegmentItem segmentItem2) {
         return getRelationship(segmentItem, segmentItem2).getLevel();
+    }
+
+    public int getWorkerRelationshipLevel(Worker segmentItem, Worker segmentItem2) {
+        return getWorkerRelationship(segmentItem, segmentItem2).getLevel();
     }
 
     public List<Relationship> getRelationships(SegmentItem segmentItem) {
