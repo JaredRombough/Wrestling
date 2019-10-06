@@ -174,7 +174,15 @@ public class Database {
         return (T) insertList(List.of(gameObject)).get(0);
     }
 
+    public static <T extends GameObject> List<T> updateList(List<T> gameObjects) {
+        return insertOrUpdateList(gameObjects, false);
+    }
+
     public static <T extends GameObject> List<T> insertList(List<T> gameObjects) {
+        return insertOrUpdateList(gameObjects, true);
+    }
+
+    public static <T extends GameObject> List<T> insertOrUpdateList(List<T> gameObjects, boolean create) {
         if (gameObjects.isEmpty()) {
             return gameObjects;
         }
@@ -224,8 +232,12 @@ public class Database {
             dao.callBatchTasks((Callable<Void>) () -> {
                 for (Object object : toInsert) {
                     Entity entity = (Entity) object;
-                    dao.create(entity);
-                    insertEntityList(entity.childrenToInsert(), connectionSource);
+                    if (create) {
+                        dao.create(entity);
+                        insertEntityList(entity.childrenToInsert(), connectionSource);
+                    } else {
+                        dao.update(entity);
+                    }
                     toReturn.add(mapper.map(entity, sourceClass));
                 }
                 return null;

@@ -66,6 +66,13 @@ public class ImportTest {
     }
 
     @Test
+    public void setManagers() {
+        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<Worker> updatedWorkers = testImport.setManagers(TEST_DATA_FOLDER, workers);
+        assertThat(updatedWorkers).hasSize(41);
+    }
+
+    @Test
     public void workersDat() {
         List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
         assertThat(workers).isNotNull().hasSize(1801);

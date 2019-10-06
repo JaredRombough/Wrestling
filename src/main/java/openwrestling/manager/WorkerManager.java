@@ -1,5 +1,6 @@
 package openwrestling.manager;
 
+import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
@@ -10,11 +11,14 @@ import org.apache.commons.lang3.RandomUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class WorkerManager implements Serializable {
 
     private final ContractManager contractManager;
-    private final List<Worker> workers;
+    @Getter
+    private List<Worker> workers;
 
     public WorkerManager(ContractManager contractManager) {
         this.contractManager = contractManager;
@@ -24,7 +28,7 @@ public class WorkerManager implements Serializable {
     public List<Worker> selectRoster(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
         contractManager.getContracts().forEach(contract -> {
-            if(contract.isActive() && contract.getPromotion().getPromotionID() == promotion.getPromotionID()) {
+            if (contract.isActive() && contract.getPromotion().getPromotionID() == promotion.getPromotionID()) {
                 roster.add(contract.getWorker());
             }
         });
@@ -48,6 +52,17 @@ public class WorkerManager implements Serializable {
     public List<Worker> createWorkers(List<Worker> workers) {
         List savedWorkers = Database.insertList(workers);
         this.workers.addAll(savedWorkers);
+        return savedWorkers;
+    }
+
+    public List<Worker> updateWorkers(List<Worker> workers) {
+        List<Worker> savedWorkers = Database.updateList(workers);
+        savedWorkers.addAll(
+                this.workers.stream()
+                        .filter(worker -> savedWorkers.stream().noneMatch(savedWorker -> savedWorker.getWorkerID() == worker.getWorkerID()))
+                        .collect(Collectors.toList())
+        );
+        this.workers = savedWorkers;
         return savedWorkers;
     }
 
@@ -105,10 +120,6 @@ public class WorkerManager implements Serializable {
                 && worker.getPopularity() > worker.getMinimumPopularity()) {
             addPopularity(worker, -1);
         }
-    }
-
-    public List<Worker> allWorkers() {
-        return workers;
     }
 
 }

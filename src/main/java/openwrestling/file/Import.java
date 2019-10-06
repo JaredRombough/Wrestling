@@ -85,6 +85,9 @@ public class Import {
                 promotions = gameController.getPromotionManager().createPromotions(promotions);
                 List<Worker> workers = workersDat(importFolder);
                 workers = gameController.getWorkerManager().createWorkers(workers);
+                List<Worker> workersWithManagers = setManagers(importFolder, workers);
+                gameController.getWorkerManager().updateWorkers(workersWithManagers);
+                workers = gameController.getWorkerManager().getWorkers();
                 List<RosterSplit> rosterSplits = rosterSplits(importFolder, "promos", promotions);
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
                 List<Contract> contracts = contracts(importFolder, workers, promotions, gameController.getDateManager().today());
@@ -431,6 +434,25 @@ public class Import {
         return staffContracts;
     }
 
+    List<Worker> setManagers(File importFolder, List<Worker> workers) {
+        List<Worker> updatedWorkers = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
+        hexLines.forEach(hexLine -> {
+            int workerID = hexStringToInt(hexLine.get(1) + hexLine.get(2));
+            int managerID = hexStringToInt(hexLine.get(121) + hexLine.get(122));
+            if (managerID != 0) {
+                Worker worker = workers.stream().filter(worker1 -> worker1.getImportKey() == workerID).findFirst().orElse(null);
+                Worker manager = workers.stream().filter(worker1 -> worker1.getImportKey() == managerID).findFirst().orElse(null);
+                if (worker != null && manager != null) {
+                    worker.setManager(manager);
+                    updatedWorkers.add(worker);
+                }
+            }
+        });
+
+        return updatedWorkers;
+    }
+
     List<Worker> workersDat(File importFolder) {
         List<Worker> workers = new ArrayList<>();
         int rosterPositionIndex = 82;
@@ -565,13 +587,6 @@ public class Import {
         return relationships;
     }
 
-//    private void setManagers(List<Worker>workers) {
-//        for (int i = 0; i < workerIDs.size(); i++) {
-//            if (workerIDs.indexOf(managerIDs.get(i)) > -1) {
-//                workers.get(i).setManager(workers.get(workerIDs.indexOf(managerIDs.get(i))));
-//            }
-//        }
-//    }
 
     private void assignRosterSplit(iRosterSplit item, Promotion promotion, List<RosterSplit> rosterSplits) {
         RosterSplit rosterSplit = rosterSplits.stream().filter(rs ->
