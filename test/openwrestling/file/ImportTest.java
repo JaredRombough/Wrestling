@@ -73,6 +73,29 @@ public class ImportTest {
     }
 
     @Test
+    public void otherPromotions() {
+        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
+        assertThat(promotions).hasSize(11);
+    }
+
+    @Test
+    public void otherPromotionContracts() {
+        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
+        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<Contract> contracts = testImport.otherPromotionContracts(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
+        assertThat(contracts).hasSize(245);
+    }
+
+    @Test
+    public void processOther() {
+        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
+        List<Contract> contracts = testImport.otherPromotionContracts(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
+        List<Promotion> updatedPromotions = testImport.updateOther(promotions, contracts);
+        assertThat(updatedPromotions).hasSize(11);
+    }
+
+    @Test
     public void workersDat() {
         List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
         assertThat(workers).isNotNull().hasSize(1801);

@@ -118,7 +118,7 @@ public class Database {
         return connection;
     }
 
-    public static void insertEntityList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
+    private static void insertEntityList(List<? extends Entity> toInsert, ConnectionSource connectionSource, boolean create) {
         if (toInsert.isEmpty()) {
             return;
         }
@@ -128,7 +128,11 @@ public class Database {
 
             dao.callBatchTasks((Callable<Void>) () -> {
                 for (Entity entity : toInsert) {
-                    dao.create(entity);
+                    if (create) {
+                        dao.create(entity);
+                    } else {
+                        dao.update(entity);
+                    }
                 }
                 return null;
             });
@@ -234,7 +238,7 @@ public class Database {
                     Entity entity = (Entity) object;
                     if (create) {
                         dao.create(entity);
-                        insertEntityList(entity.childrenToInsert(), connectionSource);
+                        insertEntityList(entity.childrenToInsert(), connectionSource, create);
                     } else {
                         dao.update(entity);
                     }

@@ -25,6 +25,7 @@ import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ContractUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +41,6 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,7 +55,6 @@ public class Import {
 
     private File importFolder;
 
-    private final List<Promotion> allPromotions = new ArrayList<>();
     @Getter
     private final List<Integer> promotionKeys = new ArrayList<>();
     private final List<String> workerIDs = new ArrayList<>();
@@ -88,6 +87,15 @@ public class Import {
                 List<Worker> workersWithManagers = setManagers(importFolder, workers);
                 gameController.getWorkerManager().updateWorkers(workersWithManagers);
                 workers = gameController.getWorkerManager().getWorkers();
+
+
+                List<Promotion> otherPromotions = gameController.getPromotionManager().createPromotions(otherPromotions(importFolder));
+                List<Contract> otherPromotionContracts = otherPromotionContracts(importFolder, otherPromotions, workers, gameController.getDateManager().today());
+                otherPromotionContracts = gameController.getContractManager().createContracts(otherPromotionContracts);
+                List<Promotion> updatedPromotions = updateOther(otherPromotions, otherPromotionContracts);
+                gameController.getPromotionManager().updatePromotions(updatedPromotions);
+
+
                 List<RosterSplit> rosterSplits = rosterSplits(importFolder, "promos", promotions);
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
                 List<Contract> contracts = contracts(importFolder, workers, promotions, gameController.getDateManager().today());
@@ -115,9 +123,7 @@ public class Import {
                 logger.log(Level.ERROR, ex);
                 throw ex;
             }
-//            processOther();
 
-            gameController.getPromotionManager().createPromotions(allPromotions);
             gameController.getEventManager().addEventTemplates(eventTemplates);
 
             //for statistical evaluation of data only
@@ -130,54 +136,6 @@ public class Import {
         return sb.toString();
 
     }
-
-    private boolean workersMatch(Worker worker1, Worker worker2) {
-        return Objects.equals(worker1.getName(), worker2.getName()) &&
-                Objects.equals(worker1.getShortName(), worker2.getShortName()) &&
-                Objects.equals(worker1.getAge(), worker2.getAge()) &&
-                Objects.equals(worker1.getStriking(), worker2.getStriking());
-    }
-
-
-//
-//    private void processOther() {
-//        otherPromotionNames.stream().map((s) -> {
-//            Promotion p = gameController.getPromotionFactory().newPromotion();
-//            p.setName(s);
-//            p.setShortName(s);
-//            return p;
-//        }).map((p) -> {
-//            //calculate promotion level
-//            int totalPop = 0;
-//            int totalWorkers = 0;
-//            for (int i = 0; i < otherWorkers.size(); i++) {
-//                if (otherWorkerPromotions.get(i).equals(p.getName())) {
-//                    totalPop += otherWorkers.get(i).getPopularity();
-//                    totalWorkers++;
-//                }
-//            }
-//            int avgPop = totalPop / totalWorkers;
-//            p.setLevel((int) ((avgPop - (avgPop % 20)) / 20) + 1);
-//            p.setPromotionID(allPromotions.size());
-//            allPromotions.add(p);
-//            return p;
-//        }).forEach((promotion) -> {
-//            for (int i = 0; i < otherWorkers.size(); i++) {
-//                if (otherWorkerPromotions.get(i).equals(promotion.getName())) {
-//                    contractsToAdd.add(Contract.builder()
-//                            .worker(otherWorkers.get(i))
-//                            .promotion(promotion)
-//                            .exclusive(false)
-//                            .active(true)
-//                            .startDate(getGameController().getDateManager().today())
-//                            .endDate(ContractUtils.contractEndDate(getGameController().getDateManager().today(), RandomUtils.nextInt(0, 12)))
-//                            .build());
-//                }
-//            }
-//        });
-//
-//        updateOtherPromotions(allPromotions, importFolder);
-//    }
 
     List<EventTemplate> tvDat(File importFolder, List<Promotion> promotions, List<RosterSplit> rosterSplits) {
         List<EventTemplate> eventTemplates = new ArrayList<>();
@@ -453,9 +411,76 @@ public class Import {
         return updatedWorkers;
     }
 
+    List<Promotion> updateOther(List<Promotion> otherPromotions, List<Contract> otherPromotionContracts) {
+        for (Promotion promotion : otherPromotions) {
+            List<Worker> otherPromotionWorkers = otherPromotionContracts.stream()
+                    .filter(contract -> contract.getPromotion().getName().equals(promotion.getName()))
+                    .map(Contract::getWorker).collect(Collectors.toList());
+            int totalPop = 0;
+            int totalWorkers = otherPromotionWorkers.size();
+            for (Worker worker : otherPromotionWorkers) {
+                totalPop += worker.getPopularity();
+            }
+            int avgPop = totalWorkers == 0 ? 0 : totalPop / totalWorkers;
+            promotion.setLevel(((avgPop - (avgPop % 20)) / 20) + 1);
+        }
+        return otherPromotions;
+    }
+
+    List<Contract> otherPromotionContracts(File importFolder, List<Promotion> otherPromotions, List<Worker> workers, LocalDate gameStartDate) {
+        List<Contract> contracts = new ArrayList<>();
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
+
+        hexLines.forEach(hexLine -> {
+            String currentLine = hexLineToTextString(hexLine);
+            String promotionName = currentLine.substring(76, 78);
+            if (StringUtils.isNotBlank(promotionName)) {
+                Worker worker = workers.stream()
+                        .filter(worker1 -> worker1.getImportKey() == hexStringToInt(hexLine.get(1) + hexLine.get(2)))
+                        .findFirst()
+                        .orElse(null);
+                Promotion promotion = otherPromotions.stream()
+                        .filter(promotion1 -> promotion1.getName().equals(promotionName))
+                        .findFirst()
+                        .orElse(null);
+
+                if (worker != null && promotion != null) {
+                    contracts.add(Contract.builder()
+                            .worker(worker)
+                            .promotion(promotion)
+                            .exclusive(false)
+                            .active(true)
+                            .startDate(gameStartDate)
+                            .endDate(ContractUtils.contractEndDate(gameStartDate, RandomUtils.nextInt(0, 12)))
+                            .build());
+                }
+            }
+        });
+
+        return contracts;
+    }
+
+    List<Promotion> otherPromotions(File importFolder) {
+        List<Promotion> promotions = new ArrayList<>();
+
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
+
+        hexLines.forEach(hexLine -> {
+            String currentLine = hexLineToTextString(hexLine);
+            String promotionName = currentLine.substring(76, 78);
+            if (StringUtils.isNotBlank(promotionName) && promotions.stream().noneMatch(promotion -> promotion.getName().equals(promotionName))) {
+                Promotion promotion = new Promotion();
+                promotion.setName(promotionName);
+                promotion.setShortName(promotionName);
+                promotions.add(promotion);
+            }
+        });
+
+        return promotions;
+    }
+
     List<Worker> workersDat(File importFolder) {
         List<Worker> workers = new ArrayList<>();
-        int rosterPositionIndex = 82;
 
         List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
 
@@ -484,7 +509,7 @@ public class Import {
             boolean fullTime;
             boolean mainRoster;
 
-            switch (hexLine.get(rosterPositionIndex)) {
+            switch (hexLine.get(82)) {
                 case "07":
                     //development
                     fullTime = true;
