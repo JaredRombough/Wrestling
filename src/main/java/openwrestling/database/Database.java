@@ -10,6 +10,7 @@ import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
 import openwrestling.entities.EventTemplateEntity;
@@ -25,6 +26,7 @@ import openwrestling.entities.TagTeamWorkerEntity;
 import openwrestling.entities.TitleEntity;
 import openwrestling.entities.TitleReignEntity;
 import openwrestling.entities.TitleReignWorkerEntity;
+import openwrestling.entities.TransactionEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.entities.WorkerRelationshipEntity;
 import openwrestling.model.gameObjects.Contract;
@@ -40,6 +42,8 @@ import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
+import openwrestling.model.gameObjects.financial.BankAccount;
+import openwrestling.model.gameObjects.financial.Transaction;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -76,6 +80,8 @@ public class Database {
         put(StaffMember.class, StaffMemberEntity.class);
         put(StaffContract.class, StaffContractEntity.class);
         put(WorkerRelationship.class, WorkerRelationshipEntity.class);
+        put(BankAccount.class, BankAccountEntity.class);
+        put(Transaction.class, TransactionEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -276,7 +282,9 @@ public class Database {
                     EventTemplateEntity.class,
                     StaffMemberEntity.class,
                     StaffContractEntity.class,
-                    WorkerRelationshipEntity.class);
+                    WorkerRelationshipEntity.class,
+                    BankAccountEntity.class,
+                    TransactionEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

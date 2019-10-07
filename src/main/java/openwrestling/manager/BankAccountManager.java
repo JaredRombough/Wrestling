@@ -1,12 +1,15 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
-import openwrestling.model.financial.BankAccount;
+import lombok.Getter;
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.financial.BankAccount;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class BankAccountManager implements Serializable {
 
     private final List<BankAccount> bankAccounts;
@@ -28,4 +31,9 @@ public class BankAccountManager implements Serializable {
         return null;
     }
 
+    public List<BankAccount> createBankAccounts(List<BankAccount> bankAccounts) {
+        List<BankAccount> saved = Database.insertList(bankAccounts);
+        this.bankAccounts.addAll(saved);
+        return saved;
+    }
 }

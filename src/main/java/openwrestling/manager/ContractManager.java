@@ -9,7 +9,6 @@ import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.segmentEnum.TransactionType;

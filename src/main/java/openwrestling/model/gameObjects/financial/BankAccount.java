@@ -1,16 +1,30 @@
-package openwrestling.model.financial;
+package openwrestling.model.gameObjects.financial;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.segmentEnum.TransactionType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.segmentEnum.TransactionType;
 
-public class BankAccount {
+@Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class BankAccount extends GameObject {
 
-    private final Promotion promotion;
-    private int funds;
-
+    private long bankAccountID;
+    private Promotion promotion;
+    @Builder.Default
+    private int funds = 1000000;
+    @Builder.Default
     private List<Transaction> transactions = new ArrayList<>();
 
     public BankAccount(Promotion promotion) {
@@ -61,16 +75,19 @@ public class BankAccount {
     }
 
     private void addTransaction(int amount, TransactionType type, LocalDate date) {
-        Transaction transaction = new Transaction(amount, type, date);
+        Transaction transaction = Transaction.builder()
+                .amount(amount)
+                .type(type)
+                .date(date)
+                .build();
         transactions.add(transaction);
     }
 
-    //for adding funds outside of the game economy
-    public void addFunds(int income) {
-        funds += income;
+    public void setFunds(int income) {
+        funds = income;
     }
 
-    public void addFunds(int income, TransactionType type, LocalDate date) {
+    public void setFunds(int income, TransactionType type, LocalDate date) {
         funds += income;
         addTransaction(income, type, date);
     }
@@ -79,17 +96,6 @@ public class BankAccount {
         funds -= expense;
         addTransaction(expense, type, date);
 
-    }
-
-    public Integer getFunds() {
-        return funds;
-    }
-
-    /**
-     * @return the promotion
-     */
-    public Promotion getPromotion() {
-        return promotion;
     }
 
     private boolean sameMonth(LocalDate transactionDate, LocalDate date) {

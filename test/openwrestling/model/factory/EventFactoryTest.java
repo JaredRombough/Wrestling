@@ -1,6 +1,8 @@
 package openwrestling.model.factory;
 
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
@@ -11,8 +13,6 @@ import openwrestling.model.Match;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.modelView.EventView;
@@ -27,8 +27,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static openwrestling.model.constants.GameConstants.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -23,17 +23,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ImportTest {
 
-    private static final File TEST_DATA_FOLDER = new File(".\\test_data");
-    private Import testImport;
+    private ImportHelper importHelper;
 
     @Before
     public void setUp() {
-        testImport = new Import();
+        importHelper = new ImportHelper(new File(".\\test_data"));
     }
 
     @Test
     public void promotionsDat() {
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
         assertThat(promotions).isNotNull().hasSize(18);
         assertThat(promotions.get(0).getName().substring(0, 5)).isEqualTo("World");
         assertThat(promotions.get(0).getName().toCharArray()).hasSize(26);
@@ -43,8 +42,6 @@ public class ImportTest {
         assertThat(promotions.get(16).getLevel()).isEqualTo(2);
         for (int i = 0; i < promotions.size(); i++) {
             Promotion promotion = promotions.get(i);
-            assertThat(promotion.getImportKey())
-                    .isEqualTo(testImport.getPromotionKeys().get(i));
             assertThat(promotion.getName()).isNotNull();
             assertThat(promotion.getLevel()).isNotNull();
             assertThat(promotion.getShortName()).isNotNull();
@@ -54,8 +51,8 @@ public class ImportTest {
 
     @Test
     public void rosterSplits() {
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos_with_splits");
-        List<RosterSplit> rosterSplits = testImport.rosterSplits(TEST_DATA_FOLDER,
+        List<Promotion> promotions = importHelper.promotionsDat("promos_with_splits");
+        List<RosterSplit> rosterSplits = importHelper.rosterSplits(
                 "promos_with_splits",
                 promotions);
         assertThat(rosterSplits).isNotNull().hasSize(8);
@@ -67,37 +64,37 @@ public class ImportTest {
 
     @Test
     public void setManagers() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Worker> updatedWorkers = testImport.setManagers(TEST_DATA_FOLDER, workers);
+        List<Worker> workers = importHelper.workersDat();
+        List<Worker> updatedWorkers = importHelper.setManagers(workers);
         assertThat(updatedWorkers).hasSize(41);
     }
 
     @Test
     public void otherPromotions() {
-        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
+        List<Promotion> promotions = importHelper.otherPromotions();
         assertThat(promotions).hasSize(11);
     }
 
     @Test
     public void otherPromotionContracts() {
-        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Contract> contracts = testImport.otherPromotionContracts(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
+        List<Promotion> promotions = importHelper.otherPromotions();
+        List<Worker> workers = importHelper.workersDat();
+        List<Contract> contracts = importHelper.otherPromotionContracts(promotions, workers, LocalDate.now());
         assertThat(contracts).hasSize(245);
     }
 
     @Test
     public void processOther() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Promotion> promotions = testImport.otherPromotions(TEST_DATA_FOLDER);
-        List<Contract> contracts = testImport.otherPromotionContracts(TEST_DATA_FOLDER, promotions, workers, LocalDate.now());
-        List<Promotion> updatedPromotions = testImport.updateOther(promotions, contracts);
+        List<Worker> workers = importHelper.workersDat();
+        List<Promotion> promotions = importHelper.otherPromotions();
+        List<Contract> contracts = importHelper.otherPromotionContracts(promotions, workers, LocalDate.now());
+        List<Promotion> updatedPromotions = importHelper.updateOther(promotions, contracts);
         assertThat(updatedPromotions).hasSize(11);
     }
 
     @Test
     public void workersDat() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
+        List<Worker> workers = importHelper.workersDat();
         assertThat(workers).isNotNull().hasSize(1801);
         assertThat(workers.get(0).getName().substring(0, 3)).isEqualTo("Chr");
         assertThat(workers.get(0).getName().toCharArray()).hasSize(13);
@@ -128,9 +125,9 @@ public class ImportTest {
 
     @Test
     public void contracts() {
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Contract> contracts = testImport.contracts(TEST_DATA_FOLDER, workers, promotions, LocalDate.now());
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
+        List<Worker> workers = importHelper.workersDat();
+        List<Contract> contracts = importHelper.contracts(workers, promotions, LocalDate.now());
 
         List<Contract> found = contracts.stream().filter(contract -> contract.getWorker().getImportKey() == 6144).collect(Collectors.toList());
         assertThat(found).hasSize(2);
@@ -156,8 +153,8 @@ public class ImportTest {
 
     @Test
     public void teamsDat() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<TagTeam> tagTeams = testImport.teamsDat(TEST_DATA_FOLDER, workers);
+        List<Worker> workers = importHelper.workersDat();
+        List<TagTeam> tagTeams = importHelper.teamsDat(workers);
         assertThat(tagTeams).hasSize(515);
 
         assertThat(tagTeams.get(0).getWorkers()).extracting(Worker::getImportKey).containsOnly(6144, 6400);
@@ -177,9 +174,9 @@ public class ImportTest {
 
     @Test
     public void stablesDat() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
-        List<Stable> stables = testImport.stablesDat(TEST_DATA_FOLDER, workers, promotions);
+        List<Worker> workers = importHelper.workersDat();
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
+        List<Stable> stables = importHelper.stablesDat(workers, promotions);
         assertThat(stables).hasSize(12);
         assertThat(stables.get(2).getWorkers()).hasSize(4);
         stables.forEach(stable -> {
@@ -192,31 +189,30 @@ public class ImportTest {
 
     @Test
     public void beltsDat() {
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<RosterSplit> rosterSplits = testImport.rosterSplits(TEST_DATA_FOLDER,
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
+        List<Worker> workers = importHelper.workersDat();
+        List<RosterSplit> rosterSplits = importHelper.rosterSplits(
                 "promos",
                 promotions);
-        List<Title> titles = testImport.beltDat(TEST_DATA_FOLDER, promotions, workers, LocalDate.now(), rosterSplits);
+        List<Title> titles = importHelper.beltDat(promotions, workers, LocalDate.now(), rosterSplits);
         assertThat(titles).hasSize(69);
     }
 
 
     @Test
     public void eventDat() {
-        List<Promotion> promotions = testImport.promotionsDat(TEST_DATA_FOLDER, "promos");
-        List<RosterSplit> rosterSplits = testImport.rosterSplits(TEST_DATA_FOLDER,
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
+        List<RosterSplit> rosterSplits = importHelper.rosterSplits(
                 "promos",
                 promotions);
-        List<EventTemplate> eventTemplates = testImport.eventDat(TEST_DATA_FOLDER, rosterSplits, promotions);
+        List<EventTemplate> eventTemplates = importHelper.eventDat(rosterSplits, promotions);
         assertThat(eventTemplates).hasSize(68);
     }
 
     @Test
     public void relateDat() {
-        List<Worker> workers = testImport.workersDat(TEST_DATA_FOLDER);
-        List<WorkerRelationship> workerRelationships = testImport.relateDat(TEST_DATA_FOLDER,
-                workers);
+        List<Worker> workers = importHelper.workersDat();
+        List<WorkerRelationship> workerRelationships = importHelper.relateDat(workers);
         assertThat(workerRelationships).hasSize(2842);
     }
 }

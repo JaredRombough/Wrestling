@@ -1,26 +1,26 @@
 package openwrestling.model.factory;
 
+import openwrestling.manager.BankAccountManager;
+import openwrestling.manager.ContractManager;
+import openwrestling.manager.PromotionManager;
+import openwrestling.manager.StaffManager;
+import openwrestling.manager.WorkerManager;
+import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.financial.BankAccount;
+import openwrestling.model.manager.DateManager;
+import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.utility.StaffUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import openwrestling.model.gameObjects.Contract;
-import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
-import openwrestling.model.financial.BankAccount;
-import openwrestling.model.manager.DateManager;
-import openwrestling.manager.PromotionManager;
-import openwrestling.manager.StaffManager;
-import openwrestling.manager.WorkerManager;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.StaffType;
-import openwrestling.model.utility.StaffUtils;
 
 /*
 for generating promotions in a random game
@@ -87,7 +87,7 @@ public class PromotionFactory {
                 int rosterSize = 10 + (currentLevel * 10);
 
                 //add funds (this could be based on promotion level)
-                bankAccountManager.getBankAccount(promotion).addFunds(startingFunds * promotion.getLevel());
+                bankAccountManager.getBankAccount(promotion).setFunds(startingFunds * promotion.getLevel());
 
                 //assign workers based on promotion level
 
@@ -127,7 +127,7 @@ public class PromotionFactory {
     public Promotion newPromotion() {
         Promotion promotion = new Promotion();
         BankAccount bankAccount = new BankAccount(promotion);
-        bankAccount.addFunds(1000000);
+        bankAccount.setFunds(1000000);
         bankAccountManager.addBankAccount(bankAccount);
         return promotion;
     }

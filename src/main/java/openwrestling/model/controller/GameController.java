@@ -1,27 +1,27 @@
 package openwrestling.model.controller;
 
 import lombok.Getter;
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RosterSplitManager;
 import openwrestling.manager.StableManager;
+import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
 import openwrestling.model.factory.PromotionFactory;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.DateManager;
-import openwrestling.manager.EventManager;
 import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.manager.StaffManager;
-import openwrestling.manager.TitleManager;
 import openwrestling.model.segmentEnum.EventFrequency;
 
 import java.io.IOException;
@@ -63,12 +63,13 @@ public final class GameController implements Serializable {
 
         titleManager = new TitleManager(dateManager);
 
-        promotionManager = new PromotionManager();
+        bankAccountManager = new BankAccountManager();
+        promotionManager = new PromotionManager(bankAccountManager);
+
         newsManager = new NewsManager();
         staffManager = new StaffManager();
         stableManager = new StableManager();
         relationshipManager = new RelationshipManager();
-        bankAccountManager = new BankAccountManager();
         rosterSplitManager = new RosterSplitManager();
 
         contractManager = new ContractManager(promotionManager,

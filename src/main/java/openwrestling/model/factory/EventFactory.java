@@ -1,32 +1,32 @@
 package openwrestling.model.factory;
 
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.AngleParams;
 import openwrestling.model.Event;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.EventWorker;
 import openwrestling.model.Match;
 import openwrestling.model.MatchEvent;
 import openwrestling.model.SegmentTemplate;
 import openwrestling.model.controller.PromotionController;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
-import openwrestling.model.manager.BankAccountManager;
-import openwrestling.manager.EventManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.manager.TitleManager;
 import openwrestling.model.modelView.EventView;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -100,7 +100,7 @@ public class EventFactory {
 
         setEventStats(event, segments);
 
-        bankAccountManager.getBankAccount(event.getPromotion()).addFunds(
+        bankAccountManager.getBankAccount(event.getPromotion()).setFunds(
                 eventManager.calculateGate(event), TransactionType.GATE, eventView.getEvent().getDate());
 
         for (Worker worker : eventManager.allWorkers(segments)) {

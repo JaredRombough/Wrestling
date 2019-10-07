@@ -1,6 +1,7 @@
 package openwrestling.file;
 
 import openwrestling.database.Database;
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.TitleManager;
@@ -9,7 +10,6 @@ import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.BankAccountManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import org.apache.commons.lang3.RandomStringUtils;
