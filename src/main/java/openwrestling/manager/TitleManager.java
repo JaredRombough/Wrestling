@@ -35,7 +35,7 @@ public class TitleManager implements Serializable {
     }
 
     public List<Title> createTitles(List<Title> titles) {
-        List saved = Database.insertList(titles);
+        List saved = Database.insertOrUpdateList(titles);
         List<TitleReign> titleReigns = new ArrayList<>();
 
         saved.forEach(obj -> {
@@ -53,7 +53,7 @@ public class TitleManager implements Serializable {
             }
         });
 
-        List savedReigns = Database.insertList(titleReigns);
+        List savedReigns = Database.insertOrUpdateList(titleReigns);
 
         saved.forEach(obj -> {
             Title title = (Title) obj;

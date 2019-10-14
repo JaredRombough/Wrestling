@@ -20,7 +20,7 @@ public class TagTeamManager implements Serializable {
     }
 
     public List<TagTeam> createTagTeams(List<TagTeam> tagTeams) {
-        List saved = Database.insertList(tagTeams);
+        List saved = Database.insertOrUpdateList(tagTeams);
         this.tagTeams.addAll(saved);
         return saved;
     }

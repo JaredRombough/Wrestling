@@ -78,13 +78,13 @@ public class ContractManager implements Serializable {
     }
 
     public List<Contract> createContracts(List<Contract> contracts) {
-        List saved = Database.insertList(contracts);
+        List saved = Database.insertOrUpdateList(contracts);
         this.contracts.addAll(saved);
         return saved;
     }
 
     public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
-        List saved = Database.insertList(contracts);
+        List saved = Database.insertOrUpdateList(contracts);
         this.staffContracts.addAll(saved);
         return saved;
     }

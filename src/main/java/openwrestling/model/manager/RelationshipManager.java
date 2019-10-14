@@ -120,7 +120,7 @@ public class RelationshipManager {
     }
 
     public List<WorkerRelationship> createWorkerRelationships(List<WorkerRelationship> workerRelationships) {
-        List<WorkerRelationship> savedRelationships = Database.insertList(workerRelationships);
+        List<WorkerRelationship> savedRelationships = Database.insertOrUpdateList(workerRelationships);
         savedRelationships.forEach(this::createWorkerRelationship);
 
         return savedRelationships;

@@ -79,7 +79,7 @@ public class EventManager implements Serializable {
     }
 
     public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
-        List saved = Database.insertList(eventTemplates);
+        List saved = Database.insertOrUpdateList(eventTemplates);
         this.eventTemplates.addAll(saved);
         return saved;
     }

@@ -15,7 +15,7 @@ public class RosterSplitManager {
     }
 
     public List<RosterSplit> createRosterSplits(List<RosterSplit> rosterSplits) {
-        List saved = Database.insertList(rosterSplits);
+        List saved = Database.insertOrUpdateList(rosterSplits);
         this.rosterSplits.addAll(saved);
         return saved;
     }

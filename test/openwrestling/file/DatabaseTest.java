@@ -36,7 +36,7 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        Database.insertList(List.of(worker));
+        Database.insertOrUpdateList(List.of(worker));
         List<Worker> workers = Database.selectAll(Worker.class);
         assertThat(workers).hasSize(1);
         Worker worker1 = workers.get(0);
@@ -53,11 +53,12 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        worker.setWorkerID(123);
-        Database.insertGameObject(worker);
-        List<Worker> workers = Database.selectAll(Worker.class);
-        assertThat(workers).hasSize(1);
-        Worker worker1 = workers.get(0);
+        Worker returnedWorker =  Database.insertGameObject(worker);
+        assertThat(returnedWorker).isNotNull();
+        assertThat(returnedWorker.getWorkerID()).isNotEqualTo(0).isPositive();
+        List<Worker> selectedWorkers = Database.selectAll(Worker.class);
+        assertThat(selectedWorkers).hasSize(1);
+        Worker worker1 = selectedWorkers.get(0);
 
         assertThat(worker1.getPopularity()).isEqualTo(worker.getPopularity());
         assertThat(worker1.getCharisma()).isEqualTo(worker.getCharisma());
@@ -108,7 +109,6 @@ public class DatabaseTest {
         assertThat(rosterWorker3).isNotNull();
         assertThat(rosterWorker3.getName()).isEqualTo(worker3.getName());
     }
-
 
     @Test
     public void contract() {

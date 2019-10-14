@@ -50,13 +50,13 @@ public class WorkerManager implements Serializable {
     }
 
     public List<Worker> createWorkers(List<Worker> workers) {
-        List savedWorkers = Database.insertList(workers);
+        List savedWorkers = Database.insertOrUpdateList(workers);
         this.workers.addAll(savedWorkers);
         return savedWorkers;
     }
 
     public List<Worker> updateWorkers(List<Worker> workers) {
-        List<Worker> savedWorkers = Database.updateList(workers);
+        List<Worker> savedWorkers = Database.insertOrUpdateList(workers);
         savedWorkers.addAll(
                 this.workers.stream()
                         .filter(worker -> savedWorkers.stream().noneMatch(savedWorker -> savedWorker.getWorkerID() == worker.getWorkerID()))

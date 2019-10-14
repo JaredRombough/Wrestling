@@ -9,9 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.gameObjects.Contract;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,7 +19,7 @@ import java.util.List;
 public class PromotionEntity extends Entity {
 
     @DatabaseField(generatedId = true)
-    private int promotionID;
+    private long promotionID;
 
     @DatabaseField
     private int importKey;
@@ -44,7 +41,6 @@ public class PromotionEntity extends Entity {
 
     @ForeignCollectionField(eager = true)
     public ForeignCollection<ContractEntity> contractEntities;
-
 
 
 //    public List<ContractEntity> contracts;

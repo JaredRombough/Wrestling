@@ -2,7 +2,7 @@ package openwrestling.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -45,7 +45,6 @@ import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -124,7 +123,7 @@ public class Database {
         return connection;
     }
 
-    private static void insertEntityList(List<? extends Entity> toInsert, ConnectionSource connectionSource, boolean create) {
+    private static void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
         if (toInsert.isEmpty()) {
             return;
         }
@@ -134,7 +133,7 @@ public class Database {
 
             dao.callBatchTasks((Callable<Void>) () -> {
                 for (Entity entity : toInsert) {
-                    if (create) {
+                    if (isCreate(entity)) {
                         dao.create(entity);
                     } else {
                         dao.update(entity);
@@ -172,8 +171,7 @@ public class Database {
             List entities = dao.queryForAll();
             List targets = new ArrayList();
 
-            entities.stream().forEach(entity -> targets.add(mapper.map(entity, sourceClass)));
-            return targets;
+            return entitiesToGameObjects(entities, sourceClass);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -181,84 +179,150 @@ public class Database {
     }
 
     public static <T extends GameObject> T insertGameObject(GameObject gameObject) {
-        return (T) insertList(List.of(gameObject)).get(0);
+        return (T) insertOrUpdateList(List.of(gameObject)).get(0);
     }
 
-    public static <T extends GameObject> List<T> updateList(List<T> gameObjects) {
-        return insertOrUpdateList(gameObjects, false);
-    }
-
-    public static <T extends GameObject> List<T> insertList(List<T> gameObjects) {
-        return insertOrUpdateList(gameObjects, true);
-    }
-
-    public static <T extends GameObject> List<T> insertOrUpdateList(List<T> gameObjects, boolean create) {
+    public static <T extends GameObject> List<T> insertOrUpdateList(List<T> gameObjects) {
         if (gameObjects.isEmpty()) {
             return gameObjects;
+        }
+        List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+        List<? extends Entity> saved = insertOrUpdateEntityList(entities);
+        return entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
+    }
+
+    public static <T extends Entity> List<T> insertOrUpdateEntityList(List<T> entities) {
+        if (entities.isEmpty()) {
+            return entities;
         }
 
         try {
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
 
-            Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
-            Class sourceClass = gameObjects.get(0).getClass();
+            Class<? extends Entity> targetClass = entities.get(0).getClass();
 
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
 
-            BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(gameObjects.get(0).getClass(), targetClass);
-
-            List toInsert = gameObjects.stream().map(gameObject -> {
-                Object entity = null;
-                try {
-                    entity = targetClass.getConstructor().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (entity == null) {
-                    return null;
-                }
-
-                for (Field field : entity.getClass().getDeclaredFields()) {
-                    if (field.isAnnotationPresent(ForeignCollectionField.class)) {
-                        try {
-
-                            field.set(entity, dao.getEmptyForeignCollection(field.getName()));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-                Object result = boundedMapper.map(gameObject, entity);
-
-                return result;
-            })
-                    .collect(Collectors.toList());
-
-            MapperFacade mapper = getMapperFactory().getMapperFacade();
-            List toReturn = new ArrayList();
             dao.callBatchTasks((Callable<Void>) () -> {
-                for (Object object : toInsert) {
-                    Entity entity = (Entity) object;
-                    if (create) {
+                for (Entity entity : entities) {
+                    if (isCreate(entity)) {
                         dao.create(entity);
-                        insertEntityList(entity.childrenToInsert(), connectionSource, create);
                     } else {
                         dao.update(entity);
                     }
-                    toReturn.add(mapper.map(entity, sourceClass));
+                    insertOrUpdateChildList(entity.childrenToInsert(), connectionSource);
                 }
                 return null;
             });
 
-            return toReturn;
+            return entities;
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
+        if (gameObjects.isEmpty()) {
+            return List.of();
+        }
+
+        Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
+
+        BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(gameObjects.get(0).getClass(), targetClass);
+
+        return gameObjects.stream()
+                .map(gameObject -> {
+                    Object entity = null;
+                    try {
+                        entity = targetClass.getConstructor().newInstance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (entity == null) {
+                        return null;
+                    }
+//
+//                    for (Field field : entity.getClass().getDeclaredFields()) {
+//                        if (field.isAnnotationPresent(ForeignCollectionField.class)) {
+//                            try {
+//
+//                                field.set(entity, dao.getEmptyForeignCollection(field.getName()));
+//
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                        }
+//                    }
+                    Object result = boundedMapper.map(gameObject, entity);
+
+                    return result;
+                })
+                .map(targetClass::cast)
+                .collect(Collectors.toList());
+    }
+
+    public static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(entities.get(0).getClass(), targetClass);
+
+        return entities.stream()
+                .map(entity -> {
+                    Object gameObject = null;
+                    try {
+                        gameObject = targetClass.getConstructor().newInstance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (gameObject == null) {
+                        return null;
+                    }
+//
+//                    for (Field field : entity.getClass().getDeclaredFields()) {
+//                        if (field.isAnnotationPresent(ForeignCollectionField.class)) {
+//                            try {
+//
+//                                field.set(entity, dao.getEmptyForeignCollection(field.getName()));
+//
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                        }
+//                    }
+                    Object result = boundedMapper.map(entity, gameObject);
+
+                    return result;
+                })
+                .map(targetClass::cast)
+                .collect(Collectors.toList());
+    }
+
+
+    private static boolean isCreate(Entity entity) {
+        return List.of(entity.getClass().getDeclaredFields()).stream().anyMatch(field -> {
+                    try {
+                        boolean isCreate = false;
+                        if(field.isAnnotationPresent(DatabaseField.class) &&
+                                field.getAnnotation(DatabaseField.class).generatedId()) {
+                            field.setAccessible(true);
+                            isCreate = field.getLong(entity) == 0;
+                            field.setAccessible(false);
+                        }
+                        return isCreate;
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+        );
     }
 
     private static void createTables(String url) {

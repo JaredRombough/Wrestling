@@ -27,7 +27,7 @@ public class PromotionManager implements Serializable {
     }
 
     public List<Promotion> createPromotions(List<Promotion> promotions) {
-        List<Promotion> saved = Database.insertList(promotions);
+        List<Promotion> saved = Database.insertOrUpdateList(promotions);
         bankAccountManager.createBankAccounts(
                 saved.stream()
                         .map(promotion -> BankAccount.builder().promotion(promotion).build())
@@ -38,7 +38,7 @@ public class PromotionManager implements Serializable {
     }
 
     public List<Promotion> updatePromotions(List<Promotion> promotions) {
-        List<Promotion> saved = Database.updateList(promotions);
+        List<Promotion> saved = Database.insertOrUpdateList(promotions);
         saved.addAll(
                 this.promotions.stream()
                         .filter(promotion -> saved.stream().noneMatch(savedPromotion -> savedPromotion.getPromotionID() == promotion.getPromotionID()))

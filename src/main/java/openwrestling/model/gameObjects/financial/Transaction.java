@@ -21,4 +21,5 @@ public class Transaction extends GameObject {
     private int amount;
     private TransactionType type;
     private LocalDate date;
+    private BankAccount bankAccount;
 }

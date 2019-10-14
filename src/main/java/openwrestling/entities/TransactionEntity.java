@@ -22,8 +22,8 @@ public class TransactionEntity extends Entity {
     @DatabaseField(generatedId = true)
     private long transactionID;
 
-    @DatabaseField(foreign = true)
-    private BankAccountEntity bankAccountEntity;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 0)
+    private BankAccountEntity bankAccount;
 
     @DatabaseField
     private long amount;

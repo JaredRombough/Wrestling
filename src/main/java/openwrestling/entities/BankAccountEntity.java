@@ -1,6 +1,5 @@
 package openwrestling.entities;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -9,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -28,6 +29,6 @@ public class BankAccountEntity extends Entity {
     private long funds;
 
     @ForeignCollectionField(eager = true)
-    public ForeignCollection<TransactionEntity> transactionEntities;
+    public Collection<TransactionEntity> transactions;
 
 }

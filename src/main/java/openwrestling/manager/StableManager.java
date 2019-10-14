@@ -26,7 +26,7 @@ public class StableManager {
     }
 
     public List<Stable> createStables(List<Stable> stables) {
-        List saved = Database.insertList(stables);
+        List saved = Database.insertOrUpdateList(stables);
         this.stables.addAll(saved);
         return this.stables;
     }
