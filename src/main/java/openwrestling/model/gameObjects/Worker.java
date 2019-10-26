@@ -44,7 +44,6 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
     private Injury injury;
 
     private Worker manager;
-    private List<Worker> entourage = new ArrayList<>();
 
     public void addContract(Contract contract) {
         contracts.add(contract);
@@ -84,17 +83,6 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
     @Override
     public iContract getContract() {
         return contracts.isEmpty() ? null : contracts.get(0);
-    }
-
-    /**
-     * @param manager the manager to set
-     */
-    public void setManager(Worker manager) {
-        if (!Objects.equals(this.manager, manager)) {
-            getEntourage().remove(this.manager);
-        }
-        this.manager = manager;
-        getEntourage().add(manager);
     }
 
     @Override

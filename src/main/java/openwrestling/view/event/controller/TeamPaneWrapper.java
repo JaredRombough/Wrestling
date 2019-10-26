@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -364,7 +365,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             entouragePaneController.removeSegmentItem(segmentItem);
             if (segmentItem instanceof Worker) {
                 Worker worker = (Worker) segmentItem;
-                worker.getEntourage().forEach(item -> entouragePaneController.removeSegmentItem(item));
+                gameController.getEntourageManager().getEntourage(worker)
+                        .forEach(item -> entouragePaneController.removeSegmentItem(item));
             }
         }
 
@@ -392,7 +394,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         teamPaneController.addSegmentItem(segmentItem);
         if (segmentItem instanceof Worker) {
             Worker worker = (Worker) segmentItem;
-            worker.getEntourage().forEach(item -> entouragePaneController.addSegmentItem(item));
+            gameController.getEntourageManager().getEntourage(worker)
+                    .forEach(item -> entouragePaneController.addSegmentItem(item));
         }
     }
 

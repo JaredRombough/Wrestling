@@ -13,6 +13,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
+import openwrestling.entities.EntourageMemberEntity;
 import openwrestling.entities.EventTemplateEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
 import openwrestling.entities.PromotionEntity;
@@ -31,6 +32,7 @@ import openwrestling.entities.TransactionEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.entities.WorkerRelationshipEntity;
 import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.EntourageMember;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.MoraleRelationship;
@@ -84,6 +86,7 @@ public class Database {
         put(MoraleRelationship.class, MoraleRelationshipEntity.class);
         put(BankAccount.class, BankAccountEntity.class);
         put(Transaction.class, TransactionEntity.class);
+        put(EntourageMember.class, EntourageMemberEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -352,7 +355,8 @@ public class Database {
                     WorkerRelationshipEntity.class,
                     MoraleRelationshipEntity.class,
                     BankAccountEntity.class,
-                    TransactionEntity.class);
+                    TransactionEntity.class,
+                    EntourageMemberEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

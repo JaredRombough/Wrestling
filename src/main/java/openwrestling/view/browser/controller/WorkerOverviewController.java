@@ -178,7 +178,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         entourageButton.setOnAction(a -> {
             List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(promotion));
-            workers.removeAll(worker.getEntourage());
+            workers.removeAll(gameController.getEntourageManager().getEntourage(worker));
             workers.remove(worker);
             Optional<Worker> result = ViewUtils.selectWorkerDialog(
                     workers,
@@ -186,33 +186,33 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     String.format(resx.getString("JoinEntourageText"), worker.getName())
             ).showAndWait();
 
-            result.ifPresent(newMember -> {
-                worker.getEntourage().add(newMember);
+            result.ifPresent(follower -> {
+                gameController.getEntourageManager().addWorkerToEntourage(worker, follower);
                 updateLabels();
             });
         });
 
-        entourageListView.setCellFactory(c -> new ListCell<Worker>() {
+        entourageListView.setCellFactory(c -> new ListCell<>() {
             @Override
-            public void updateItem(Worker client, boolean empty) {
-                super.updateItem(client, empty);
+            public void updateItem(Worker follower, boolean empty) {
+                super.updateItem(follower, empty);
                 if (empty) {
                     setText(null);
                     setGraphic(null);
                 } else {
                     GameScreen clientScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
-                    GroupMemberController cotroller = (GroupMemberController) clientScreen.controller;
-                    cotroller.setCurrent(client);
+                    GroupMemberController controller = (GroupMemberController) clientScreen.controller;
+                    controller.setCurrent(follower);
                     setPrefHeight(40);
                     setMaxHeight(40);
-                    cotroller.setEditable(Objects.equals(promotion, playerPromotion()));
+                    controller.setEditable(Objects.equals(promotion, playerPromotion()));
                     if (Objects.equals(promotion, playerPromotion())) {
 
-                        cotroller.getxButton().setOnAction(a -> {
+                        controller.getxButton().setOnAction(a -> {
                             String header = resx.getString("removing.worker.from.entourage");
-                            String content = String.format("Really remove %s from %s's entourage?", client.getName(), worker.getName());
+                            String content = String.format("Really remove %s from %s's entourage?", follower.getName(), worker.getName());
                             if (ViewUtils.generateConfirmationDialogue(header, content)) {
-                                worker.getEntourage().remove(client);
+                                gameController.getEntourageManager().removeWorkerFromEntourage(worker, follower);
                                 updateLabels();
                             }
                         });
@@ -223,7 +223,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
         });
 
-        managedListView.setCellFactory(c -> new ListCell<Worker>() {
+        managedListView.setCellFactory(c -> new ListCell<>() {
             @Override
             public void updateItem(Worker client, boolean empty) {
                 super.updateItem(client, empty);
@@ -232,13 +232,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                     setGraphic(null);
                 } else {
                     GameScreen clientScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
-                    GroupMemberController cotroller = (GroupMemberController) clientScreen.controller;
-                    cotroller.setCurrent(client);
+                    GroupMemberController controller = (GroupMemberController) clientScreen.controller;
+                    controller.setCurrent(client);
                     setPrefHeight(40);
                     setMaxHeight(40);
 
                     if (Objects.equals(promotion, playerPromotion())) {
-                        cotroller.getxButton().setOnAction(a -> {
+                        controller.getxButton().setOnAction(a -> {
                             String header = "Removing client from manager";
                             String content = String.format("Really remove %s as a client for %s?", client.getName(), worker.getName());
                             if (ViewUtils.generateConfirmationDialogue(header, content)) {
@@ -279,7 +279,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             updateManagerLabels();
             entourageListView.getItems().clear();
-            entourageListView.getItems().addAll(worker.getEntourage());
+            entourageListView.getItems().addAll(gameController.getEntourageManager().getEntourage(worker));
 
             if (worker.getInjury() != null) {
                 injury.setText(String.format("%s days left",

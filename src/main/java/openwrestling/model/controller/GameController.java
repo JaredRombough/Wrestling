@@ -3,6 +3,7 @@ package openwrestling.model.controller;
 import lombok.Getter;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.EntourageManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RosterSplitManager;
@@ -52,6 +53,7 @@ public final class GameController implements Serializable {
     private final RelationshipManager relationshipManager;
     private final BankAccountManager bankAccountManager;
     private final RosterSplitManager rosterSplitManager;
+    private final EntourageManager entourageManager;
 
     private final PromotionController promotionController;
 
@@ -72,6 +74,7 @@ public final class GameController implements Serializable {
         relationshipManager = new RelationshipManager();
         rosterSplitManager = new RosterSplitManager();
 
+
         contractManager = new ContractManager(promotionManager,
                 titleManager,
                 newsManager,
@@ -79,6 +82,7 @@ public final class GameController implements Serializable {
                 bankAccountManager);
 
         workerManager = new WorkerManager(contractManager);
+        entourageManager = new EntourageManager(workerManager);
         tagTeamManager = new TagTeamManager(workerManager);
         segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
         injuryManager = new InjuryManager(newsManager, workerManager);
