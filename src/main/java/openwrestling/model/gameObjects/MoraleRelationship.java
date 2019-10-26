@@ -14,26 +14,26 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class WorkerRelationship extends Relationship {
+public class MoraleRelationship extends Relationship {
 
-    private Worker worker1;
-    private Worker worker2;
+    private Worker worker;
+    private Promotion promotion;
     private int level;
     private long relationshipID;
 
     @Override
     public SegmentItem getSegmentItem1() {
-        return worker1;
+        return worker;
     }
 
     @Override
     public SegmentItem getSegmentItem2() {
-        return worker2;
+        return promotion;
     }
 
 
     @Override
     public SegmentItem getOtherSegmentItem(SegmentItem segmentItem) {
-        return Objects.equals(segmentItem, worker1) ? worker2 : worker1;
+        return Objects.equals(segmentItem, worker) ? promotion : worker;
     }
 }

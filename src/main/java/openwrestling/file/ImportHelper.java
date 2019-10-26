@@ -507,7 +507,13 @@ public class ImportHelper {
                         level = DEFAULT_RELATIONSHIP_LEVEL;
                         break;
                 }
-                relationships.add(new WorkerRelationship(relationshipWorkers.get(0), relationshipWorkers.get(1), level));
+                relationships.add(
+                        WorkerRelationship.builder()
+                                .worker1(relationshipWorkers.get(0))
+                                .worker2(relationshipWorkers.get(1))
+                                .level(level)
+                                .build()
+                );
             }
 
         });

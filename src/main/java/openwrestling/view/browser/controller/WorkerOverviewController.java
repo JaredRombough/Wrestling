@@ -1,15 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import static java.time.temporal.ChronoUnit.DAYS;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -20,10 +10,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.manager.WorkerManager;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import static openwrestling.model.constants.UIConstants.EDIT_ICON;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
@@ -33,6 +19,21 @@ import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NameComparator;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static openwrestling.model.constants.UIConstants.EDIT_ICON;
 
 public class WorkerOverviewController extends ControllerBase implements Initializable {
 
@@ -274,7 +275,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             workrate.setText(ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker)));
             ageLabel.setText(Integer.toString(worker.getAge()));
             genderLabel.setText(worker.getGender().toString());
-            moraleLabel.setText(Integer.toString(gameController.getRelationshipManager().getRelationshipLevel(promotion, worker)));
+            moraleLabel.setText(Integer.toString(gameController.getRelationshipManager().getMoraleRelationship(worker, promotion).getLevel()));
 
             updateManagerLabels();
             entourageListView.getItems().clear();

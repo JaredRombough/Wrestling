@@ -49,6 +49,10 @@ public class WorkerManager implements Serializable {
         return averagePop;
     }
 
+    public Worker createWorker(Worker worker) {
+        return createWorkers(List.of(worker)).get(0);
+    }
+
     public List<Worker> createWorkers(List<Worker> workers) {
         List savedWorkers = Database.insertOrUpdateList(workers);
         this.workers.addAll(savedWorkers);

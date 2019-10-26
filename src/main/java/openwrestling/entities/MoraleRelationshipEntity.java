@@ -13,17 +13,17 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@DatabaseTable(tableName = "worker_relationships")
-public class WorkerRelationshipEntity extends Entity {
+@DatabaseTable(tableName = "morale_relationships")
+public class MoraleRelationshipEntity extends Entity {
 
     @DatabaseField(generatedId = true)
     private long relationshipID;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private WorkerEntity worker1;
+    private WorkerEntity worker;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private WorkerEntity worker2;
+    private PromotionEntity promotion;
 
     @DatabaseField
     private int level;

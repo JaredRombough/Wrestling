@@ -14,6 +14,7 @@ import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
 import openwrestling.entities.EventTemplateEntity;
+import openwrestling.entities.MoraleRelationshipEntity;
 import openwrestling.entities.PromotionEntity;
 import openwrestling.entities.RosterSplitEntity;
 import openwrestling.entities.RosterSplitWorkerEntity;
@@ -32,6 +33,7 @@ import openwrestling.entities.WorkerRelationshipEntity;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
@@ -79,6 +81,7 @@ public class Database {
         put(StaffMember.class, StaffMemberEntity.class);
         put(StaffContract.class, StaffContractEntity.class);
         put(WorkerRelationship.class, WorkerRelationshipEntity.class);
+        put(MoraleRelationship.class, MoraleRelationshipEntity.class);
         put(BankAccount.class, BankAccountEntity.class);
         put(Transaction.class, TransactionEntity.class);
     }};
@@ -161,7 +164,7 @@ public class Database {
         return List.of();
     }
 
-    public static List selectAll(Class sourceClass) {
+    public static <T> List selectAll(Class sourceClass) {
         try {
             Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
@@ -310,7 +313,7 @@ public class Database {
         return List.of(entity.getClass().getDeclaredFields()).stream().anyMatch(field -> {
                     try {
                         boolean isCreate = false;
-                        if(field.isAnnotationPresent(DatabaseField.class) &&
+                        if (field.isAnnotationPresent(DatabaseField.class) &&
                                 field.getAnnotation(DatabaseField.class).generatedId()) {
                             field.setAccessible(true);
                             isCreate = field.getLong(entity) == 0;
@@ -347,6 +350,7 @@ public class Database {
                     StaffMemberEntity.class,
                     StaffContractEntity.class,
                     WorkerRelationshipEntity.class,
+                    MoraleRelationshipEntity.class,
                     BankAccountEntity.class,
                     TransactionEntity.class);
 
