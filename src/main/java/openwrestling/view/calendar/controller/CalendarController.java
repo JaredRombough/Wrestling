@@ -19,7 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import openwrestling.model.Event;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.view.SimpleDisplayController;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;

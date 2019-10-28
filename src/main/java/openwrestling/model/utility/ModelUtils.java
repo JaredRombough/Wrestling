@@ -11,7 +11,7 @@ import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -176,12 +176,12 @@ public final class ModelUtils {
         return false;
     }
 
-    public static SegmentView getSegmentFromTemplate(SegmentTemplate template) {
+    public static Segment getSegmentFromTemplate(SegmentTemplate template) {
         return getSegmentFromTeams(template.getSegmentTeams());
     }
 
-    public static SegmentView getSegmentFromTeams(List<SegmentTeam> segmentTeams) {
-        SegmentView challengeMatch = new SegmentView(SegmentType.MATCH);
+    public static Segment getSegmentFromTeams(List<SegmentTeam> segmentTeams) {
+        Segment challengeMatch = new Segment(SegmentType.MATCH);
         segmentTeams.forEach(team -> {
             if (TeamType.CHALLENGER.equals(team.getType()) || TeamType.CHALLENGED.equals(team.getType())) {
                 SegmentTeam segmentTeam = new SegmentTeam();

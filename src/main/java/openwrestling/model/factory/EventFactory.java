@@ -1,5 +1,6 @@
 package openwrestling.model.factory;
 
+import openwrestling.Logging;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
@@ -8,33 +9,32 @@ import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.AngleParams;
-import openwrestling.model.Event;
 import openwrestling.model.EventWorker;
-import openwrestling.model.Match;
-import openwrestling.model.MatchEvent;
 import openwrestling.model.SegmentTemplate;
 import openwrestling.model.controller.PromotionController;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.Segment;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.modelView.EventView;
+import openwrestling.model.manager.SegmentManager;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.ResponseType;
+import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.Level;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN
 import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
 import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
-public class EventFactory {
+public class EventFactory extends Logging {
 
     private final ContractManager contractManager;
     private final EventManager eventManager;
@@ -59,6 +59,7 @@ public class EventFactory {
     private final RelationshipManager relationshipManager;
     private final NewsManager newsManager;
     private final BankAccountManager bankAccountManager;
+    private final SegmentManager segmentManager;
 
     public EventFactory(
             ContractManager contractManager,
@@ -71,7 +72,9 @@ public class EventFactory {
             StableManager stableManager,
             RelationshipManager relationshipManager,
             NewsManager newsManager,
-            BankAccountManager bankAccountManager) {
+            BankAccountManager bankAccountManager,
+            SegmentManager segmentManager
+    ) {
         this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
@@ -83,39 +86,49 @@ public class EventFactory {
         this.relationshipManager = relationshipManager;
         this.newsManager = newsManager;
         this.bankAccountManager = bankAccountManager;
+        this.segmentManager = segmentManager;
     }
 
-    public void processEventView(EventView eventView, boolean processSegments, PromotionController promotionController) {
-        Event event = eventView.getEvent();
+    public Event processEventView(Event event, boolean processSegments) {
+        logger.log(Level.DEBUG, "start process processEventView for " + event.getName());
+        try {
 
-        if (processSegments) {
-            for (SegmentView segmentView : eventView.getSegmentViews()) {
-                segmentView.setSegment(processSegmentView(eventView, segmentView));
+            if (processSegments) {
+                logger.log(Level.DEBUG, "processing " + event.getSegments().size() + " segments");
+                for (Segment segment : event.getSegments()) {
+                    processSegment(event, segment);
+                }
             }
+            segmentManager.createSegments(event.getSegments());
+
+            logger.log(Level.DEBUG, "after processSegments for " + event.getName());
+
+            //TODO delete
+            clearOldSegmentTemplates(event);
+
+
+            setEventStats(event, event.getSegments());
+
+            bankAccountManager.getBankAccount(event.getPromotion()).setFunds(
+                    eventManager.calculateGate(event), TransactionType.GATE, event.getDate());
+
+            for (Worker worker : eventManager.allWorkers(event.getSegments())) {
+                EventWorker eventWorker = new EventWorker(event, worker);
+                eventManager.addEventWorker(eventWorker);
+            }
+            processContracts(event, event.getSegments());
+
+            logger.log(Level.DEBUG, "end process processEventView for " + event.getName());
+        } catch (Exception e) {
+            logger.log(Level.ERROR, e.getMessage());
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw e;
         }
-
-        clearOldSegmentTemplates(event);
-
-        List<Segment> segments = segmentsFromSegmentViews(eventView.getSegmentViews());
-
-        setEventStats(event, segments);
-
-        bankAccountManager.getBankAccount(event.getPromotion()).setFunds(
-                eventManager.calculateGate(event), TransactionType.GATE, eventView.getEvent().getDate());
-
-        for (Worker worker : eventManager.allWorkers(segments)) {
-            EventWorker eventWorker = new EventWorker(event, worker);
-            eventManager.addEventWorker(eventWorker);
-        }
-        processContracts(event, segments);
-
-        eventManager.addEventView(eventView);
-
-        promotionController.updateEventTemplate(eventView);
+        return event;
     }
 
     public void createMonthlyEvents(Promotion promotion) {
-
+        List<EventTemplate> eventTemplates = new ArrayList<>();
         Month month = Month.JANUARY;
         for (int i = 0; i < 12; i++) {
 
@@ -135,9 +148,11 @@ public class EventFactory {
             } else {
                 template.setEventVenueSize(EventVenueSize.SMALL);
             }
-            eventManager.addEventTemplate(template);
+            eventTemplates.add(template);
+
 
         }
+        eventManager.createEventTemplates(eventTemplates);
     }
 
     private void clearOldSegmentTemplates(Event event) {
@@ -154,13 +169,6 @@ public class EventFactory {
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
     }
 
-    private List<Segment> segmentsFromSegmentViews(List<SegmentView> segmentViews) {
-        List<Segment> segments = new ArrayList<>();
-        for (SegmentView segmentView : segmentViews) {
-            segments.add(segmentView.getSegment());
-        }
-        return segments;
-    }
 
     private void processContracts(iEvent event, List<Segment> segments) {
         eventManager.allWorkers(segments).stream().forEach((worker) -> {
@@ -168,44 +176,47 @@ public class EventFactory {
         });
     }
 
-    public Segment processSegmentView(EventView eventView, SegmentView segmentView) {
-        segmentView.setEventView(eventView);
-        Segment segment = matchFactory.saveSegment(segmentView);
-        if (segment instanceof Match) {
-            eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
-            List<Worker> winners = segmentView.getWinners();
-            winners.stream().forEach((worker) -> {
+    public Segment processSegment(Event event, Segment toProcess) {
+        logger.log(Level.DEBUG, "start processSegment for " + event.getName());
+        toProcess.setEvent(event);
+        Segment segment = matchFactory.saveSegment(toProcess);
+        if (SegmentType.MATCH.equals(segment.getSegmentType())) {
+            logger.log(Level.DEBUG, "processing match");
+            // eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
+            List<Worker> winners = toProcess.getWinners();
+            winners.forEach((worker) -> {
+                logger.log(Level.DEBUG, "processing winner " + worker.getName());
                 workerManager.gainPopularity(worker);
-                relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_MATCH_WIN);
-                if (!segmentView.getTitles().isEmpty()) {
-                    relationshipManager.addRelationshipValue(worker, segmentView.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
+                //TODO bottleneck no batch update
+                relationshipManager.addRelationshipValue(worker, toProcess.getPromotion(), MORALE_BONUS_MATCH_WIN);
+                if (!toProcess.getTitles().isEmpty()) {
+                    relationshipManager.addRelationshipValue(worker, toProcess.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
                 }
             });
             if (!winners.isEmpty()) {
-                getMatchMoralePenalties(segmentView).entrySet().stream().forEach(entry -> {
-                    relationshipManager.addRelationshipValue(entry.getKey(), segmentView.getPromotion(), -entry.getValue());
-                    newsManager.addJobComplaintNewsItem(entry.getKey(), winners, segmentView.getPromotion(), segmentView.getDate());
+                getMatchMoralePenalties(toProcess).entrySet().stream().forEach(entry -> {
+                    relationshipManager.addRelationshipValue(entry.getKey(), toProcess.getPromotion(), -entry.getValue());
+                    newsManager.addJobComplaintNewsItem(entry.getKey(), winners, toProcess.getPromotion(), toProcess.getDate());
                 });
             }
-            if (!segmentView.getTitles().isEmpty() && !winners.isEmpty()) {
-                processTitleChanges(segmentView, winners);
+            if (!toProcess.getTitles().isEmpty() && !winners.isEmpty()) {
+                processTitleChanges(toProcess, winners);
             }
         } else {
-            AngleParams angleParams = (AngleParams) segmentView.getSegment().getSegmentParams();
-            if (AngleType.OFFER.equals(angleParams.getAngleType())) {
-                processOffer(segmentView, angleParams);
-            } else if (AngleType.CHALLENGE.equals(angleParams.getAngleType())) {
-                processChallenge(angleParams);
+            if (AngleType.OFFER.equals(segment.getAngleType())) {
+                processOffer(segment);
+            } else if (AngleType.CHALLENGE.equals(segment.getAngleType())) {
+                processChallenge(segment);
             }
         }
         return segment;
     }
 
-    private void processOffer(SegmentView segmentView, AngleParams angleParams) {
-        SegmentTeam offerer = segmentView.getTeams(TeamType.OFFERER).stream().findFirst().orElse(null);
-        List<SegmentTeam> offerees = segmentView.getTeams(TeamType.OFFEREE).stream().collect(Collectors.toList());
+    private void processOffer(Segment segment) {
+        SegmentTeam offerer = segment.getTeams(TeamType.OFFERER).stream().findFirst().orElse(null);
+        List<SegmentTeam> offerees = new ArrayList<>(segment.getTeams(TeamType.OFFEREE));
 
-        if (JoinTeamType.TAG_TEAM.equals(angleParams.getJoinTeamType())) {
+        if (JoinTeamType.TAG_TEAM.equals(segment.getJoinTeamType())) {
             SegmentTeam offeree = offerees.get(0);
             if (ResponseType.YES.equals(offeree.getResponse())) {
                 tagTeamManager.createTagTeam(
@@ -213,7 +224,7 @@ public class EventFactory {
                         offerer.getWorkers().get(0),
                         offeree.getWorkers().get(0));
             }
-        } else if (JoinTeamType.NEW_STABLE.equals(angleParams.getJoinTeamType())) {
+        } else if (JoinTeamType.NEW_STABLE.equals(segment.getJoinTeamType())) {
             List<Worker> newMembers = new ArrayList<>();
             newMembers.addAll(offerer.getWorkers());
             offerees.forEach(offeree -> {
@@ -223,25 +234,25 @@ public class EventFactory {
             });
 
             if (newMembers.size() > 1) {
-                Stable stable = new Stable(ModelUtils.slashNames(newMembers), segmentView.getPromotion());
+                Stable stable = new Stable(ModelUtils.slashNames(newMembers), segment.getPromotion());
                 stable.setWorkers(newMembers);
                 stableManager.addStable(stable);
-                segmentView.setNewStable(stable);
+                segment.setNewStable(stable);
             }
 
-        } else if (JoinTeamType.STABLE.equals(angleParams.getJoinTeamType())) {
+        } else if (JoinTeamType.STABLE.equals(segment.getJoinTeamType())) {
             List<Worker> newMembers = new ArrayList<>();
             offerees.forEach(offeree -> {
                 if (ResponseType.YES.equals(offeree.getResponse())) {
                     newMembers.addAll(offeree.getWorkers());
                 }
             });
-            segmentView.getSegment().getSegmentParams().getJoinStable().getWorkers().addAll(newMembers);
+            segment.getJoinStable().getWorkers().addAll(newMembers);
         }
     }
 
-    private void processTitleChanges(SegmentView segmentView, List<Worker> winners) {
-        for (Title title : segmentView.getTitles()) {
+    private void processTitleChanges(Segment segment, List<Worker> winners) {
+        for (Title title : segment.getTitles()) {
             boolean change = !winners.equals(title.getChampions());
             if (change) {
                 titleManager.titleChange(title, winners);
@@ -249,13 +260,13 @@ public class EventFactory {
         }
     }
 
-    private void processChallenge(AngleParams angleParams) {
-        if (angleParams.getShowType().equals(ShowType.NEXT_SHOW)) {
-            List<SegmentTeam> teams = angleParams.getChallengeSegment().getSegmentTeams().stream()
+    private void processChallenge(Segment segment) {
+        if (segment.getShowType().equals(ShowType.NEXT_SHOW)) {
+            List<SegmentTeam> teams = segment.getChallengeSegment().getSegmentTeams().stream()
                     .filter(team -> team.getType().equals(TeamType.CHALLENGER) || ResponseType.YES.equals(team.getResponse()))
                     .collect(Collectors.toList());
             if (teams.size() > 1) {
-                angleParams.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(angleParams.getChallengeSegment());
+                segment.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(segment.getChallengeSegment());
             }
         }
     }

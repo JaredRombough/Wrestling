@@ -1,9 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,14 +11,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import openwrestling.model.AngleParams;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class AngleOptionsController extends ControllerBase implements Initializable {
 
@@ -64,27 +64,27 @@ public class AngleOptionsController extends ControllerBase implements Initializa
         }
     }
 
-    public AngleParams getAngleParams() {
-        AngleParams angleParams = new AngleParams();
-        angleParams.setAngleType((AngleType) angleTypeComboBox.getValue());
-        if (AngleType.OFFER.equals(angleParams.getAngleType())) {
+    public AngleOptions getAngleOptions() {
+        AngleOptions angleOptions = new AngleOptions();
+        angleOptions.setAngleType((AngleType) angleTypeComboBox.getValue());
+        if (AngleType.OFFER.equals(angleOptions.getAngleType())) {
             if (combo1.getValue() instanceof JoinTeamType) {
-                angleParams.setJoinTeamType((JoinTeamType) combo1.getValue());
+                angleOptions.setJoinTeamType((JoinTeamType) combo1.getValue());
             } else if (combo1.getValue() instanceof Stable) {
-                angleParams.setJoinTeamType(JoinTeamType.STABLE);
-                angleParams.setJoinStable((Stable) combo1.getValue());
+                angleOptions.setJoinTeamType(JoinTeamType.STABLE);
+                angleOptions.setJoinStable((Stable) combo1.getValue());
             }
-        } else if (AngleType.CHALLENGE.equals((angleParams.getAngleType()))) {
+        } else if (AngleType.CHALLENGE.equals((angleOptions.getAngleType()))) {
             SegmentTemplate challengeSegment = new SegmentTemplate();
             if (combo1.getValue() instanceof ShowType) {
-                angleParams.setShowType((ShowType) combo1.getValue());
+                angleOptions.setShowType((ShowType) combo1.getValue());
             } else if (combo1.getValue() instanceof EventTemplate) {
-                angleParams.setShowType(ShowType.NEXT_SHOW);
+                angleOptions.setShowType(ShowType.NEXT_SHOW);
                 challengeSegment.setEventTemplate((EventTemplate) combo1.getValue());
             }
-            angleParams.setChallengeSegment(challengeSegment);
+            angleOptions.setChallengeSegment(challengeSegment);
         }
-        return angleParams;
+        return angleOptions;
     }
 
     private void setCombo1(ObservableList items, String labelText) {
@@ -152,9 +152,9 @@ public class AngleOptionsController extends ControllerBase implements Initializa
 
     @Override
     public void updateLabels() {
-        AngleParams angleParams = getAngleParams();
-        challengeButton.setDisable(challengeIsPresent || !challengeIsComplete || !angleParams.getShowType().equals(ShowType.TONIGHT));
-        challengeButton.setVisible(AngleType.CHALLENGE.equals(angleParams.getAngleType()));
+        AngleOptions angleOptions = getAngleOptions();
+        challengeButton.setDisable(challengeIsPresent || !challengeIsComplete || !angleOptions.getShowType().equals(ShowType.TONIGHT));
+        challengeButton.setVisible(AngleType.CHALLENGE.equals(angleOptions.getAngleType()));
     }
 
     /**

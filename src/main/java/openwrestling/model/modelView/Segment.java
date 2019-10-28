@@ -1,46 +1,80 @@
 package openwrestling.model.modelView;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import openwrestling.model.Angle;
-import openwrestling.model.AngleParams;
-import openwrestling.model.Match;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.Segment;
+import openwrestling.model.segmentEnum.AngleType;
+import openwrestling.model.segmentEnum.JoinTeamType;
+import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.MatchRule;
+import openwrestling.model.segmentEnum.PresenceType;
+import openwrestling.model.segmentEnum.PromoType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.SegmentValidation;
+import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
 
-public class SegmentView implements Serializable {
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    private List<SegmentTeam> teams;
-    private LocalDate date;
-    private Segment segment;
-    private final List<Title> titles;
-    private final SegmentType segmentType;
-    private EventView eventView;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Segment extends GameObject implements Serializable {
+
+    private long segmentID;
+
+    @Builder.Default
+    private List<SegmentTeam> teams = new ArrayList<>();
+
+    @Builder.Default
+    private List<Title> titles = new ArrayList<>();
+
+    private SegmentType segmentType;
+    private Event event;
     private StaffMember referee;
-    private List<? extends SegmentItem> broadcastTeam;
+    //TODO
+    // private List<? extends SegmentItem> broadcastTeam;
     private Stable newStable;
+    private int workRating;
+    private int crowdRating;
+    private int segmentLength;
+    private AngleType angleType;
+    private JoinTeamType joinTeamType;
+    private PresenceType presenceType;
+    private PromoType promoType;
+    private ShowType showType;
+    private Stable joinStable;
+    private SegmentTemplate challengeSegment;
 
-    public SegmentView(SegmentType segmentType) {
+    private MatchFinish matchFinish = MatchFinish.CLEAN;
+    private MatchRule matchRule = MatchRule.DEFAULT;
+
+    public LocalDate getDate() {
+        return event.getDate();
+    }
+
+    public Segment(SegmentType segmentType) {
         this.segmentType = segmentType;
-        if (segmentType.equals(SegmentType.MATCH)) {
-            segment = new Match();
-        } else {
-            segment = new Angle();
-        }
         teams = new ArrayList<>();
-        broadcastTeam = new ArrayList<>();
+        //TODOCaught
+        //broadcastTeam = new ArrayList<>();
         titles = new ArrayList<>();
     }
 
@@ -59,7 +93,8 @@ public class SegmentView implements Serializable {
             segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titles);
-        segmentItems.addAll(broadcastTeam);
+        //TODO
+        //segmentItems.addAll(broadcastTeam);
         segmentItems.add(referee);
         return segmentItems;
     }
@@ -154,48 +189,6 @@ public class SegmentView implements Serializable {
     }
 
     /**
-     * @param teams the teams to set
-     */
-    public void setTeams(List<SegmentTeam> teams) {
-        this.teams = teams;
-    }
-
-    /**
-     * @return the date
-     */
-    public LocalDate getDate() {
-        return date;
-    }
-
-    /**
-     * @param date the date to set
-     */
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    /**
-     * @return the segment
-     */
-    public Segment getSegment() {
-        return segment;
-    }
-
-    /**
-     * @param segment the segment to set
-     */
-    public void setSegment(Segment segment) {
-        this.segment = segment;
-    }
-
-    /**
-     * @return the title
-     */
-    public List<Title> getTitles() {
-        return titles;
-    }
-
-    /**
      * @param title the title to set
      */
     public void addTitle(Title title) {
@@ -206,82 +199,8 @@ public class SegmentView implements Serializable {
         this.titles.addAll(titles);
     }
 
-    /**
-     * @return the segmentType
-     */
-    public SegmentType getSegmentType() {
-        return segmentType;
-    }
-
-    /**
-     * @return the eventView
-     */
-    public EventView getEventView() {
-        return eventView;
-    }
-
     public Promotion getPromotion() {
-        return eventView.getEvent().getPromotion();
-    }
-
-    /**
-     * @param eventView the eventView to set
-     */
-    public void setEventView(EventView eventView) {
-        this.eventView = eventView;
-    }
-
-    /**
-     * @return the referee
-     */
-    public StaffMember getReferee() {
-        return referee;
-    }
-
-    /**
-     * @param referee the referee to set
-     */
-    public void setReferee(StaffMember referee) {
-        this.referee = referee;
-    }
-
-    /**
-     * @return the broadcastTeam
-     */
-    public List<? extends SegmentItem> getBroadcastTeam() {
-        return broadcastTeam;
-    }
-
-    /**
-     * @param broadcastTeam the broadcastTeam to set
-     */
-    public void setBroadcastTeam(List<? extends SegmentItem> broadcastTeam) {
-        this.broadcastTeam = broadcastTeam;
-    }
-
-    public MatchRule getMatchRule() {
-        return segment.getSegmentParams().getMatchRule();
-    }
-
-    /**
-     * @return the newStable
-     */
-    public Stable getNewStable() {
-        return newStable;
-    }
-
-    /**
-     * @param newStable the newStable to set
-     */
-    public void setNewStable(Stable newStable) {
-        this.newStable = newStable;
-    }
-
-    /**
-     * @return the angleParams
-     */
-    public AngleParams getAngleParams() {
-        return (AngleParams) segment.getSegmentParams();
+        return event.getPromotion();
     }
 
 }

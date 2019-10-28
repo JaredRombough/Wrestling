@@ -1,6 +1,7 @@
 package openwrestling.manager;
 
 import lombok.Getter;
+import openwrestling.Logging;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
@@ -13,6 +14,7 @@ import openwrestling.model.manager.NewsManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,7 +26,7 @@ import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONU
 import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static openwrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
-public class ContractManager implements Serializable {
+public class ContractManager extends Logging implements Serializable {
 
     @Getter
     private final List<Contract> contracts;
@@ -52,6 +54,7 @@ public class ContractManager implements Serializable {
     }
 
     public void dailyUpdate(LocalDate date) {
+        logger.log(Level.DEBUG, "dailyUpdate contracts " + date.toString());
         for (Contract contract : contracts) {
             if (!contract.isActive()) {
                 continue;
@@ -63,11 +66,12 @@ public class ContractManager implements Serializable {
                 handleMoraleCheck(contract, date);
             }
         }
-
+        logger.log(Level.DEBUG, "dailyUpdate staff contracts " + date.toString());
         for (StaffContract contract : staffContracts) {
             nextDay(contract, date);
         }
     }
+
 
     public void addContract(Contract contract) {
         contracts.add(contract);
@@ -273,6 +277,7 @@ public class ContractManager implements Serializable {
     }
 
     private void handleMoraleCheck(iContract contract, LocalDate date) {
+        logger.log(Level.DEBUG, "handleMoraleCheck");
         long daysBetween = DAYS.between(contract.getLastShowDate(), date);
         int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
         if (penalty > 0) {

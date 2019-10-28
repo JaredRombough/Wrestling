@@ -2,17 +2,16 @@ package openwrestling.model.utility;
 
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.Event;
-import openwrestling.model.modelView.EventView;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.SegmentType;
 
 public final class TestUtils {
 
-    public static EventView testEventView(Event event, List<Worker> roster, boolean addImages) {
+    public static Event testEventView(Event event, List<Worker> roster, boolean addImages) {
 
         if (addImages) {
             String imagePath = "worker%02d.jpg";
@@ -23,7 +22,7 @@ public final class TestUtils {
             }
         }
 
-        List<SegmentView> testSegments = new ArrayList<>();
+        List<Segment> testSegments = new ArrayList<>();
         for (int teamSize = 1; teamSize < 10; teamSize++) {
             testSegments.add(testSegment(2, teamSize, roster));
             testSegments.add(testSegment(4, teamSize, roster));
@@ -34,13 +33,14 @@ public final class TestUtils {
 
             testSegments.add(testSegment(numbers[n], 1, roster));
         }
+        event.setSegments(testSegments);
 
-        return new EventView(event, testSegments);
+        return event;
 
     }
 
-    private static SegmentView testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
-        SegmentView segmentView = new SegmentView(SegmentType.MATCH);
+    private static Segment testSegment(int numberOfTeams, int teamSize, List<Worker> roster) {
+        Segment segment = new Segment(SegmentType.MATCH);
         List<SegmentTeam> teams = new ArrayList<>();
 
         int currentWorkerIndex = 0;
@@ -61,8 +61,8 @@ public final class TestUtils {
 
             teams.add(team);
         }
-        segmentView.setTeams(teams);
-        return segmentView;
+        segment.setTeams(teams);
+        return segment;
 
     }
 

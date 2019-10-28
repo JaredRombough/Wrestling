@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import openwrestling.model.Event;
+import openwrestling.model.gameObjects.Event;
 import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.interfaces.ControllerBase;

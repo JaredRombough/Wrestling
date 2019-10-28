@@ -82,9 +82,11 @@ public class Import {
                 gameController.getTitleManager().createTitles(titles);
 
                 List<EventTemplate> tvTemplates = importHelper.tvDat(promotions, rosterSplits);
+                tvTemplates.forEach(eventTemplate -> ImportUtils.setInitialEventTemplateDates(eventTemplate, gameController.getDateManager().today()));
                 gameController.getEventManager().createEventTemplates(tvTemplates);
 
                 List<EventTemplate> eventTemplates = importHelper.eventDat(rosterSplits, promotions);
+                eventTemplates.forEach(eventTemplate -> ImportUtils.setInitialEventTemplateDates(eventTemplate, gameController.getDateManager().today()));
                 gameController.getEventManager().createEventTemplates(eventTemplates);
 
                 List<StaffMember> staffMembers = importHelper.staffDat();

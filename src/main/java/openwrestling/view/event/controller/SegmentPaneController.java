@@ -10,18 +10,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import openwrestling.model.AngleParams;
-import openwrestling.model.gameObjects.EventTemplate;
-import openwrestling.model.MatchParams;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Title;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -86,7 +84,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private List<Button> segmentTypeButtons;
 
     private GameScreen angleOptionsScreen;
-    private AngleOptionsController angleOptions;
+    private AngleOptionsController angleOptionsController;
     private GameScreen matchOptionsScreen;
     private MatchOptions matchOptions;
     private ButtonWrapper segmentLengthWrapper;
@@ -104,7 +102,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private EventScreenController eventScreenController;
 
     private SegmentType segmentType;
-    private SegmentView challengeSource;
+    private Segment challengeSource;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -147,7 +145,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         initializeRef();
 
         addTeamButton.setOnAction(e -> addTeam(
-                angleOptions.getAngleParams().getAngleType().addTeamType()
+                angleOptionsController.getAngleOptions().getAngleType().addTeamType()
         ));
         interferenceButton.setOnAction(e -> addTeam(TeamType.INTERFERENCE));
     }
@@ -192,9 +190,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
     private void initializeAngleOptions() {
         angleOptionsScreen = ViewUtils.loadScreenFromFXML(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
-        angleOptions = (AngleOptionsController) angleOptionsScreen.controller;
+        angleOptionsController = (AngleOptionsController) angleOptionsScreen.controller;
 
-        angleOptions.setAngleTypeListener(new ChangeListener<AngleType>() {
+        angleOptionsController.setAngleTypeListener(new ChangeListener<AngleType>() {
             @Override
             public void changed(ObservableValue ov, AngleType oldType, AngleType newType) {
                 if (newType != null) {
@@ -206,16 +204,16 @@ public class SegmentPaneController extends ControllerBase implements Initializab
 
         List<Object> challengeOptions = new ArrayList<>();
         challengeOptions.add(ShowType.TONIGHT);
-        List<EventTemplate> futureEvents = new ArrayList<>(playerPromotion().getEventTemplates());
-        Collections.sort(futureEvents, new DateComparator());
+        List<EventTemplate> futureEvents = gameController.getEventManager().getEventTemplates(playerPromotion());
+        futureEvents.sort(new DateComparator());
         challengeOptions.addAll(futureEvents);
-        angleOptions.setChallengeOptions(challengeOptions);
+        angleOptionsController.setChallengeOptions(challengeOptions);
 
-        angleOptions.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
+        angleOptionsController.getCombo1().valueProperty().addListener((ObservableValue ov, Object t, Object t1) -> {
             angleOptionChanged(t1);
         });
 
-        angleOptions.setChallengeButtonAction(e -> {
+        angleOptionsController.setChallengeButtonAction(e -> {
             eventScreenController.addSegment(ModelUtils.getSegmentFromTeams(getSegmentTeamsForChallenge()));
         });
 
@@ -421,7 +419,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 ? MatchLength.values() : AngleLength.values()));
         segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
         refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
-        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType()));
+        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptionsController.getAngleOptions().getAngleType()));
         eventScreenController.segmentsChanged();
         eventScreenController.updateLabels();
     }
@@ -429,7 +427,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private boolean getXButtonVisible(int index, TeamType teamType) {
         int minTeams = getSegmentType().equals(SegmentType.MATCH)
                 ? 2
-                : angleOptions.getAngleParams().getAngleType().minWorkers();
+                : angleOptionsController.getAngleOptions().getAngleType().minWorkers();
 
         return index >= minTeams || teamType.equals(TeamType.INTERFERENCE);
     }
@@ -444,8 +442,8 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         TeamType teamType;
 
         if (getSegmentType().equals(SegmentType.ANGLE)) {
-            teamType = index == 0 ? angleOptions.getAngleParams().getAngleType().mainTeamType()
-                    : angleOptions.getAngleParams().getAngleType().addTeamType();
+            teamType = index == 0 ? angleOptionsController.getAngleOptions().getAngleType().mainTeamType()
+                    : angleOptionsController.getAngleOptions().getAngleType().addTeamType();
         } else if (matchOptions.getMatchFinish().equals(MatchFinish.DRAW)) {
             teamType = TeamType.DRAW;
         } else {
@@ -507,22 +505,22 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             screen.controller.updateLabels();
         }
 
-        if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptions.getAngleParams().getAngleType())) {
+        if (SegmentType.ANGLE.equals(segmentType) && AngleType.OFFER.equals(angleOptionsController.getAngleOptions().getAngleType())) {
             updateOffers();
         }
 
-        if (SegmentType.ANGLE.equals(segmentType) && AngleType.CHALLENGE.equals(angleOptions.getAngleParams().getAngleType())) {
-            SegmentView segmentView = getSegmentView();
-            if (SegmentValidation.COMPLETE.equals(segmentView.getValidationStatus())) {
-                SegmentView challengeMatch = ModelUtils.getSegmentFromTeams(getSegmentTeamsForChallenge());
+        if (SegmentType.ANGLE.equals(segmentType) && AngleType.CHALLENGE.equals(angleOptionsController.getAngleOptions().getAngleType())) {
+            Segment segment = getSegment();
+            if (SegmentValidation.COMPLETE.equals(segment.getValidationStatus())) {
+                Segment challengeMatch = ModelUtils.getSegmentFromTeams(getSegmentTeamsForChallenge());
                 boolean isPresent = eventScreenController.challengeForTonightIsPresent(challengeMatch, this);
-                angleOptions.setChallengeIsPresent(isPresent);
-                angleOptions.setChallengeIsComplete(challengeMatch.getMatchParticipantTeams().size() > 1);
+                angleOptionsController.setChallengeIsPresent(isPresent);
+                angleOptionsController.setChallengeIsComplete(challengeMatch.getMatchParticipantTeams().size() > 1);
             } else {
-                angleOptions.setChallengeIsPresent(true);
+                angleOptionsController.setChallengeIsPresent(true);
             }
         }
-        angleOptions.updateLabels();
+        angleOptionsController.updateLabels();
     }
 
     public void swapTeams(int indexA, int indexB) {
@@ -540,30 +538,35 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         eventScreenController.updateLabels();
     }
 
-    public SegmentView getSegmentView() {
-        SegmentView segmentView = new SegmentView(segmentType);
-        segmentView.getSegment().setSegmentLength(segmentLength.value());
-        segmentView.setTeams(getSegmentTeams());
-        segmentView.addTitles(getTitles());
-        segmentView.setReferee(getRef());
-        segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
+    public Segment getSegment() {
+        Segment segment = new Segment(segmentType);
+        segment.setSegmentLength(segmentLength.value());
+        segment.setTeams(getSegmentTeams());
+        segment.addTitles(getTitles());
+        segment.setReferee(getRef());
+        //TODO
+        //segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
         if (segmentType.equals(SegmentType.MATCH)) {
-            MatchParams params = new MatchParams();
-            params.setMatchFinish(matchOptions.getMatchFinish());
-            params.setMatchRule(matchOptions.getMatchRule());
-            segmentView.getSegment().setSegmentParams(params);
+            segment.setMatchFinish(matchOptions.getMatchFinish());
+            segment.setMatchRule(matchOptions.getMatchRule());
         } else {
-            AngleParams angleParams = angleOptions.getAngleParams();
+            AngleOptions angleOptions = angleOptionsController.getAngleOptions();
 
-            if (angleParams.getAngleType().equals(AngleType.CHALLENGE)) {
-                angleParams.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeamsForChallenge());
-                angleParams.getChallengeSegment().getTitleViews().addAll(getTitles());
-                angleParams.getChallengeSegment().setSourceEvent(eventScreenController.getCurrentEvent());
+            if (angleOptions.getAngleType().equals(AngleType.CHALLENGE)) {
+                angleOptions.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeamsForChallenge());
+                angleOptions.getChallengeSegment().getTitleViews().addAll(getTitles());
+                angleOptions.getChallengeSegment().setSourceEvent(eventScreenController.getCurrentEvent());
             }
-            segmentView.getSegment().setSegmentParams(angleParams);
+            segment.setAngleType(angleOptions.getAngleType());
+            segment.setJoinStable(angleOptions.getJoinStable());
+            segment.setJoinTeamType(angleOptions.getJoinTeamType());
+            segment.setChallengeSegment(angleOptions.getChallengeSegment());
+            segment.setPresenceType(angleOptions.getPresenceType());
+            segment.setPromoType(angleOptions.getPromoType());
+            segment.setShowType(angleOptions.getShowType());
         }
 
-        return segmentView;
+        return segment;
     }
 
     private List<SegmentTeam> getSegmentTeamsForChallenge() {
@@ -681,21 +684,21 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                     }
                 }
             }
-            angleOptions.setOffers(offers);
+            angleOptionsController.setOffers(offers);
         }
     }
 
     /**
      * @return the challengeSource
      */
-    public SegmentView getChallengeSource() {
+    public Segment getChallengeSource() {
         return challengeSource;
     }
 
     /**
      * @param challengeSource the challengeSource to set
      */
-    public void setChallengeSource(SegmentView challengeSource) {
+    public void setChallengeSource(Segment challengeSource) {
         this.challengeSource = challengeSource;
     }
 }

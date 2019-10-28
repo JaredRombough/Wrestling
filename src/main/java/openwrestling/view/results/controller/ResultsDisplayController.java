@@ -1,9 +1,5 @@
 package openwrestling.view.results.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -12,12 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import openwrestling.model.Event;
-import openwrestling.model.interfaces.Segment;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
@@ -26,6 +20,11 @@ import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class ResultsDisplayController extends ControllerBase implements Initializable {
 
@@ -44,7 +43,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     @FXML
     private ScrollPane scrollPane;
 
-    private SegmentView segmentView;
+    private Segment segment;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,44 +56,43 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof SegmentView) {
-            this.segmentView = (SegmentView) obj;
+        if (obj instanceof Segment) {
+            this.segment = (Segment) obj;
             updateLabels();
-        } else if (obj instanceof EventView) {
-            showEventSummary(((EventView) obj).getEvent());
+        } else if (obj instanceof Event) {
+            showEventSummary(((Event) obj));
         }
     }
 
     @Override
     public void updateLabels() {
 
-        if (segmentView != null) {
-            segmentTitle.setText(gameController.getSegmentManager().getSegmentTitle(segmentView));
-            Segment segment = segmentView.getSegment();
+        if (segment != null) {
+            segmentTitle.setText(gameController.getSegmentManager().getSegmentTitle(segment));
             StringBuilder sb = new StringBuilder();
 
-            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.BEFORE)) {
                     sb.append(getInterferenceNote(team));
                 }
             }
 
-            sb.append(gameController.getSegmentManager().getSegmentString(segmentView));
+            sb.append(gameController.getSegmentManager().getSegmentString(segment));
             sb.append("\n");
 
-            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.DURING)) {
                     sb.append(getInterferenceNote(team));
                 }
             }
 
-            for (SegmentTeam team : segmentView.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.AFTER)) {
                     sb.append(getInterferenceNote(team));
                 }
             }
 
-            boolean isMatch = segmentView.getSegmentType().equals(SegmentType.MATCH);
+            boolean isMatch = segment.getSegmentType().equals(SegmentType.MATCH);
 
             sb.append(isMatch ? "Match" : "Segment");
             sb.append(String.format(" rating: %s", isMatch
@@ -104,13 +102,14 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                     .append(String.format("Crowd reaction: %d%%", segment.getCrowdRating()));
             if (isMatch) {
                 sb.append("\n");
-                sb.append((String.format("Referee: %s", segmentView.getReferee() != null ? segmentView.getReferee().toString() : " None")));
+                sb.append((String.format("Referee: %s", segment.getReferee() != null ? segment.getReferee().toString() : " None")));
             }
             sb.append("\n");
-            if (!segmentView.getBroadcastTeam().isEmpty()) {
-                sb.append("\n");
-                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNames(segmentView.getBroadcastTeam())));
-            }
+            //TODO
+//            if (!segmentView.getBroadcastTeam().isEmpty()) {
+//                sb.append("\n");
+//                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNames(segmentView.getBroadcastTeam())));
+//            }
 
             summaryText.setText(sb.toString());
             populateView();
@@ -133,7 +132,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
 
         flowPane.getChildren().clear();
 
-        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
+        if (segment.getSegmentType().equals(SegmentType.MATCH)) {
             populateMatch();
         } else {
             populateAngle();
@@ -141,7 +140,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void populateMatch() {
-        List<SegmentTeam> defaultTeams = segmentView.getMatchParticipantTeams();
+        List<SegmentTeam> defaultTeams = segment.getMatchParticipantTeams();
         for (SegmentTeam team : defaultTeams) {
             List<GameScreen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
@@ -161,7 +160,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void populateAngle() {
-        List<SegmentTeam> teams = segmentView.getTeams();
+        List<SegmentTeam> teams = segment.getTeams();
         for (SegmentTeam team : teams) {
             List<GameScreen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {
@@ -178,9 +177,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private String getInterferenceNote(SegmentTeam team) {
-        String segmentTypeString = segmentView.getSegmentType().equals(SegmentType.MATCH)
+        String segmentTypeString = segment.getSegmentType().equals(SegmentType.MATCH)
                 ? "match"
-                : gameController.getSegmentManager().getSegmentTitle(segmentView);
+                : gameController.getSegmentManager().getSegmentTitle(segment);
 
         return String.format("%s interfered %s the %s, attacking %s %s\n",
                 ModelUtils.slashNames(team.getWorkers()),

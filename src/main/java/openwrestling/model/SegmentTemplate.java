@@ -3,6 +3,7 @@ package openwrestling.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.gameObjects.Title;

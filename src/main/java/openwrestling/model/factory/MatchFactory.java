@@ -1,34 +1,14 @@
 package openwrestling.model.factory;
 
-import java.io.Serializable;
-import java.util.List;
-
 import openwrestling.manager.WorkerManager;
-import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentWorker;
-import static openwrestling.model.constants.GameConstants.BASE_INJURY_RATE;
-import static openwrestling.model.constants.GameConstants.BROADCAST_TEAM_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.CREATIVE_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.CROWD_RATING_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.ENTOURAGE_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
-import static openwrestling.model.constants.GameConstants.PRODUCTION_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.REF_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.ROAD_AGENT_MODIFIER_WEIGHT;
-import static openwrestling.model.constants.GameConstants.TIME_OVERRUN_PENALTY_WEIGHT;
-import static openwrestling.model.constants.GameConstants.TIME_UNDERRUN_PENALTY_WEIGHT;
-import static openwrestling.model.constants.GameConstants.TITLE_MODIFIER_WEIGHT;
-import openwrestling.model.interfaces.Segment;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.MatchLength;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -37,6 +17,12 @@ import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.StaffUtils;
+import org.apache.commons.lang3.RandomUtils;
+
+import java.io.Serializable;
+import java.util.List;
+
+import static openwrestling.model.constants.GameConstants.*;
 import static openwrestling.model.utility.StaffUtils.getStaffSkillAverage;
 
 public class MatchFactory implements Serializable {
@@ -53,45 +39,48 @@ public class MatchFactory implements Serializable {
         this.workerManager = workerManager;
     }
 
-    public Segment saveSegment(SegmentView segmentView) {
-        setSegmentRatings(segmentView);
-        segmentView.setDate(dateManager.today());
-        processInjuries(segmentView);
-        matchManager.addSegmentView(segmentView);
-        for (SegmentTeam team : segmentView.getTeams()) {
-            for (Worker worker : team.getWorkers()) {
-                matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
-            }
-        }
+    public Segment saveSegment(Segment segment) {
+        setSegmentRatings(segment);
 
-        matchManager.addSegment(segmentView.getSegment());
-        return segmentView.getSegment();
+        //TODO
+        //processInjuries(segmentView);
+
+
+        //  matchManager.addSegment(segment);
+//        for (SegmentTeam team : segmentView.getTeams()) {
+//            for (Worker worker : team.getWorkers()) {
+//                matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
+//            }
+//        }
+
+        //matchManager.addSegment(segmentView.getSegment());
+        return segment;
     }
 
-    private int getSegmentWorkRating(SegmentView segmentView) {
+    private int getSegmentWorkRating(Segment segment) {
         int workRatingTotal = 0;
-        boolean isMatch = segmentView.getSegmentType().equals(SegmentType.MATCH);
+        boolean isMatch = segment.getSegmentType().equals(SegmentType.MATCH);
 
-        for (SegmentTeam team : segmentView.getTeams()) {
-            workRatingTotal += getWorkRating(team, segmentView.getMatchRule());
+        for (SegmentTeam team : segment.getTeams()) {
+            workRatingTotal += getWorkRating(team, segment.getMatchRule());
         }
 
-        int segmentRating = workRatingTotal / segmentView.getTeams().size();
+        int segmentRating = workRatingTotal / segment.getTeams().size();
 
         if (isMatch) {
-            segmentRating = getSegmentRatingWithMatchModifiers(segmentView, segmentRating);
+            segmentRating = getSegmentRatingWithMatchModifiers(segment, segmentRating);
         } else {
-            segmentRating = getSegmentRatingWithAngleModifiers(segmentView, segmentRating);
+            segmentRating = getSegmentRatingWithAngleModifiers(segment, segmentRating);
         }
 
-        segmentRating = getSegmentRatingWithTimeModifier(segmentView, segmentRating);
+        segmentRating = getSegmentRatingWithTimeModifier(segment, segmentRating);
 
         return segmentRating;
     }
 
-    private int getSegmentRatingWithTimeModifier(SegmentView segmentView, int baseRating) {
-        int maxTime = segmentView.getSegmentType().equals(SegmentType.MATCH) ? MatchLength.MAXIMUM.value() : AngleLength.MAXIMUM.value();
-        int actual = segmentView.getSegment().getSegmentLength() / maxTime * 100;
+    private int getSegmentRatingWithTimeModifier(Segment segment, int baseRating) {
+        int maxTime = segment.getSegmentType().equals(SegmentType.MATCH) ? MatchLength.MAXIMUM.value() : AngleLength.MAXIMUM.value();
+        int actual = segment.getSegmentLength() / maxTime * 100;
 
         int timeDiff = (int) actual - baseRating;
 
@@ -100,30 +89,30 @@ public class MatchFactory implements Serializable {
         return baseRating - Math.abs(timeDiff) / penalty;
     }
 
-    private int getSegmentRatingWithAngleModifiers(SegmentView segmentView, int baseRating) {
+    private int getSegmentRatingWithAngleModifiers(Segment segment, int baseRating) {
         baseRating = modifyRating(baseRating,
-                getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
+                getStaffSkillAverage(StaffType.CREATIVE, segment.getPromotion()),
                 CREATIVE_MODIFIER_WEIGHT);
 
         return baseRating;
     }
 
-    private int getSegmentRatingWithMatchModifiers(SegmentView segmentView, int baseRating) {
+    private int getSegmentRatingWithMatchModifiers(Segment segment, int baseRating) {
         baseRating = modifyRating(baseRating,
-                getStaffSkillAverage(StaffType.REFEREE, segmentView.getPromotion()),
+                getStaffSkillAverage(StaffType.REFEREE, segment.getPromotion()),
                 REF_MODIFIER_WEIGHT);
         baseRating = modifyRating(baseRating,
-                getStaffSkillAverage(StaffType.ROAD_AGENT, segmentView.getPromotion()),
+                getStaffSkillAverage(StaffType.ROAD_AGENT, segment.getPromotion()),
                 ROAD_AGENT_MODIFIER_WEIGHT);
 
         return baseRating;
     }
 
-    private int getMatchCrowdRating(SegmentView segmentView) {
+    private int getMatchCrowdRating(Segment segment) {
         int teamCount = 0;
         int totalPop = 0;
 
-        for (SegmentTeam team : segmentView.getTeams()) {
+        for (SegmentTeam team : segment.getTeams()) {
             int teamPopTotal = 0;
             for (Worker worker : team.getWorkers()) {
                 teamPopTotal += worker.getPopularity();
@@ -146,21 +135,21 @@ public class MatchFactory implements Serializable {
 
         int crowdRating = totalPop / teamCount;
 
-        if (!segmentView.getTitles().isEmpty()) {
+        if (!segment.getTitles().isEmpty()) {
             int titleTotal = 0;
-            for (Title title : segmentView.getTitles()) {
+            for (Title title : segment.getTitles()) {
                 titleTotal += title.getPrestige();
             }
 
-            int titleAvg = titleTotal / segmentView.getTitles().size();
+            int titleAvg = titleTotal / segment.getTitles().size();
             crowdRating = modifyRating(crowdRating, titleAvg, TITLE_MODIFIER_WEIGHT);
         }
 
         crowdRating = modifyRating(crowdRating,
-                getStaffSkillAverage(StaffType.CREATIVE, segmentView.getPromotion()),
+                getStaffSkillAverage(StaffType.CREATIVE, segment.getPromotion()),
                 CREATIVE_MODIFIER_WEIGHT);
         crowdRating = modifyRating(crowdRating,
-                getStaffSkillAverage(StaffType.PRODUCTION, segmentView.getPromotion()),
+                getStaffSkillAverage(StaffType.PRODUCTION, segment.getPromotion()),
                 PRODUCTION_MODIFIER_WEIGHT);
 
         return crowdRating;
@@ -172,31 +161,31 @@ public class MatchFactory implements Serializable {
         return base;
     }
 
-    private void setSegmentRatings(SegmentView segmentView) {
-        int workRating = getSegmentWorkRating(segmentView);
-        segmentView.getSegment().setWorkRating(workRating);
+    private void setSegmentRatings(Segment segment) {
+        int workRating = getSegmentWorkRating(segment);
+        segment.setWorkRating(workRating);
 
-        int crowdRating = modifyRating(getMatchCrowdRating(segmentView), workRating, CROWD_RATING_MODIFIER_WEIGHT);
+        int crowdRating = modifyRating(getMatchCrowdRating(segment), workRating, CROWD_RATING_MODIFIER_WEIGHT);
+//TODO
+//        if (!segmentView.getBroadcastTeam().isEmpty()) {
+//            int broadCastTeamTotal = 0;
+//            for (SegmentItem item : segmentView.getBroadcastTeam()) {
+//                if (item instanceof StaffMember) {
+//                    broadCastTeamTotal += ((StaffMember) item).getSkill();
+//                } else if (item instanceof Worker) {
+//                    broadCastTeamTotal += ModelUtils.getWeightedScore(new Integer[]{
+//                        ((Worker) item).getCharisma(),
+//                        ((Worker) item).getPopularity()
+//                    });
+//                }
+//            }
+//
+//            crowdRating = modifyRating(crowdRating,
+//                    broadCastTeamTotal / segmentView.getBroadcastTeam().size(),
+//                    BROADCAST_TEAM_MODIFIER_WEIGHT);
+//        }
 
-        if (!segmentView.getBroadcastTeam().isEmpty()) {
-            int broadCastTeamTotal = 0;
-            for (SegmentItem item : segmentView.getBroadcastTeam()) {
-                if (item instanceof StaffMember) {
-                    broadCastTeamTotal += ((StaffMember) item).getSkill();
-                } else if (item instanceof Worker) {
-                    broadCastTeamTotal += ModelUtils.getWeightedScore(new Integer[]{
-                        ((Worker) item).getCharisma(),
-                        ((Worker) item).getPopularity()
-                    });
-                }
-            }
-
-            crowdRating = modifyRating(crowdRating,
-                    broadCastTeamTotal / segmentView.getBroadcastTeam().size(),
-                    BROADCAST_TEAM_MODIFIER_WEIGHT);
-        }
-
-        segmentView.getSegment().setCrowdRating(crowdRating);
+        segment.setCrowdRating(crowdRating);
     }
 
     private int getWorkRating(SegmentTeam team, MatchRule matchRule) {
@@ -263,17 +252,17 @@ public class MatchFactory implements Serializable {
         return totalTeamScore / team.getWorkers().size();
     }
 
-    private void processInjuries(SegmentView segmentView) {
-        List<Worker> matchWorkers = segmentView.getMatchParticipants();
+    private void processInjuries(Segment segment) {
+        List<Worker> matchWorkers = segment.getMatchParticipants();
         matchWorkers.stream().forEach((w) -> {
-            Promotion promotion = segmentView.getPromotion();
+            Promotion promotion = segment.getPromotion();
             int medicModifier = StaffUtils.getStaffSkillModifier(StaffType.MEDICAL, promotion, workerManager.selectRoster(promotion));
-            int injuryRate = BASE_INJURY_RATE - segmentView.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
+            int injuryRate = BASE_INJURY_RATE - segment.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
             if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
                 int duration = injuryDays - (medicModifier / 10);
                 if (duration > 0) {
-                    injuryManager.createInjury(dateManager.today(), duration, w, segmentView);
+                    injuryManager.createInjury(dateManager.today(), duration, w, segment);
                 }
             }
         });

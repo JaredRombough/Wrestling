@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
-import openwrestling.model.Event;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.NewsItem;
 import openwrestling.manager.EventManager;
 import openwrestling.model.gameObjects.Title;

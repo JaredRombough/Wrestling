@@ -1,15 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -37,25 +27,21 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.MainApp;
-import openwrestling.model.Event;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentTemplate;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.Segment;
+import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.SegmentValidation;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.SegmentUtils;
-import static openwrestling.model.utility.SegmentUtils.getMatchObjectors;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.model.utility.TestUtils;
 import openwrestling.view.utility.GameScreen;
@@ -65,6 +51,21 @@ import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static openwrestling.model.utility.SegmentUtils.getMatchObjectors;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
@@ -136,22 +137,22 @@ public class EventScreenController extends ControllerBase implements Initializab
         }
     }
 
-    private SegmentView currentSegment() {
+    private Segment currentSegment() {
         if (segmentListView == null || segmentListView.getSelectionModel().getSelectedIndex() < 0) {
             return null;
         }
-        return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex()).getSegmentView();
+        return segmentPaneControllers.get(segmentListView.getSelectionModel().getSelectedIndex()).getSegment();
     }
 
-    private List<SegmentView> getSegmentViews() {
-        List<SegmentView> segmentViews = new ArrayList<>();
+    private List<Segment> getSegments() {
+        List<Segment> segments = new ArrayList<>();
         eventLength = 0;
         for (SegmentPaneController controller : segmentPaneControllers) {
-            SegmentView segmentView = controller.getSegmentView();
-            segmentViews.add(segmentView);
-            eventLength += segmentView.getSegment().getSegmentLength();
+            Segment segment = controller.getSegment();
+            segments.add(segment);
+            eventLength += segment.getSegmentLength();
         }
-        return segmentViews;
+        return segments;
     }
 
     @FXML
@@ -172,7 +173,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private boolean handleWorkers() {
         StringBuilder objectionString = new StringBuilder();
 
-        getSegmentViews().stream().forEach(segment -> {
+        getSegments().stream().forEach(segment -> {
             List<Worker> objectors = getMatchObjectors(segment);
             if (!objectors.isEmpty()) {
                 objectionString.append(String.format("%s %s not happy about losing their match against %s.",
@@ -212,12 +213,12 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private String getErrors() {
         StringBuilder errors = new StringBuilder();
-        List<SegmentView> segmentViews = getSegmentViews();
+        List<Segment> segments = getSegments();
         if (!validateDuration()) {
             errors.append("Event duration is invalid.\n");
         }
-        for (int i = 0; i < segmentViews.size(); i++) {
-            SegmentValidation validation = segmentViews.get(i).getValidationStatus();
+        for (int i = 0; i < segments.size(); i++) {
+            SegmentValidation validation = segments.get(i).getValidationStatus();
             if (validation.equals(SegmentValidation.EMPTY)) {
                 errors.append(String.format("Segment #%d is empty.\n", i + 1));
             } else if (validation.equals(SegmentValidation.INCOMPLETE)) {
@@ -231,22 +232,22 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     private String getWarnings() {
         StringBuilder warnings = new StringBuilder();
-        for (int i = 0; i < getSegmentViews().size(); i++) {
-            SegmentView segmentView = getSegmentViews().get(i);
-            if (segmentView.getSegmentType().equals(SegmentType.MATCH) && segmentView.getReferee() == null) {
+        for (int i = 0; i < getSegments().size(); i++) {
+            Segment segment = getSegments().get(i);
+            if (segment.getSegmentType().equals(SegmentType.MATCH) && segment.getReferee() == null) {
                 warnings.append(String.format("Segment #%d has no referee.\n", i + 1));
             }
-            if (SegmentUtils.isChallengeForTonight(segmentView)) {
-                SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentView.getAngleParams().getChallengeSegment());
+            if (SegmentUtils.isChallengeForTonight(segment)) {
+                Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segment.getChallengeSegment());
                 if (!challengeForTonightIsPresent(challengeMatch, i)) {
                     warnings.append(String.format("%s\nA challenge for this match was made and accepted tonight, but it is not present.\n",
                             gameController.getSegmentManager().getVsMatchString(challengeMatch)));
                 }
             }
-            for (Title title : segmentView.getTitles()) {
+            for (Title title : segment.getTitles()) {
                 if (!title.getChampions().isEmpty()
                         && !ModelUtils.teamIsPresent(title.getChampions(),
-                                segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
+                        segmentPaneControllers.get(i).getWorkerTeamWrappers())) {
                     warnings.append(String.format("The %s Title is not being defended by %s.\n",
                             title.getShortName(),
                             ModelUtils.slashNames(title.getChampions())));
@@ -255,7 +256,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             }
         }
         for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
-            SegmentView challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
+            Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
             if (!challengeForTonightIsPresent(challengeMatch, 0)) {
                 warnings.append(String.format("%s\nA challenge for this match was made and accepted on %s at %s, but it is not present.\n",
                         gameController.getSegmentManager().getVsMatchString(challengeMatch),
@@ -272,13 +273,14 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (testing) {
             mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), gameController.getWorkerManager().selectRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
-            mainApp.show(ScreenCode.RESULTS, new EventView(getCurrentEvent(), removeEmpty(getSegmentViews())));
+            currentEvent.setSegments(removeEmpty(getSegments()));
+            mainApp.show(ScreenCode.RESULTS, currentEvent);
         }
 
     }
 
-    private List<SegmentView> removeEmpty(List<SegmentView> list) {
-        return list.stream().filter(segmentView -> !segmentView.getWorkers().isEmpty()).collect(Collectors.toList());
+    private List<Segment> removeEmpty(List<Segment> list) {
+        return list.stream().filter(segment -> !segment.getWorkers().isEmpty()).collect(Collectors.toList());
     }
 
     private void resetSegments() {
@@ -310,10 +312,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         totalCostLabel.setText("Total Cost: $" + currentCost());
         totalCostLabel.setVisible(currentCost() != 0);
 
-        List<SegmentView> segmentViews = getSegmentViews();
+        List<Segment> segments = getSegments();
 
         for (SegmentNameItem segmentNameItem : segmentListView.getItems()) {
-            segmentNameItem.segment.set(segmentViews.get(segmentListView.getItems().indexOf(segmentNameItem)));
+            segmentNameItem.segment.set(segments.get(segmentListView.getItems().indexOf(segmentNameItem)));
         }
 
         if (getCurrentEvent() != null) {
@@ -412,7 +414,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private void addSegment() {
 
         SegmentNameItem item = new SegmentNameItem();
-        item.segment.set(initController().getSegmentView());
+        item.segment.set(initController().getSegment());
         segmentListView.getItems().add(item);
         segmentListView.getSelectionModel().select(item);
 
@@ -421,13 +423,13 @@ public class EventScreenController extends ControllerBase implements Initializab
         updateLabels();
     }
 
-    public void addSegment(SegmentView segmentView) {
+    public void addSegment(Segment segment) {
         SegmentPaneController controller = initController();
         SegmentNameItem item = new SegmentNameItem();
-        item.segment.set(controller.getSegmentView());
+        item.segment.set(controller.getSegment());
         segmentListView.getItems().add(item);
         segmentListView.getSelectionModel().select(item);
-        segmentView.getMatchParticipantTeams().forEach(team -> controller.addTeam(team.getWorkers(), updatingChallenge));
+        segment.getMatchParticipantTeams().forEach(team -> controller.addTeam(team.getWorkers(), updatingChallenge));
 
         segmentsChanged();
 
@@ -435,7 +437,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void removeSegment(int index) {
-        if (getSegmentViews().size() > 1) {
+        if (getSegments().size() > 1) {
 
             int selectedIndex = segmentListView.getSelectionModel().getSelectedIndex();
 
@@ -446,9 +448,9 @@ public class EventScreenController extends ControllerBase implements Initializab
             //remove the controller too
             getSegmentPaneControllers().remove(index);
 
-            for (SegmentView segmentView : getSegmentViews()) {
+            for (Segment segment : getSegments()) {
                 SegmentNameItem item = new SegmentNameItem();
-                item.segment.set(segmentView);
+                item.segment.set(segment);
                 segmentListView.getItems().add(item);
             }
 
@@ -601,21 +603,21 @@ public class EventScreenController extends ControllerBase implements Initializab
         return isBooked;
     }
 
-    public boolean challengeForTonightIsPresent(SegmentView segmentView, int challengeSegmentIndex) {
+    public boolean challengeForTonightIsPresent(Segment segment, int challengeSegmentIndex) {
         for (int i = challengeSegmentIndex; i < segmentPaneControllers.size(); i++) {
             if (SegmentType.MATCH.equals(segmentPaneControllers.get(i).getSegmentType())
-                    && segmentsMatch(segmentPaneControllers.get(i).getSegmentView(), segmentView)) {
+                    && segmentsMatch(segmentPaneControllers.get(i).getSegment(), segment)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean challengeForTonightIsPresent(SegmentView segmentView, SegmentPaneController sourceController) {
-        return challengeForTonightIsPresent(segmentView, segmentPaneControllers.indexOf(sourceController));
+    public boolean challengeForTonightIsPresent(Segment segment, SegmentPaneController sourceController) {
+        return challengeForTonightIsPresent(segment, segmentPaneControllers.indexOf(sourceController));
     }
 
-    private boolean segmentsMatch(SegmentView segment1, SegmentView segment2) {
+    private boolean segmentsMatch(Segment segment1, Segment segment2) {
         if (!Objects.equals(segment1.getSegmentType(), segment2.getSegmentType())) {
             return false;
         }
@@ -760,7 +762,8 @@ public class EventScreenController extends ControllerBase implements Initializab
         public static Callback<SegmentNameItem, Observable[]> extractor() {
             return (SegmentNameItem param) -> new Observable[]{param.segment};
         }
-        ObjectProperty<SegmentView> segment = new SimpleObjectProperty();
+
+        ObjectProperty<Segment> segment = new SimpleObjectProperty();
 
     }
 

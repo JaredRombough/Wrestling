@@ -3,15 +3,12 @@ package openwrestling.model.gameObjects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentTemplate;
-import openwrestling.model.gameObjects.GameObject;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventRecurrence;
@@ -29,39 +26,39 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class EventTemplate extends GameObject implements Serializable, iDate, SegmentItem, iRosterSplit {
 
+    private long eventTemplateID;
     private Promotion promotion;
     private LocalDate nextDate;
-    private LocalDate bookedUntil;
-    private int defaultDuration;
+    @Builder.Default
+    private LocalDate bookedUntil = LocalDate.MIN;
+    @Builder.Default
+    private int defaultDuration = 180;
     private String name;
-    private EventFrequency eventFrequency;
-    private EventBroadcast eventBroadcast;
-    private EventRecurrence eventRecurrence;
-    private EventVenueSize eventVenueSize;
-    private int eventsLeft;
-    private DayOfWeek dayOfWeek;
-    private int month;
-    private List<StaffMember> defaultBroadcastTeam;
-    private final List<SegmentTemplate> segmentTemplates;
+    @Builder.Default
+    private EventFrequency eventFrequency = EventFrequency.ANNUAL;
+    @Builder.Default
+    private EventBroadcast eventBroadcast = EventBroadcast.NONE;
+    @Builder.Default
+    private EventRecurrence eventRecurrence = EventRecurrence.UNLIMITED;
+    @Builder.Default
+    private EventVenueSize eventVenueSize = EventVenueSize.MEDIUM;
+    @Builder.Default
+    private int eventsLeft = 1;
+    @Builder.Default
+    private DayOfWeek dayOfWeek = Arrays.asList(
+            DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
+            RandomUtils.nextInt(0, 2));
+    @Builder.Default
+    private int month = 1;
+    @Builder.Default
+    private List<StaffMember> defaultBroadcastTeam = new ArrayList<>();
+    @Builder.Default
+    private List<SegmentTemplate> segmentTemplates = new ArrayList<>();
     private RosterSplit rosterSplit;
 
-    public EventTemplate() {
-        bookedUntil = LocalDate.MIN;
-        defaultDuration = 180;
-        eventFrequency = EventFrequency.ANNUAL;
-        eventBroadcast = EventBroadcast.NONE;
-        eventRecurrence = EventRecurrence.UNLIMITED;
-        eventVenueSize = EventVenueSize.MEDIUM;
-        eventsLeft = 1;
-        dayOfWeek = Arrays.asList(
-                DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
-                RandomUtils.nextInt(0, 2));
-        month = 1;
-        defaultBroadcastTeam = new ArrayList<>();
-        segmentTemplates = new ArrayList<>();
-    }
 
     @Override
     public String toString() {

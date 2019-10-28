@@ -1,6 +1,7 @@
 package openwrestling.entities;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.EventVenueSize;
 
 import java.time.DayOfWeek;
+import java.util.Collection;
 import java.util.Date;
 
 @Getter
@@ -69,4 +71,7 @@ public class EventTemplateEntity extends Entity {
 
     @DatabaseField(foreign = true)
     private RosterSplitEntity rosterSplit;
+
+    @ForeignCollectionField
+    private Collection<EventEntity> events;
 }

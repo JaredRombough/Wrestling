@@ -1,19 +1,16 @@
 package openwrestling.model.manager;
 
+import lombok.Getter;
+import openwrestling.database.Database;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
-import openwrestling.model.AngleParams;
-import openwrestling.model.Match;
-import openwrestling.model.MatchTitle;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentWorker;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.Segment;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
-import openwrestling.model.gameObjects.Title;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -28,76 +25,51 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static openwrestling.model.utility.ModelUtils.slashShortNames;
 
+@Getter
 public class SegmentManager implements Serializable {
 
-    private final List<Segment> segments;
-    private final List<SegmentWorker> segmentWorkers;
-    private final List<MatchTitle> matchTitles;
-    private final List<SegmentView> segmentViews;
+    private List<Segment> segments;
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
 
     public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
         segments = new ArrayList<>();
-        segmentWorkers = new ArrayList<>();
-        matchTitles = new ArrayList<>();
-        segmentViews = new ArrayList<>();
         this.dateManager = dateManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
     }
 
-    public void addSegmentWorker(SegmentWorker segmentWorker) {
-        segmentWorkers.add(segmentWorker);
+    public List<Segment> createSegments(List<Segment> segments) {
+        List<Segment> savedSegments = Database.insertOrUpdateList(segments);
+        this.segments.addAll(savedSegments);
+        return savedSegments;
     }
 
-    public void addMatchTitle(MatchTitle matchTitle) {
-        matchTitles.add(matchTitle);
+    public List<Segment> getSegments(Event event) {
+        return segments.stream()
+                .filter(segment -> segment.getEvent().getEventID() == event.getEventID())
+                .collect(Collectors.toList());
     }
 
     public void addSegment(Segment segment) {
         segments.add(segment);
     }
 
-    public void addSegmentView(SegmentView segmentView) {
-        segmentViews.add(segmentView);
-    }
-
-    public Title getTitle(Match match) {
-        Title title = null;
-        for (MatchTitle matchTitle : matchTitles) {
-            if (matchTitle.getMatch().equals(match)) {
-                title = matchTitle.getTitle();
-            }
-        }
-        return title;
-    }
 
     public List<Worker> getWorkers(Segment segment) {
-        List<Worker> workers = new ArrayList<>();
-        for (SegmentWorker matchWorker : segmentWorkers) {
-            if (matchWorker.getSegment().equals(segment)) {
-                workers.add(matchWorker.getWorker());
-            }
-        }
-        return workers;
+        return segment.getTeams().stream()
+                .flatMap(segmentTeam -> segmentTeam.getWorkers().stream())
+                .collect(Collectors.toList());
     }
 
-    private List<SegmentWorker> getMatchWorkers(Match match) {
-        List<SegmentWorker> getMatchWorkers = new ArrayList<>();
-        segmentWorkers.stream().filter((matchWorker) -> (matchWorker.getSegment().equals(match))).forEach((matchWorker) -> {
-            getMatchWorkers.add(matchWorker);
-        });
-        return getMatchWorkers;
-    }
 
-    public List<SegmentView> getTopMatches(LocalDate localDate, ChronoUnit unit, int units, int totalMatches) {
+    public List<Segment> getTopMatches(LocalDate localDate, ChronoUnit unit, int units, int totalMatches) {
 
         LocalDate earliestDate = localDate;
         switch (unit) {
@@ -122,64 +94,62 @@ public class SegmentManager implements Serializable {
                 }
                 break;
         }
-        List<SegmentView> weekMatches = new ArrayList<>();
-        for (SegmentView segmentView : segmentViews) {
-            if (segmentView.getDate().isAfter(earliestDate) && segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-                weekMatches.add(segmentView);
+        List<Segment> weekMatches = new ArrayList<>();
+        for (Segment segment : segments) {
+            if (segment.getDate().isAfter(earliestDate) && segment.getSegmentType().equals(SegmentType.MATCH)) {
+                weekMatches.add(segment);
             }
         }
-        Collections.sort(weekMatches, (SegmentView sv1, SegmentView sv2)
-                -> sv2.getSegment().getWorkRating() - sv1.getSegment().getWorkRating());
+        weekMatches.sort((Segment sv1, Segment sv2)
+                -> sv2.getWorkRating() - sv1.getWorkRating());
 
-        int actualTotal = totalMatches <= weekMatches.size()
-                ? totalMatches
-                : weekMatches.size();
+        int actualTotal = Math.min(totalMatches, weekMatches.size());
 
         return new ArrayList<>(weekMatches.subList(0, actualTotal));
     }
 
-    public String getSegmentTitle(SegmentView segmentView) {
-        if (segmentView.getSegmentType().equals(SegmentType.MATCH)) {
-            return SegmentStringUtils.getMatchTitle(segmentView);
+    public String getSegmentTitle(Segment segment) {
+        if (segment.getSegmentType().equals(SegmentType.MATCH)) {
+            return SegmentStringUtils.getMatchTitle(segment);
         }
-        return getAngleTitle(segmentView);
+        return getAngleTitle(segment);
     }
 
-    private String getAngleTitle(SegmentView segmentView) {
-        return ((AngleParams) segmentView.getSegment().getSegmentParams()).getAngleType().description();
+    private String getAngleTitle(Segment segment) {
+        return segment.getAngleType().description();
     }
 
-    public String getIsolatedSegmentString(SegmentView segmentView) {
+    public String getIsolatedSegmentString(Segment segment) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(segmentView.getEventView().getVerboseEventTitle());
+        stringBuilder.append(segment.getEvent().getVerboseEventTitle());
         stringBuilder.append("\n");
-        stringBuilder.append(getSegmentString(segmentView));
+        stringBuilder.append(getSegmentString(segment));
         stringBuilder.append("\n");
-        stringBuilder.append(segmentView.getSegmentType().equals(SegmentType.MATCH)
-                ? ViewUtils.intToStars(segmentView.getSegment().getWorkRating())
-                : "Rating: " + segmentView.getSegment().getWorkRating() + "%");
+        stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
+                ? ViewUtils.intToStars(segment.getWorkRating())
+                : "Rating: " + segment.getWorkRating() + "%");
 
         return stringBuilder.toString();
     }
 
-    public String getSegmentString(SegmentView segmentView) {
-        return getSegmentString(segmentView, false);
+    public String getSegmentString(Segment segment) {
+        return getSegmentString(segment, false);
     }
 
-    public String getSegmentString(SegmentView segmentView, boolean verbose) {
-        String segmentString = segmentView.getSegmentType().equals(SegmentType.MATCH)
-                ? getMatchString(segmentView, verbose)
-                : getAngleString(segmentView);
+    public String getSegmentString(Segment segment, boolean verbose) {
+        String segmentString = segment.getSegmentType().equals(SegmentType.MATCH)
+                ? getMatchString(segment, verbose)
+                : getAngleString(segment);
         if (verbose) {
-            segmentString += " @ " + segmentView.getEventView().toString();
+            segmentString += " @ " + segment.getEvent().toString();
         }
         return segmentString;
     }
 
-    public String getAngleString(SegmentView segmentView) {
-        AngleType angleType = ((AngleParams) segmentView.getSegment().getSegmentParams()).getAngleType();
-        List<SegmentTeam> mainTeam = segmentView.getTeams(angleType.mainTeamType());
+    public String getAngleString(Segment segment) {
+        AngleType angleType = segment.getAngleType();
+        List<SegmentTeam> mainTeam = segment.getTeams(angleType.mainTeamType());
         String mainTeamString;
         String pluralString;
         if (mainTeam.isEmpty()) {
@@ -190,7 +160,7 @@ public class SegmentManager implements Serializable {
             pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
         }
         List<String> andTeamNames = new ArrayList<>();
-        for (SegmentTeam tesm : segmentView.getTeams(angleType.addTeamType())) {
+        for (SegmentTeam tesm : segment.getTeams(angleType.addTeamType())) {
             andTeamNames.add(generateTeamName(tesm.getWorkers()));
         }
 
@@ -199,15 +169,15 @@ public class SegmentManager implements Serializable {
                 pluralString,
                 ModelUtils.joinGrammatically(andTeamNames));
 
-        if (angleType.equals(AngleType.PROMO) && segmentView.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
+        if (angleType.equals(AngleType.PROMO) && segment.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
             string = string.split("targeting")[0];
             string = string.replace(" targeting", "");
         }
 
         if (angleType.equals(AngleType.OFFER)) {
-            string += SegmentStringUtils.getOfferString(segmentView);
+            string += SegmentStringUtils.getOfferString(segment);
         } else if (angleType.equals(AngleType.CHALLENGE)) {
-            string += SegmentStringUtils.getChallengeString(segmentView);
+            string += SegmentStringUtils.getChallengeString(segment);
         }
 
         return string;
@@ -255,9 +225,9 @@ public class SegmentManager implements Serializable {
         return String.format("");
     }
 
-    public String getVsMatchString(SegmentView segmentView) {
-        List<SegmentTeam> teams = segmentView.getTeams();
-        int teamsSize = segmentView.getMatchParticipantTeams().size();
+    public String getVsMatchString(Segment segment) {
+        List<SegmentTeam> teams = segment.getTeams();
+        int teamsSize = segment.getMatchParticipantTeams().size();
         String matchString = "";
 
         if (teamsSize > 1) {
@@ -293,10 +263,10 @@ public class SegmentManager implements Serializable {
 
     }
 
-    public String getMatchString(SegmentView segmentView, boolean verbose) {
-        List<SegmentTeam> teams = segmentView.getTeams();
-        MatchFinish finish = ((Match) segmentView.getSegment()).getSegmentParams().getMatchFinish();
-        int teamsSize = segmentView.getMatchParticipantTeams().size();
+    public String getMatchString(Segment segment, boolean verbose) {
+        List<SegmentTeam> teams = segment.getTeams();
+        MatchFinish finish = segment.getMatchFinish();
+        int teamsSize = segment.getMatchParticipantTeams().size();
         String matchString = "";
 
         if (teamsSize > 1) {

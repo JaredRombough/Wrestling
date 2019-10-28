@@ -137,7 +137,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
 
             myLabel = new Label(
                     segmentManager.getSegmentTitle(item.segment.get())
-                    + String.format(" (%d min)", item.segment.get().getSegment().getSegmentLength())
+                    + String.format(" (%d min)", item.segment.get().getSegmentLength())
                     + "\n"
                     + segmentManager.getSegmentString(item.segment.get()));
             myLabel.setTextAlignment(TextAlignment.CENTER);

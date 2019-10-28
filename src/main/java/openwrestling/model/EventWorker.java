@@ -1,6 +1,8 @@
 package openwrestling.model;
 
 import java.io.Serializable;
+
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Worker;
 
 /*

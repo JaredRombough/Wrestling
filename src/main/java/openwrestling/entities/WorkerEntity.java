@@ -89,4 +89,10 @@ public class WorkerEntity extends Entity {
     @ForeignCollectionField(eager = true)
     public Collection<StableWorkerEntity> workerGroups;
 
+    @ForeignCollectionField
+    private Collection<SegmentTeamWorkerEntity> segmentTeams;
+
+    @ForeignCollectionField
+    private Collection<SegmentTeamEntourageEntity> entourageTeams;
+
 }

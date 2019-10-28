@@ -3,6 +3,7 @@ package openwrestling.view.calendar.controller;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -24,7 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import openwrestling.model.Event;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -161,7 +162,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         Optional<EventTemplate> optionalResult = createShowDialog().showAndWait();
         optionalResult.ifPresent((EventTemplate template) -> {
 
-            gameController.getEventManager().addEventTemplate(template);
+            gameController.getEventManager().createEventTemplates(List.of(template));
             gameController.getPromotionController().bookEventTemplate(template, currentDate);
 
             mainApp.show(ScreenCode.CALENDAR,

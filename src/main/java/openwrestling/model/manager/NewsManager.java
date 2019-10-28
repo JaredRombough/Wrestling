@@ -1,5 +1,15 @@
 package openwrestling.model.manager;
 
+import openwrestling.model.Injury;
+import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffMember;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iContract;
+import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.lang3.RandomUtils;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,18 +17,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.Injury;
-import openwrestling.model.NewsItem;
 
 import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
-import openwrestling.model.interfaces.iContract;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.utility.ModelUtils;
 
 public class NewsManager implements Serializable {
 
@@ -83,7 +84,7 @@ public class NewsManager implements Serializable {
         addNews(newsItem);
     }
 
-    public void addMatchInjuryNewsItem(Injury injury, EventView event) {
+    public void addMatchInjuryNewsItem(Injury injury, Event event) {
         NewsItem newsItem = new NewsItem(String.format("%s injured", injury.getWorker().getLongName()),
                 String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
                         injury.getWorker().getLongName(),

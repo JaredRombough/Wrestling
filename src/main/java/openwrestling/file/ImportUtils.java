@@ -1,5 +1,6 @@
 package openwrestling.file;
 
+import openwrestling.model.gameObjects.EventTemplate;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.DatatypeConverter;
@@ -8,9 +9,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.TemporalAdjusters.next;
 
 public class ImportUtils {
     static int hexStringToInt(String hexValueString) {
@@ -72,6 +76,10 @@ public class ImportUtils {
     static String hexLineToTextString(List<String> hexLine) {
         List<String> toLetters = hexLine.stream().map(ImportUtils::hexStringToLetter).collect(Collectors.toList());
         return StringUtils.join(toLetters, null);
+    }
+
+    static void setInitialEventTemplateDates(EventTemplate eventTemplate, LocalDate gameStartDate) {
+        eventTemplate.setNextDate(gameStartDate.with(next(eventTemplate.getDayOfWeek())));
     }
 
 

@@ -2,16 +2,6 @@ package openwrestling;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -23,10 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import openwrestling.database.Database;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.objenesis.strategy.StdInstantiatorStrategy;
 import openwrestling.file.Import;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
@@ -38,6 +24,21 @@ import openwrestling.view.start.controller.TitleScreenController;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class MainApp extends Application {
 
@@ -72,7 +73,11 @@ public class MainApp extends Application {
 
         this.cssEnabled = true;
         logger = LogManager.getLogger(getClass());
-
+        Configurator.setRootLevel(Level.DEBUG);
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            System.out.println("Caught " + e);
+            System.out.println(ExceptionUtils.getStackTrace(e));
+        });
         logger.log(Level.INFO, "Logger online. Running version " + VERSION);
 
         Locale locale = new Locale("en", "US");
@@ -184,12 +189,7 @@ public class MainApp extends Application {
                 logger.log(Level.ERROR, "initRootLayout() call failed in continueGame()", ex);
                 throw ex;
             }
-            try {
-                startGame();
-            } catch (IOException ex) {
-                logger.log(Level.ERROR, "startGame() call failed in continueGame()", ex);
-                throw ex;
-            }
+            startGame();
         }
     }
 
@@ -225,9 +225,14 @@ public class MainApp extends Application {
 
     }
 
-    public void startGame() throws IOException {
+    public void startGame() {
         Runnable task = this::startGameTask;
+        Thread.UncaughtExceptionHandler h = (th, ex) -> {
+            System.out.println("Uncaught exception: " + ex);
+            System.out.println(ExceptionUtils.getStackTrace(ex));
+        };
         Thread backgroundThread = new Thread(task);
+        backgroundThread.setUncaughtExceptionHandler(h);
         backgroundThread.setDaemon(true);
         backgroundThread.start();
     }
@@ -273,16 +278,18 @@ public class MainApp extends Application {
     }
 
     private void saveGame() throws IOException {
-
-        Kryo kryo = new Kryo();
-
-        try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
-            kryo.writeObject(output, gameController);
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex);
-            ViewUtils.generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
-            throw ex;
-        }
+        logger.log(Level.DEBUG, "saveGame start");
+//TODO
+//        Kryo kryo = new Kryo();
+//
+//        try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
+//            kryo.writeObject(output, gameController);
+//        } catch (IOException ex) {
+//            logger.log(Level.ERROR, ex);
+//            ViewUtils.generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
+//            throw ex;
+//        }
+        logger.log(Level.DEBUG, "saveGame end");
     }
 
     private GameController loadGame() {
@@ -382,6 +389,7 @@ public class MainApp extends Application {
     in labels outside of their screens it can be handled here
      */
     private void updateLabels() {
+        logger.log(Level.DEBUG, "updateLabels");
         for (GameScreen screen : screens) {
             if (screen.code.alwaysUpdate()) {
                 updateLabels(screen.code);
@@ -412,7 +420,12 @@ public class MainApp extends Application {
             root.setButtonsDisable(true);
             primaryStage.getScene().setCursor(Cursor.WAIT);
 
+            Thread.UncaughtExceptionHandler h = (th, ex) -> {
+                System.out.println("Uncaught exception: " + ex);
+                System.out.println(ExceptionUtils.getStackTrace(ex));
+            };
             Thread thread = new Thread(nextDayTask(nextDay, root));
+            thread.setUncaughtExceptionHandler(h);
             thread.setDaemon(true);
             thread.start();
 
@@ -423,10 +436,10 @@ public class MainApp extends Application {
 
     private Task<Void> nextDayTask(NewsScreenController nextDayScreenController, RootLayoutController root) {
 
-        Task<Void> task = new Task<Void>() {
+        Task<Void> task = new Task<>() {
 
             @Override
-            public Void call() throws InterruptedException {
+            public Void call() {
 
                 gameController.nextDay();
 
@@ -434,14 +447,13 @@ public class MainApp extends Application {
                     saveGame();
                 } catch (IOException ex) {
                     logger.log(Level.ERROR, "Problem saving Game", ex);
-
                 }
                 return null;
             }
         };
 
         task.setOnSucceeded((WorkerStateEvent t) -> {
-
+            logger.log(Level.DEBUG, "onSucceeded");
             root.setButtonsDisable(false);
             nextDayScreenController.nextDay();
             updateLabels();

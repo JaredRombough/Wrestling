@@ -1,10 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -22,8 +17,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.ResponseType;
@@ -36,6 +31,11 @@ import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
@@ -138,7 +138,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
 
         if (targets.size() > 1) {
             List<Worker> emptyList = new ArrayList<>();
-            targets.add(new SegmentTeam(emptyList, TeamType.EVERYONE));
+            targets.add(
+                    SegmentTeam.builder()
+                            .workers(emptyList)
+                            .type(TeamType.EVERYONE)
+                            .build()
+            );
         }
 
         ObservableList list = FXCollections.observableArrayList(targets);
@@ -312,7 +317,12 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     public SegmentTeam getSegmentTeam() {
         List<Worker> workers = ModelUtils.getWorkersFromSegmentItems(getSegmentItems());
 
-        SegmentTeam segmentTeam = new SegmentTeam(workers, teamType);
+        SegmentTeam segmentTeam =
+                SegmentTeam.builder()
+                        .workers(workers)
+                        .type(teamType)
+                        .build();
+
         segmentTeam.setEntourage(ModelUtils.getWorkersFromSegmentItems(entouragePaneController.getItems()));
 
         segmentTeam.setTarget(targetComboBox != null
@@ -320,10 +330,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
                 : segmentTeam
         );
 
-        segmentTeam.setOutcome(outcomeType != null
-                ? outcomeType
-                : null);
-
+        segmentTeam.setOutcome(outcomeType);
         segmentTeam.setTiming(timingType);
         segmentTeam.setSuccess(successType);
         segmentTeam.setPresence(presenceType);

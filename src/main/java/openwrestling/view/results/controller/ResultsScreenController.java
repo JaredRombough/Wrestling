@@ -9,10 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import openwrestling.model.gameObjects.Event;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
@@ -29,9 +29,9 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @FXML
     private Button nextButton;
 
-    private EventView eventView;
+    private Event event;
 
-    private int currentSegmentViewIndex;
+    private int currentSegmentIndex;
 
     private GameScreen currentResultsDisplay;
 
@@ -45,9 +45,9 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (event.getSource() == nextButton) {
-            if (currentSegmentViewIndex < eventView.getSegmentViews().size()) {
+            if (currentSegmentIndex < this.event.getSegments().size()) {
                 nextSegment();
-            } else if (eventView.getEvent().getAttendance() == 0) {
+            } else if (this.event.getAttendance() == 0) {
                 showSummary();
             } else {
                 try {
@@ -61,9 +61,9 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     @Override
     public void setCurrent(Object object) {
-        if (object instanceof EventView) {
-            eventView = (EventView) object;
-            currentSegmentViewIndex = 0;
+        if (object instanceof Event) {
+            event = (Event) object;
+            currentSegmentIndex = 0;
             nextSegment();
             updateLabels();
         }
@@ -71,8 +71,8 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     @Override
     public void updateLabels() {
-        if (eventView != null) {
-            titleText.setText(eventView.getEvent().toString());
+        if (event != null) {
+            titleText.setText(event.toString());
             if (currentResultsDisplay != null) {
                 currentResultsDisplay.controller.updateLabels();
             }
@@ -80,14 +80,14 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     }
 
     private void showSummary() {
-        gameController.getEventFactory().processEventView(eventView, false, gameController.getPromotionController());
-        showNextDisplay(eventView);
+        gameController.getEventFactory().processEventView(event, false);
+
+        showNextDisplay(event);
     }
 
     private void nextSegment() {
-        SegmentView current = eventView.getSegmentViews().get(currentSegmentViewIndex);
-        current.setSegment(gameController.getEventFactory().processSegmentView(eventView, current));
-        currentSegmentViewIndex++;
+        Segment current = gameController.getEventFactory().processSegment(event, event.getSegments().get(currentSegmentIndex));
+        currentSegmentIndex++;
         showNextDisplay(current);
         if (current.getNewStable() != null) {
             String name = ViewUtils.editTextDialog("", "Enter name for new stable");

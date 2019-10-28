@@ -1,21 +1,17 @@
 package openwrestling.manager;
 
 import openwrestling.database.Database;
-import openwrestling.model.Event;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.EventWorker;
-import openwrestling.model.Match;
-import openwrestling.model.MatchEvent;
 import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.Segment;
-import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.modelView.EventView;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.EventRecurrence;
+import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
@@ -31,17 +27,16 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 public class EventManager implements Serializable {
 
-    private final List<Event> events;
+    private List<Event> events;
     private final List<EventWorker> eventWorkers;
-    private final List<MatchEvent> matchEvents;
     private final List<EventTemplate> eventTemplates;
-    private final List<EventView> eventViews;
 
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
@@ -55,27 +50,10 @@ public class EventManager implements Serializable {
             SegmentManager segmentManager) {
         events = new ArrayList<>();
         eventWorkers = new ArrayList<>();
-        matchEvents = new ArrayList<>();
         eventTemplates = new ArrayList<>();
-        eventViews = new ArrayList<>();
         this.segmentManager = segmentManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
-    }
-
-    public void addEventTemplates(List<EventTemplate> templates) {
-        templates.forEach(template -> addEventTemplate(template));
-    }
-
-    public void addEventTemplate(EventTemplate template) {
-        getEventTemplates().add(template);
-        template.getPromotion().addEventTemplate(template);
-    }
-
-    public void addEvent(Event event) {
-        if (!events.contains(event)) {
-            events.add(event);
-        }
     }
 
     public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
@@ -84,13 +62,17 @@ public class EventManager implements Serializable {
         return saved;
     }
 
-    public void addEventView(EventView eventView) {
-        eventViews.add(eventView);
+    public List<Event> createEvents(List<Event> events) {
+        List saved = Database.insertOrUpdateList(events);
+//        this.events.addAll(saved);
+        this.events = Database.selectAll(Event.class);
+        return saved;
     }
 
-    public void addMatchEvent(MatchEvent matchEvent) {
-        matchEvents.add(matchEvent);
-    }
+
+//    public void addMatchEvent(MatchEvent matchEvent) {
+//        matchEvents.add(matchEvent);
+//    }
 
     public void addEventWorker(EventWorker eventWorker) {
         eventWorkers.add(eventWorker);
@@ -133,12 +115,7 @@ public class EventManager implements Serializable {
     public void cancelEvent(Event eventToCancel) {
         EventTemplate template = eventToCancel.getEventTemplate();
 
-        for (Iterator<MatchEvent> iter = matchEvents.listIterator(); iter.hasNext(); ) {
-            MatchEvent matchEvent = iter.next();
-            if (matchEvent.getEvent().equals(eventToCancel)) {
-                iter.remove();
-            }
-        }
+
         for (Iterator<EventWorker> iter = eventWorkers.listIterator(); iter.hasNext(); ) {
             EventWorker eventWorker = iter.next();
             if (eventWorker.getEvent().equals(eventToCancel)) {
@@ -160,11 +137,10 @@ public class EventManager implements Serializable {
     }
 
     public List<Event> getEvents(Promotion promotion) {
-        List<Event> promotionEvents = new ArrayList();
-        events.stream().filter((event) -> (event.getPromotion().equals(promotion))).forEach((event) -> {
-            promotionEvents.add(event);
-        });
-        return promotionEvents;
+        return events.stream()
+                .filter((event) -> (event.getPromotion().equals(promotion)))
+                .collect(Collectors.toList());
+
     }
 
     public Event getNextEvent(EventTemplate template) {
@@ -235,15 +211,6 @@ public class EventManager implements Serializable {
                 ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
-    public List<EventView> getEventViews(Promotion promotion) {
-        List<EventView> promotionEvents = new ArrayList();
-        eventViews.stream().filter((eventView)
-                -> (eventView.getEvent().getPromotion().equals(promotion))).forEach((event) -> {
-            promotionEvents.add(event);
-        });
-        return promotionEvents;
-    }
-
     public Event getNextEvent(Promotion promotion, LocalDate startDate) {
         Event event = null;
         int futureDaysToSearch = 180;
@@ -268,15 +235,6 @@ public class EventManager implements Serializable {
         return null;
     }
 
-    public EventView getEventView(Event event) {
-        for (EventView eventView : eventViews) {
-            if (event.equals(eventView.getEvent())) {
-                return eventView;
-            }
-        }
-        return null;
-    }
-
     public List<Event> getEventsOnDate(LocalDate date) {
         List<Event> eventsOnDate = new ArrayList<>();
         for (Event event : events) {
@@ -296,14 +254,6 @@ public class EventManager implements Serializable {
         return futureEvents;
     }
 
-    public List<Segment> getMatches(iEvent event) {
-        List<Segment> matches = new ArrayList<>();
-        matchEvents.stream().filter((matchEvent) -> (matchEvent.getEvent().equals(event))).forEach((matchEvent) -> {
-            matches.add(matchEvent.getMatch());
-        });
-        return matches;
-    }
-
     //this will return a list of all workers currently booked
     //without any duplicates
     //so if a worker is in two different segments he is only on the list
@@ -313,7 +263,7 @@ public class EventManager implements Serializable {
 
         List allWorkers = new ArrayList<>();
         for (Segment currentSegment : segments) {
-            if (currentSegment instanceof Match) {
+            if (SegmentType.MATCH.equals(currentSegment.getSegmentType())) {
                 allWorkers.addAll(segmentManager.getWorkers(currentSegment));
             }
         }
@@ -338,10 +288,14 @@ public class EventManager implements Serializable {
     }
 
     //dynamic current cost calculation to be called while the player is booking
-    public int calculateCost(iEvent event) {
+    public int calculateCost(Event event) {
         int currentCost = 0;
 
-        for (Worker worker : allWorkers(getMatches(event))) {
+        List<Segment> matches = event.getSegments().stream()
+                .filter(segment -> SegmentType.MATCH.equals(segment.getSegmentType()))
+                .collect(Collectors.toList());
+
+        for (Worker worker : allWorkers(matches)) {
             currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
         }
         return currentCost;
@@ -358,7 +312,7 @@ public class EventManager implements Serializable {
     }
 
     //gross profit for the event
-    public int calculateGate(iEvent event) {
+    public int calculateGate(Event event) {
 
         int ticketPrice = 0;
 
@@ -413,7 +367,7 @@ public class EventManager implements Serializable {
         return calculateAttendance(segments, promotion) * ticketPrice;
     }
 
-    public int calculateAttendance(iEvent event) {
+    public int calculateAttendance(Event event) {
         int attendance = 0;
 
         switch (event.getPromotion().getLevel()) {
@@ -437,13 +391,11 @@ public class EventManager implements Serializable {
         }
 
         //how many workers are draws?
-        int draws = 0;
-        for (Worker worker : allWorkers(getMatches(event))) {
-
-            if (worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10) {
-                draws++;
-            }
-        }
+        long draws = event.getSegments().stream()
+                .flatMap(segment -> segment.getTeams().stream())
+                .flatMap(segmentTeam -> segmentTeam.getWorkers().stream())
+                .filter(worker -> worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10)
+                .count();
 
         attendance += RandomUtils.nextInt(event.getPromotion().getLevel(), event.getPromotion().getLevel() * 15) * draws;
 
@@ -499,7 +451,6 @@ public class EventManager implements Serializable {
     }
 
     public String generateSummaryString(Event event) {
-        EventView eventView = getEventView(event);
 
         StringBuilder sb = new StringBuilder();
 
@@ -510,10 +461,11 @@ public class EventManager implements Serializable {
         if (event.getDate().equals(dateManager.today())) {
             return sb.append("This event is scheduled for later today.\n").append(futureEventString(event)).toString();
         }
-        if (eventView != null) {
-            for (SegmentView segmentView : eventView.getSegmentViews()) {
-                if (!segmentView.getWorkers().isEmpty()) {
-                    sb.append(segmentManager.getIsolatedSegmentString(segmentView));
+        if (event != null) {
+            List<Segment> segments = segmentManager.getSegments(event);
+            for (Segment segment : segments) {
+                if (!segment.getWorkers().isEmpty()) {
+                    sb.append(segmentManager.getIsolatedSegmentString(segment));
                 } else {
                     logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
                 }
@@ -612,5 +564,12 @@ public class EventManager implements Serializable {
     public List<EventTemplate> getEventTemplates() {
         return eventTemplates;
     }
+
+    public List<EventTemplate> getEventTemplates(Promotion promotion) {
+        return eventTemplates.stream()
+                .filter(eventTemplate -> promotion.getPromotionID() == eventTemplate.getPromotion().getPromotionID())
+                .collect(Collectors.toList());
+    }
+
 
 }

@@ -1,10 +1,11 @@
 package openwrestling.model.modelView;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
@@ -14,92 +15,43 @@ import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
 import openwrestling.model.utility.ModelUtils;
 
-public class SegmentTeam implements Serializable {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    private List<Worker> workers;
-    private List<Worker> entourage;
-    private TeamType type;
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class SegmentTeam extends GameObject implements Serializable {
+
+    private long segmentTeamID;
+    @Builder.Default
+    private List<Worker> workers = new ArrayList<>();
+    @Builder.Default
+    private List<Worker> entourage = new ArrayList<>();
+    @Builder.Default
+    private TeamType type = TeamType.DEFAULT;
     private SegmentTeam target;
     private SuccessType success;
     private TimingType timing;
+    //    @Builder.Default
+//    private OutcomeType outcome = OutcomeType.WINNER;
     private OutcomeType outcome;
     private PresenceType presence;
     private ResponseType response;
+    private Segment segment;
 
-    public SegmentTeam(Worker worker, TeamType type) {
-        this.workers = Arrays.asList(worker);
-        this.type = type;
-        entourage = new ArrayList();
-    }
-
-    public SegmentTeam(List<Worker> workers, TeamType type) {
-        this.workers = workers;
-        this.type = type;
-        entourage = new ArrayList();
-    }
-
-    public SegmentTeam() {
-        workers = new ArrayList();
-        entourage = new ArrayList();
-        type = TeamType.DEFAULT;
-        outcome = OutcomeType.WINNER;
-    }
-
-    /**
-     * @return the workers
-     */
-    public List<Worker> getWorkers() {
-        return workers;
-    }
-
-    /**
-     * @param workers the workers to set
-     */
-    public void setWorkers(List<Worker> workers) {
-        this.workers = workers;
-    }
-
-    /**
-     * @return the type
-     */
-    public TeamType getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(TeamType type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the target
-     */
-    public SegmentTeam getTarget() {
-        return target;
-    }
-
-    /**
-     * @param target the target to set
-     */
-    public void setTarget(SegmentTeam target) {
-        this.target = target;
-    }
-
-    /**
-     * @return the success
-     */
-    public SuccessType getSuccess() {
-        return success;
-    }
-
-    /**
-     * @param success the success to set
-     */
-    public void setSuccess(SuccessType success) {
-        this.success = success;
-    }
+//    public SegmentTeam(Worker worker, TeamType type) {
+//        this.workers = Arrays.asList(worker);
+//        this.type = type;
+//    }
+//
+//    public SegmentTeam(List<Worker> workers, TeamType type) {
+//        this.workers = workers;
+//        this.type = type;
+//    }
 
     @Override
     public String toString() {
@@ -114,76 +66,6 @@ public class SegmentTeam implements Serializable {
         }
 
         return string;
-    }
-
-    /**
-     * @return the timing
-     */
-    public TimingType getTiming() {
-        return timing;
-    }
-
-    /**
-     * @param timing the timing to set
-     */
-    public void setTiming(TimingType timing) {
-        this.timing = timing;
-    }
-
-    /**
-     * @return the outcome
-     */
-    public OutcomeType getOutcome() {
-        return outcome;
-    }
-
-    /**
-     * @param outcome the outcome to set
-     */
-    public void setOutcome(OutcomeType outcome) {
-        this.outcome = outcome;
-    }
-
-    /**
-     * @return the presence
-     */
-    public PresenceType getPresence() {
-        return presence;
-    }
-
-    /**
-     * @param presence the presence to set
-     */
-    public void setPresence(PresenceType presence) {
-        this.presence = presence;
-    }
-
-    /**
-     * @return the entourage
-     */
-    public List<Worker> getEntourage() {
-        return entourage;
-    }
-
-    /**
-     * @param entourage the entourage to set
-     */
-    public void setEntourage(List<Worker> entourage) {
-        this.entourage = entourage;
-    }
-
-    /**
-     * @return the response
-     */
-    public ResponseType getResponse() {
-        return response;
-    }
-
-    /**
-     * @param response the response to set
-     */
-    public void setResponse(ResponseType response) {
-        this.response = response;
     }
 
 }

@@ -1,39 +1,38 @@
 package openwrestling.model.utility;
 
-import java.util.ArrayList;
-import java.util.List;
-import openwrestling.model.AngleParams;
-import openwrestling.model.Match;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.SegmentView;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.TeamType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class SegmentStringUtils {
 
-    public static String getMatchTitle(SegmentView segmentView) {
-        List<SegmentTeam> teams = segmentView.getTeams();
-        MatchRule rules = ((Match) segmentView.getSegment()).getSegmentParams().getMatchRule();
+    public static String getMatchTitle(Segment segment) {
+        List<SegmentTeam> teams = segment.getTeams();
+        MatchRule rules = segment.getMatchRule();
 
         String string = "";
 
-        if (segmentView.getWorkers().isEmpty()) {
+        if (segment.getWorkers().isEmpty()) {
             return "Empty Match";
         }
 
-        if (!segmentView.getTitles().isEmpty()) {
-            string += ModelUtils.andItemsLongName(segmentView.getTitles());
+        if (!segment.getTitles().isEmpty()) {
+            string += ModelUtils.andItemsLongName(segment.getTitles());
             string += " ";
         }
 
-        if (SegmentUtils.isHandicapMatch(segmentView)) {
+        if (SegmentUtils.isHandicapMatch(segment)) {
             string += "Handicap";
 
         } else if (rules.equals(MatchRule.DEFAULT) && string.isEmpty()) {
 
-            int teamsSize = segmentView.getMatchParticipantTeams().size();
+            int teamsSize = segment.getMatchParticipantTeams().size();
 
             switch (teamsSize) {
                 case 2:
@@ -76,9 +75,9 @@ public final class SegmentStringUtils {
         return string;
     }
 
-    public static String getOfferString(SegmentView segmentView) {
+    public static String getOfferString(Segment segment) {
         String string = "";
-        switch (segmentView.getSegment().getSegmentParams().getJoinTeamType()) {
+        switch (segment.getJoinTeamType()) {
             case TAG_TEAM:
                 string += " to form a new tag team";
                 break;
@@ -86,32 +85,31 @@ public final class SegmentStringUtils {
                 string += " to form a new stable";
                 break;
             default:
-                Stable stable = segmentView.getSegment().getSegmentParams().getJoinStable();
+                Stable stable = segment.getJoinStable();
                 if (stable != null) {
                     if (string.contains(stable.getName())) {
                         string += " to join them";
                     } else {
-                        string += " to join " + segmentView.getSegment().getSegmentParams().getJoinStable().getName();
+                        string += " to join " + segment.getJoinStable().getName();
                     }
                 }
         }
 
-        return string += getResponseString(segmentView.getTeams(TeamType.OFFEREE), "offer");
+        return string += getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
     }
 
-    public static String getChallengeString(SegmentView segmentView) {
+    public static String getChallengeString(Segment segment) {
         String string = " to a match";
-        AngleParams params = (AngleParams) segmentView.getSegment().getSegmentParams();
-        switch (params.getShowType()) {
+        switch (segment.getShowType()) {
             case TONIGHT:
                 string += " tonight";
                 break;
             default:
-                string += String.format(" at %s", params.getChallengeSegment().getEventTemplate().getLongName());
+                string += String.format(" at %s", segment.getChallengeSegment().getEventTemplate().getLongName());
                 break;
         }
 
-        return string += getResponseString(segmentView.getTeams(TeamType.CHALLENGED), "challenge");
+        return string += getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
     }
 
     private static String getResponseString(List<SegmentTeam> teams, String keyword) {

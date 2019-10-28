@@ -57,4 +57,11 @@ public class Contract extends GameObject implements Serializable, iContract {
         return worker;
     }
 
+    public LocalDate getLastShowDate() {
+        if(lastShowDate == null) {
+            return startDate;
+        }
+        return lastShowDate;
+    }
+
 }

@@ -14,11 +14,17 @@ import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
 import openwrestling.entities.EntourageMemberEntity;
+import openwrestling.entities.EventEntity;
 import openwrestling.entities.EventTemplateEntity;
+import openwrestling.entities.MatchTitleEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
 import openwrestling.entities.PromotionEntity;
 import openwrestling.entities.RosterSplitEntity;
 import openwrestling.entities.RosterSplitWorkerEntity;
+import openwrestling.entities.SegmentEntity;
+import openwrestling.entities.SegmentTeamEntity;
+import openwrestling.entities.SegmentTeamEntourageEntity;
+import openwrestling.entities.SegmentTeamWorkerEntity;
 import openwrestling.entities.StableEntity;
 import openwrestling.entities.StableWorkerEntity;
 import openwrestling.entities.StaffContractEntity;
@@ -33,6 +39,7 @@ import openwrestling.entities.WorkerEntity;
 import openwrestling.entities.WorkerRelationshipEntity;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EntourageMember;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.MoraleRelationship;
@@ -48,6 +55,10 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
+import openwrestling.model.modelView.Segment;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -63,6 +74,7 @@ import java.util.stream.Collectors;
 public class Database {
 
     private static String dbUrl;
+    private static Logger logger = LogManager.getLogger();
 
     private static MapperFactory getMapperFactory() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -87,6 +99,8 @@ public class Database {
         put(BankAccount.class, BankAccountEntity.class);
         put(Transaction.class, TransactionEntity.class);
         put(EntourageMember.class, EntourageMemberEntity.class);
+        put(Event.class, EventEntity.class);
+        put(Segment.class, SegmentEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -192,6 +206,10 @@ public class Database {
         if (gameObjects.isEmpty()) {
             return gameObjects;
         }
+        logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
+                gameObjects.size(),
+                gameObjects.get(0).getClass())
+        );
         List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
         List<? extends Entity> saved = insertOrUpdateEntityList(entities);
         return entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
@@ -356,7 +374,13 @@ public class Database {
                     MoraleRelationshipEntity.class,
                     BankAccountEntity.class,
                     TransactionEntity.class,
-                    EntourageMemberEntity.class);
+                    EntourageMemberEntity.class,
+                    EventEntity.class,
+                    SegmentEntity.class,
+                    SegmentTeamEntity.class,
+                    SegmentTeamEntourageEntity.class,
+                    SegmentTeamWorkerEntity.class,
+                    MatchTitleEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

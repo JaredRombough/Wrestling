@@ -2,7 +2,6 @@ package openwrestling.view.news.controller;
 
 import java.net.URL;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +24,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.logging.log4j.LogManager;
-import openwrestling.model.NewsItem;
 import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.NewsFilter;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -139,26 +137,26 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             units++;
         }
 
-        List<SegmentView> topMatches
+        List<Segment> topMatches
                 = gameController.getSegmentManager().getTopMatches(
                         gameController.getDateManager().today(),
                         unit,
                         units,
                         matchesToShow);
 
-        ObservableList<SegmentView> items = FXCollections.observableArrayList(topMatches);
+        ObservableList<Segment> items = FXCollections.observableArrayList(topMatches);
 
         rankingsListView.setItems(items);
 
-        rankingsListView.setCellFactory(param -> new ListCell<SegmentView>() {
+        rankingsListView.setCellFactory(param -> new ListCell<Segment>() {
             @Override
-            protected void updateItem(SegmentView segmentView, boolean empty) {
-                super.updateItem(segmentView, empty);
+            protected void updateItem(Segment segment, boolean empty) {
+                super.updateItem(segment, empty);
 
-                if (empty || segmentView == null || !(segmentView instanceof SegmentView)) {
+                if (empty || segment == null || !(segment instanceof Segment)) {
                     setGraphic(null);
                 } else {
-                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segmentView));
+                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segment));
                     text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
                     text.setTextAlignment(TextAlignment.CENTER);
                     setGraphic(text);

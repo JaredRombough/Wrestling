@@ -3,6 +3,7 @@ package openwrestling.model.gameObjects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.segmentEnum.StaffType;
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Promotion extends GameObject implements SegmentItem, Serializable {
 
     private static int serialNumber = 0;
@@ -26,28 +28,13 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     private String imagePath;
     private int promotionID;
     private int importKey;
-    private int popularity;
+    @Builder.Default
+    private int popularity = 50;
     private int level;
-
-    private final List<StaffMember> allStaff;
-    private List<StaffMember> defaultBroadcastTeam;
-    private List<EventTemplate> eventTemplates;
-
-    public Promotion() {
-
-        allStaff = new ArrayList<>();
-        defaultBroadcastTeam = new ArrayList<>();
-        eventTemplates = new ArrayList<>();
-
-        //default popularity of 50 for now
-        popularity = 50;
-
-        serialNumber++;
-    }
-
-    public int indexNumber() {
-        return promotionID;
-    }
+    @Builder.Default
+    private List<StaffMember> allStaff = new ArrayList<>();
+    @Builder.Default
+    private List<StaffMember> defaultBroadcastTeam = new ArrayList<>();
 
 
     public void setPopularity(int popularity) {
@@ -90,14 +77,10 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     public void removeFromStaff(StaffMember staff) {
         allStaff.remove(staff);
         defaultBroadcastTeam.remove(staff);
-        eventTemplates.forEach(template -> {
-            template.getDefaultBroadcastTeam().remove(staff);
-        });
-    }
-
-
-    public void addEventTemplate(EventTemplate template) {
-        eventTemplates.add(template);
+        //TODO
+//        eventTemplates.forEach(template -> {
+//            template.getDefaultBroadcastTeam().remove(staff);
+//        });
     }
 
     @Override

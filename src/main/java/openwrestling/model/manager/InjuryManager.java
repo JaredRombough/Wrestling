@@ -12,7 +12,7 @@ import openwrestling.model.Injury;
 import static openwrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
 
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.SegmentView;
+import openwrestling.model.modelView.Segment;
 import openwrestling.model.gameObjects.Worker;
 
 public class InjuryManager implements Serializable {
@@ -53,10 +53,10 @@ public class InjuryManager implements Serializable {
         return injuries;
     }
 
-    public void createInjury(LocalDate startDate, int duration, Worker worker, SegmentView segmentView) {
-        Injury injury = new Injury(startDate, startDate.plusDays(duration), worker, segmentView.getPromotion());
+    public void createInjury(LocalDate startDate, int duration, Worker worker, Segment segment) {
+        Injury injury = new Injury(startDate, startDate.plusDays(duration), worker, segment.getPromotion());
         addInjury(injury);
-        newsManager.addMatchInjuryNewsItem(injury, segmentView.getEventView());
+        newsManager.addMatchInjuryNewsItem(injury, segment.getEvent());
     }
 
     public void createRandomInjury(Worker worker, LocalDate date, Promotion promotion) {
