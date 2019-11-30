@@ -1,11 +1,5 @@
 package openwrestling.view.calendar.controller;
 
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -23,8 +17,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.segmentEnum.EventFrequency;
@@ -32,6 +24,18 @@ import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static openwrestling.model.utility.EventUtils.bookEventsForNewEventTemplate;
+import static openwrestling.model.utility.EventUtils.getInitialEventTemplateDate;
 
 public class BookShowController extends ControllerBase implements Initializable {
 
@@ -163,7 +167,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         optionalResult.ifPresent((EventTemplate template) -> {
 
             gameController.getEventManager().createEventTemplates(List.of(template));
-            gameController.getPromotionController().bookEventTemplate(template, currentDate);
+            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(template));
 
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getEventOnDate(
@@ -175,8 +179,8 @@ public class BookShowController extends ControllerBase implements Initializable 
         Dialog<EventTemplate> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField eventName = new TextField();
-        ComboBox<EventVenueSize> venueSize = new ComboBox(FXCollections.observableArrayList(EventVenueSize.values()));
-        ComboBox<EventFrequency> frequency = new ComboBox(FXCollections.observableArrayList(EventFrequency.values()));
+        ComboBox<EventVenueSize> venueSize = new ComboBox<>(FXCollections.observableArrayList(EventVenueSize.values()));
+        ComboBox<EventFrequency> frequency = new ComboBox<>(FXCollections.observableArrayList(EventFrequency.values()));
         ComboBox duration = new ComboBox(FXCollections.observableArrayList(
                 Arrays.asList(30, 60, 90, 120, 180, 240, 300)));
         VBox vBox = new VBox(8);
@@ -214,6 +218,10 @@ public class BookShowController extends ControllerBase implements Initializable 
                 template.setMonth(currentDate.getMonth().getValue());
                 template.setDayOfWeek(currentDate.getDayOfWeek());
                 template.setEventsLeft(52);
+                template.setNextDate(
+                        getInitialEventTemplateDate(template,
+                                gameController.getDateManager().today())
+                );
                 return template;
             }
             return null;

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static openwrestling.model.utility.EventUtils.getInitialEventTemplateDate;
+
 public class Import {
 
     private GameController gameController;
@@ -82,11 +84,11 @@ public class Import {
                 gameController.getTitleManager().createTitles(titles);
 
                 List<EventTemplate> tvTemplates = importHelper.tvDat(promotions, rosterSplits);
-                tvTemplates.forEach(eventTemplate -> ImportUtils.setInitialEventTemplateDates(eventTemplate, gameController.getDateManager().today()));
+                tvTemplates.forEach(eventTemplate -> eventTemplate.setNextDate(getInitialEventTemplateDate(eventTemplate, gameController.getDateManager().today())));
                 gameController.getEventManager().createEventTemplates(tvTemplates);
 
                 List<EventTemplate> eventTemplates = importHelper.eventDat(rosterSplits, promotions);
-                eventTemplates.forEach(eventTemplate -> ImportUtils.setInitialEventTemplateDates(eventTemplate, gameController.getDateManager().today()));
+                eventTemplates.forEach(eventTemplate -> eventTemplate.setNextDate(getInitialEventTemplateDate(eventTemplate, gameController.getDateManager().today())));
                 gameController.getEventManager().createEventTemplates(eventTemplates);
 
                 List<StaffMember> staffMembers = importHelper.staffDat();
