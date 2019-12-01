@@ -2,8 +2,6 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.model.EventWorker;
-import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
@@ -21,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 public class EventManager implements Serializable {
 
     private List<Event> events;
-    private final List<EventWorker> eventWorkers;
     private List<EventTemplate> eventTemplates;
 
     private final DateManager dateManager;
@@ -45,7 +43,6 @@ public class EventManager implements Serializable {
             DateManager dateManager,
             SegmentManager segmentManager) {
         events = new ArrayList<>();
-        eventWorkers = new ArrayList<>();
         eventTemplates = new ArrayList<>();
         this.segmentManager = segmentManager;
         this.contractManager = contractManager;
@@ -62,19 +59,6 @@ public class EventManager implements Serializable {
         List saved = Database.insertOrUpdateList(events);
         this.events = Database.selectAll(Event.class);
         return saved;
-    }
-
-
-//    public void addMatchEvent(MatchEvent matchEvent) {
-//        matchEvents.add(matchEvent);
-//    }
-
-    public void addEventWorker(EventWorker eventWorker) {
-        eventWorkers.add(eventWorker);
-    }
-
-    public boolean hasEvent(Event event) {
-        return events.contains(event);
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {
@@ -110,13 +94,6 @@ public class EventManager implements Serializable {
     public void cancelEvent(Event eventToCancel) {
         EventTemplate template = eventToCancel.getEventTemplate();
 
-
-        for (Iterator<EventWorker> iter = eventWorkers.listIterator(); iter.hasNext(); ) {
-            EventWorker eventWorker = iter.next();
-            if (eventWorker.getEvent().equals(eventToCancel)) {
-                iter.remove();
-            }
-        }
         for (Iterator<Event> iter = events.listIterator(); iter.hasNext(); ) {
             Event event = iter.next();
             if (event.equals(eventToCancel)) {
@@ -127,13 +104,6 @@ public class EventManager implements Serializable {
         if (template != null) {
             updateFirstAndLastEvents(template);
         }
-
-    }
-
-    public List<Event> getEvents(Promotion promotion) {
-        return events.stream()
-                .filter((event) -> (event.getPromotion().equals(promotion)))
-                .collect(Collectors.toList());
 
     }
 
@@ -157,7 +127,7 @@ public class EventManager implements Serializable {
         }
 
         templateEvents.sort(
-                (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+                Comparator.comparing(Event::getDate));
         return templateEvents.isEmpty()
                 ? null : templateEvents.get(0);
     }
@@ -175,7 +145,7 @@ public class EventManager implements Serializable {
     public Event getLastEvent(EventTemplate template) {
         List<Event> templateEvents = getEventsForTemplate(template);
         templateEvents.sort(
-                (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+                Comparator.comparing(Event::getDate));
         return templateEvents.isEmpty()
                 ? null : templateEvents.get(templateEvents.size() - 1);
     }
@@ -243,16 +213,6 @@ public class EventManager implements Serializable {
         //convert the set back to a list with no duplicates
         allWorkers = new ArrayList<>(allWorkersSet);
 
-        return allWorkers;
-    }
-
-    public List<Worker> allWorkers(Event event) {
-        List allWorkers = new ArrayList<>();
-        for (EventWorker eventWorker : eventWorkers) {
-            if (eventWorker.getEvent().equals(event)) {
-                allWorkers.add(eventWorker.getWorker());
-            }
-        }
         return allWorkers;
     }
 
@@ -408,27 +368,16 @@ public class EventManager implements Serializable {
         return attendance;
     }
 
-    private String futureEventString(Event event) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Workers booked:");
-        List<Worker> workers = allWorkers(event);
-        for (Worker worker : workers) {
-            sb.append("\n");
-            sb.append(worker.getName());
-        }
-        return sb.toString();
-    }
-
     public String generateSummaryString(Event event) {
 
         StringBuilder sb = new StringBuilder();
 
         if (event.getDate().isAfter(dateManager.today())) {
-            return sb.append("This event is in the future.\n").append(futureEventString(event)).toString();
+            return sb.append("This event is in the future.\n").toString();
         }
 
         if (event.getDate().equals(dateManager.today())) {
-            return sb.append("This event is scheduled for later today.\n").append(futureEventString(event)).toString();
+            return sb.append("This event is scheduled for later today.\n").toString();
         }
         if (event != null) {
             List<Segment> segments = segmentManager.getSegments(event);
@@ -454,72 +403,6 @@ public class EventManager implements Serializable {
         }
 
         return sb.toString();
-    }
-
-    //checks if a worker is booked at all on a given date
-    public boolean isBooked(Worker worker, LocalDate date) {
-        boolean isBooked = false;
-
-        for (EventWorker eventWorker : eventWorkers) {
-            if (eventWorker.getEvent().getDate().equals(date)
-                    && eventWorker.getWorker().equals(worker)) {
-                isBooked = true;
-                break;
-            }
-        }
-
-        return isBooked;
-    }
-
-    private EventWorker getBooking(Worker worker, LocalDate date) {
-        EventWorker workerBooking = null;
-        for (EventWorker eventWorker : eventWorkers) {
-            if (eventWorker.getEvent().getDate().equals(date)
-                    && eventWorker.getWorker().equals(worker)) {
-                workerBooking = eventWorker;
-                break;
-            }
-        }
-        return workerBooking;
-    }
-
-    //checks if a worker is booked on a certain date
-    //returns false if the booking is with the given promotion
-    public boolean isAvailable(Worker worker, LocalDate date, Promotion promotion) {
-        EventWorker eventWorker = getBooking(worker, date);
-        if (eventWorker == null) {
-            return false;
-        }
-        if (!eventWorker.getEvent().getPromotion().equals(promotion)) {
-            return false;
-        }
-        return eventWorker.getWorker().getInjury() == null;
-    }
-
-    public List<Worker> getAvailableRoster(Promotion promotion, LocalDate date) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contractManager.getContracts(promotion)) {
-            if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
-    }
-
-    public List<Worker> getUnavailableRoster(Promotion promotion, LocalDate date) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contractManager.getContracts(promotion)) {
-            if (contract.isActive() && isAvailable(contract.getWorker(), date, promotion)) {
-                roster.add(contract.getWorker());
-            }
-
-        }
-
-        return roster;
     }
 
     public boolean canReschedule(Event event) {

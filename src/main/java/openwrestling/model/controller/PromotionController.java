@@ -211,19 +211,6 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-    //sign a contract with the first suitable worker found
-    private void signContract(Promotion promotion, LocalDate date) {
-
-        for (Worker worker : workerManager.freeAgents(promotion)) {
-            if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)
-                    && !eventManager.isBooked(worker, date)) {
-                contractFactory.createContract(worker, promotion, dateManager.today());
-                break;
-            }
-        }
-    }
-
-
     private List<Segment> bookSegments(Promotion promotion) {
         //maximum segments for the event
         int maxSegments = 8;
@@ -236,7 +223,7 @@ public class PromotionController extends Logging implements Serializable {
         }
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = getEventMatchRoster(promotion);
+        List<Worker> eventRoster = workerManager.selectRoster(promotion);
 
         //list to track workers on the pushlist that are still available
         List<Worker> pushListPresent = new ArrayList<>();
@@ -393,42 +380,5 @@ public class PromotionController extends Logging implements Serializable {
         return eventFactory.processEventView(
                 event,
                 true);
-    }
-
-    private List<Worker> getEventMatchRoster(Promotion promotion) {
-        //lists to track workers the event roster
-        //and workers that are already booked on this date
-        List<Worker> eventRoster = workerManager.selectRoster(promotion);
-        List<Worker> unavailable = new ArrayList<>();
-
-        //go through the event roster and check for workers already booked
-        for (Worker worker : eventRoster) {
-
-            //the worker is unavailable if they are booked and the booking isn't with us
-            if (!eventManager.isAvailable(worker, dateManager.today(), promotion)) {
-                unavailable.add(worker);
-            }
-        }
-
-        //remove all booked workers from the event roster
-        eventRoster.removeAll(unavailable);
-
-        //list to hold noncompetitors (managers, etc)
-        List<Worker> nonCompetitors = new ArrayList<>();
-
-        //go through the event roster and collect noncompetitors
-        for (Worker worker : eventRoster) {
-            if (!worker.isFullTime() || !worker.isMainRoster()) {
-
-                nonCompetitors.add(worker);
-            }
-        }
-
-        //remove noncompetitors from the event roster
-        eventRoster.removeAll(nonCompetitors);
-
-        sortByPopularity(eventRoster);
-
-        return eventRoster;
     }
 }

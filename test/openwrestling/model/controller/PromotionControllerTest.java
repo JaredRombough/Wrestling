@@ -7,16 +7,10 @@ import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import org.junit.Before;
-import org.junit.Test;
 
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class PromotionControllerTest {

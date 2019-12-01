@@ -9,7 +9,6 @@ import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.EventWorker;
 import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -114,10 +113,6 @@ public class EventFactory extends Logging {
             bankAccountManager.getBankAccount(event.getPromotion()).setFunds(
                     eventManager.calculateGate(event), TransactionType.GATE, event.getDate());
 
-            for (Worker worker : eventManager.allWorkers(event.getSegments())) {
-                EventWorker eventWorker = new EventWorker(event, worker);
-                eventManager.addEventWorker(eventWorker);
-            }
             processContracts(event, event.getSegments());
 
             logger.log(Level.DEBUG, "end process processEventView for " + event.getName());
