@@ -1,53 +1,75 @@
 package openwrestling.model.utility;
 
-import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.segmentEnum.EventFrequency;
+import org.apache.commons.lang3.RandomUtils;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.TemporalAdjusters;
 
 import static java.time.temporal.TemporalAdjusters.next;
 
 public class EventUtils {
 
-    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate) {
-        List<Event> newEvents = new ArrayList<>();
+    public static void initializeEventTemplateDates(EventTemplate eventTemplate, LocalDate earliestDate) {
+        LocalDate date;
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-            Event event = new Event();
-            event.setDate(eventTemplate.getNextDate());
-            event.setPromotion(eventTemplate.getPromotion());
-            event.setName(eventTemplate.getName());
-            event.setEventTemplate(eventTemplate);
-            event.setDefaultDuration(eventTemplate.getDefaultDuration());
-            newEvents.add(event);
-        } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
-            LocalDate weeklyDate = LocalDate.of(eventTemplate.getNextDate().getYear(),
-                    eventTemplate.getNextDate().getMonthValue(),
-                    eventTemplate.getNextDate().getDayOfMonth()
-            );
-            for (int i = 0; i < eventTemplate.getEventsLeft(); i++) {
-
-                Event event = new Event();
-                event.setDate(weeklyDate);
-                event.setPromotion(eventTemplate.getPromotion());
-                event.setName(eventTemplate.getName());
-                event.setEventTemplate(eventTemplate);
-                event.setDefaultDuration(eventTemplate.getDefaultDuration());
-                newEvents.add(event);
-                eventTemplate.setBookedUntil(weeklyDate);
-                weeklyDate = weeklyDate.with(next(eventTemplate.getDayOfWeek()));
+            while (earliestDate.getMonth().getValue() != eventTemplate.getMonth()) {
+                earliestDate = earliestDate.plusMonths(1);
             }
+            date = getAnnualEventDateInMonth(earliestDate, eventTemplate.getDayOfWeek());
+
+        } else {
+            if (earliestDate.getDayOfWeek().equals(eventTemplate.getDayOfWeek())) {
+                date = earliestDate;
+            } else {
+                date = earliestDate.with(next(eventTemplate.getDayOfWeek()));
+            }
+
         }
-        return newEvents;
+        eventTemplate.setNextDate(date);
+        eventTemplate.setBookedUntil(date);
+
     }
 
-    public static LocalDate getInitialEventTemplateDate(EventTemplate eventTemplate, LocalDate startDate) {
-        if (startDate.getDayOfWeek().equals(eventTemplate.getDayOfWeek())) {
-            return startDate;
+//    public static LocalDate getInitialEventTemplateNextDate(EventTemplate eventTemplate, LocalDate earliestDate) {
+//        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+//            while (earliestDate.getMonth().getValue() != eventTemplate.getMonth()) {
+//                earliestDate = earliestDate.plusMonths(1);
+//            }
+//            return getAnnualEventDateInMonth(earliestDate, eventTemplate.getDayOfWeek());
+//
+//        }
+//        if (earliestDate.getDayOfWeek().equals(eventTemplate.getDayOfWeek())) {
+//            return earliestDate;
+//        }
+//        return earliestDate.with(next(eventTemplate.getDayOfWeek()));
+//    }
+
+
+    public static LocalDate getAnnualEventDateInMonth(LocalDate dateInMonth, DayOfWeek dayOfWeek) {
+        return dateInMonth.with(TemporalAdjusters.dayOfWeekInMonth(
+                RandomUtils.nextInt(1, 4),
+                dayOfWeek));
+    }
+
+
+//    public static LocalDate getNewBookedUntilDateAfterEvent(EventTemplate eventTemplate) {
+//        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+//            return EventUtils.getAnnualEventDateInMonth(eventTemplate.getBookedUntil().plusMonths(12), eventTemplate.getDayOfWeek());
+//        }
+//        return eventTemplate.getBookedUntil().plusDays(7);
+//    }
+
+    public static void updateDatesAfterEvent(EventTemplate eventTemplate) {
+        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+            LocalDate date = EventUtils.getAnnualEventDateInMonth(eventTemplate.getBookedUntil().plusMonths(12), eventTemplate.getDayOfWeek());
+            eventTemplate.setNextDate(date);
+        } else {
+            eventTemplate.setNextDate(eventTemplate.getNextDate().plusDays(7));
+            eventTemplate.setBookedUntil(eventTemplate.getBookedUntil().plusDays(7));
         }
-        return startDate.with(next(eventTemplate.getDayOfWeek()));
     }
 
 }

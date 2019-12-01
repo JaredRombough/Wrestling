@@ -1,5 +1,6 @@
 package openwrestling.manager;
 
+import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.model.EventWorker;
 import openwrestling.model.gameObjects.Contract;
@@ -32,11 +33,12 @@ import java.util.stream.Collectors;
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
+@Getter
 public class EventManager implements Serializable {
 
     private List<Event> events;
     private final List<EventWorker> eventWorkers;
-    private final List<EventTemplate> eventTemplates;
+    private List<EventTemplate> eventTemplates;
 
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
@@ -58,13 +60,12 @@ public class EventManager implements Serializable {
 
     public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
         List saved = Database.insertOrUpdateList(eventTemplates);
-        this.eventTemplates.addAll(saved);
+        this.eventTemplates = Database.selectAll(EventTemplate.class);
         return saved;
     }
 
     public List<Event> createEvents(List<Event> events) {
         List saved = Database.insertOrUpdateList(events);
-//        this.events.addAll(saved);
         this.events = Database.selectAll(Event.class);
         return saved;
     }
@@ -556,13 +557,6 @@ public class EventManager implements Serializable {
     public boolean canReschedule(Event event) {
         //return event != null && event.getTelevision() == null;
         return true;
-    }
-
-    /**
-     * @return the eventTemplates
-     */
-    public List<EventTemplate> getEventTemplates() {
-        return eventTemplates;
     }
 
     public List<EventTemplate> getEventTemplates(Promotion promotion) {

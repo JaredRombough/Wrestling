@@ -11,7 +11,6 @@ import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.EventWorker;
 import openwrestling.model.SegmentTemplate;
-import openwrestling.model.controller.PromotionController;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
@@ -25,6 +24,7 @@ import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.AngleType;
+import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.ResponseType;
@@ -36,14 +36,17 @@ import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.time.temporal.TemporalAdjusters.next;
 import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
 import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
+import static openwrestling.model.utility.EventUtils.initializeEventTemplateDates;
 import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory extends Logging {
@@ -127,7 +130,7 @@ public class EventFactory extends Logging {
         return event;
     }
 
-    public void createMonthlyEvents(Promotion promotion) {
+    public static List<EventTemplate> generateMonthlyEventTemplates(Promotion promotion, LocalDate startDate) {
         List<EventTemplate> eventTemplates = new ArrayList<>();
         Month month = Month.JANUARY;
         for (int i = 0; i < 12; i++) {
@@ -148,11 +151,40 @@ public class EventFactory extends Logging {
             } else {
                 template.setEventVenueSize(EventVenueSize.SMALL);
             }
+            initializeEventTemplateDates(template, startDate);
             eventTemplates.add(template);
 
 
         }
-        eventManager.createEventTemplates(eventTemplates);
+        return eventTemplates;
+    }
+
+    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate) {
+        List<Event> newEvents = new ArrayList<>();
+        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
+            Event event = bookEventForTemplate(eventTemplate, eventTemplate.getNextDate());
+            newEvents.add(event);
+            eventTemplate.setBookedUntil(event.getDate());
+        } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
+            LocalDate weeklyDate = eventTemplate.getNextDate();
+            for (int i = 0; i < eventTemplate.getEventsLeft(); i++) {
+                Event event = bookEventForTemplate(eventTemplate, weeklyDate);
+                newEvents.add(event);
+                eventTemplate.setBookedUntil(weeklyDate);
+                weeklyDate = weeklyDate.with(next(eventTemplate.getDayOfWeek()));
+            }
+        }
+        return newEvents;
+    }
+
+    public static Event bookEventForTemplate(EventTemplate eventTemplate, LocalDate date) {
+        Event event = new Event();
+        event.setDate(date);
+        event.setPromotion(eventTemplate.getPromotion());
+        event.setName(eventTemplate.getName());
+        event.setEventTemplate(eventTemplate);
+        event.setDefaultDuration(eventTemplate.getDefaultDuration());
+        return event;
     }
 
     private void clearOldSegmentTemplates(Event event) {

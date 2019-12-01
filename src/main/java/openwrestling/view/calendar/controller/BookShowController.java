@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static openwrestling.model.utility.EventUtils.bookEventsForNewEventTemplate;
-import static openwrestling.model.utility.EventUtils.getInitialEventTemplateDate;
+import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
+import static openwrestling.model.utility.EventUtils.initializeEventTemplateDates;
 
 public class BookShowController extends ControllerBase implements Initializable {
 
@@ -218,10 +218,7 @@ public class BookShowController extends ControllerBase implements Initializable 
                 template.setMonth(currentDate.getMonth().getValue());
                 template.setDayOfWeek(currentDate.getDayOfWeek());
                 template.setEventsLeft(52);
-                template.setNextDate(
-                        getInitialEventTemplateDate(template,
-                                gameController.getDateManager().today())
-                );
+                initializeEventTemplateDates(template, gameController.getDateManager().today());
                 return template;
             }
             return null;

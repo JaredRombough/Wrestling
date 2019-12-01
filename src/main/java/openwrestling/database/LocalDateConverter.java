@@ -15,6 +15,9 @@ public class LocalDateConverter extends BidirectionalConverter<LocalDate, Date> 
         if (LocalDate.MIN.equals(source)) {
             return new Date(Long.MIN_VALUE);
         }
+        if (LocalDate.MAX.equals(source)) {
+            return new Date(Long.MAX_VALUE);
+        }
         return java.util.Date.from(source.atStartOfDay()
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -24,6 +27,9 @@ public class LocalDateConverter extends BidirectionalConverter<LocalDate, Date> 
     public LocalDate convertFrom(Date source, Type<LocalDate> destinationType, MappingContext context) {
         if (source.getTime() == Long.MIN_VALUE) {
             return LocalDate.MIN;
+        }
+        if (source.getTime() == Long.MAX_VALUE) {
+            return LocalDate.MAX;
         }
         return source.toInstant()
                 .atZone(ZoneId.systemDefault())

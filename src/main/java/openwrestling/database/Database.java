@@ -56,6 +56,7 @@ import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.modelView.Segment;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,20 +200,27 @@ public class Database {
     }
 
     public static <T extends GameObject> T insertGameObject(GameObject gameObject) {
+
         return (T) insertOrUpdateList(List.of(gameObject)).get(0);
+
     }
 
     public static <T extends GameObject> List<T> insertOrUpdateList(List<T> gameObjects) {
-        if (gameObjects.isEmpty()) {
-            return gameObjects;
+        try {
+            if (gameObjects.isEmpty()) {
+                return gameObjects;
+            }
+            logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
+                    gameObjects.size(),
+                    gameObjects.get(0).getClass())
+            );
+            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+            List<? extends Entity> saved = insertOrUpdateEntityList(entities);
+            return entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw e;
         }
-        logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
-                gameObjects.size(),
-                gameObjects.get(0).getClass())
-        );
-        List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
-        List<? extends Entity> saved = insertOrUpdateEntityList(entities);
-        return entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
     }
 
     public static <T extends Entity> List<T> insertOrUpdateEntityList(List<T> entities) {

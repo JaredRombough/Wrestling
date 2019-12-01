@@ -39,15 +39,15 @@ public class PromotionControllerTest {
         );
     }
 
-    @Test
-    public void updateEventTemplate() {
-        LocalDate date = LocalDate.now();
-        EventTemplate eventTemplate = EventTemplate.builder().build();
-        eventTemplate.setNextDate(date);
-        eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
-        eventTemplate.setEventsLeft(3);
-        EventTemplate updated = promotionController.updateEventTemplate(eventTemplate);
-        assertThat(updated.getNextDate()).isNotNull().isNotEqualTo(date);
-        assertThat(updated.getEventsLeft()).isEqualTo(2);
-    }
+//    @Test
+//    public void updateEventTemplate() {
+//        LocalDate date = LocalDate.now();
+//        EventTemplate eventTemplate = EventTemplate.builder().build();
+//        eventTemplate.setNextDate(date);
+//        eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
+//        eventTemplate.setEventsLeft(3);
+//        EventTemplate updated = promotionController.updateEventTemplate(eventTemplate);
+//        assertThat(updated.getNextDate()).isNotNull().isNotEqualTo(date);
+//        assertThat(updated.getEventsLeft()).isEqualTo(2);
+//    }
 }
