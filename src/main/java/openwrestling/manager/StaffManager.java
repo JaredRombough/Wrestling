@@ -11,11 +11,8 @@ public class StaffManager implements Serializable {
 
     private final List<StaffMember> staffMembers = new ArrayList<>();
 
-    public void addStaff(List<StaffMember> staff) {
-        getStaffMembers().addAll(staff);
-    }
 
-    public List<StaffMember> creatStaffMembers(List<StaffMember> staffMembers) {
+    public List<StaffMember> createStaffMembers(List<StaffMember> staffMembers) {
         List saved = Database.insertOrUpdateList(staffMembers);
         this.staffMembers.addAll(saved);
         return saved;

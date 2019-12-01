@@ -1,14 +1,15 @@
 package openwrestling.model.factory;
 
-import java.time.LocalDate;
-import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.gameObjects.Contract;
-import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.manager.ContractManager;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ContractUtils;
+import org.apache.commons.lang3.RandomUtils;
+
+import java.time.LocalDate;
 
 public class ContractFactory {
 
@@ -18,12 +19,12 @@ public class ContractFactory {
         this.contractManager = contractManager;
     }
 
-    public void createContract(StaffMember staff, Promotion promotion, LocalDate startDate) {
+    public StaffContract createContract(StaffMember staff, Promotion promotion, LocalDate startDate) {
         int duration = 1 + RandomUtils.nextInt(0, 2);
         for (int i = 0; i < promotion.getLevel(); i++) {
             duration += 1;
         }
-        createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
+        return createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
     public void createContract(StaffMember staff, Promotion promotion, LocalDate startDate, int duration) {
@@ -51,21 +52,19 @@ public class ContractFactory {
             contract.setAppearanceCost(ContractUtils.calculateWorkerContractCost(worker, false));
         }
 
-        contractManager.addContract(contract);
-        //promotion.addToRoster(worker);
         worker.addContract(contract);
 
         return contract;
     }
 
-    private void createContract(StaffMember staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
+    private StaffContract createContract(StaffMember staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
         StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);
         promotion.addToStaff(staff);
-        contractManager.addContract(contract);
         contractManager.buyOutContracts(staff, promotion, startDate);
         contractManager.paySigningFee(startDate, contract);
         staff.setStaffContract(contract);
+        return contract;
     }
 }

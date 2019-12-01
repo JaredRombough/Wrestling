@@ -55,7 +55,7 @@ public class WorkerManager implements Serializable {
 
     public List<Worker> createWorkers(List<Worker> workers) {
         List savedWorkers = Database.insertOrUpdateList(workers);
-        this.workers.addAll(savedWorkers);
+        this.workers = Database.selectAll(Worker.class);
         return savedWorkers;
     }
 

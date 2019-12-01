@@ -92,7 +92,7 @@ public class Import {
                 gameController.getEventManager().createEventTemplates(eventTemplates);
 
                 List<StaffMember> staffMembers = importHelper.staffDat();
-                staffMembers = gameController.getStaffManager().creatStaffMembers(staffMembers);
+                staffMembers = gameController.getStaffManager().createStaffMembers(staffMembers);
 
                 List<StaffContract> staffContracts = importHelper.staffContracts(promotions, staffMembers, gameController.getDateManager().today());
                 gameController.getContractManager().createStaffContracts(staffContracts);

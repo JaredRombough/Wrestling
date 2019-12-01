@@ -7,20 +7,21 @@ import openwrestling.manager.StaffManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffContract;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.StaffUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
 for generating promotions in a random game
@@ -54,74 +55,153 @@ public class PromotionFactory {
         this.contractManager = contractManager;
     }
 
-    public void preparePromotions() throws IOException {
+    public void preparePromotions() {
+
+        promotionManager.createPromotions(getInitialPromotions());
+        setStartingFunds();
+        List<Contract> initialContracts = initialContracts();
+        List<Worker> initialContractWorkers = initialContracts.stream()
+                .map(Contract::getWorker)
+                .collect(Collectors.toList());
+
+        List<Worker> savedWorkers = workerManager.createWorkers(initialContractWorkers);
+
+        initialContracts
+                .forEach(contract -> {
+                    contract.setWorker(savedWorkers.stream().filter(
+                            worker -> worker.getName().equals(contract.getWorker().getName())
+                    ).findFirst().orElse(null));
+                });
+
+        contractManager.createContracts(initialContracts);
+        workerManager.createWorkers(initialFreeAgents());
+
+
+        List<StaffContract> initialStaffContracts = initialStaffContracts();
+        List<StaffMember> initialContractStaff = initialStaffContracts.stream()
+                .map(StaffContract::getStaff)
+                .collect(Collectors.toList());
+
+        List<StaffMember> savedStaff = staffManager.createStaffMembers(initialContractStaff);
+
+        initialStaffContracts
+                .forEach(contract -> {
+                    contract.setStaff(savedStaff.stream().filter(
+                            staffMember -> staffMember.getName().equals(contract.getStaff().getName())
+                    ).findFirst().orElse(null));
+                });
+
+        contractManager.createStaffContracts(initialStaffContracts);
+        staffManager.createStaffMembers(initialFreeAgentStaff());
+    }
+
+    List<Promotion> getInitialPromotions() {
         int numberOfPromotions = 20;
-        int startingFunds = 10000;
-        double[] levelRatios = {0.3, 0.2, 0.2, 0.2, 0.1};
-
-        List<Promotion> promotionsToAdd = new ArrayList<>();
-        List<Contract> contractsToAdd = new ArrayList<>();
-        List<Worker> workersToAdd = new ArrayList<>();
-
-        List<String> promotionNames = new ArrayList<>();
-        promotionNames.addAll(PROMOTION_NAMES);
+        List<Double> levelRatios = List.of(0.3, 0.2, 0.2, 0.2, 0.1);
+        List<String> promotionNames = new ArrayList<>(PROMOTION_NAMES);
         Collections.shuffle(promotionNames);
-        int name = 0;
-        for (double ratio : levelRatios) {
-            double target = numberOfPromotions * ratio;
-            //levels are 1 to 5
-            int currentLevel = 5 - ArrayUtils.indexOf(levelRatios, ratio);
 
-            for (int i = 0; i < target; i++) {
-                Promotion promotion = newPromotion();
-                promotion.setLevel(currentLevel);
-                promotion.setName(promotionNames.get(name).trim());
-                String[] words = promotion.getName().split(" ");
-                String shortName = "";
-                for (String word : words) {
-                    shortName += StringUtils.upperCase(word.substring(0, 1));
-                }
-                promotion.setShortName(shortName);
-                name++;
-
-                int rosterSize = 10 + (currentLevel * 10);
-
-                //add funds (this could be based on promotion level)
-                bankAccountManager.getBankAccount(promotion).setFunds(startingFunds * promotion.getLevel());
-
-                //assign workers based on promotion level
-
-
-                for (int j = 0; j < rosterSize; j++) {
-                    Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
-                    contractsToAdd.add(contractFactory.createContract(worker, promotion, dateManager.today()));
-                    if (j < rosterSize / 2) {
-                        workersToAdd.add(PersonFactory.randomWorker(promotion.getLevel()));
+        return levelRatios.stream()
+                .flatMap(ratio -> {
+                    double target = numberOfPromotions * ratio;
+                    //levels are 1 to 5
+                    int currentLevel = 5 - levelRatios.indexOf(ratio);
+                    List<Promotion> promotions = new ArrayList<>();
+                    for (int i = 0; i < target; i++) {
+                        Promotion promotion = newPromotion();
+                        promotion.setLevel(currentLevel);
+                        promotion.setName(promotionNames.get(i).trim());
+                        String[] words = promotion.getName().split(" ");
+                        String shortName = "";
+                        for (String word : words) {
+                            shortName += StringUtils.upperCase(word.substring(0, 1));
+                        }
+                        promotion.setShortName(shortName);
+                        promotions.add(promotion);
                     }
-                }
+                    return promotions.stream();
+                }).collect(Collectors.toList());
+    }
 
+    void setStartingFunds() {
+        List<BankAccount> bankAccounts = bankAccountManager.getBankAccounts();
+        int startingFunds = 10000;
+        bankAccounts.forEach(bankAccount -> {
+            bankAccount.setFunds(bankAccount.getPromotion().getLevel() * startingFunds);
+        });
+        bankAccountManager.createBankAccounts(bankAccounts);
+    }
 
-                for (StaffType staffType : StaffType.values()) {
-                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
-                    int rand = RandomUtils.nextInt(0, 6);
-                    if (rand == 1) {
-                        ideal += 1;
-                    } else if (rand == 2) {
-                        ideal -= 1;
+    List<Contract> initialContracts() {
+        return promotionManager.getPromotions().stream()
+                .flatMap(promotion -> {
+                    int rosterSize = 10 + (promotion.getLevel() * 10);
+                    List<Contract> contracts = new ArrayList<>();
+                    for (int i = 0; i < rosterSize; i++) {
+                        Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
+                        contracts.add(contractFactory.createContract(worker, promotion, dateManager.today()));
                     }
-                    for (int j = 0; j < ideal; j++) {
-                        contractFactory.createContract(PersonFactory.randomStaff(promotion.getLevel(), staffType), promotion, dateManager.today());
-                        staffManager.addStaff(PersonFactory.randomStaff(promotion.getLevel(), staffType));
+                    return contracts.stream();
+                }).collect(Collectors.toList());
+    }
+
+    List<Worker> initialFreeAgents() {
+        return promotionManager.getPromotions().stream()
+                .flatMap(promotion -> {
+                    int rosterSize = 10 + (promotion.getLevel() * 10);
+                    List<Worker> workers = new ArrayList<>();
+                    for (int j = 0; j < rosterSize / 2; j++) {
+                        if (j < rosterSize / 2) {
+                            workers.add(PersonFactory.randomWorker(promotion.getLevel()));
+                        }
                     }
-                }
-                staffManager.addStaff(promotion.getAllStaff());
-                //workerManager.createWorkers(promotion.getFullRoster());
-                promotionsToAdd.add(promotion);
-            }
-        }
-        workerManager.createWorkers(workersToAdd);
-        promotionManager.createPromotions(promotionsToAdd);
-        contractManager.createContracts(contractsToAdd);
+                    return workers.stream();
+                }).collect(Collectors.toList());
+    }
+
+    List<StaffMember> initialFreeAgentStaff() {
+        return promotionManager.getPromotions().stream()
+                .flatMap(promotion ->
+                        List.of(StaffType.values()).stream()
+                                .flatMap(staffType -> {
+                                    List<StaffMember> staffMembers = new ArrayList<>();
+                                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
+                                    int rand = RandomUtils.nextInt(0, 6);
+                                    if (rand == 1) {
+                                        ideal += 1;
+                                    } else if (rand == 2) {
+                                        ideal -= 1;
+                                    }
+                                    for (int j = 0; j < ideal; j++) {
+                                        staffMembers.add(PersonFactory.randomStaff(promotion.getLevel(), staffType));
+                                    }
+                                    return staffMembers.stream();
+                                }).collect(Collectors.toList()).stream()
+                )
+                .collect(Collectors.toList());
+
+    }
+
+    List<StaffContract> initialStaffContracts() {
+        return promotionManager.getPromotions().stream()
+                .flatMap(promotion ->
+                        List.of(StaffType.values()).stream()
+                                .flatMap(staffType -> {
+                                    List<StaffContract> staffContracts = new ArrayList<>();
+                                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
+                                    int rand = RandomUtils.nextInt(0, 6);
+                                    if (rand == 1) {
+                                        ideal += 1;
+                                    } else if (rand == 2) {
+                                        ideal -= 1;
+                                    }
+                                    for (int j = 0; j < ideal; j++) {
+                                        staffContracts.add(contractFactory.createContract(PersonFactory.randomStaff(promotion.getLevel(), staffType), promotion, dateManager.today()));
+                                    }
+                                    return staffContracts.stream();
+                                }).collect(Collectors.toList()).stream()
+                )
+                .collect(Collectors.toList());
     }
 
     public Promotion newPromotion() {

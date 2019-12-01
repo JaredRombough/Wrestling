@@ -73,14 +73,6 @@ public class ContractManager extends Logging implements Serializable {
     }
 
 
-    public void addContract(Contract contract) {
-        contracts.add(contract);
-    }
-
-    public void addContract(StaffContract contract) {
-        staffContracts.add(contract);
-    }
-
     public List<Contract> createContracts(List<Contract> contracts) {
         List saved = Database.insertOrUpdateList(contracts);
         this.contracts.addAll(saved);
