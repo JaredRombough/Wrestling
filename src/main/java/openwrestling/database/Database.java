@@ -111,13 +111,14 @@ public class Database {
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database has been created. " + url);
+                logger.log(Level.DEBUG, "The driver name is " + meta.getDriverName());
+                logger.log(Level.DEBUG, "A new database has been created. " + url);
                 dbUrl = url;
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw new RuntimeException(e);
         }
 
         createTables(url);
@@ -131,14 +132,16 @@ public class Database {
         try {
             connection = DriverManager.getConnection(url);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw new RuntimeException(e);
         } finally {
             try {
                 if (connection != null) {
                     connection.close();
                 }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+            } catch (SQLException e) {
+                logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+                throw new RuntimeException(e);
             }
         }
         return connection;

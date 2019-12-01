@@ -18,7 +18,6 @@ import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.ActiveType;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.Gender;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ContractUtils;
@@ -56,8 +55,6 @@ public class ImportHelper {
             EventTemplate eventTemplate = new EventTemplate();
             eventTemplate.setEventBroadcast(EventBroadcast.TELEVISION);
             eventTemplate.setEventFrequency(EventFrequency.WEEKLY);
-            eventTemplate.setEventRecurrence(EventRecurrence.LIMITED);
-            eventTemplate.setEventsLeft(RandomUtils.nextInt(30, 60));
             eventTemplate.setName(textLine.substring(1, 21).trim());
 
             int duration = 0;

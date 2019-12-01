@@ -217,7 +217,6 @@ public class BookShowController extends ControllerBase implements Initializable 
                 template.setPromotion(playerPromotion());
                 template.setMonth(currentDate.getMonth().getValue());
                 template.setDayOfWeek(currentDate.getDayOfWeek());
-                template.setEventsLeft(52);
                 initializeEventTemplateDates(template, gameController.getDateManager().today());
                 return template;
             }

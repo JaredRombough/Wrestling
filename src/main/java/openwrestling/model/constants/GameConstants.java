@@ -28,6 +28,8 @@ public class GameConstants {
     public static final int MORALE_PENALTY_DAYS_BETWEEN = 30;
     public static final int MORALE_BONUS_MATCH_WIN = 1;
     public static final int MORALE_BONUS_TITLE_MATCH_WIN = 1;
+
+    public static final int WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT = 30;
     
 
 }

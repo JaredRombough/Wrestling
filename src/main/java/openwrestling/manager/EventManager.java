@@ -11,7 +11,6 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.modelView.Segment;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -21,17 +20,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.time.temporal.TemporalAdjusters.firstInMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Getter
 public class EventManager implements Serializable {
@@ -131,7 +125,6 @@ public class EventManager implements Serializable {
         }
 
         if (template != null) {
-            template.setEventsLeft(template.getEventsLeft() - 1);
             updateFirstAndLastEvents(template);
         }
 
@@ -185,31 +178,6 @@ public class EventManager implements Serializable {
                 (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
         return templateEvents.isEmpty()
                 ? null : templateEvents.get(templateEvents.size() - 1);
-    }
-
-    public List<EventTemplate> getActiveEventTemplatesFuture(YearMonth yearMonth) {
-        List<EventTemplate> activeEvents = new ArrayList();
-        eventTemplates.stream().filter((event) -> (!event.getEventRecurrence().equals(EventRecurrence.LIMITED)
-                || getEventsLeftFuture(event, yearMonth) > 0)).forEach((event) -> {
-            activeEvents.add(event);
-        });
-        return activeEvents;
-    }
-
-    public int getEventsLeftFuture(EventTemplate eventTemplate, YearMonth yearMonth) {
-        if (!eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)) {
-            return eventTemplate.getEventsLeft();
-        }
-
-        LocalDate presentLast = dateManager.today().minusMonths(1);
-        presentLast = presentLast.with(lastDayOfMonth());
-
-        LocalDate futureFirst = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), 1);
-        futureFirst = futureFirst.with(firstInMonth(eventTemplate.getDayOfWeek()));
-
-        return eventTemplate.getEventsLeft()
-                - Math.toIntExact(
-                ChronoUnit.WEEKS.between(presentLast, futureFirst));
     }
 
     public Event getNextEvent(Promotion promotion, LocalDate startDate) {

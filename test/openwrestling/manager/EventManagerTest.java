@@ -13,7 +13,6 @@ import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -54,7 +53,6 @@ public class EventManagerTest {
                 .name(name)
                 .eventBroadcast(EventBroadcast.TELEVISION)
                 .eventFrequency(EventFrequency.WEEKLY)
-                .eventRecurrence(EventRecurrence.LIMITED)
                 .eventVenueSize(EventVenueSize.LARGE)
                 .bookedUntil(LocalDate.now().plusDays(100))
                 .build();

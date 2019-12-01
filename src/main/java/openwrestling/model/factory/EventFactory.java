@@ -44,8 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.TemporalAdjusters.next;
-import static openwrestling.model.constants.GameConstants.MORALE_BONUS_MATCH_WIN;
-import static openwrestling.model.constants.GameConstants.MORALE_BONUS_TITLE_MATCH_WIN;
+import static openwrestling.model.constants.GameConstants.*;
 import static openwrestling.model.utility.EventUtils.initializeEventTemplateDates;
 import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
@@ -167,7 +166,7 @@ public class EventFactory extends Logging {
             eventTemplate.setBookedUntil(event.getDate());
         } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
             LocalDate weeklyDate = eventTemplate.getNextDate();
-            for (int i = 0; i < eventTemplate.getEventsLeft(); i++) {
+            for (int i = 0; i < WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT; i++) {
                 Event event = bookEventForTemplate(eventTemplate, weeklyDate);
                 newEvents.add(event);
                 eventTemplate.setBookedUntil(weeklyDate);

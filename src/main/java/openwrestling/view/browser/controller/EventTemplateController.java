@@ -1,9 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,8 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.gameObjects.EventTemplate;
-import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
-import static openwrestling.model.constants.UIConstants.EDIT_ICON;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -23,8 +17,16 @@ import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
-import static openwrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
+import static openwrestling.model.constants.UIConstants.EDIT_ICON;
+import static openwrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 
 public class EventTemplateController extends ControllerBase implements Initializable {
 
@@ -47,9 +49,6 @@ public class EventTemplateController extends ControllerBase implements Initializ
 
     @FXML
     private Label broadcastLabel;
-
-    @FXML
-    private Label remainingLabel;
 
     @FXML
     private AnchorPane venueSizeAnchorPane;
@@ -136,7 +135,6 @@ public class EventTemplateController extends ControllerBase implements Initializ
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
-            remainingLabel.setText(Integer.toString(eventTemplate.getEventsLeft()));
             broadcastTeamLabel.setText(eventTemplate.getDefaultBroadcastTeam().isEmpty()
                     ? ModelUtils.slashNames(eventTemplate.getPromotion().getDefaultBroadcastTeam(), "None")
                     : ModelUtils.slashNames(eventTemplate.getDefaultBroadcastTeam()));

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.EventVenueSize;
 
 import java.time.DayOfWeek;
@@ -48,9 +47,6 @@ public class EventTemplateEntity extends Entity {
 
     @DatabaseField
     private EventBroadcast eventBroadcast;
-
-    @DatabaseField
-    private EventRecurrence eventRecurrence;
 
     @DatabaseField
     private EventVenueSize eventVenueSize;

@@ -5,13 +5,11 @@ import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.EventWorker;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
@@ -20,7 +18,6 @@ import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.NewsManager;
 import openwrestling.model.modelView.Segment;
 import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TeamType;
@@ -31,7 +28,6 @@ import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -227,75 +223,6 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-    //determine how many future events the promotion is meant to have at a given time
-    private int eventAmountTarget(Promotion promotion) {
-
-        int target = 0;
-
-        switch (promotion.getLevel()) {
-            case 1:
-                target = 1;
-                break;
-            case 2:
-                target = 1;
-                break;
-            case 3:
-                target = 2;
-                break;
-            case 4:
-                target = 4;
-                break;
-            case 5:
-                target = 20;
-                break;
-            default:
-                break;
-
-        }
-
-        return target;
-    }
-
-    private Event bookNextEvent(EventTemplate template, LocalDate eventDate) {
-        Event event = bookNextEvent(template.getPromotion(), eventDate);
-        event.setName(template.getName());
-        event.setEventTemplate(template);
-        event.setDefaultDuration(template.getDefaultDuration());
-        return event;
-    }
-
-    private Event bookNextEvent(Promotion promotion, LocalDate eventDate) {
-
-        int workersNeeded = idealRosterSize(promotion) - contractManager.getActiveRoster(promotion).size();
-
-        if (workersNeeded > 0) {
-            for (int i = 0; i < workersNeeded; i++) {
-                signContract(promotion, dateManager.today());
-            }
-        }
-
-        Event event = new Event(promotion, eventDate);
-        //eventManager.addEvent(event);
-
-        //book the roster for the date
-        List<Worker> roster = workerManager.selectRoster(promotion);
-        for (Worker worker : roster) {
-            if (!eventManager.isBooked(worker, eventDate)) {
-                eventManager.addEventWorker(new EventWorker(event, worker));
-            }
-        }
-
-        return event;
-
-    }
-
-//    public void bookNextEvent(Promotion promotion) {
-//
-//        LocalDate eventDate = LocalDate.ofYearDay(dateManager.today().getYear(), dateManager.today().getDayOfYear());
-//        eventDate = LocalDate.from(eventDate).plusDays(RandomUtils.nextInt(25, 35));
-//        bookNextEvent(promotion, eventDate);
-//
-//    }
 
     private List<Segment> bookSegments(Promotion promotion) {
         //maximum segments for the event
@@ -467,73 +394,6 @@ public class PromotionController extends Logging implements Serializable {
                 event,
                 true);
     }
-
-    private LocalDate generateEventTemplateStartDate(EventTemplate eventTemplate) {
-        LocalDate date = dateManager.today();
-        if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-            while (date.getMonth().getValue() != eventTemplate.getMonth()) {
-                date = date.plusMonths(1);
-            }
-            date = date.with(TemporalAdjusters.dayOfWeekInMonth(
-                    RandomUtils.nextInt(1, 4),
-                    eventTemplate.getDayOfWeek()));
-
-            bookNextEvent(eventTemplate, date);
-        }
-        return date;
-    }
-
-    private EventTemplate bookEventTemplate(EventTemplate eventTemplate) {
-        eventTemplate.setNextDate(generateEventTemplateStartDate(eventTemplate));
-        return bookEventTemplate(eventTemplate, generateEventTemplateStartDate(eventTemplate));
-    }
-
-    private EventTemplate bookEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
-        logger.log(Level.DEBUG, "bookEventTemplate" + eventTemplate.getName() + " " + startDate.toString());
-        if (eventTemplate.getBookedUntil().isBefore(dateManager.today())) {
-            int timesToBook = eventTemplate.getEventsLeft();
-
-            if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-                eventTemplate.setNextDate(startDate);
-                bookNextEvent(eventTemplate, startDate);
-            } else {
-                if (startDate.getDayOfWeek() != eventTemplate.getDayOfWeek()) {
-                    startDate = startDate.with(
-                            TemporalAdjusters.next(eventTemplate.getDayOfWeek()));
-                }
-                eventTemplate.setNextDate(startDate);
-                for (int i = 0; i < timesToBook; i++) {
-                    bookNextEvent(eventTemplate, startDate);
-                    startDate = startDate.plusWeeks(1);
-                }
-            }
-            eventTemplate.setBookedUntil(startDate);
-
-        }
-        return eventTemplate;
-    }
-
-
-//    public EventTemplate updateEventTemplate(EventTemplate eventTemplate) {
-//        if (eventTemplate == null) {
-//            throw new RuntimeException("null eventTemplate!");
-//        }
-//        logger.log(Level.DEBUG, "updateEventTemplate " + eventTemplate.getName());
-//
-//        LocalDate nextDate = eventTemplate.getNextDate();
-//        if (eventTemplate.getEventRecurrence().equals(EventRecurrence.LIMITED)) {
-//            eventTemplate.setEventsLeft(eventTemplate.getEventsLeft() - 1);
-//            eventTemplate.setNextDate(nextDate.with(TemporalAdjusters.next(eventTemplate.getDayOfWeek())));
-//
-//        }
-//        logger.log(Level.DEBUG, "before bookEventTemplate " + eventTemplate.getName());
-//        //TODO move out?
-//        if (eventTemplate.getEventsLeft() <= 0) {
-//            bookEventTemplate(eventTemplate);
-//        }
-//
-//        return eventTemplate;
-//    }
 
     private List<Worker> getEventMatchRoster(Promotion promotion) {
         //lists to track workers the event roster

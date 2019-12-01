@@ -11,7 +11,6 @@ import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventRecurrence;
 import openwrestling.model.segmentEnum.EventVenueSize;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -42,11 +41,7 @@ public class EventTemplate extends GameObject implements Serializable, iDate, Se
     @Builder.Default
     private EventBroadcast eventBroadcast = EventBroadcast.NONE;
     @Builder.Default
-    private EventRecurrence eventRecurrence = EventRecurrence.UNLIMITED;
-    @Builder.Default
     private EventVenueSize eventVenueSize = EventVenueSize.MEDIUM;
-    @Builder.Default
-    private int eventsLeft = 1;
     @Builder.Default
     private DayOfWeek dayOfWeek = Arrays.asList(
             DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).get(
