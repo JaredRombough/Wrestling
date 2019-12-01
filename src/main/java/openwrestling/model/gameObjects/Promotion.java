@@ -77,7 +77,7 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     public void removeFromStaff(StaffMember staff) {
         allStaff.remove(staff);
         defaultBroadcastTeam.remove(staff);
-        //TODO
+        //TODO #186
 //        eventTemplates.forEach(template -> {
 //            template.getDefaultBroadcastTeam().remove(staff);
 //        });

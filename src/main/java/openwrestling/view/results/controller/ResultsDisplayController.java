@@ -105,7 +105,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 sb.append((String.format("Referee: %s", segment.getReferee() != null ? segment.getReferee().toString() : " None")));
             }
             sb.append("\n");
-            //TODO
+            //TODO #186
 //            if (!segmentView.getBroadcastTeam().isEmpty()) {
 //                sb.append("\n");
 //                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNames(segmentView.getBroadcastTeam())));

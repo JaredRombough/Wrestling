@@ -49,7 +49,7 @@ public class Segment extends GameObject implements Serializable {
     private SegmentType segmentType;
     private Event event;
     private StaffMember referee;
-    //TODO
+    //TODO #186
     // private List<? extends SegmentItem> broadcastTeam;
     private Stable newStable;
     private int workRating;
@@ -73,7 +73,7 @@ public class Segment extends GameObject implements Serializable {
     public Segment(SegmentType segmentType) {
         this.segmentType = segmentType;
         teams = new ArrayList<>();
-        //TODOCaught
+        //TODO #186
         //broadcastTeam = new ArrayList<>();
         titles = new ArrayList<>();
     }
@@ -93,7 +93,7 @@ public class Segment extends GameObject implements Serializable {
             segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titles);
-        //TODO
+        //TODO #186
         //segmentItems.addAll(broadcastTeam);
         segmentItems.add(referee);
         return segmentItems;

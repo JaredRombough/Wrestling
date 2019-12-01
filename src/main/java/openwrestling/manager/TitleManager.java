@@ -96,7 +96,7 @@ public class TitleManager implements Serializable {
 
     //check if we have any outstanding titles from expired contracts
     public void stripTitles(Contract contract) {
-        //TODO
+        //TODO #176
 //        for (Title title : getTitleViews(contract.getPromotion())) {
 //            for (Worker worker : getCurrentChampionWorkers(title)) {
 //                if (worker.equals(contract.getWorker())) {
@@ -107,7 +107,7 @@ public class TitleManager implements Serializable {
     }
 
     public void stripTitle(Title title) {
-        //TODO
+        //TODO #176
 //        List<TitleWorker> currentChamps = getCurrentChampionTitleWorkers(title);
 //        for (TitleWorker titleWorker : currentChamps) {
 //            titleWorker.setDayLost(dateManager.today());
@@ -127,7 +127,7 @@ public class TitleManager implements Serializable {
     }
 
     public void awardTitle(Title title, List<Worker> winner) {
-        //TODO
+        //TODO #177
         for (Worker worker : winner) {
 //            TitleWorker titleWorker = new TitleWorker(title, worker, dateManager.today());
 //            titleWorkers.add(titleWorker);

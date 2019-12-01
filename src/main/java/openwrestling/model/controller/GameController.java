@@ -167,7 +167,6 @@ public final class GameController extends Logging implements Serializable {
 
         eventManager.createEventTemplates(updatedBookedUntilDates);
         eventManager.createEvents(initialEvents);
-        //TODO book workers
     }
 
     //only called by MainApp

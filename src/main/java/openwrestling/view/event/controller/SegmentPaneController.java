@@ -544,7 +544,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segment.setTeams(getSegmentTeams());
         segment.addTitles(getTitles());
         segment.setReferee(getRef());
-        //TODO
+        //TODO #186
         //segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
         if (segmentType.equals(SegmentType.MATCH)) {
             segment.setMatchFinish(matchOptions.getMatchFinish());

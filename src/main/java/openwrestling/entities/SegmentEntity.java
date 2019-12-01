@@ -51,7 +51,7 @@ public class SegmentEntity extends Entity {
     @DatabaseField(foreign = true)
     private StaffMemberEntity referee;
 
-    //TODO
+    //TODO #186
 //    @ForeignCollectionField
 //    private List<StaffMemberEntity> broadcastTeam;
 
@@ -91,7 +91,7 @@ public class SegmentEntity extends Entity {
     @DatabaseField(foreign = true)
     private StableEntity joinStable;
 
-    //TODO
+    //TODO #188
 //    @DatabaseField
 //    private SegmentTemplate challengeSegment;
 

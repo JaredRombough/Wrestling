@@ -279,7 +279,7 @@ public class MainApp extends Application {
 
     private void saveGame() throws IOException {
         logger.log(Level.DEBUG, "saveGame start");
-//TODO
+//TODO #185
 //        Kryo kryo = new Kryo();
 //
 //        try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {

@@ -42,18 +42,9 @@ public class MatchFactory implements Serializable {
     public Segment saveSegment(Segment segment) {
         setSegmentRatings(segment);
 
-        //TODO
+        //TODO #187
         //processInjuries(segmentView);
 
-
-        //  matchManager.addSegment(segment);
-//        for (SegmentTeam team : segmentView.getTeams()) {
-//            for (Worker worker : team.getWorkers()) {
-//                matchManager.addSegmentWorker(new SegmentWorker(segmentView.getSegment(), worker, segmentView.getTeams().indexOf(team)));
-//            }
-//        }
-
-        //matchManager.addSegment(segmentView.getSegment());
         return segment;
     }
 
@@ -166,7 +157,7 @@ public class MatchFactory implements Serializable {
         segment.setWorkRating(workRating);
 
         int crowdRating = modifyRating(getMatchCrowdRating(segment), workRating, CROWD_RATING_MODIFIER_WEIGHT);
-//TODO
+//TODO #186
 //        if (!segmentView.getBroadcastTeam().isEmpty()) {
 //            int broadCastTeamTotal = 0;
 //            for (SegmentItem item : segmentView.getBroadcastTeam()) {
