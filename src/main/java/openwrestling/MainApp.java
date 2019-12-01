@@ -1,7 +1,5 @@
 package openwrestling;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,10 +27,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,20 +174,6 @@ public class MainApp extends Application {
 
     }
 
-    //continues the last saved game, jumps to browser
-    public void continueGame() throws IOException {
-        this.gameController = loadGame();
-
-        if (gameController != null) {
-            try {
-                initRootLayout();
-            } catch (IOException ex) {
-                logger.log(Level.ERROR, "initRootLayout() call failed in continueGame()", ex);
-                throw ex;
-            }
-            startGame();
-        }
-    }
 
     //shows initial title screen
     private void showTitleScreen() throws IOException {
@@ -266,50 +248,10 @@ public class MainApp extends Application {
 
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
-            try {
-                nextDay();
-            } catch (IOException ex) {
-                logger.log(Level.ERROR, "Error during pre run days", ex);
-            }
-
+            nextDay();
         }
 
         preRun = false;
-    }
-
-    private void saveGame() throws IOException {
-        logger.log(Level.DEBUG, "saveGame start");
-//TODO #185
-//        Kryo kryo = new Kryo();
-//
-//        try (Output output = new Output(new FileOutputStream("saveGame.bin"))) {
-//            kryo.writeObject(output, gameController);
-//        } catch (IOException ex) {
-//            logger.log(Level.ERROR, ex);
-//            ViewUtils.generateAlert("Error", "Error while saving the game", ex.getLocalizedMessage()).showAndWait();
-//            throw ex;
-//        }
-        logger.log(Level.DEBUG, "saveGame end");
-    }
-
-    private GameController loadGame() {
-
-        Kryo kryo = new Kryo();
-        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
-
-        GameController gc;
-
-        try (Input input = new Input(new FileInputStream("saveGame.bin"))) {
-            gc = kryo.readObject(input, GameController.class);
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "IOException in loadGame(), returning null gameController", ex);
-            gc = null;
-        } catch (Exception ex) {
-            logger.log(Level.ERROR, "Error loading game", ex);
-            throw ex;
-        }
-
-        return gc;
     }
 
     private void loadScreens() throws IOException {
@@ -407,11 +349,10 @@ public class MainApp extends Application {
 
     }
 
-    public void nextDay() throws IOException {
+    public void nextDay() {
 
         if (preRun) {
             gameController.nextDay();
-            saveGame();
         } else {
             NewsScreenController nextDay = (NewsScreenController) ViewUtils.getByCode(screens, ScreenCode.NEWS).controller;
             RootLayoutController root = (RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller;
@@ -440,13 +381,11 @@ public class MainApp extends Application {
 
             @Override
             public Void call() {
-
-                gameController.nextDay();
-
                 try {
-                    saveGame();
-                } catch (IOException ex) {
+                    gameController.nextDay();
+                } catch (Exception ex) {
                     logger.log(Level.ERROR, "Problem saving Game", ex);
+                    throw ex;
                 }
                 return null;
             }

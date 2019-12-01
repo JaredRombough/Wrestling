@@ -1,8 +1,5 @@
 package openwrestling.view.results.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,13 +7,15 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import openwrestling.model.gameObjects.Event;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.model.modelView.Segment;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.logging.log4j.LogManager;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ResultsScreenController extends ControllerBase implements Initializable {
 
@@ -50,11 +49,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
             } else if (this.event.getAttendance() == 0) {
                 showSummary();
             } else {
-                try {
-                    mainApp.nextDay();
-                } catch (IOException ex) {
-                    logger.log(Level.FATAL, ex);
-                }
+                mainApp.nextDay();
             }
         }
     }
