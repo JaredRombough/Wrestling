@@ -4,7 +4,6 @@ import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
-import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
@@ -53,7 +52,7 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        Worker returnedWorker =  Database.insertGameObject(worker);
+        Worker returnedWorker = Database.insertGameObject(worker);
         assertThat(returnedWorker).isNotNull();
         assertThat(returnedWorker.getWorkerID()).isNotEqualTo(0).isPositive();
         List<Worker> selectedWorkers = Database.selectAll(Worker.class);
@@ -76,7 +75,6 @@ public class DatabaseTest {
 
         ContractManager contractManager = new ContractManager(
                 mock(PromotionManager.class),
-                mock(TitleManager.class),
                 mock(NewsManager.class),
                 mock(RelationshipManager.class),
                 mock(BankAccountManager.class));

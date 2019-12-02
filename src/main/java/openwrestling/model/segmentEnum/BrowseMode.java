@@ -1,20 +1,21 @@
 package openwrestling.model.segmentEnum;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.DateComparator;
 import openwrestling.view.utility.comparators.NameComparator;
 import openwrestling.view.utility.comparators.TitlePrestigeComparator;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum BrowseMode implements iBrowseMode {
     FREE_AGENTS {
@@ -178,7 +179,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return gameController.getTitleManager().getTitleViews(promotion);
+            return gameController.getTitleManager().getTitles(promotion);
         }
 
         @Override

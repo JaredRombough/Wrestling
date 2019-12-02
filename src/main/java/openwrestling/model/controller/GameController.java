@@ -16,7 +16,7 @@ import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
-import openwrestling.model.factory.PromotionFactory;
+import openwrestling.model.factory.RandomGameAssetGenerator;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
@@ -40,7 +40,6 @@ public final class GameController extends Logging implements Serializable {
 
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
-    private final PromotionFactory promotionFactory;
     private final MatchFactory matchFactory;
 
     private final DateManager dateManager;
@@ -69,7 +68,6 @@ public final class GameController extends Logging implements Serializable {
         //set the initial date here
         dateManager = new DateManager(LocalDate.of(2015, 1, 5));
 
-        titleManager = new TitleManager(dateManager);
 
         bankAccountManager = new BankAccountManager();
         promotionManager = new PromotionManager(bankAccountManager);
@@ -82,12 +80,13 @@ public final class GameController extends Logging implements Serializable {
 
 
         contractManager = new ContractManager(promotionManager,
-                titleManager,
                 newsManager,
                 relationshipManager,
                 bankAccountManager);
 
         workerManager = new WorkerManager(contractManager);
+        titleManager = new TitleManager(dateManager, workerManager);
+
         entourageManager = new EntourageManager(workerManager);
         tagTeamManager = new TagTeamManager(workerManager);
         segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
@@ -116,14 +115,6 @@ public final class GameController extends Logging implements Serializable {
                 bankAccountManager,
                 segmentManager);
 
-        promotionFactory = new PromotionFactory(
-                contractFactory,
-                dateManager,
-                promotionManager,
-                workerManager,
-                staffManager,
-                bankAccountManager,
-                contractManager);
 
         promotionController = new PromotionController(
                 contractFactory,
@@ -145,7 +136,15 @@ public final class GameController extends Logging implements Serializable {
                 .build();
 
         if (randomGame) {
-            promotionFactory.preparePromotions();
+            RandomGameAssetGenerator randomGameAssetGenerator = new RandomGameAssetGenerator(
+                    contractFactory,
+                    dateManager,
+                    promotionManager,
+                    workerManager,
+                    staffManager,
+                    bankAccountManager,
+                    contractManager);
+            randomGameAssetGenerator.preparePromotions();
         }
 
     }

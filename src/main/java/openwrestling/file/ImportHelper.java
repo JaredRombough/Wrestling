@@ -21,6 +21,7 @@ import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.Gender;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ContractUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -547,6 +548,7 @@ public class ImportHelper {
                     .name(textLine.substring(1, 31).trim())
                     .promotion(promotion)
                     .prestige(hexStringToInt(hexline.get(43)))
+                    .teamSize(CollectionUtils.isEmpty(champions) ? 1 : champions.size())
                     .build();
 
             if (!champions.isEmpty()) {
@@ -555,7 +557,7 @@ public class ImportHelper {
                         .dayWon(dayWon)
                         .sequenceNumber(1)
                         .build();
-                title.setChampionTitleReign(titleReign);
+                title.setTitleReigns(List.of(titleReign));
             }
 
             assignRosterSplit(title, promotion, rosterSplits);

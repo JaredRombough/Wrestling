@@ -263,7 +263,7 @@ public class PromotionController extends Logging implements Serializable {
             }
 
             List<SegmentTeam> matchTeams = new ArrayList<>();
-            List<Worker> champs = titleManager.getCurrentChampionWorkers(title);
+            List<Worker> champs = title.getChampions();
 
             //if the title is not vacant, make the title holders team 1
             if (!champs.isEmpty()) {

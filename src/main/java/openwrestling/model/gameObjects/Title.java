@@ -8,11 +8,12 @@ import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.ActiveType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -22,27 +23,13 @@ import java.util.List;
 public class Title extends GameObject implements SegmentItem, Serializable, iRosterSplit {
 
     private long titleID;
-    @Builder.Default
-    private List<TitleReign> titleReigns = new ArrayList<>();
-    private TitleReign championTitleReign;
+    private List<TitleReign> titleReigns;
     private RosterSplit rosterSplit;
     private Promotion promotion;
     private int teamSize;
     private String name;
     private ActiveType activeType;
     private int prestige;
-    private int sequenceNumber;
-
-
-    public void addReign(List<Worker> workers, LocalDate dayWon) {
-        if (championTitleReign != null) {
-            championTitleReign.setDayLost(dayWon);
-        }
-        int sequenceNumber = titleReigns.size() + 1;
-        TitleReign newChamps = new TitleReign(workers, dayWon, sequenceNumber);
-        titleReigns.add(newChamps);
-        championTitleReign = newChamps;
-    }
 
     @Override
     public String toString() {
@@ -55,7 +42,20 @@ public class Title extends GameObject implements SegmentItem, Serializable, iRos
     }
 
     public List<Worker> getChampions() {
-        return championTitleReign.getWorkers();
+        return getChampionTitleReign().getWorkers();
+    }
+
+    public TitleReign getChampionTitleReign() {
+        return CollectionUtils.isEmpty(titleReigns) ? null : titleReigns.stream()
+                .max(Comparator.comparing(TitleReign::getSequenceNumber))
+                .orElseThrow();
+
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Title &&
+                Objects.equals(((Title) object).getTitleID(), titleID);
     }
 
 }

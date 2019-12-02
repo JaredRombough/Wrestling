@@ -192,9 +192,8 @@ public class Database {
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
 
             MapperFacade mapper = getMapperFactory().getMapperFacade();
-            List entities = dao.queryForAll();
-            List targets = new ArrayList();
-
+            List<? extends Entity> entities = dao.queryForAll();
+            entities.forEach(Entity::selectChildren);
             return entitiesToGameObjects(entities, sourceClass);
         } catch (Exception e) {
             e.printStackTrace();

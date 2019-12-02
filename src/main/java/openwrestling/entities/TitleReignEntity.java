@@ -53,4 +53,10 @@ public class TitleReignEntity extends Entity {
                         .build()
         ).collect(Collectors.toList());
     }
+
+    public void selectChildren() {
+        workers = titleReignWorkers.stream()
+                .map(titleReignWorker -> titleReignWorker.getWorkerEntity())
+                .collect(Collectors.toList());
+    }
 }

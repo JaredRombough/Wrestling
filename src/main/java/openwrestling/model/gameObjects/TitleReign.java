@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -25,14 +26,13 @@ public class TitleReign extends GameObject implements Serializable {
     private int sequenceNumber;
     private Title title;
 
-    public TitleReign(List<Worker> workers, LocalDate dayWon, int sequenceNumber) {
-        this.workers = workers;
-        this.dayWon = dayWon;
-        this.sequenceNumber = sequenceNumber;
-    }
-
     public String getDayLostString() {
         return dayLost == null ? "Today" : dayLost.toString();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof TitleReign &&
+                Objects.equals(((TitleReign) object).getTitleReignID(), titleReignID);
+    }
 }

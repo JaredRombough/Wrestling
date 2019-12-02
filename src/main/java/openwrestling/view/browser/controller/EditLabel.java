@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
@@ -52,6 +52,7 @@ public class EditLabel extends ControllerBase implements Initializable {
                 if (segmentItem instanceof Title) {
                     Title title = (Title) object;
                     title.setName(ViewUtils.editTextDialog(title.getName()));
+                    gameController.getTitleManager().updateTitle(title);
                 } else if (segmentItem instanceof EventTemplate) {
                     EventTemplate eventTemplate = (EventTemplate) object;
                     eventTemplate.setName(ViewUtils.editTextDialog(eventTemplate.getName()));

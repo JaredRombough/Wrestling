@@ -34,20 +34,17 @@ public class ContractManager extends Logging implements Serializable {
     private final List<StaffContract> staffContracts;
 
     private final PromotionManager promotionManager;
-    private final TitleManager titleManager;
     private final NewsManager newsManager;
     private final RelationshipManager relationshipManager;
     private final BankAccountManager bankAccountManager;
 
     public ContractManager(PromotionManager promotionManager,
-                           TitleManager titleManager,
                            NewsManager newsManager,
                            RelationshipManager relationshipManager,
                            BankAccountManager bankAccountManager) {
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
-        this.titleManager = titleManager;
         this.newsManager = newsManager;
         this.relationshipManager = relationshipManager;
         this.bankAccountManager = bankAccountManager;
@@ -59,9 +56,10 @@ public class ContractManager extends Logging implements Serializable {
             if (!contract.isActive()) {
                 continue;
             }
-            if (!nextDay(contract, date)) {
-                titleManager.stripTitles(contract);
-            }
+            //TODO strip titles for expiring contracts
+//            if (!nextDay(contract, date)) {
+//                titleManager.stripTitlesForExpiringContract(contract);
+//            }
             if (isMoraleCheckDay(contract, date)) {
                 handleMoraleCheck(contract, date);
             }

@@ -25,6 +25,18 @@ public class WorkerManager implements Serializable {
         this.workers = new ArrayList<>();
     }
 
+    public Worker getWorker(long id) {
+        return workers.stream().filter(worker -> worker.getWorkerID() == id).findFirst().orElse(null);
+    }
+
+    public List<Worker> getWorkers(List<Long> ids) {
+        return workers.stream().filter(worker -> ids.contains(worker.getWorkerID())).collect(Collectors.toList());
+    }
+
+    List<Worker> refreshWorkers(List<Worker> workers) {
+        return this.workers.stream().filter(workers::contains).collect(Collectors.toList());
+    }
+
     public List<Worker> selectRoster(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
         contractManager.getContracts().forEach(contract -> {

@@ -1,5 +1,6 @@
 package openwrestling.model.manager;
 
+import lombok.NoArgsConstructor;
 import openwrestling.model.Injury;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
@@ -21,6 +22,7 @@ import java.util.Map;
 import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
 
+@NoArgsConstructor
 public class NewsManager implements Serializable {
 
     private final List<NewsItem> newsItems = new ArrayList<>();

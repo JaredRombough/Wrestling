@@ -22,8 +22,8 @@ public class TitleEntity extends Entity {
     @DatabaseField(generatedId = true)
     private long titleID;
 
-    @DatabaseField(foreign = true)
-    private TitleReignEntity championTitleReign;
+    @ForeignCollectionField
+    private Collection<TitleReignEntity> titleReigns;
 
     @DatabaseField(foreign = true)
     private RosterSplitEntity rosterSplit;
