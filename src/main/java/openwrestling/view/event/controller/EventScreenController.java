@@ -46,7 +46,6 @@ import openwrestling.model.utility.StaffUtils;
 import openwrestling.model.utility.TestUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.LocalDragboard;
-import openwrestling.view.utility.RefreshSkin;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
@@ -467,10 +466,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     private void initializeSegmentListView() {
-
-        RefreshSkin skin = new RefreshSkin(segmentListView);
-        segmentListView.setSkin(skin);
-
         ObservableList<SegmentNameItem> items = FXCollections.observableArrayList(SegmentNameItem.extractor());
 
         segmentListView.setCellFactory(param -> new SorterCell(
@@ -589,8 +584,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentItemListView.getSelectionModel().selectFirst();
         }
 
-//        ((RefreshSkin) getSegmentItemListView().getSkin()).refresh();
-
     }
 
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
@@ -656,11 +649,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         initializeSegmentListView();
 
         setSegmentItemCellFactory(getSegmentItemListView());
-
-        RefreshSkin skin = new RefreshSkin(getSegmentItemListView());
-
-        getSegmentItemListView().setSkin(skin);
-
     }
 
     private void setSegmentItemCellFactory(ListView listView) {
@@ -670,8 +658,8 @@ public class EventScreenController extends ControllerBase implements Initializab
             @Override
             public void updateItem(final SegmentItem segmentItem, boolean empty) {
                 super.updateItem(segmentItem, empty);
-                int booked = 0;
                 if (segmentItem != null) {
+                    int booked = 0;
                     for (SegmentItem subItem : segmentItem.getSegmentItems()) {
                         if (segmentItemIsBookedForCurrentShow(subItem)) {
                             booked++;
@@ -688,6 +676,11 @@ public class EventScreenController extends ControllerBase implements Initializab
                     }
 
                     ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty);
+                } else {
+                    setText(null);
+                    setGraphic(null);
+                    getStyleClass().remove("highStat");
+                    getStyleClass().remove("midStat");
                 }
 
             }

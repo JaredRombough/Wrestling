@@ -95,8 +95,8 @@ public class TitleManager extends Logging implements Serializable {
         logger.log(Level.DEBUG, String.format("TITLE CHANGE! promo %s title %s winner %s loser %s",
                 title.getPromotion().getName(),
                 title.getName(),
-                ModelUtils.slashNames(title.getChampionTitleReign().getWorkers()),
-                ModelUtils.slashNames(winner)
+                ModelUtils.slashNames(winner),
+                ModelUtils.slashNames(title.getChampionTitleReign().getWorkers())
         ));
         title.getChampionTitleReign().setDayLost(dateManager.today());
         TitleReign newChamps = TitleReign.builder()

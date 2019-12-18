@@ -16,13 +16,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
-import openwrestling.view.utility.RefreshSkin;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
@@ -146,8 +145,6 @@ public class BrowserController extends ControllerBase implements Initializable {
         if (displaySubScreen != null) {
             displaySubScreen.controller.updateLabels();
         }
-//        ((RefreshSkin) mainListView.getSkin()).refresh();
-
     }
 
     @FXML
@@ -274,9 +271,6 @@ public class BrowserController extends ControllerBase implements Initializable {
                     }
                 }
             });
-
-            RefreshSkin skin = new RefreshSkin(mainListView);
-            mainListView.setSkin(skin);
 
             promotionComboBox.setValue(playerPromotion());
 
