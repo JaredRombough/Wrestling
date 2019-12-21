@@ -80,12 +80,12 @@ public class EventTemplateController extends ControllerBase implements Initializ
             Optional<List<StaffMember>> optionalResult = dialog.getDialog(
                     gameController,
                     playerPromotion(),
-                    eventTemplate.getDefaultBroadcastTeam().isEmpty()
-                            ? playerPromotion().getDefaultBroadcastTeam()
-                            : eventTemplate.getDefaultBroadcastTeam()
+                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
+                            ? gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())
+                            : gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate)
             ).showAndWait();
             optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
-                eventTemplate.setDefaultBroadcastTeam(broadcastTeam);
+                gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(eventTemplate, broadcastTeam);
                 updateLabels();
             });
         });
@@ -135,9 +135,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
-            broadcastTeamLabel.setText(eventTemplate.getDefaultBroadcastTeam().isEmpty()
-                    ? ModelUtils.slashNames(eventTemplate.getPromotion().getDefaultBroadcastTeam(), "None")
-                    : ModelUtils.slashNames(eventTemplate.getDefaultBroadcastTeam()));
+            broadcastTeamLabel.setText(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
+                    ? ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate.getPromotion()), "None")
+                    : ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate)));
         } else {
             editLabel.setCurrent(BrowseMode.EVENTS);
         }

@@ -20,7 +20,6 @@ import openwrestling.model.segmentEnum.ShowType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -50,10 +49,6 @@ public class SegmentEntity extends Entity {
 
     @DatabaseField(foreign = true)
     private StaffMemberEntity referee;
-
-    //TODO #186
-//    @ForeignCollectionField
-//    private List<StaffMemberEntity> broadcastTeam;
 
     @DatabaseField(foreign = true)
     private StableEntity newStable;

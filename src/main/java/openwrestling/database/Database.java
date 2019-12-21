@@ -11,6 +11,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import openwrestling.entities.BankAccountEntity;
+import openwrestling.entities.BroadcastTeamMemberEntity;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.Entity;
 import openwrestling.entities.EntourageMemberEntity;
@@ -37,6 +38,7 @@ import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.TransactionEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.entities.WorkerRelationshipEntity;
+import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EntourageMember;
 import openwrestling.model.gameObjects.Event;
@@ -102,6 +104,7 @@ public class Database {
         put(EntourageMember.class, EntourageMemberEntity.class);
         put(Event.class, EventEntity.class);
         put(Segment.class, SegmentEntity.class);
+        put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -195,6 +198,19 @@ public class Database {
             List<? extends Entity> entities = dao.queryForAll();
             entities.forEach(Entity::selectChildren);
             return entitiesToGameObjects(entities, sourceClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void deleteByID(Class sourceClass, long id) {
+        try {
+            Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+            Dao dao = DaoManager.createDao(connectionSource, targetClass);
+
+            dao.deleteById(id);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -390,7 +406,8 @@ public class Database {
                     SegmentTeamEntity.class,
                     SegmentTeamEntourageEntity.class,
                     SegmentTeamWorkerEntity.class,
-                    MatchTitleEntity.class);
+                    MatchTitleEntity.class,
+                    BroadcastTeamMemberEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

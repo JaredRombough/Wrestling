@@ -43,9 +43,6 @@ public class PromotionEntity extends Entity {
     public ForeignCollection<ContractEntity> contractEntities;
 
 
-//    public List<ContractEntity> contracts;
-
 //    private List<StaffView> allStaff;
-//    private List<StaffView> defaultBroadcastTeam;
 //    private List<EventTemplate> eventTemplates;
 }

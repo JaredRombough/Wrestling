@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -49,8 +50,6 @@ public class EventTemplate extends GameObject implements Serializable, iDate, Se
     @Builder.Default
     private int month = 1;
     @Builder.Default
-    private List<StaffMember> defaultBroadcastTeam = new ArrayList<>();
-    @Builder.Default
     private List<SegmentTemplate> segmentTemplates = new ArrayList<>();
     private RosterSplit rosterSplit;
 
@@ -63,6 +62,13 @@ public class EventTemplate extends GameObject implements Serializable, iDate, Se
     @Override
     public LocalDate getDate() {
         return nextDate;
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof EventTemplate &&
+                Objects.equals(((EventTemplate) object).getEventTemplateID(), eventTemplateID);
     }
 
 }

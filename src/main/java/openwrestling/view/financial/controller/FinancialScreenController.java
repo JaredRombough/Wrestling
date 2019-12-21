@@ -1,10 +1,5 @@
 package openwrestling.view.financial.controller;
 
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -18,6 +13,12 @@ import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class FinancialScreenController extends ControllerBase implements Initializable {
 
@@ -82,7 +83,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
                 WORKER_EXPENSE_ROW);
 
         addSheetLabel(-1,
-                ContractUtils.getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
+                gameController.getStaffManager().getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 STAFF_EXPENSE_ROW);
 
         for (GameScreen screen : departmentScreens) {

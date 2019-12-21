@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffMember;
@@ -18,8 +19,8 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
-import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.Segment;
+import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -50,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -544,8 +546,18 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         segment.setTeams(getSegmentTeams());
         segment.addTitles(getTitles());
         segment.setReferee(getRef());
-        //TODO #186
-        //segmentView.setBroadcastTeam(broadcastTeamController.getSegmentItems());
+        segment.setBroadcastTeam(
+                broadcastTeamController.getSegmentItems().stream()
+                        .map(segmentItem -> {
+                            if (segmentItem instanceof Worker) {
+                                return BroadcastTeamMember.builder().worker((Worker) segmentItem).build();
+                            } else if (segmentItem instanceof StaffMember) {
+                                return BroadcastTeamMember.builder().staffMember((StaffMember) segmentItem).build();
+                            }
+                            return null;
+                        }).filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
         if (segmentType.equals(SegmentType.MATCH)) {
             segment.setMatchFinish(matchOptions.getMatchFinish());
             segment.setMatchRule(matchOptions.getMatchRule());

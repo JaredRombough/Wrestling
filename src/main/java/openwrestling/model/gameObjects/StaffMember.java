@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 public class StaffMember extends GameObject implements Serializable, SegmentItem, iPerson {
 
+    private long staffMemberID;
     private String name;
     private Gender gender;
     private int age;

@@ -3,6 +3,7 @@ package openwrestling.model.controller;
 import openwrestling.Logging;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
+import openwrestling.manager.StaffManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
@@ -22,7 +23,6 @@ import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ModelUtils;
-import openwrestling.model.utility.StaffUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 
@@ -49,6 +49,7 @@ public class PromotionController extends Logging implements Serializable {
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
     private final NewsManager newsManager;
+    private final StaffManager staffManager;
 
     public PromotionController(
             ContractFactory contractFactory,
@@ -59,7 +60,8 @@ public class PromotionController extends Logging implements Serializable {
             EventManager eventManager,
             TitleManager titleManager,
             WorkerManager workerManager,
-            NewsManager newsManager) {
+            NewsManager newsManager,
+            StaffManager staffManager) {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
         this.matchFactory = matchFactory;
@@ -69,6 +71,7 @@ public class PromotionController extends Logging implements Serializable {
         this.titleManager = titleManager;
         this.workerManager = workerManager;
         this.newsManager = newsManager;
+        this.staffManager = staffManager;
     }
 
     private int idealRosterSize(Promotion promotion) {
@@ -146,13 +149,11 @@ public class PromotionController extends Logging implements Serializable {
             contractManager.payDay(date, c);
         }
 
-        for (StaffMember staff : promotion.getAllStaff()) {
-            contractManager.payDay(date, staff.getStaffContract());
-        }
+        contractManager.staffPayDay(date, promotion);
     }
 
     public void trainerUpdate(Promotion promotion) {
-        for (StaffMember trainer : StaffUtils.getStaff(StaffType.TRAINER, promotion)) {
+        for (StaffMember trainer : staffManager.getStaff(StaffType.TRAINER, promotion)) {
             if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {
                 List<Worker> roster = workerManager.selectRoster(promotion);
                 Worker worker = roster.get(RandomUtils.nextInt(0, roster.size() - 1));

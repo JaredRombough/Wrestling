@@ -1,23 +1,24 @@
 package openwrestling.view.financial.controller;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import static openwrestling.model.constants.UIConstants.EDIT_ICON;
-import static openwrestling.model.constants.UIConstants.VIEW_ICON;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
-import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.browser.controller.BrowseParams;
 import openwrestling.view.browser.controller.EditBroadcastTeamDialog;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static openwrestling.model.constants.UIConstants.EDIT_ICON;
+import static openwrestling.model.constants.UIConstants.VIEW_ICON;
 
 public class RingsideController extends ControllerBase {
 
@@ -65,14 +66,14 @@ public class RingsideController extends ControllerBase {
     public void updateLabels() {
         if (staffType != null) {
             departmentNameLabel.setText(staffType.toString());
-            if (staffType.equals(staffType.OWNER)) {
-
-                staffCount.setText(playerPromotion().getOwner() != null ? playerPromotion().getOwner().getName() : "None");
+            if (staffType.equals(StaffType.OWNER)) {
+                StaffMember owner = gameController.getStaffManager().getOwner(playerPromotion());
+                staffCount.setText(owner != null ? owner.getName() : "None");
             } else {
-                staffCount.setText(String.format("Count: %d", StaffUtils.getStaff(staffType, playerPromotion()).size()));
+                staffCount.setText(String.format("Count: %d", gameController.getStaffManager().getStaff(staffType, playerPromotion()).size()));
             }
 
-            defaultBroadcastTeam.setText(ModelUtils.slashShortNames(playerPromotion().getDefaultBroadcastTeam()));
+            defaultBroadcastTeam.setText(ModelUtils.slashShortNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())));
         }
     }
 
@@ -105,10 +106,10 @@ public class RingsideController extends ControllerBase {
                 Optional<List<StaffMember>> optionalResult = dialog.getDialog(
                         gameController,
                         playerPromotion(),
-                        playerPromotion().getDefaultBroadcastTeam()
+                        gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())
                 ).showAndWait();
                 optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
-                    playerPromotion().setDefaultBroadcastTeam(broadcastTeam);
+                    gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(playerPromotion(), broadcastTeam);
                     updateLabels();
                 });
             });

@@ -42,7 +42,6 @@ import openwrestling.model.segmentEnum.SegmentValidation;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.SegmentUtils;
-import openwrestling.model.utility.StaffUtils;
 import openwrestling.model.utility.TestUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.LocalDragboard;
@@ -400,9 +399,9 @@ public class EventScreenController extends ControllerBase implements Initializab
             controller.setEventScreenController(this);
             controller.setDependencies(mainApp, gameController);
 
-            controller.setBroadcastTeam(currentEvent.getEventTemplate().getDefaultBroadcastTeam().isEmpty()
-                    ? playerPromotion().getDefaultBroadcastTeam()
-                    : currentEvent.getEventTemplate().getDefaultBroadcastTeam());
+            controller.setBroadcastTeam(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(currentEvent.getEventTemplate()).isEmpty()
+                    ? gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())
+                    : gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(currentEvent.getEventTemplate()));
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
@@ -726,7 +725,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void autoUpdateRefs() {
-        List<StaffMember> refs = new ArrayList(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
+        List<StaffMember> refs = new ArrayList(gameController.getStaffManager().getStaff(StaffType.REFEREE, playerPromotion()));
         Collections.sort(refs, Comparator.comparingInt(StaffMember::getSkill));
         if (!refs.isEmpty()) {
             for (int i = segmentPaneControllers.size() - 1; i >= 0; i--) {
@@ -736,7 +735,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 } else if (controller.isAutoSetRef()) {
                     controller.setRefAuto(refs.remove(refs.size() - 1));
                     if (refs.isEmpty()) {
-                        refs.addAll(StaffUtils.getStaff(StaffType.REFEREE, playerPromotion()));
+                        refs.addAll(gameController.getStaffManager().getStaff(StaffType.REFEREE, playerPromotion()));
                     }
                 }
             }

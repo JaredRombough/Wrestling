@@ -7,13 +7,12 @@ import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StableManager;
+import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.controller.PromotionController;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.InjuryManager;
@@ -43,16 +42,12 @@ public class EventFactoryTest {
     private final SegmentManager segmentManager = mock(SegmentManager.class);
 
     private RelationshipManager relationshipManager;
-    private Promotion promotion;
-    private Event event;
-    private Worker winner;
-    private Worker loser;
 
     private EventFactory eventFactory;
 
     @Before
     public void setUp() {
-        matchFactory = new MatchFactory(segmentManager, mock(DateManager.class), mock(InjuryManager.class), workerManager);
+        matchFactory = new MatchFactory(segmentManager, mock(DateManager.class), mock(InjuryManager.class), workerManager, mock(StaffManager.class));
         Database.createNewDatabase("testdb");
         when(bankAccountManager.getBankAccount(any(Promotion.class))).thenReturn(new BankAccount());
         relationshipManager = mock(RelationshipManager.class);

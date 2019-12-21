@@ -10,8 +10,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.modelView.Segment;
+import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
@@ -105,11 +105,11 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 sb.append((String.format("Referee: %s", segment.getReferee() != null ? segment.getReferee().toString() : " None")));
             }
             sb.append("\n");
-            //TODO #186
-//            if (!segmentView.getBroadcastTeam().isEmpty()) {
-//                sb.append("\n");
-//                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNames(segmentView.getBroadcastTeam())));
-//            }
+
+            if (!segment.getBroadcastTeam().isEmpty()) {
+                sb.append("\n");
+                sb.append(String.format("Broadcast Team: %s", ModelUtils.slashNamesBroadcastTeam(segment.getBroadcastTeam())));
+            }
 
             summaryText.setText(sb.toString());
             populateView();

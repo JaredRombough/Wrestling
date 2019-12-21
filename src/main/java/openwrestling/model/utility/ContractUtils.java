@@ -1,20 +1,18 @@
 package openwrestling.model.utility;
 
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffMember;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iContract;
+import openwrestling.model.interfaces.iPerson;
+
 import java.time.LocalDate;
-
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.MONTHS;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import openwrestling.model.gameObjects.StaffContract;
-import openwrestling.model.interfaces.iContract;
-import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Worker;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 public final class ContractUtils {
 
@@ -119,17 +117,6 @@ public final class ContractUtils {
         return total;
     }
 
-    public static int getStaffPayrollForMonth(LocalDate date, Promotion promotion) {
-        int total = 0;
-
-        for (StaffMember staff : promotion.getAllStaff()) {
-            StaffContract contract = staff.getStaffContract();
-            if (contract != null && contract.getEndDate().isAfter(date.withDayOfMonth(1))) {
-                total += contract.getMonthlyCost();
-            }
-        }
-        return total;
-    }
 
     public static String getTermsString(Worker worker, Promotion promotion) {
         iContract contract = worker.getContract(promotion);

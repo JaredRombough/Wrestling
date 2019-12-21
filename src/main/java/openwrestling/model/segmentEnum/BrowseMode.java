@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.interfaces.iBrowseMode;
-import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.DateComparator;
@@ -99,7 +98,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return promotion.getAllStaff();
+            return gameController.getStaffManager().getStaffMembers(promotion);
         }
 
         @Override
@@ -125,7 +124,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return StaffUtils.getStaff(StaffType.REFEREE, promotion);
+            return gameController.getStaffManager().getStaff(StaffType.REFEREE, promotion);
         }
 
         @Override
@@ -151,7 +150,7 @@ public enum BrowseMode implements iBrowseMode {
 
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
-            return StaffUtils.getStaff(StaffType.BROADCAST, promotion);
+            return gameController.getStaffManager().getStaff(StaffType.BROADCAST, promotion);
         }
 
         @Override

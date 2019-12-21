@@ -3,6 +3,7 @@ package openwrestling.model.controller;
 import lombok.Getter;
 import openwrestling.Logging;
 import openwrestling.manager.BankAccountManager;
+import openwrestling.manager.BroadcastTeamManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.EntourageManager;
 import openwrestling.manager.EventManager;
@@ -59,6 +60,7 @@ public final class GameController extends Logging implements Serializable {
     private final RosterSplitManager rosterSplitManager;
     private final EntourageManager entourageManager;
     private final NextDayController nextDayController;
+    private final BroadcastTeamManager broadcastTeamManager;
 
     private final PromotionController promotionController;
 
@@ -73,11 +75,11 @@ public final class GameController extends Logging implements Serializable {
         promotionManager = new PromotionManager(bankAccountManager);
 
         newsManager = new NewsManager();
-        staffManager = new StaffManager();
+
         stableManager = new StableManager();
         relationshipManager = new RelationshipManager();
         rosterSplitManager = new RosterSplitManager();
-
+        broadcastTeamManager = new BroadcastTeamManager();
 
         contractManager = new ContractManager(promotionManager,
                 newsManager,
@@ -85,6 +87,7 @@ public final class GameController extends Logging implements Serializable {
                 bankAccountManager);
 
         workerManager = new WorkerManager(contractManager);
+        staffManager = new StaffManager(contractManager);
         titleManager = new TitleManager(dateManager, workerManager);
 
         entourageManager = new EntourageManager(workerManager);
@@ -98,7 +101,7 @@ public final class GameController extends Logging implements Serializable {
                 dateManager,
                 segmentManager);
 
-        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager);
+        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager, staffManager);
 
 
         eventFactory = new EventFactory(
@@ -125,7 +128,8 @@ public final class GameController extends Logging implements Serializable {
                 eventManager,
                 titleManager,
                 workerManager,
-                newsManager);
+                newsManager,
+                staffManager);
 
         nextDayController = NextDayController.builder()
                 .promotionController(promotionController)

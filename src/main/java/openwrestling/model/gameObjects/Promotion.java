@@ -6,12 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.StaffType;
-import openwrestling.model.utility.StaffUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -31,10 +27,6 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     @Builder.Default
     private int popularity = 50;
     private int level;
-    @Builder.Default
-    private List<StaffMember> allStaff = new ArrayList<>();
-    @Builder.Default
-    private List<StaffMember> defaultBroadcastTeam = new ArrayList<>();
 
 
     public void setPopularity(int popularity) {
@@ -63,24 +55,6 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public StaffMember getOwner() {
-        List<StaffMember> owner = StaffUtils.getStaff(StaffType.OWNER, this);
-        return owner.isEmpty() ? null : owner.get(0);
-    }
-
-    public void addToStaff(StaffMember staff) {
-        allStaff.add(staff);
-    }
-
-    public void removeFromStaff(StaffMember staff) {
-        allStaff.remove(staff);
-        defaultBroadcastTeam.remove(staff);
-        //TODO #186
-//        eventTemplates.forEach(template -> {
-//            template.getDefaultBroadcastTeam().remove(staff);
-//        });
     }
 
     @Override

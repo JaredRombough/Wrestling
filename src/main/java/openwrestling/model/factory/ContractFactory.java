@@ -61,7 +61,6 @@ public class ContractFactory {
         StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);
-        promotion.addToStaff(staff);
         contractManager.buyOutContracts(staff, promotion, startDate);
         contractManager.paySigningFee(startDate, contract);
         staff.setStaffContract(contract);

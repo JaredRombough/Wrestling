@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
@@ -49,8 +50,8 @@ public class Segment extends GameObject implements Serializable {
     private SegmentType segmentType;
     private Event event;
     private StaffMember referee;
-    //TODO #186
-    // private List<? extends SegmentItem> broadcastTeam;
+    @Builder.Default
+    private List<BroadcastTeamMember> broadcastTeam = new ArrayList<>();
     private Stable newStable;
     private int workRating;
     private int crowdRating;
@@ -73,8 +74,6 @@ public class Segment extends GameObject implements Serializable {
     public Segment(SegmentType segmentType) {
         this.segmentType = segmentType;
         teams = new ArrayList<>();
-        //TODO #186
-        //broadcastTeam = new ArrayList<>();
         titles = new ArrayList<>();
     }
 
@@ -93,8 +92,13 @@ public class Segment extends GameObject implements Serializable {
             segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titles);
-        //TODO #186
-        //segmentItems.addAll(broadcastTeam);
+        broadcastTeam.forEach(broadcastTeamMember -> {
+            if (broadcastTeamMember.getWorker() != null) {
+                segmentItems.add(broadcastTeamMember.getWorker());
+            } else if (broadcastTeamMember.getStaffMember() != null) {
+                segmentItems.add(broadcastTeamMember.getStaffMember());
+            }
+        });
         segmentItems.add(referee);
         return segmentItems;
     }

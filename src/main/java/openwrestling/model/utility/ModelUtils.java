@@ -1,5 +1,19 @@
 package openwrestling.model.utility;
 
+import openwrestling.model.SegmentItem;
+import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.BroadcastTeamMember;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.modelView.Segment;
+import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.segmentEnum.MatchRule;
+import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.view.event.controller.TeamPaneWrapper;
+import openwrestling.view.utility.GameScreen;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -7,18 +21,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentTemplate;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
-import openwrestling.view.event.controller.TeamPaneWrapper;
-import openwrestling.view.utility.GameScreen;
+import java.util.stream.Collectors;
 
 public final class ModelUtils {
 
@@ -33,6 +36,16 @@ public final class ModelUtils {
     }
 
     public static String slashNames(List<? extends SegmentItem> segmentItems) {
+        return slashNames(segmentItems, "?");
+    }
+
+    public static String slashNamesBroadcastTeam(List<BroadcastTeamMember> broadcastTeamMembers) {
+        List<? extends SegmentItem> segmentItems = broadcastTeamMembers.stream()
+                .map(broadcastTeamMember ->
+                        broadcastTeamMember.getWorker() != null ?
+                                broadcastTeamMember.getWorker() :
+                                broadcastTeamMember.getStaffMember())
+                .collect(Collectors.toList());
         return slashNames(segmentItems, "?");
     }
 
@@ -108,10 +121,10 @@ public final class ModelUtils {
 
     public static int getMatchWorkRating(Worker worker) {
         return getWeightedScore(new Integer[]{
-            worker.getFlying(),
-            worker.getWrestling(),
-            worker.getStriking(),
-            worker.getCharisma()
+                worker.getFlying(),
+                worker.getWrestling(),
+                worker.getStriking(),
+                worker.getCharisma()
         });
     }
 
@@ -120,10 +133,10 @@ public final class ModelUtils {
         int wrestling = worker.getWrestling() + (matchRule.getWrestingModifier() * worker.getWrestling() / 100);
         int striking = worker.getStriking() + (matchRule.getStrikingModifier() * worker.getStriking() / 100);
         return getWeightedScore(new Integer[]{
-            flying,
-            wrestling,
-            striking,
-            worker.getCharisma()
+                flying,
+                wrestling,
+                striking,
+                worker.getCharisma()
         });
     }
 

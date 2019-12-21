@@ -186,11 +186,11 @@ public class ContractManager extends Logging implements Serializable {
         }
     }
 
-    public void payDay(LocalDate date, StaffContract contract) {
-        if (contract.getMonthlyCost() != 0) {
-            bankAccountManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getMonthlyCost(),
-                    TransactionType.STAFF, date);
-        }
+    public void staffPayDay(LocalDate date, Promotion promotion) {
+        staffContracts.stream()
+                .filter(contract -> contract.getPromotion().equals(promotion) && contract.getMonthlyCost() > 0)
+                .forEach(contract -> bankAccountManager.getBankAccount(promotion).removeFunds(contract.getMonthlyCost(),
+                        TransactionType.STAFF, date));
     }
 
     public void paySigningFee(LocalDate date, iContract contract) {
@@ -219,14 +219,13 @@ public class ContractManager extends Logging implements Serializable {
     }
 
     public void terminateContract(iContract contract) {
-        //contract.getPromotion().removeFromRoster(contract.getWorker());
-        contract.getPromotion().removeFromStaff(contract.getStaff());
         if (contract.getWorker() != null) {
             contract.getWorker().removeContract((Contract) contract);
         } else if (contract.getStaff() != null) {
             contract.getStaff().setStaffContract(null);
         }
         contract.setActive(false);
+        //TODO update db?
     }
 
     public String getTerms(iContract contract) {

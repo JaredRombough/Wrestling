@@ -60,11 +60,6 @@ public class EventTemplateEntity extends Entity {
     @DatabaseField
     private long month;
 
-//    @DatabaseField
-//    private List<StaffView> defaultBroadcastTeam;
-
-//    private final List<SegmentTemplate> segmentTemplates;
-
     @DatabaseField(foreign = true)
     private RosterSplitEntity rosterSplit;
 

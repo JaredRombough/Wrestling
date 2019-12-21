@@ -1,8 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ButtonType;
@@ -14,9 +11,12 @@ import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.StaffType;
-import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NameComparator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EditBroadcastTeamDialog {
 
@@ -36,7 +36,7 @@ public class EditBroadcastTeamDialog {
         empty = new StaffMember();
         empty.setName(EMPTY);
 
-        broadcastStaff = StaffUtils.getStaff(StaffType.BROADCAST, promotion);
+        broadcastStaff = gameController.getStaffManager().getStaff(StaffType.BROADCAST, promotion);
         Collections.sort(broadcastStaff, new NameComparator());
         broadcastStaff.add(0, empty);
 

@@ -46,8 +46,6 @@ public class ImportTest {
             assertThat(promotion.getLevel()).isNotNull();
             assertThat(promotion.getShortName()).isNotNull();
             assertThat(promotion.getPopularity()).isEqualTo(50);
-            assertThat(promotion.getAllStaff()).isNotNull().isEmpty();
-            assertThat(promotion.getDefaultBroadcastTeam()).isNotNull().isEmpty();
         }
     }
 
