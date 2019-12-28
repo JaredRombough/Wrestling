@@ -137,6 +137,7 @@ public final class GameController extends Logging implements Serializable {
                 .eventManager(eventManager)
                 .workerManager(workerManager)
                 .promotionManager(promotionManager)
+                .relationshipManager(relationshipManager)
                 .build();
 
         if (randomGame) {

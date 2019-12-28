@@ -46,7 +46,7 @@ public class RelationshipManagerTest {
 
     @Test
     public void getMoraleRelationship_returnsDefault() {
-        MoraleRelationship relationship = relationshipManager.getMoraleRelationship(worker, promotion);
+        MoraleRelationship relationship = relationshipManager.getOrCreateMoraleRelationship(worker, promotion);
         assertThat(relationship.getLevel()).isEqualTo(DEFAULT_RELATIONSHIP_LEVEL);
     }
 

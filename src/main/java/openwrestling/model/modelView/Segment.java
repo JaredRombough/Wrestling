@@ -10,6 +10,7 @@ import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffMember;
@@ -30,7 +31,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -52,6 +55,7 @@ public class Segment extends GameObject implements Serializable {
     private StaffMember referee;
     @Builder.Default
     private List<BroadcastTeamMember> broadcastTeam = new ArrayList<>();
+    private Map<Worker, MoraleRelationship> moraleRelationshipMap = new HashMap<>();
     private Stable newStable;
     private int workRating;
     private int crowdRating;

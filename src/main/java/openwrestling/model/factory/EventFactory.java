@@ -12,6 +12,7 @@ import openwrestling.manager.WorkerManager;
 import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Title;
@@ -39,7 +40,9 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.TemporalAdjusters.next;
@@ -208,23 +211,29 @@ public class EventFactory extends Logging {
         Segment segment = matchFactory.saveSegment(toProcess);
         if (SegmentType.MATCH.equals(segment.getSegmentType())) {
             logger.log(Level.DEBUG, "processing match");
-            // eventManager.addMatchEvent(new MatchEvent((Match) segment, eventView.getEvent()));
             List<Worker> winners = toProcess.getWinners();
+            Map<Worker, MoraleRelationship> relationshipMap = new HashMap<>();
             winners.forEach((worker) -> {
                 logger.log(Level.DEBUG, "processing winner " + worker.getName());
                 workerManager.gainPopularity(worker);
-                //TODO bottleneck no batch update
-                relationshipManager.addRelationshipValue(worker, toProcess.getPromotion(), MORALE_BONUS_MATCH_WIN);
+                relationshipMap.put(worker, relationshipManager.getMoraleRelationship(worker, event.getPromotion()));
+                relationshipMap.get(worker).modifyValue(MORALE_BONUS_MATCH_WIN);
                 if (!toProcess.getTitles().isEmpty()) {
-                    relationshipManager.addRelationshipValue(worker, toProcess.getPromotion(), MORALE_BONUS_TITLE_MATCH_WIN);
+                    relationshipMap.get(worker).modifyValue(MORALE_BONUS_TITLE_MATCH_WIN);
                 }
             });
             if (!winners.isEmpty()) {
-                getMatchMoralePenalties(toProcess).entrySet().stream().forEach(entry -> {
-                    relationshipManager.addRelationshipValue(entry.getKey(), toProcess.getPromotion(), -entry.getValue());
-                    newsManager.addJobComplaintNewsItem(entry.getKey(), winners, toProcess.getPromotion(), toProcess.getDate());
+                getMatchMoralePenalties(toProcess).forEach((key, value) -> {
+                    if (!relationshipMap.containsKey(key)) {
+                        relationshipMap.put(key, relationshipManager.getMoraleRelationship(key, event.getPromotion()));
+                    }
+                    relationshipMap.get(key).modifyValue(-value);
+                    newsManager.addJobComplaintNewsItem(key, winners, toProcess.getPromotion(), toProcess.getDate());
                 });
             }
+
+            segment.setMoraleRelationshipMap(relationshipMap);
+
             if (!toProcess.getTitles().isEmpty() && !winners.isEmpty()) {
                 processTitleChanges(toProcess, winners);
             }

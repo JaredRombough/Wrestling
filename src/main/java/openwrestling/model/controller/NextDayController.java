@@ -1,24 +1,28 @@
 package openwrestling.model.controller;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import openwrestling.Logging;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.DateManager;
+import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.utility.EventUtils;
 import org.apache.logging.log4j.Level;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
 import static openwrestling.model.factory.EventFactory.bookEventForTemplate;
 
 
@@ -30,6 +34,7 @@ public class NextDayController extends Logging {
     private DateManager dateManager;
     private PromotionController promotionController;
     private WorkerManager workerManager;
+    private RelationshipManager relationshipManager;
 
     public void nextDay() {
         logger.log(Level.DEBUG, "nextDay");
@@ -38,6 +43,28 @@ public class NextDayController extends Logging {
                 .map(this::eventOnDay)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+
+        Map<Worker, MoraleRelationship> relationships = new HashMap<>();
+
+        events.stream()
+                .flatMap(event -> event.getSegments().stream())
+                .forEach(segment -> {
+                    segment.getWorkers().forEach(worker -> {
+                        if (!relationships.containsKey(worker)) {
+                            relationships.put(worker, relationshipManager.getMoraleRelationship(worker, segment.getPromotion()));
+                        }
+                        relationships.get(worker).modifyValue(APPEARANCE_MORALE_BONUS);
+                    });
+
+                    segment.getMoraleRelationshipMap().forEach((key, value) -> {
+                        if (!relationships.containsKey(key)) {
+                            relationships.put(key, value);
+                        } else {
+                            relationships.get(key).modifyValue(value.getLevel());
+                        }
+                    });
+                });
+
 
         List<EventTemplate> eventTemplates = events.stream()
                 .map(Event::getEventTemplate)
@@ -49,6 +76,7 @@ public class NextDayController extends Logging {
                 .collect(Collectors.toList());
 
 
+        relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
         eventManager.createEventTemplates(eventTemplates);
         eventManager.createEvents(newEvents);

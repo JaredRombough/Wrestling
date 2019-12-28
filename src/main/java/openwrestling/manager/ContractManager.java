@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
 import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static openwrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
@@ -174,7 +173,6 @@ public class ContractManager extends Logging implements Serializable {
 
     public void appearance(LocalDate date, Worker worker, Promotion promotion) {
         Contract contract = getContract(worker, promotion);
-        relationshipManager.addRelationshipValue(worker, promotion, APPEARANCE_MORALE_BONUS);
         contract.setLastShowDate(date);
         bankAccountManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
     }

@@ -47,7 +47,7 @@ public class RelationshipManager {
         return relationships;
     }
 
-    public MoraleRelationship getMoraleRelationship(Worker worker, Promotion promotion) {
+    public MoraleRelationship getOrCreateMoraleRelationship(Worker worker, Promotion promotion) {
         MoraleRelationship moraleRelationship = moraleRelationships.stream()
                 .filter(moraleRelationship1 -> moraleRelationship1.getWorker().getWorkerID() == worker.getWorkerID() &&
                         moraleRelationship1.getPromotion().getPromotionID() == promotion.getPromotionID())
@@ -65,6 +65,18 @@ public class RelationshipManager {
         return moraleRelationship;
     }
 
+    public MoraleRelationship getMoraleRelationship(Worker worker, Promotion promotion) {
+        return moraleRelationships.stream()
+                .filter(moraleRelationship1 -> moraleRelationship1.getWorker().getWorkerID() == worker.getWorkerID() &&
+                        moraleRelationship1.getPromotion().getPromotionID() == promotion.getPromotionID())
+                .findFirst()
+                .orElse(MoraleRelationship.builder()
+                        .level(DEFAULT_RELATIONSHIP_LEVEL)
+                        .worker(worker)
+                        .promotion(promotion)
+                        .build());
+    }
+
     public void addRelationshipValue(Worker worker, Promotion promotion, int addValue) {
         MoraleRelationship moraleRelationship = moraleRelationships.stream()
                 .filter(moraleRelationship1 -> moraleRelationship1.getWorker().getWorkerID() == worker.getWorkerID() &&
@@ -80,7 +92,8 @@ public class RelationshipManager {
         moraleRelationships = Database.selectAll(MoraleRelationship.class);
     }
 
-    public List<MoraleRelationship> createMoraleRelationships(List<MoraleRelationship> workerRelationships) {
+
+    public List<MoraleRelationship> createOrUpdateMoraleRelationships(List<MoraleRelationship> workerRelationships) {
         List<MoraleRelationship> savedRelationships = Database.insertOrUpdateList(workerRelationships);
         this.moraleRelationships = Database.selectAll(MoraleRelationship.class);
         return savedRelationships;
