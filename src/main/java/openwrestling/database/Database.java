@@ -171,6 +171,7 @@ public class Database {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -184,8 +185,8 @@ public class Database {
             return roster;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return List.of();
     }
 
     public static <T> List selectAll(Class sourceClass) {
@@ -289,6 +290,8 @@ public class Database {
                         entity = targetClass.getConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+                        throw new RuntimeException(e);
                     }
 
                     if (entity == null) {
@@ -329,6 +332,7 @@ public class Database {
                         gameObject = targetClass.getConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
 
                     if (gameObject == null) {
@@ -418,6 +422,7 @@ public class Database {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

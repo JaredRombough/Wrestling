@@ -8,7 +8,9 @@ import openwrestling.model.gameObjects.financial.Transaction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -54,5 +56,26 @@ public class BankAccountManager implements Serializable {
         List<BankAccount> savedBankAccounts = Database.insertOrUpdateList(bankAccounts);
         this.bankAccounts = Database.selectAll(BankAccount.class);
         return savedBankAccounts;
+    }
+
+    public List<Transaction> insertTransactions(List<Transaction> transactions) {
+        Map<Promotion, BankAccount> bankAccountMap = new HashMap<>();
+        transactions.forEach(transaction -> {
+            if (bankAccountMap.containsKey(transaction.getPromotion())) {
+                BankAccount bankAccount = bankAccountMap.get(transaction.getPromotion());
+                bankAccount.setFunds(bankAccount.getFunds() + transaction.getAmount());
+            } else {
+                BankAccount bankAccount = getBankAccount(transaction.getPromotion());
+                bankAccount.setFunds(bankAccount.getFunds() + transaction.getAmount());
+                bankAccountMap.put(transaction.getPromotion(), bankAccount);
+            }
+        });
+
+        Database.insertOrUpdateList(transactions);
+        Database.insertOrUpdateList(new ArrayList<>(bankAccountMap.values()));
+
+        bankAccounts = Database.selectAll(BankAccount.class);
+
+        return List.of();
     }
 }

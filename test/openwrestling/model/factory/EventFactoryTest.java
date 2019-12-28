@@ -71,10 +71,10 @@ public class EventFactoryTest {
     public void processEventView() {
         Event event = TestUtils.basicEvent();
 
-        Event processed = eventFactory.processEventView(event, true);
+//        Event processed = eventFactory.processEventView(event, true);
 
-        assertThat(processed).isNotNull();
-        assertThat(processed.getEventTemplate().getNextDate()).isNotNull();
+//        assertThat(processed).isNotNull();
+//        assertThat(processed.getEventTemplate().getNextDate()).isNotNull();
     }
 
 

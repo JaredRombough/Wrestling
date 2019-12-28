@@ -11,6 +11,7 @@ import openwrestling.model.manager.SegmentManager;
 import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +58,11 @@ public class EventManager implements Serializable {
 
     public List<Event> createEvents(List<Event> events) {
         List saved = Database.insertOrUpdateList(events);
+        List<Segment> segments = events.stream()
+                .filter(event -> CollectionUtils.isNotEmpty(event.getSegments()))
+                .flatMap(event -> event.getSegments().stream())
+                .collect(Collectors.toList());
+        segmentManager.createSegments(segments);
         this.events = Database.selectAll(Event.class);
         return saved;
     }

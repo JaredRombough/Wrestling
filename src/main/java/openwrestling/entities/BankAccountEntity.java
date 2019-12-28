@@ -28,7 +28,4 @@ public class BankAccountEntity extends Entity {
     @DatabaseField
     private long funds;
 
-    @ForeignCollectionField(eager = true)
-    public Collection<TransactionEntity> transactions;
-
 }

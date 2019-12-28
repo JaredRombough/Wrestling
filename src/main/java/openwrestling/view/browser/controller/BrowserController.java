@@ -278,6 +278,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         } catch (Exception ex) {
             logger.log(Level.ERROR, "Error initializing broswerController", ex);
+            throw new RuntimeException(ex);
         }
 
     }

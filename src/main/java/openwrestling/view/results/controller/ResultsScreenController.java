@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import openwrestling.model.controller.NextDayController;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.modelView.Segment;
 import openwrestling.view.utility.GameScreen;
@@ -15,6 +16,7 @@ import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ResultsScreenController extends ControllerBase implements Initializable {
@@ -38,7 +40,6 @@ public class ResultsScreenController extends ControllerBase implements Initializ
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
         nextButton.setText("Next");
-
     }
 
     @FXML
@@ -47,6 +48,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
             if (currentSegmentIndex < this.event.getSegments().size()) {
                 nextSegment();
             } else if (this.event.getAttendance() == 0) {
+                System.out.println("show summ");
                 showSummary();
             } else {
                 mainApp.nextDay();
@@ -76,7 +78,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private void showSummary() {
         gameController.getEventFactory().processEventView(event, false);
-
+        gameController.getNextDayController().processEvents(List.of(event));
         showNextDisplay(event);
     }
 

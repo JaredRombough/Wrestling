@@ -405,6 +405,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         } catch (IOException ex) {
             logger.log(Level.ERROR, ex);
+            throw new RuntimeException(ex);
         }
         return controller;
     }

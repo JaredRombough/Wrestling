@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.segmentEnum.TransactionType;
 
 import java.time.LocalDate;
@@ -22,4 +23,5 @@ public class Transaction extends GameObject {
     private TransactionType type;
     private LocalDate date;
     private BankAccount bankAccount;
+    private Promotion promotion;
 }

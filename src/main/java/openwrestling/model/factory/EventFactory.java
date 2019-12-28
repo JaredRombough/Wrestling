@@ -31,7 +31,6 @@ import openwrestling.model.segmentEnum.ResponseType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
-import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
@@ -103,7 +102,6 @@ public class EventFactory extends Logging {
                     processSegment(event, segment);
                 }
             }
-            segmentManager.createSegments(event.getSegments());
 
             logger.log(Level.DEBUG, "after processSegments for " + event.getName());
 
@@ -113,8 +111,7 @@ public class EventFactory extends Logging {
 
             setEventStats(event, event.getSegments());
 
-            bankAccountManager.getBankAccount(event.getPromotion()).setFunds(
-                    eventManager.calculateGate(event), TransactionType.GATE, event.getDate());
+            event.setGate(eventManager.calculateGate(event));
 
             processContracts(event, event.getSegments());
 

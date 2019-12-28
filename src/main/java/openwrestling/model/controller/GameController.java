@@ -138,6 +138,7 @@ public final class GameController extends Logging implements Serializable {
                 .workerManager(workerManager)
                 .promotionManager(promotionManager)
                 .relationshipManager(relationshipManager)
+                .bankAccountManager(bankAccountManager)
                 .build();
 
         if (randomGame) {
@@ -186,8 +187,6 @@ public final class GameController extends Logging implements Serializable {
             }
             if (!promotionManager.getPlayerPromotion().equals(promotion)) {
                 promotionController.dailyUpdate(promotion);
-
-
             }
         }
 

@@ -2,6 +2,7 @@ package openwrestling.model.controller;
 
 import lombok.Builder;
 import openwrestling.Logging;
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
@@ -10,8 +11,10 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.manager.DateManager;
 import openwrestling.model.manager.RelationshipManager;
+import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.EventUtils;
 import org.apache.logging.log4j.Level;
 
@@ -35,6 +38,7 @@ public class NextDayController extends Logging {
     private PromotionController promotionController;
     private WorkerManager workerManager;
     private RelationshipManager relationshipManager;
+    private BankAccountManager bankAccountManager;
 
     public void nextDay() {
         logger.log(Level.DEBUG, "nextDay");
@@ -44,6 +48,11 @@ public class NextDayController extends Logging {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+        processEvents(events);
+
+    }
+
+    public void processEvents(List<Event> events) {
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
 
         events.stream()
@@ -76,11 +85,22 @@ public class NextDayController extends Logging {
                 .collect(Collectors.toList());
 
 
+        updateBankAccounts(events);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
         eventManager.createEventTemplates(eventTemplates);
         eventManager.createEvents(newEvents);
+    }
 
+    void updateBankAccounts(List<Event> events) {
+        List<Transaction> transactions = events.stream()
+                .map(event -> Transaction.builder()
+                        .amount(event.getGate())
+                        .type(TransactionType.GATE)
+                        .promotion(event.getPromotion())
+                        .build()).collect(Collectors.toList());
+
+        bankAccountManager.insertTransactions(transactions);
     }
 
     private Event eventOnDay(Promotion promotion) {

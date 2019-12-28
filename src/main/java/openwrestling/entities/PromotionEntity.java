@@ -42,6 +42,12 @@ public class PromotionEntity extends Entity {
     @ForeignCollectionField(eager = true)
     public ForeignCollection<ContractEntity> contractEntities;
 
+    @ForeignCollectionField(eager = true)
+    public ForeignCollection<TransactionEntity> transactionEntities;
+
+    @DatabaseField(foreign = true)
+    public BankAccountEntity bankAccount;
+
 
 //    private List<StaffView> allStaff;
 //    private List<EventTemplate> eventTemplates;
