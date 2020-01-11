@@ -2,7 +2,6 @@ package openwrestling.model.gameObjects;
 
 import lombok.Getter;
 import lombok.Setter;
-import openwrestling.model.Injury;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
@@ -40,8 +39,6 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
     private int minimumPopularity = 0;
 
     private final List<Contract> contracts = new ArrayList<>();
-
-    private Injury injury;
 
     private Worker manager;
 

@@ -3,6 +3,7 @@ package openwrestling.model.factory;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
@@ -22,6 +23,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static openwrestling.model.constants.GameConstants.*;
@@ -49,8 +51,7 @@ public class MatchFactory implements Serializable {
     public Segment saveSegment(Segment segment) {
         setSegmentRatings(segment);
 
-        //TODO #187
-        //processInjuries(segmentView);
+        processInjuries(segment);
 
         return segment;
     }
@@ -260,7 +261,18 @@ public class MatchFactory implements Serializable {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
                 int duration = injuryDays - (medicModifier / 10);
                 if (duration > 0) {
-                    injuryManager.createInjury(dateManager.today(), duration, w, segment);
+                    Injury injury = Injury.builder()
+                            .startDate(dateManager.today())
+                            .expiryDate(dateManager.today().plusDays(duration))
+                            .promotion(segment.getPromotion())
+                            .segment(segment)
+                            .worker(w)
+                            .build();
+                    if (CollectionUtils.isEmpty(segment.getInjuries())) {
+                        segment.setInjuries(new ArrayList<>(List.of(injury)));
+                    } else {
+                        segment.getInjuries().add(injury);
+                    }
                 }
             }
         });

@@ -1,7 +1,7 @@
 package openwrestling.model.manager;
 
 import lombok.NoArgsConstructor;
-import openwrestling.model.Injury;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Promotion;

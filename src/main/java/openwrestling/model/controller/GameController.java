@@ -93,7 +93,7 @@ public final class GameController extends Logging implements Serializable {
         entourageManager = new EntourageManager(workerManager);
         tagTeamManager = new TagTeamManager(workerManager);
         segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
-        injuryManager = new InjuryManager(newsManager, workerManager);
+        injuryManager = new InjuryManager(newsManager, workerManager, dateManager);
         contractFactory = new ContractFactory(contractManager);
 
         eventManager = new EventManager(
@@ -139,6 +139,7 @@ public final class GameController extends Logging implements Serializable {
                 .promotionManager(promotionManager)
                 .relationshipManager(relationshipManager)
                 .bankAccountManager(bankAccountManager)
+                .injuryManager(injuryManager)
                 .build();
 
         if (randomGame) {

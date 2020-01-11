@@ -10,6 +10,7 @@ import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Stable;
@@ -67,6 +68,7 @@ public class Segment extends GameObject implements Serializable {
     private ShowType showType;
     private Stable joinStable;
     private SegmentTemplate challengeSegment;
+    private List<Injury> injuries = new ArrayList<>();
 
     private MatchFinish matchFinish = MatchFinish.CLEAN;
     private MatchRule matchRule = MatchRule.DEFAULT;

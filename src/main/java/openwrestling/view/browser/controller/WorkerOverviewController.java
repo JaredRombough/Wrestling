@@ -10,6 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
@@ -281,12 +282,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             entourageListView.getItems().clear();
             entourageListView.getItems().addAll(gameController.getEntourageManager().getEntourage(worker));
 
-            if (worker.getInjury() != null) {
+            Injury workerInjury = gameController.getInjuryManager().getInjury(worker);
+            if (workerInjury != null) {
                 injury.setText(String.format("%s days left",
-                        DAYS.between(gameController.getDateManager().today(), worker.getInjury().getExpiryDate()) + 1));
+                        DAYS.between(gameController.getDateManager().today(), workerInjury.getExpiryDate()) + 1));
             }
-            injury.setVisible(worker.getInjury() != null);
-            injuryLabel.setVisible(worker.getInjury() != null);
+            injury.setVisible(workerInjury != null);
+            injuryLabel.setVisible(workerInjury != null);
 
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);

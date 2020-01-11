@@ -1,40 +1,36 @@
 package openwrestling.model.manager;
 
+import lombok.Getter;
+import openwrestling.database.Database;
+import openwrestling.manager.WorkerManager;
+import openwrestling.model.gameObjects.Injury;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
+import org.apache.commons.lang3.RandomUtils;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import openwrestling.manager.WorkerManager;
-import org.apache.commons.lang3.RandomUtils;
-import openwrestling.model.Injury;
+import java.util.stream.Collectors;
 
 import static openwrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
-
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.gameObjects.Worker;
 
 public class InjuryManager implements Serializable {
 
     private final NewsManager newsManager;
     private final WorkerManager workerManager;
-    private final List<Injury> injuries = new ArrayList();
+    private final DateManager dateManager;
+    @Getter
+    private List<Injury> injuries = new ArrayList<>();
 
-    public InjuryManager(NewsManager newsManager, WorkerManager workerManager) {
+    public InjuryManager(NewsManager newsManager, WorkerManager workerManager, DateManager dateManager) {
         this.newsManager = newsManager;
         this.workerManager = workerManager;
+        this.dateManager = dateManager;
     }
 
     public void dailyUpdate(LocalDate date, Promotion promotion) {
-        for (Injury injury : injuries) {
-            if (injury.getPromotion().equals(promotion) && injury.getExpiryDate().equals(date)) {
-                Worker worker = injury.getWorker();
-                worker.setInjury(null);
-            }
-        }
-        injuries.removeIf(injury -> injury.getExpiryDate().equals(date));
-
         if (randomInjury()) {
             List<Worker> roster = workerManager.selectRoster(promotion);
             int workerIndex = RandomUtils.nextInt(0, roster.size());
@@ -42,33 +38,46 @@ public class InjuryManager implements Serializable {
         }
     }
 
+    public boolean hasInjury(Worker worker) {
+        return injuries.stream().anyMatch(injury -> injury.getWorker().equals(worker));
+    }
+
+    public Injury getInjury(Worker worker) {
+        return injuries.stream()
+                .filter(injury -> injury.getWorker().equals(worker))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void createInjuries(List<Injury> injuries) {
+        Database.insertOrUpdateList(injuries);
+        update();
+    }
+
+
+    public void createRandomInjury(Worker worker, LocalDate date, Promotion promotion) {
+        int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
+        Injury injury = Injury.builder()
+                .startDate(date)
+                .expiryDate(date.plusDays(injuryDays))
+                .worker(worker)
+                .promotion(promotion)
+                .build();
+        createInjuries(List.of(injury));
+
+        newsManager.addRandomInjuryNewsItem(injury);
+    }
+
+    private void update() {
+        this.injuries = (List<Injury>) Database.selectAll(Injury.class).stream()
+                .filter(injury -> ((Injury) injury).getExpiryDate().isAfter(dateManager.today()))
+                .collect(Collectors.toList());
+    }
+
+
     private boolean randomInjury() {
         return RandomUtils.nextInt(0, 1000) == 1;
     }
 
-    /**
-     * @return the injuries
-     */
-    public List<Injury> getInjuries() {
-        return injuries;
-    }
-
-    public void createInjury(LocalDate startDate, int duration, Worker worker, Segment segment) {
-        Injury injury = new Injury(startDate, startDate.plusDays(duration), worker, segment.getPromotion());
-        addInjury(injury);
-        newsManager.addMatchInjuryNewsItem(injury, segment.getEvent());
-    }
-
-    public void createRandomInjury(Worker worker, LocalDate date, Promotion promotion) {
-        int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
-        Injury injury = new Injury(date, date.plusDays(injuryDays), worker, promotion);
-        newsManager.addRandomInjuryNewsItem(injury);
-        addInjury(injury);
-    }
-
-    private void addInjury(Injury injury) {
-        injuries.add(injury);
-        injury.getWorker().setInjury(injury);
-    }
 
 }

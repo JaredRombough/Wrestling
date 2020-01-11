@@ -693,8 +693,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (!(segmentItem instanceof Worker)) {
             return false;
         }
-        return ((Worker) segmentItem).getInjury() != null;
-
+        return gameController.getInjuryManager().hasInjury((Worker) segmentItem);
     }
 
     /**

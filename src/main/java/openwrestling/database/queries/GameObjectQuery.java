@@ -1,4 +1,4 @@
-package openwrestling.database;
+package openwrestling.database.queries;
 
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;

@@ -10,6 +10,7 @@ import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import openwrestling.database.queries.GameObjectQuery;
 import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.BroadcastTeamMemberEntity;
 import openwrestling.entities.ContractEntity;
@@ -17,6 +18,7 @@ import openwrestling.entities.Entity;
 import openwrestling.entities.EntourageMemberEntity;
 import openwrestling.entities.EventEntity;
 import openwrestling.entities.EventTemplateEntity;
+import openwrestling.entities.InjuryEntity;
 import openwrestling.entities.MatchTitleEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
 import openwrestling.entities.PromotionEntity;
@@ -44,6 +46,7 @@ import openwrestling.model.gameObjects.EntourageMember;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
@@ -105,6 +108,7 @@ public class Database {
         put(Event.class, EventEntity.class);
         put(Segment.class, SegmentEntity.class);
         put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
+        put(Injury.class, InjuryEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -411,7 +415,8 @@ public class Database {
                     SegmentTeamEntourageEntity.class,
                     SegmentTeamWorkerEntity.class,
                     MatchTitleEntity.class,
-                    BroadcastTeamMemberEntity.class);
+                    BroadcastTeamMemberEntity.class,
+                    InjuryEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

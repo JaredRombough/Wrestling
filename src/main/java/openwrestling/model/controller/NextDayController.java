@@ -8,14 +8,17 @@ import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.manager.DateManager;
+import openwrestling.model.manager.InjuryManager;
 import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.EventUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class NextDayController extends Logging {
     private WorkerManager workerManager;
     private RelationshipManager relationshipManager;
     private BankAccountManager bankAccountManager;
+    private InjuryManager injuryManager;
 
     public void nextDay() {
         logger.log(Level.DEBUG, "nextDay");
@@ -54,10 +58,15 @@ public class NextDayController extends Logging {
 
     public void processEvents(List<Event> events) {
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
+        List<Injury> injuries = new ArrayList<>();
 
         events.stream()
                 .flatMap(event -> event.getSegments().stream())
                 .forEach(segment -> {
+                    if (CollectionUtils.isNotEmpty(segment.getInjuries())) {
+                        injuries.addAll(segment.getInjuries());
+                    }
+
                     segment.getWorkers().forEach(worker -> {
                         if (!relationships.containsKey(worker)) {
                             relationships.put(worker, relationshipManager.getMoraleRelationship(worker, segment.getPromotion()));
@@ -90,6 +99,7 @@ public class NextDayController extends Logging {
         eventManager.createEvents(events);
         eventManager.createEventTemplates(eventTemplates);
         eventManager.createEvents(newEvents);
+        injuryManager.createInjuries(injuries);
     }
 
     void updateBankAccounts(List<Event> events) {
