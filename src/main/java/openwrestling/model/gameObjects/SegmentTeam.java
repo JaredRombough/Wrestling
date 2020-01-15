@@ -1,12 +1,10 @@
-package openwrestling.model.modelView;
+package openwrestling.model.gameObjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.gameObjects.GameObject;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.ResponseType;

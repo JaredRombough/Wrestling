@@ -15,10 +15,10 @@ import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.InjuryManager;
+import openwrestling.manager.InjuryManager;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.SegmentManager;
+import openwrestling.manager.RelationshipManager;
+import openwrestling.manager.SegmentManager;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.segmentEnum.AngleType;

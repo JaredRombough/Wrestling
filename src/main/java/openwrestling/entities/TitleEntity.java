@@ -45,4 +45,7 @@ public class TitleEntity extends Entity {
 
     @ForeignCollectionField
     private Collection<SegmentEntity> matches;
+
+    @ForeignCollectionField
+    private Collection<SegmentTemplateEntity> segmentTemplateEntities;
 }

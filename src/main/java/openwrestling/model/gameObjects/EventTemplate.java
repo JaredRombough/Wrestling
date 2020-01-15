@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentTemplate;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iRosterSplit;
 import openwrestling.model.segmentEnum.EventBroadcast;
@@ -49,8 +48,6 @@ public class EventTemplate extends GameObject implements Serializable, iDate, Se
             RandomUtils.nextInt(0, 2));
     @Builder.Default
     private int month = 1;
-    @Builder.Default
-    private List<SegmentTemplate> segmentTemplates = new ArrayList<>();
     private RosterSplit rosterSplit;
 
 

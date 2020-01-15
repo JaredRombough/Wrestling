@@ -1,4 +1,4 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
@@ -6,6 +6,8 @@ import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.manager.DateManager;
+import openwrestling.model.manager.NewsManager;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;

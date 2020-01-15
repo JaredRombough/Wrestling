@@ -1,4 +1,4 @@
-package openwrestling.model.modelView;
+package openwrestling.model.gameObjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,17 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentTemplate;
-import openwrestling.model.gameObjects.BroadcastTeamMember;
-import openwrestling.model.gameObjects.Event;
-import openwrestling.model.gameObjects.GameObject;
-import openwrestling.model.gameObjects.Injury;
-import openwrestling.model.gameObjects.MoraleRelationship;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
 import openwrestling.model.segmentEnum.MatchFinish;
@@ -27,6 +16,7 @@ import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.SegmentValidation;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -98,13 +88,15 @@ public class Segment extends GameObject implements Serializable {
             segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titles);
-        broadcastTeam.forEach(broadcastTeamMember -> {
-            if (broadcastTeamMember.getWorker() != null) {
-                segmentItems.add(broadcastTeamMember.getWorker());
-            } else if (broadcastTeamMember.getStaffMember() != null) {
-                segmentItems.add(broadcastTeamMember.getStaffMember());
-            }
-        });
+        if(CollectionUtils.isNotEmpty(broadcastTeam)) {
+            broadcastTeam.forEach(broadcastTeamMember -> {
+                if (broadcastTeamMember.getWorker() != null) {
+                    segmentItems.add(broadcastTeamMember.getWorker());
+                } else if (broadcastTeamMember.getStaffMember() != null) {
+                    segmentItems.add(broadcastTeamMember.getStaffMember());
+                }
+            });
+        }
         segmentItems.add(referee);
         return segmentItems;
     }

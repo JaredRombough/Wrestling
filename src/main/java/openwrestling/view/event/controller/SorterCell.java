@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
-import openwrestling.model.manager.SegmentManager;
+import openwrestling.manager.SegmentManager;
 import openwrestling.model.segmentEnum.SegmentValidation;
 import openwrestling.view.utility.LocalDragboard;
 import openwrestling.view.utility.ViewUtils;

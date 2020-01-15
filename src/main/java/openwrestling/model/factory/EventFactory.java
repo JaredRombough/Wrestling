@@ -9,7 +9,7 @@ import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.MoraleRelationship;
@@ -19,10 +19,10 @@ import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.RelationshipManager;
-import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.manager.RelationshipManager;
+import openwrestling.manager.SegmentManager;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -105,9 +105,6 @@ public class EventFactory extends Logging {
 
             logger.log(Level.DEBUG, "after processSegments for " + event.getName());
 
-            //TODO delete
-            clearOldSegmentTemplates(event);
-
 
             setEventStats(event, event.getSegments());
 
@@ -179,14 +176,6 @@ public class EventFactory extends Logging {
         event.setEventTemplate(eventTemplate);
         event.setDefaultDuration(eventTemplate.getDefaultDuration());
         return event;
-    }
-
-    private void clearOldSegmentTemplates(Event event) {
-        List<SegmentTemplate> templatesForEvent = event.getEventTemplate().getSegmentTemplates().stream()
-                .filter(segmentTemplate -> segmentTemplate.getSourceEvent().equals(event))
-                .collect(Collectors.toList());
-        event.getEventTemplate().getSegmentTemplates().clear();
-        event.getEventTemplate().getSegmentTemplates().addAll(templatesForEvent);
     }
 
     private void setEventStats(Event event, List<Segment> segments) {
@@ -297,9 +286,8 @@ public class EventFactory extends Logging {
             List<SegmentTeam> teams = segment.getChallengeSegment().getSegmentTeams().stream()
                     .filter(team -> team.getType().equals(TeamType.CHALLENGER) || ResponseType.YES.equals(team.getResponse()))
                     .collect(Collectors.toList());
-            if (teams.size() > 1) {
-                segment.getChallengeSegment().getEventTemplate().getSegmentTemplates().add(segment.getChallengeSegment());
-            }
+            if (teams.size() < 2) {
+                segment.setChallengeSegment(null);}
         }
     }
 

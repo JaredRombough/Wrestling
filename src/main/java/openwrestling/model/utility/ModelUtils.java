@@ -1,13 +1,13 @@
 package openwrestling.model.utility;
 
 import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;

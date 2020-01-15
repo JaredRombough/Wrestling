@@ -11,11 +11,15 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.InjuryManager;
-import openwrestling.model.manager.RelationshipManager;
+import openwrestling.manager.InjuryManager;
+import openwrestling.manager.RelationshipManager;
+import openwrestling.model.segmentEnum.AngleType;
+import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.EventUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,6 +63,7 @@ public class NextDayController extends Logging {
     public void processEvents(List<Event> events) {
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
         List<Injury> injuries = new ArrayList<>();
+        List<SegmentTemplate> segmentTemplates = new ArrayList<>();
 
         events.stream()
                 .flatMap(event -> event.getSegments().stream())
@@ -100,6 +105,7 @@ public class NextDayController extends Logging {
         eventManager.createEventTemplates(eventTemplates);
         eventManager.createEvents(newEvents);
         injuryManager.createInjuries(injuries);
+
     }
 
     void updateBankAccounts(List<Event> events) {

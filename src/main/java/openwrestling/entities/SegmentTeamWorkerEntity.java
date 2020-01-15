@@ -19,7 +19,7 @@ public class SegmentTeamWorkerEntity extends Entity {
     @DatabaseField(generatedId = true)
     private long segmentTeamWorkerID;
 
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private WorkerEntity workerEntity;
 
     @DatabaseField(foreign = true)

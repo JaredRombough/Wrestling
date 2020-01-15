@@ -1,4 +1,4 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;

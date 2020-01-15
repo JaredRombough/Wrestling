@@ -5,10 +5,9 @@ import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.SegmentManager;
-import openwrestling.model.modelView.Segment;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,15 +55,32 @@ public class EventManager implements Serializable {
         return saved;
     }
 
-    public List<Event> createEvents(List<Event> events) {
-        List saved = Database.insertOrUpdateList(events);
-        List<Segment> segments = events.stream()
-                .filter(event -> CollectionUtils.isNotEmpty(event.getSegments()))
-                .flatMap(event -> event.getSegments().stream())
-                .collect(Collectors.toList());
-        segmentManager.createSegments(segments);
+
+    public void createEvents(List<Event> events) {
+        List<Event> eventsWithSegments = new ArrayList<>();
+        List<Event> eventsWithoutSegments = new ArrayList<>();
+        List<Segment> segmentsToSave = new ArrayList<>();
+
+        events.forEach(event -> {
+            if (CollectionUtils.isNotEmpty(event.getSegments())) {
+                eventsWithSegments.add(event);
+            } else {
+                eventsWithoutSegments.add(event);
+            }
+        });
+
+        Database.insertOrUpdateList(eventsWithoutSegments);
+
+        eventsWithSegments.forEach(event -> {
+            List<Segment> segments = event.getSegments();
+            Event savedEvent = Database.insertOrUpdateList(List.of(event)).get(0);
+            segments.forEach(segment -> segment.setEvent(savedEvent));
+            segmentsToSave.addAll(segments);
+        });
+
+        segmentManager.createSegments(segmentsToSave);
         this.events = Database.selectAll(Event.class);
-        return saved;
+        this.eventTemplates = Database.selectAll(EventTemplate.class);
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {

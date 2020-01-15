@@ -1,23 +1,27 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.manager.StableManager;
-import openwrestling.manager.TagTeamManager;
+import openwrestling.database.queries.SegmentQuery;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.manager.DateManager;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.SegmentStringUtils;
 import openwrestling.view.utility.ViewUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
@@ -34,26 +38,56 @@ import static openwrestling.model.utility.ModelUtils.slashShortNames;
 public class SegmentManager implements Serializable {
 
     private List<Segment> segments;
+    private List<SegmentTemplate> segmentTemplates;
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
 
     public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
         segments = new ArrayList<>();
+        segmentTemplates = new ArrayList<>();
         this.dateManager = dateManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
     }
 
+    public void deleteSegmentTemplates(EventTemplate eventTemplate) {
+        getSegmentTemplates(eventTemplate)
+                .forEach(segmentTemplate ->
+                        Database.deleteByID(SegmentTemplate.class, segmentTemplate.getSegmentTemplateID())
+                );
+        this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+    }
+
     public List<Segment> createSegments(List<Segment> segments) {
+        List<SegmentTemplate> segmentTemplates = segments.stream()
+                .filter(segment -> SegmentType.ANGLE.equals(segment.getSegmentType()) &&
+                        AngleType.CHALLENGE.equals(segment.getAngleType()) &&
+                        !ShowType.TONIGHT.equals(segment.getShowType()) &&
+                        segment.getChallengeSegment() != null)
+                .map(Segment::getChallengeSegment)
+                .collect(Collectors.toList());
+
+        Database.insertOrUpdateList(segmentTemplates);
+
         List<Segment> savedSegments = Database.insertOrUpdateList(segments);
-        this.segments.addAll(savedSegments);
+
+        this.segments = Database.querySelect(new SegmentQuery());
+        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
+            this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+        }
         return savedSegments;
     }
 
     public List<Segment> getSegments(Event event) {
         return segments.stream()
                 .filter(segment -> segment.getEvent().getEventID() == event.getEventID())
+                .collect(Collectors.toList());
+    }
+
+    public List<SegmentTemplate> getSegmentTemplates(EventTemplate eventTemplate) {
+        return segmentTemplates.stream()
+                .filter(segment -> segment.getEventTemplate().getEventTemplateID() == eventTemplate.getEventTemplateID())
                 .collect(Collectors.toList());
     }
 

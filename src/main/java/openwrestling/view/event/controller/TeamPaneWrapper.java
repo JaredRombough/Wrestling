@@ -18,7 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.SegmentTeam;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.ResponseType;

@@ -28,6 +28,7 @@ import openwrestling.entities.SegmentEntity;
 import openwrestling.entities.SegmentTeamEntity;
 import openwrestling.entities.SegmentTeamEntourageEntity;
 import openwrestling.entities.SegmentTeamWorkerEntity;
+import openwrestling.entities.SegmentTemplateEntity;
 import openwrestling.entities.StableEntity;
 import openwrestling.entities.StableWorkerEntity;
 import openwrestling.entities.StaffContractEntity;
@@ -50,6 +51,8 @@ import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
@@ -60,7 +63,6 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.modelView.Segment;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -85,8 +87,17 @@ public class Database {
     private static MapperFactory getMapperFactory() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
+        mapperFactory.classMap(SegmentTemplateEntity.class, SegmentTemplate.class)
+                .byDefault()
+                .customize(new SegmentTemplateMapper()
+                ).register();
+        mapperFactory.classMap(SegmentEntity.class, Segment.class)
+                .byDefault()
+                .customize(new SegmentMapper()
+                ).register();
         return mapperFactory;
     }
+
 
     public static Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
         put(Promotion.class, PromotionEntity.class);
@@ -109,6 +120,7 @@ public class Database {
         put(Segment.class, SegmentEntity.class);
         put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
         put(Injury.class, InjuryEntity.class);
+        put(SegmentTemplate.class, SegmentTemplateEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -169,6 +181,7 @@ public class Database {
                     } else {
                         dao.update(entity);
                     }
+                    insertOrUpdateChildList(entity.childrenToInsert(), connectionSource);
                 }
                 return null;
             });
@@ -199,10 +212,22 @@ public class Database {
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
 
-            MapperFacade mapper = getMapperFactory().getMapperFacade();
             List<? extends Entity> entities = dao.queryForAll();
             entities.forEach(Entity::selectChildren);
             return entitiesToGameObjects(entities, sourceClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> List querySelect(GameObjectQuery query) {
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+
+            List<? extends Entity> entities = query.getQueryBuilder(connectionSource).query();
+            entities.forEach(Entity::selectChildren);
+            return entitiesToGameObjects(entities, query.sourceClass());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -289,7 +314,7 @@ public class Database {
 
         return gameObjects.stream()
                 .map(gameObject -> {
-                    Object entity = null;
+                    Object entity;
                     try {
                         entity = targetClass.getConstructor().newInstance();
                     } catch (Exception e) {
@@ -298,24 +323,8 @@ public class Database {
                         throw new RuntimeException(e);
                     }
 
-                    if (entity == null) {
-                        return null;
-                    }
-//
-//                    for (Field field : entity.getClass().getDeclaredFields()) {
-//                        if (field.isAnnotationPresent(ForeignCollectionField.class)) {
-//                            try {
-//
-//                                field.set(entity, dao.getEmptyForeignCollection(field.getName()));
-//
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                        }
-//                    }
                     Object result = boundedMapper.map(gameObject, entity);
-
+                    getMapperFactory().getMapperFacade().map(gameObject, entity);
                     return result;
                 })
                 .map(targetClass::cast)
@@ -331,7 +340,7 @@ public class Database {
 
         return entities.stream()
                 .map(entity -> {
-                    Object gameObject = null;
+                    Object gameObject;
                     try {
                         gameObject = targetClass.getConstructor().newInstance();
                     } catch (Exception e) {
@@ -339,25 +348,7 @@ public class Database {
                         throw new RuntimeException(e);
                     }
 
-                    if (gameObject == null) {
-                        return null;
-                    }
-//
-//                    for (Field field : entity.getClass().getDeclaredFields()) {
-//                        if (field.isAnnotationPresent(ForeignCollectionField.class)) {
-//                            try {
-//
-//                                field.set(entity, dao.getEmptyForeignCollection(field.getName()));
-//
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                        }
-//                    }
-                    Object result = boundedMapper.map(entity, gameObject);
-
-                    return result;
+                    return boundedMapper.map(entity, gameObject);
                 })
                 .map(targetClass::cast)
                 .collect(Collectors.toList());
@@ -416,7 +407,8 @@ public class Database {
                     SegmentTeamWorkerEntity.class,
                     MatchTitleEntity.class,
                     BroadcastTeamMemberEntity.class,
-                    InjuryEntity.class);
+                    InjuryEntity.class,
+                    SegmentTemplateEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

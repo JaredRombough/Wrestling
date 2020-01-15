@@ -29,13 +29,13 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import openwrestling.MainApp;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.SegmentTemplate;
 import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.Segment;
-import openwrestling.model.modelView.SegmentTeam;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.SegmentValidation;
@@ -171,16 +171,18 @@ public class EventScreenController extends ControllerBase implements Initializab
     private boolean handleWorkers() {
         StringBuilder objectionString = new StringBuilder();
 
-        getSegments().stream().forEach(segment -> {
-            List<Worker> objectors = getMatchObjectors(segment);
-            if (!objectors.isEmpty()) {
-                objectionString.append(String.format("%s %s not happy about losing their match against %s.",
-                        ModelUtils.andItemsLongName(objectors),
-                        objectors.size() > 1 ? "are" : "is",
-                        ModelUtils.andItemsLongName(segment.getWinner().getWorkers())));
-                objectionString.append("\n\n");
-            }
-        });
+        getSegments().stream()
+                .filter(segment -> SegmentType.MATCH.equals(segment.getSegmentType()))
+                .forEach(segment -> {
+                    List<Worker> objectors = getMatchObjectors(segment);
+                    if (!objectors.isEmpty()) {
+                        objectionString.append(String.format("%s %s not happy about losing their match against %s.",
+                                ModelUtils.andItemsLongName(objectors),
+                                objectors.size() > 1 ? "are" : "is",
+                                ModelUtils.andItemsLongName(segment.getWinner().getWorkers())));
+                        objectionString.append("\n\n");
+                    }
+                });
 
         return objectionString.length() == 0 || ViewUtils.generateConfirmationDialogue(
                 "Run the event anyway?",
@@ -253,13 +255,13 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             }
         }
-        for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
+        for (SegmentTemplate segmentTemplate : gameController.getSegmentManager().getSegmentTemplates(currentEvent.getEventTemplate())) {
             Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
             if (!challengeForTonightIsPresent(challengeMatch, 0)) {
                 warnings.append(String.format("%s\nA challenge for this match was made and accepted on %s at %s, but it is not present.\n",
                         gameController.getSegmentManager().getVsMatchString(challengeMatch),
-                        segmentTemplate.getSourceEvent().getDate().toString(),
-                        segmentTemplate.getSourceEvent().getName()));
+                        segmentTemplate.getSourceEventDate().toString(),
+                        segmentTemplate.getSourceEventName()));
             }
         }
         return warnings.toString();
@@ -288,9 +290,12 @@ public class EventScreenController extends ControllerBase implements Initializab
         segmentPanes.clear();
         segmentPaneControllers.clear();
 
-        for (SegmentTemplate segmentTemplate : currentEvent.getEventTemplate().getSegmentTemplates()) {
-            addSegment(ModelUtils.getSegmentFromTeams(segmentTemplate.getSegmentTeams()));
-        }
+        gameController.getSegmentManager().getSegmentTemplates(currentEvent.getEventTemplate())
+                .forEach(segmentTemplate ->
+                        addSegment(ModelUtils.getSegmentFromTeams(segmentTemplate.getSegmentTeams()))
+                );
+        gameController.getSegmentManager().deleteSegmentTemplates(currentEvent.getEventTemplate());
+
 
         for (int i = 0; i < defaultSegments; i++) {
             addSegment();

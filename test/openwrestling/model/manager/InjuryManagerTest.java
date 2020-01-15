@@ -3,6 +3,7 @@ package openwrestling.model.manager;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.InjuryManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;

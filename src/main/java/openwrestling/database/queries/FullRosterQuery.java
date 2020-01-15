@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import openwrestling.entities.ContractEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 
 import java.sql.SQLException;
 
@@ -15,6 +16,11 @@ import java.sql.SQLException;
 public class FullRosterQuery extends GameObjectQuery {
 
     private Promotion promotion;
+
+    @Override
+    public Class sourceClass() {
+        return Worker.class;
+    }
 
     @Override
     public QueryBuilder getQueryBuilder(ConnectionSource connectionSource) throws SQLException {

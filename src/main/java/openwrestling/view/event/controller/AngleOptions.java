@@ -2,7 +2,7 @@ package openwrestling.view.event.controller;
 
 import lombok.Getter;
 import lombok.Setter;
-import openwrestling.model.SegmentTemplate;
+import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;

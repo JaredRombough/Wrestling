@@ -65,4 +65,7 @@ public class EventTemplateEntity extends Entity {
 
     @ForeignCollectionField
     private Collection<EventEntity> events;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<SegmentTemplateEntity> segmentTemplates;
 }

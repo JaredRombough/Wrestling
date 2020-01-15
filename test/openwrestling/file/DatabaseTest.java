@@ -10,7 +10,7 @@ import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.RelationshipManager;
+import openwrestling.manager.RelationshipManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;

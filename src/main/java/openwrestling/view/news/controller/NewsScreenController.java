@@ -25,7 +25,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.logging.log4j.LogManager;
 import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.modelView.Segment;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.segmentEnum.NewsFilter;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;

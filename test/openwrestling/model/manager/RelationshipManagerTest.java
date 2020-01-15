@@ -5,6 +5,7 @@ import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.MoraleRelationship;

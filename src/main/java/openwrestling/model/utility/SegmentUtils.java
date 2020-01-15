@@ -1,8 +1,8 @@
 package openwrestling.model.utility;
 
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.modelView.SegmentTeam;
-import openwrestling.model.modelView.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;

@@ -91,6 +91,7 @@ public class SegmentEntity extends Entity {
 //    private SegmentTemplate challengeSegment;
 
     public List<? extends Entity> childrenToInsert() {
+        teams.forEach(team -> team.setSegmentEntity(this));
         return new ArrayList<>(teams);
     }
 }

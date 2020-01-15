@@ -11,7 +11,6 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.manager.NewsManager;
-import openwrestling.model.manager.RelationshipManager;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import org.apache.logging.log4j.Level;

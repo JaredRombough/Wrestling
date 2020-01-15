@@ -33,6 +33,9 @@ public class SegmentTeamEntity extends Entity {
     @DatabaseField(foreign = true)
     private SegmentEntity segmentEntity;
 
+    @DatabaseField(foreign = true)
+    private SegmentTemplateEntity segmentTemplateEntity;
+
     private Collection<WorkerEntity> workers;
 
     @ForeignCollectionField
