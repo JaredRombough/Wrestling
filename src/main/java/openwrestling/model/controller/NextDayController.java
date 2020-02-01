@@ -63,7 +63,6 @@ public class NextDayController extends Logging {
     public void processEvents(List<Event> events) {
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
         List<Injury> injuries = new ArrayList<>();
-        List<SegmentTemplate> segmentTemplates = new ArrayList<>();
 
         events.stream()
                 .flatMap(event -> event.getSegments().stream())

@@ -90,7 +90,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("Open Wrestling " + VERSION);
         primaryStage.setMinWidth(WINDOW_MIN_WIDTH);
         primaryStage.setMinHeight(WINDOW_MIN_HEIGHT);
-        primaryStage.setResizable(false);
+        //primaryStage.setResizable(false);
 
         ChangeListener<Number> stageHeightListener = ((observable, oldValue, newValue) -> {
             currentStageHeight = newValue.doubleValue();
@@ -110,6 +110,7 @@ public class MainApp extends Application {
 
         primaryStage.widthProperty().addListener(stageWidthListener);
         primaryStage.heightProperty().addListener(stageHeightListener);
+        primaryStage.setMaximized(true);
 
         showTitleScreen();
 

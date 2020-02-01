@@ -1,14 +1,16 @@
 package openwrestling.model.manager;
 
 import lombok.NoArgsConstructor;
-import openwrestling.model.gameObjects.Injury;
+import openwrestling.database.Database;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
+import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;
@@ -25,7 +27,7 @@ import static openwrestling.model.constants.Words.BODY_PARTS;
 @NoArgsConstructor
 public class NewsManager implements Serializable {
 
-    private final List<NewsItem> newsItems = new ArrayList<>();
+    private List<NewsItem> newsItems = new ArrayList<>();
     private final Map<LocalDate, NewsItem> newsItemByDateMap = new HashMap();
     private final Map<Object, Map<LocalDate, List<NewsItem>>> newsItemBySegmentItemMap = new HashMap();
 
@@ -37,66 +39,66 @@ public class NewsManager implements Serializable {
     }
 
     public void addWelcomeNewsItem(Promotion promotion) {
-        NewsItem newsItem = new NewsItem(
-                "Welcome to Open Wrestling",
-                "Have fun!",
-                LocalDate.MIN,
-                promotion);
-        addNews(newsItem);
+        addNews(NewsItem.builder()
+                .headline("Welcome to Open Wrestling")
+                .summary("Have fun!")
+                .date(LocalDate.MIN)
+                .promotions(List.of(promotion))
+                .build());
     }
 
     public void addJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
         List<Worker> workers = new ArrayList<>(winners);
         workers.add(worker);
-        NewsItem newsItem = new NewsItem(
-                String.format("%s unhappy with loss", worker.getShortName()),
-                String.format("%s is unhappy with %s after their loss to %s",
+        addNews(NewsItem.builder()
+                .headline(String.format("%s unhappy with loss", worker.getShortName()))
+                .summary(String.format("%s is unhappy with %s after their loss to %s",
                         worker.getLongName(),
                         promotion,
-                        ModelUtils.andItemsLongName(winners)),
-                date,
-                promotion,
-                workers);
-        addNews(newsItem);
+                        ModelUtils.andItemsLongName(winners)))
+                .date(date)
+                .promotions(List.of(promotion))
+                .workers(workers)
+                .build());
     }
 
     public void addMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
-        NewsItem newsItem = new NewsItem(
-                String.format("%s loses morale", contract.getWorker().getShortName()),
-                String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
+        addNews(NewsItem.builder()
+                .headline(String.format("%s loses morale", contract.getWorker().getShortName()))
+                .summary(String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
                         contract.getWorker().getLongName(),
                         contract.getPromotion().getName(),
                         daysBetween,
-                        penalty),
-                date,
-                contract.getPromotion(),
-                contract.getWorker()
-        );
-        addNews(newsItem);
+                        penalty))
+                .date(date)
+                .promotions(List.of(contract.getPromotion()))
+                .workers(List.of(contract.getWorker()))
+                .build());
     }
 
     public void addTrainingNewsItem(Worker worker, StaffMember trainer, Promotion promotion, String stat, LocalDate date) {
-        NewsItem newsItem = new NewsItem(
-                String.format("%s training", worker.getLongName()),
-                String.format("%s increased %s working with %s trainer %s.",
-                        worker.toString(), stat, promotion.getShortName(), trainer.toString()),
-                date,
-                promotion,
-                worker);
-        addNews(newsItem);
+        addNews(NewsItem.builder()
+                .headline(String.format("%s training", worker.getLongName()))
+                .summary(String.format("%s increased %s working with %s trainer %s.",
+                        worker.toString(), stat, promotion.getShortName(), trainer.toString()))
+                .date(date)
+                .promotions(List.of(promotion))
+                .workers(List.of(worker))
+                .build());
     }
 
     public void addMatchInjuryNewsItem(Injury injury, Event event) {
-        NewsItem newsItem = new NewsItem(String.format("%s injured", injury.getWorker().getLongName()),
-                String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
+        addNews(NewsItem.builder()
+                .headline(String.format("%s injured", injury.getWorker().getLongName()))
+                .summary(String.format("%s was injured in a match at %s on %s. They are expected to be out until %s.",
                         injury.getWorker().getLongName(),
                         event.toString(),
                         injury.getStartDate().toString(),
-                        injury.getExpiryDate().toString()),
-                injury.getStartDate(),
-                injury.getPromotion(),
-                injury.getWorker());
-        addNews(newsItem);
+                        injury.getExpiryDate().toString()))
+                .date(injury.getStartDate())
+                .promotions(List.of(injury.getPromotion()))
+                .workers(List.of(injury.getWorker()))
+                .build());
     }
 
     public void addRandomInjuryNewsItem(Injury injury) {
@@ -109,8 +111,13 @@ public class NewsManager implements Serializable {
                 ACTIVITIES.get(index1).toLowerCase(),
                 injury.getExpiryDate(),
                 injury.getWorker());
-        NewsItem newsItem = new NewsItem(headline, body, injury.getStartDate(), injury.getPromotion());
-        addNews(newsItem);
+        addNews(NewsItem.builder()
+                .headline(headline)
+                .summary(body)
+                .date(injury.getStartDate())
+                .promotions(List.of(injury.getPromotion()))
+                .workers(List.of(injury.getWorker()))
+                .build());
     }
 
     public List<NewsItem> getNews(Object key, LocalDate startDate, LocalDate endDate) {
@@ -127,9 +134,14 @@ public class NewsManager implements Serializable {
     }
 
     private void addNews(NewsItem newsItem) {
-        newsItems.add(newsItem);
-        newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
-        newsItem.getWorkers().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
+        NewsItem inserted = Database.insertOrUpdateList(List.of(newsItem)).get(0);
+        if(CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
+            newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, inserted));
+        }
+        if(CollectionUtils.isNotEmpty(newsItem.getWorkers())) {
+            newsItem.getWorkers().forEach(promotion -> addSegmentItemNews(promotion, inserted));
+        }
+        newsItems.addAll(List.of(inserted));
     }
 
     private void addSegmentItemNews(Object key, NewsItem newsItem) {

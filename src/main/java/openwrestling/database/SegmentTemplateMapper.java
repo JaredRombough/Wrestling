@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SegmentTemplateMapper extends CustomMapper<SegmentTemplateEntity, SegmentTemplate> {
-    public void mapAtoB(SegmentTemplateEntity a, SegmentTemplate b, MappingContext context) {
+    public void mapAtoB(SegmentTemplateEntity segmentTemplateEntity, SegmentTemplate segmentTemplate, MappingContext context) {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
-        mapperFactory.getMapperFacade().map(b, SegmentEntity.class);
+        mapperFactory.getMapperFacade().map(segmentTemplate, SegmentEntity.class);
 
-        if (CollectionUtils.isNotEmpty(b.getSegmentTeams()) && CollectionUtils.isEmpty(b.getSegmentTeams().get(0).getWorkers())) {
-            b.setSegmentTeams(
-                    a.getSegmentTeams().stream().map(segmentTeamEntity -> {
+        if (CollectionUtils.isNotEmpty(segmentTemplate.getSegmentTeams()) && CollectionUtils.isEmpty(segmentTemplate.getSegmentTeams().get(0).getWorkers())) {
+            segmentTemplate.setSegmentTeams(
+                    segmentTemplateEntity.getSegmentTeams().stream().map(segmentTeamEntity -> {
                         List<Worker> workers = segmentTeamEntity.getSegmentTeamWorkers().stream()
                                 .map(segmentTeamWorkerEntity -> {
                                     WorkerEntity workerEntity = segmentTeamWorkerEntity.getWorkerEntity();

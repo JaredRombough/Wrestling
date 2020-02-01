@@ -7,6 +7,10 @@ public abstract class Entity {
         return List.of();
     }
 
+    public List<? extends Entity> childrenToInsert2() {
+        return List.of();
+    }
+
     public void selectChildren() {
     }
 }

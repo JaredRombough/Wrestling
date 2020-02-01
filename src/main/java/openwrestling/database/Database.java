@@ -21,6 +21,9 @@ import openwrestling.entities.EventTemplateEntity;
 import openwrestling.entities.InjuryEntity;
 import openwrestling.entities.MatchTitleEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
+import openwrestling.entities.NewsItemEntity;
+import openwrestling.entities.NewsItemPromotionEntity;
+import openwrestling.entities.NewsItemWorkerEntity;
 import openwrestling.entities.PromotionEntity;
 import openwrestling.entities.RosterSplitEntity;
 import openwrestling.entities.RosterSplitWorkerEntity;
@@ -41,6 +44,7 @@ import openwrestling.entities.TitleReignWorkerEntity;
 import openwrestling.entities.TransactionEntity;
 import openwrestling.entities.WorkerEntity;
 import openwrestling.entities.WorkerRelationshipEntity;
+import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EntourageMember;
@@ -121,6 +125,7 @@ public class Database {
         put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
         put(Injury.class, InjuryEntity.class);
         put(SegmentTemplate.class, SegmentTemplateEntity.class);
+        put(NewsItem.class, NewsItemEntity.class);
     }};
 
     public static String createNewDatabase(String fileName) {
@@ -258,13 +263,29 @@ public class Database {
             if (gameObjects.isEmpty()) {
                 return gameObjects;
             }
+            long start = System.currentTimeMillis();
             logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
                     gameObjects.size(),
                     gameObjects.get(0).getClass())
             );
             List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+            logger.log(Level.DEBUG, String.format("gameObjectsToEntities took %d ms",
+                    System.currentTimeMillis() - start)
+            );
+            long start2 = System.currentTimeMillis();
             List<? extends Entity> saved = insertOrUpdateEntityList(entities);
-            return entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
+            logger.log(Level.DEBUG, String.format("insertOrUpdateEntityList took %d ms",
+                    System.currentTimeMillis() - start2)
+            );
+            long start3 = System.currentTimeMillis();
+            List updatedGameObjects = entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
+            logger.log(Level.DEBUG, String.format("entitiesToGameObjects took %d ms",
+                    System.currentTimeMillis() - start3)
+            );
+            logger.log(Level.DEBUG, String.format("insertOrUpdateList took %d ms",
+                    System.currentTimeMillis() - start)
+            );
+            return updatedGameObjects;
         } catch (Exception e) {
             logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
             throw e;
@@ -291,6 +312,7 @@ public class Database {
                         dao.update(entity);
                     }
                     insertOrUpdateChildList(entity.childrenToInsert(), connectionSource);
+                    insertOrUpdateChildList(entity.childrenToInsert2(), connectionSource);
                 }
                 return null;
             });
@@ -307,7 +329,6 @@ public class Database {
         if (gameObjects.isEmpty()) {
             return List.of();
         }
-
         Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
 
         BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(gameObjects.get(0).getClass(), targetClass);
@@ -324,7 +345,7 @@ public class Database {
                     }
 
                     Object result = boundedMapper.map(gameObject, entity);
-                    getMapperFactory().getMapperFacade().map(gameObject, entity);
+               //     getMapperFactory().getMapperFacade().map(gameObject, entity);
                     return result;
                 })
                 .map(targetClass::cast)
@@ -408,7 +429,10 @@ public class Database {
                     MatchTitleEntity.class,
                     BroadcastTeamMemberEntity.class,
                     InjuryEntity.class,
-                    SegmentTemplateEntity.class);
+                    SegmentTemplateEntity.class,
+                    NewsItemEntity.class,
+                    NewsItemWorkerEntity.class,
+                    NewsItemPromotionEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);
