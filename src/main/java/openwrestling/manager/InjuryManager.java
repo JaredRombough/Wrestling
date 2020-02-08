@@ -2,12 +2,9 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.NewsManager;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;
@@ -18,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static openwrestling.model.constants.GameConstants.MAX_INJURY_DAYS;
 
-public class InjuryManager implements Serializable {
+public class InjuryManager extends GameObjectManager implements Serializable {
 
     private final NewsManager newsManager;
     private final WorkerManager workerManager;
@@ -30,6 +27,11 @@ public class InjuryManager implements Serializable {
         this.newsManager = newsManager;
         this.workerManager = workerManager;
         this.dateManager = dateManager;
+    }
+
+    @Override
+    public void selectData() {
+        injuries = Database.selectAll(Injury.class);
     }
 
     public void dailyUpdate(LocalDate date, Promotion promotion) {
@@ -52,7 +54,7 @@ public class InjuryManager implements Serializable {
     }
 
     public void createInjuries(List<Injury> injuries) {
-        Database.insertOrUpdateList(injuries);
+        Database.insertList(injuries);
         update();
     }
 

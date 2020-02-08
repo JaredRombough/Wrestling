@@ -1,15 +1,23 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
+
+import openwrestling.model.utility.ModelUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import openwrestling.model.utility.ModelUtils;
 
-public class DateManager implements Serializable {
+import static openwrestling.model.constants.SettingKeys.GAME_DATE;
+
+public class DateManager extends GameObjectManager implements Serializable {
 
     private LocalDate gameDate;
 
     public DateManager(LocalDate startDate) {
         gameDate = startDate;
+    }
+
+    @Override
+    public void selectData() {
+        gameDate = GameSettingManager.getGameSettingDate(GAME_DATE);
     }
 
     public String todayString() {
@@ -19,6 +27,7 @@ public class DateManager implements Serializable {
     public void nextDay() {
         //advance the day by one
         gameDate = LocalDate.from(gameDate).plusDays(1);
+        GameSettingManager.setGameDate(GAME_DATE, gameDate);
     }
 
     /**

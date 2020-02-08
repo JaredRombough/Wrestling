@@ -56,7 +56,7 @@ public class TitleReignEntity extends Entity {
 
     public void selectChildren() {
         workers = titleReignWorkers.stream()
-                .map(titleReignWorker -> titleReignWorker.getWorkerEntity())
+                .map(TitleReignWorkerEntity::getWorkerEntity)
                 .collect(Collectors.toList());
     }
 }

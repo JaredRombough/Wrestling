@@ -11,7 +11,7 @@ import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
-import openwrestling.model.manager.DateManager;
+import openwrestling.manager.DateManager;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.StaffUtils;
 import org.apache.commons.lang3.RandomUtils;

@@ -18,6 +18,7 @@ import openwrestling.entities.Entity;
 import openwrestling.entities.EntourageMemberEntity;
 import openwrestling.entities.EventEntity;
 import openwrestling.entities.EventTemplateEntity;
+import openwrestling.entities.GameSettingEntity;
 import openwrestling.entities.InjuryEntity;
 import openwrestling.entities.MatchTitleEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
@@ -67,11 +68,13 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
+import openwrestling.model.gameObjects.gamesettings.GameSetting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -87,18 +90,21 @@ public class Database {
 
     private static String dbUrl;
     private static Logger logger = LogManager.getLogger();
+    private static MapperFactory mapperFactory;
 
     private static MapperFactory getMapperFactory() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
-        mapperFactory.classMap(SegmentTemplateEntity.class, SegmentTemplate.class)
-                .byDefault()
-                .customize(new SegmentTemplateMapper()
-                ).register();
-        mapperFactory.classMap(SegmentEntity.class, Segment.class)
-                .byDefault()
-                .customize(new SegmentMapper()
-                ).register();
+        if (mapperFactory == null) {
+            mapperFactory = new DefaultMapperFactory.Builder().build();
+            mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
+            mapperFactory.classMap(SegmentTemplateEntity.class, SegmentTemplate.class)
+                    .byDefault()
+                    .customize(new SegmentTemplateMapper()
+                    ).register();
+            mapperFactory.classMap(SegmentEntity.class, Segment.class)
+                    .byDefault()
+                    .customize(new SegmentMapper()
+                    ).register();
+        }
         return mapperFactory;
     }
 
@@ -126,7 +132,13 @@ public class Database {
         put(Injury.class, InjuryEntity.class);
         put(SegmentTemplate.class, SegmentTemplateEntity.class);
         put(NewsItem.class, NewsItemEntity.class);
+        put(GameSetting.class, GameSettingEntity.class);
     }};
+
+    public static void setDbFile(File dbFile) {
+        dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
+        logger.log(Level.DEBUG, "database set to " + dbUrl);
+    }
 
     public static String createNewDatabase(String fileName) {
 
@@ -212,6 +224,8 @@ public class Database {
     }
 
     public static <T> List selectAll(Class sourceClass) {
+        long start = System.currentTimeMillis();
+        List list;
         try {
             Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
@@ -219,24 +233,34 @@ public class Database {
 
             List<? extends Entity> entities = dao.queryForAll();
             entities.forEach(Entity::selectChildren);
-            return entitiesToGameObjects(entities, sourceClass);
+            list = entitiesToGameObjects(entities, sourceClass);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        logger.log(Level.DEBUG, String.format("selectAll %s took %d ms",
+                sourceClass.getName(), System.currentTimeMillis() - start)
+        );
+        return list;
     }
 
     public static <T> List querySelect(GameObjectQuery query) {
+        long start = System.currentTimeMillis();
+        List list;
         try {
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
 
             List<? extends Entity> entities = query.getQueryBuilder(connectionSource).query();
             entities.forEach(Entity::selectChildren);
-            return entitiesToGameObjects(entities, query.sourceClass());
+            list = entitiesToGameObjects(entities, query.sourceClass());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        logger.log(Level.DEBUG, String.format("querySelect %s took %d ms",
+                query.sourceClass().getName(), System.currentTimeMillis() - start)
+        );
+        return list;
     }
 
     public static void deleteByID(Class sourceClass, long id) {
@@ -254,11 +278,11 @@ public class Database {
 
     public static <T extends GameObject> T insertGameObject(GameObject gameObject) {
 
-        return (T) insertOrUpdateList(List.of(gameObject)).get(0);
+        return (T) insertList(List.of(gameObject)).get(0);
 
     }
 
-    public static <T extends GameObject> List<T> insertOrUpdateList(List<T> gameObjects) {
+    public static <T extends GameObject> List<T> insertList(List<T> gameObjects) {
         try {
             if (gameObjects.isEmpty()) {
                 return gameObjects;
@@ -286,6 +310,31 @@ public class Database {
                     System.currentTimeMillis() - start)
             );
             return updatedGameObjects;
+        } catch (Exception e) {
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw e;
+        }
+    }
+
+    public static <T extends GameObject> void updateList(List<T> gameObjects) {
+        try {
+            if (gameObjects.isEmpty()) {
+                return;
+            }
+            long start = System.currentTimeMillis();
+            logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
+                    gameObjects.size(),
+                    gameObjects.get(0).getClass())
+            );
+            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+            logger.log(Level.DEBUG, String.format("gameObjectsToEntities took %d ms",
+                    System.currentTimeMillis() - start)
+            );
+            long start2 = System.currentTimeMillis();
+            List<? extends Entity> saved = insertOrUpdateEntityList(entities);
+            logger.log(Level.DEBUG, String.format("insertOrUpdateEntityList took %d ms",
+                    System.currentTimeMillis() - start2)
+            );
         } catch (Exception e) {
             logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
             throw e;
@@ -345,7 +394,7 @@ public class Database {
                     }
 
                     Object result = boundedMapper.map(gameObject, entity);
-               //     getMapperFactory().getMapperFacade().map(gameObject, entity);
+                    //     getMapperFactory().getMapperFacade().map(gameObject, entity);
                     return result;
                 })
                 .map(targetClass::cast)
@@ -432,7 +481,8 @@ public class Database {
                     SegmentTemplateEntity.class,
                     NewsItemEntity.class,
                     NewsItemWorkerEntity.class,
-                    NewsItemPromotionEntity.class);
+                    NewsItemPromotionEntity.class,
+                    GameSettingEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);

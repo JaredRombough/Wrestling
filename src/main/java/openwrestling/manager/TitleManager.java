@@ -1,14 +1,12 @@
 package openwrestling.manager;
 
 import lombok.Getter;
-import openwrestling.Logging;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Level;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TitleManager extends Logging implements Serializable {
+public class TitleManager extends GameObjectManager implements Serializable {
 
     @Getter
     private List<Title> titles;
@@ -30,6 +28,11 @@ public class TitleManager extends Logging implements Serializable {
         this.titles = new ArrayList<>();
         this.dateManager = dateManager;
         this.workerManager = workerManager;
+    }
+
+    @Override
+    public void selectData() {
+        selectTitles();
     }
 
     public void createTitle(Title title) {
@@ -70,7 +73,7 @@ public class TitleManager extends Logging implements Serializable {
     }
 
     public void updateTitle(Title title) {
-        Database.insertOrUpdateList(List.of(title));
+        Database.insertList(List.of(title));
         selectTitles();
     }
 
@@ -106,7 +109,7 @@ public class TitleManager extends Logging implements Serializable {
                 .title(title)
                 .build();
 
-        Database.insertOrUpdateList(List.of(title.getChampionTitleReign(), newChamps));
+        Database.insertList(List.of(title.getChampionTitleReign(), newChamps));
         selectTitles();
     }
 

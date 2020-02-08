@@ -4,6 +4,7 @@ import openwrestling.TestUtils;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.NewsItem;

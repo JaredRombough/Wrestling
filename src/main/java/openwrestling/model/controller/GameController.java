@@ -5,10 +5,16 @@ import openwrestling.Logging;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.BroadcastTeamManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.DateManager;
 import openwrestling.manager.EntourageManager;
 import openwrestling.manager.EventManager;
+import openwrestling.manager.GameObjectManager;
+import openwrestling.manager.InjuryManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.RosterSplitManager;
+import openwrestling.manager.SegmentManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
@@ -21,11 +27,6 @@ import openwrestling.model.factory.RandomGameAssetGenerator;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.manager.DateManager;
-import openwrestling.manager.InjuryManager;
-import openwrestling.model.manager.NewsManager;
-import openwrestling.manager.RelationshipManager;
-import openwrestling.manager.SegmentManager;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
@@ -61,6 +62,8 @@ public final class GameController extends Logging implements Serializable {
     private final EntourageManager entourageManager;
     private final NextDayController nextDayController;
     private final BroadcastTeamManager broadcastTeamManager;
+
+    private List<GameObjectManager> managers;
 
     private final PromotionController promotionController;
 
@@ -154,6 +157,25 @@ public final class GameController extends Logging implements Serializable {
             randomGameAssetGenerator.preparePromotions();
         }
 
+        managers = List.of(
+                bankAccountManager,
+                broadcastTeamManager,
+                contractManager,
+                dateManager,
+                entourageManager,
+                eventManager,
+                injuryManager,
+                newsManager,
+                promotionManager,
+                relationshipManager,
+                rosterSplitManager,
+                segmentManager,
+                stableManager,
+                staffManager,
+                tagTeamManager,
+                titleManager,
+                workerManager);
+
     }
 
     public void initializeGameData() {
@@ -168,11 +190,16 @@ public final class GameController extends Logging implements Serializable {
                 .collect(Collectors.toList());
 
         List<EventTemplate> updatedBookedUntilDates = initialEvents.stream()
-                .map(event -> event.getEventTemplate())
+                .map(Event::getEventTemplate)
                 .collect(Collectors.toList());
 
-        eventManager.createEventTemplates(updatedBookedUntilDates);
+        eventManager.updateEventTemplates(updatedBookedUntilDates);
         eventManager.createEvents(initialEvents);
+        newsManager.addWelcomeNewsItem(promotionManager.getPlayerPromotion());
+    }
+
+    public void loadGameDataFromDatabase() {
+        managers.forEach(GameObjectManager::selectData);
     }
 
     //only called by MainApp

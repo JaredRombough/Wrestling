@@ -7,7 +7,6 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,17 +19,21 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-public class EventManager implements Serializable {
+public class EventManager extends GameObjectManager implements Serializable {
 
-    private List<Event> events;
-    private List<EventTemplate> eventTemplates;
+    // private List<Event> events;
+    // private List<EventTemplate> eventTemplates;
+    private Map<Long, EventTemplate> eventTemplateMap;
+    private Map<Long, Event> eventMap;
 
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
@@ -42,19 +45,45 @@ public class EventManager implements Serializable {
             ContractManager contractManager,
             DateManager dateManager,
             SegmentManager segmentManager) {
-        events = new ArrayList<>();
-        eventTemplates = new ArrayList<>();
+        //   events = new ArrayList<>();
+        //   eventTemplates = new ArrayList<>();
+        eventTemplateMap = new HashMap<>();
+        eventMap = new HashMap<>();
         this.segmentManager = segmentManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
     }
 
+    public List<Event> getEvents() {
+        return new ArrayList<>(eventMap.values());
+    }
+
+    public List<EventTemplate> getEventTemplates() {
+        return new ArrayList<>(eventTemplateMap.values());
+    }
+
+    @Override
+    public void selectData() {
+        List<Event> events = Database.selectAll(Event.class);
+        events.forEach(event -> {
+            eventMap.put(event.getEventID(), event);
+        });
+        List<EventTemplate> eventTemplates = Database.selectAll(EventTemplate.class);
+        eventTemplates.forEach(eventTemplate -> {
+            eventTemplateMap.put(eventTemplate.getEventTemplateID(), eventTemplate);
+        });
+    }
+
     public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
-        List saved = Database.insertOrUpdateList(eventTemplates);
-        this.eventTemplates = Database.selectAll(EventTemplate.class);
+        List<EventTemplate> saved = Database.insertList(eventTemplates);
+        saved.forEach(savedEvent -> eventTemplateMap.put(savedEvent.getEventTemplateID(), savedEvent));
         return saved;
     }
 
+    public void updateEventTemplates(List<EventTemplate> eventTemplates) {
+        Database.updateList(eventTemplates);
+        eventTemplates.forEach(updatedEvent -> eventTemplateMap.put(updatedEvent.getEventTemplateID(), updatedEvent));
+    }
 
     public void createEvents(List<Event> events) {
         List<Event> eventsWithSegments = new ArrayList<>();
@@ -69,18 +98,21 @@ public class EventManager implements Serializable {
             }
         });
 
-        Database.insertOrUpdateList(eventsWithoutSegments);
+        List<Event> savedEventsWithoutSegments = Database.insertList(eventsWithoutSegments);
+        savedEventsWithoutSegments.forEach(event -> {
+            eventMap.put(event.getEventID(), event);
+        });
 
         eventsWithSegments.forEach(event -> {
             List<Segment> segments = event.getSegments();
-            Event savedEvent = Database.insertOrUpdateList(List.of(event)).get(0);
+            Event savedEvent = Database.insertList(List.of(event)).get(0);
             segments.forEach(segment -> segment.setEvent(savedEvent));
             segmentsToSave.addAll(segments);
+            eventMap.put(savedEvent.getEventID(), savedEvent);
         });
 
         segmentManager.createSegments(segmentsToSave);
-        this.events = Database.selectAll(Event.class);
-        this.eventTemplates = Database.selectAll(EventTemplate.class);
+        //selectData();
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {
@@ -90,7 +122,7 @@ public class EventManager implements Serializable {
     }
 
     public void updateEventName(EventTemplate eventTemplate) {
-        for (Event event : events) {
+        for (Event event : getEvents()) {
             if (event.getEventTemplate().equals(eventTemplate)) {
                 event.setName(eventTemplate.getName());
             }
@@ -116,12 +148,7 @@ public class EventManager implements Serializable {
     public void cancelEvent(Event eventToCancel) {
         EventTemplate template = eventToCancel.getEventTemplate();
 
-        for (Iterator<Event> iter = events.listIterator(); iter.hasNext(); ) {
-            Event event = iter.next();
-            if (event.equals(eventToCancel)) {
-                iter.remove();
-            }
-        }
+        eventMap.remove(eventToCancel.getEventID());
 
         if (template != null) {
             updateFirstAndLastEvents(template);
@@ -130,7 +157,7 @@ public class EventManager implements Serializable {
     }
 
     public Event getNextEvent(EventTemplate template) {
-        for (Event event : events) {
+        for (Event event : getEvents()) {
             if (event.getEventTemplate().equals(template)
                     && event.getDate().equals(template.getNextDate())) {
                 return event;
@@ -156,7 +183,7 @@ public class EventManager implements Serializable {
 
     public List<Event> getEventsForTemplate(EventTemplate template) {
         List<Event> templateEvents = new ArrayList<>();
-        for (Event event : events) {
+        for (Event event : getEvents()) {
             if (event.getEventTemplate().equals(template)) {
                 templateEvents.add(event);
             }
@@ -187,7 +214,7 @@ public class EventManager implements Serializable {
     }
 
     public Event getEventOnDate(Promotion promotion, LocalDate date) {
-        for (Event event : events) {
+        for (Event event : getEvents()) {
             if (event.getDate().equals(date)
                     && event.getPromotion().equals(promotion)) {
                 return event;
@@ -198,7 +225,7 @@ public class EventManager implements Serializable {
 
     public List<Event> getEventsOnDate(LocalDate date) {
         List<Event> eventsOnDate = new ArrayList<>();
-        for (Event event : events) {
+        for (Event event : getEvents()) {
             if (event.getDate().equals(date)) {
                 eventsOnDate.add(event);
             }
@@ -208,7 +235,7 @@ public class EventManager implements Serializable {
 
     public int eventsAfterDate(Promotion promotion, LocalDate date) {
         int futureEvents = 0;
-        futureEvents = events.stream().filter((Event event) -> {
+        futureEvents = getEvents().stream().filter((Event event) -> {
             return event.getPromotion().equals(promotion)
                     && event.getDate().isAfter(date);
         }).map((_item) -> 1).reduce(futureEvents, Integer::sum);
@@ -433,7 +460,7 @@ public class EventManager implements Serializable {
     }
 
     public List<EventTemplate> getEventTemplates(Promotion promotion) {
-        return eventTemplates.stream()
+        return getEventTemplates().stream()
                 .filter(eventTemplate -> promotion.getPromotionID() == eventTemplate.getPromotion().getPromotionID())
                 .collect(Collectors.toList());
     }

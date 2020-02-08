@@ -4,6 +4,7 @@ import openwrestling.TestUtils;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.DateManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.SegmentManager;
@@ -26,7 +27,6 @@ import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 

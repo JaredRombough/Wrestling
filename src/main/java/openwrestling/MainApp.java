@@ -110,7 +110,6 @@ public class MainApp extends Application {
 
         primaryStage.widthProperty().addListener(stageWidthListener);
         primaryStage.heightProperty().addListener(stageHeightListener);
-        primaryStage.setMaximized(true);
 
         showTitleScreen();
 
@@ -129,16 +128,13 @@ public class MainApp extends Application {
             gameController = null;
             throw ex;
         }
-        if (gameController != null) {
-            initRootLayout();
-            showStartGameScreen();
-        }
+        initRootLayout();
+        showStartGameScreen();
 
     }
 
-    //starts a new game from imported data
-    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
-        dbURL = Database.createNewDatabase("newImport");
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder, String fileName) throws Exception {
+        dbURL = Database.createNewDatabase(fileName);
         Database.connect(dbURL);
 
         randomGame = false;
@@ -175,9 +171,21 @@ public class MainApp extends Application {
 
     }
 
+    public void continueGame(File dbFile) {
+        Database.setDbFile(dbFile);
+        try {
+            gameController = new GameController(false);
+            gameController.loadGameDataFromDatabase();
+            initRootLayout();
+            continueGame();
+        } catch (IOException e) {
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw new RuntimeException(e);
+        }
+    }
 
-    //shows initial title screen
-    private void showTitleScreen() throws IOException {
+
+    private void showTitleScreen() {
 
         GameScreen titleScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TITLE, this, gameController);
 
@@ -208,6 +216,18 @@ public class MainApp extends Application {
 
     }
 
+    public void continueGame() {
+        Runnable task = this::continueGameTask;
+        Thread.UncaughtExceptionHandler h = (th, ex) -> {
+            System.out.println("Uncaught exception: " + ex);
+            System.out.println(ExceptionUtils.getStackTrace(ex));
+        };
+        Thread backgroundThread = new Thread(task);
+        backgroundThread.setUncaughtExceptionHandler(h);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+    }
+
     public void startGame() {
         Runnable task = this::startGameTask;
         Thread.UncaughtExceptionHandler h = (th, ex) -> {
@@ -226,14 +246,27 @@ public class MainApp extends Application {
             primaryStage.getScene().setCursor(Cursor.WAIT);
         });
 
-        try {
-            loadScreens();
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "Error preparing screens", ex);
-        }
+        loadScreens();
 
         gameController.initializeGameData();
         preRun();
+
+        Platform.runLater(() -> {
+            show(ScreenCode.BROWSER);
+            updateLabels();
+        });
+
+        setRootLayoutButtonDisable(false);
+        primaryStage.getScene().setCursor(Cursor.DEFAULT);
+    }
+
+    private void continueGameTask() {
+
+        Platform.runLater(() -> {
+            primaryStage.getScene().setCursor(Cursor.WAIT);
+        });
+
+        loadScreens();
 
         Platform.runLater(() -> {
             show(ScreenCode.BROWSER);
@@ -255,7 +288,7 @@ public class MainApp extends Application {
         preRun = false;
     }
 
-    private void loadScreens() throws IOException {
+    private void loadScreens() {
         //this will load into memory all the screens that we will be switching between
         //so we aren't creating a new screen each time
         List<ScreenCode> screensToLoad = new ArrayList<>(Arrays.asList(ScreenCode.FINANCIAL,
@@ -277,7 +310,7 @@ public class MainApp extends Application {
      *
      * @throws java.io.IOException
      */
-    public void initRootLayout() throws IOException {
+    public void initRootLayout() {
         screens.add(ViewUtils.loadScreenFromFXML(ScreenCode.ROOT, this, gameController));
         Scene scene = new Scene(ViewUtils.getByCode(screens, ScreenCode.ROOT).pane, currentStageWidth, currentStageHeight);
         if (cssEnabled) {
@@ -313,16 +346,10 @@ public class MainApp extends Application {
         screen.controller.setCurrent(obj);
     }
 
-    /*
-    loads and shows a start game screen
-    currently these methods are combined because we only do it once
-     */
-    public void showStartGameScreen() throws IOException {
+    public void showStartGameScreen() {
 
         GameScreen startGameScreen = ViewUtils.loadScreenFromFXML(ScreenCode.START, this, gameController);
         ((BorderPane) ViewUtils.getByCode(screens, ScreenCode.ROOT).pane).setCenter(startGameScreen.pane);
-        primaryStage.setResizable(true);
-        primaryStage.setMaximized(true);
     }
 
     /*

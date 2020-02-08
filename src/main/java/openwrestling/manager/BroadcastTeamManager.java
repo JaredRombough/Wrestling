@@ -13,9 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-public class BroadcastTeamManager implements Serializable {
+public class BroadcastTeamManager extends GameObjectManager implements Serializable {
 
     private List<BroadcastTeamMember> broadcastTeamMembers = new ArrayList<>();
+
+    @Override
+    public void selectData() {
+        broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
+    }
 
     public void setDefaultBroadcastTeam(Promotion promotion, List<StaffMember> newTeam) {
         List<BroadcastTeamMember> defaultBroadcastTeam = broadcastTeamMembers.stream()
@@ -34,7 +39,7 @@ public class BroadcastTeamManager implements Serializable {
                                 .build())
                 .collect(Collectors.toList());
 
-        Database.insertOrUpdateList(toInsert);
+        Database.insertList(toInsert);
 
         broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
     }
@@ -56,7 +61,7 @@ public class BroadcastTeamManager implements Serializable {
                                 .build())
                 .collect(Collectors.toList());
 
-        Database.insertOrUpdateList(toInsert);
+        Database.insertList(toInsert);
 
         broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
     }

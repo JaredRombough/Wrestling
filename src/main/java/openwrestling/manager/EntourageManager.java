@@ -10,13 +10,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class EntourageManager implements Serializable {
+public class EntourageManager extends GameObjectManager implements Serializable {
 
     private List<EntourageMember> entourageMembers = new ArrayList<>();
     private WorkerManager workerManager;
 
     public EntourageManager(WorkerManager workerManager) {
         this.workerManager = workerManager;
+    }
+
+    @Override
+    public void selectData() {
+        entourageMembers = Database.selectAll(EntourageMember.class);
     }
 
     public List<Worker> getEntourage(Worker leader) {

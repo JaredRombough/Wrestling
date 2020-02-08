@@ -7,7 +7,7 @@ import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
+import openwrestling.manager.DateManager;
 import openwrestling.manager.InjuryManager;
 import openwrestling.manager.SegmentManager;
 import openwrestling.model.gameObjects.Segment;

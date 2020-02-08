@@ -1,24 +1,24 @@
 package openwrestling.manager;
 
+import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Stable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StableManager {
+public class StableManager extends GameObjectManager {
 
-    private final List<Stable> stables;
+    @Getter
+    private List<Stable> stables;
 
     public StableManager() {
         stables = new ArrayList<>();
     }
 
-    /**
-     * @return the stables
-     */
-    public List<Stable> getStables() {
-        return stables;
+    @Override
+    public void selectData() {
+        stables = Database.selectAll(Stable.class);
     }
 
     public void addStable(Stable stable) {
@@ -26,7 +26,7 @@ public class StableManager {
     }
 
     public List<Stable> createStables(List<Stable> stables) {
-        List saved = Database.insertOrUpdateList(stables);
+        List saved = Database.insertList(stables);
         this.stables.addAll(saved);
         return this.stables;
     }

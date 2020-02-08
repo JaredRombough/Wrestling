@@ -1,7 +1,7 @@
 package openwrestling.manager;
 
 import openwrestling.database.Database;
-import openwrestling.entities.TagTeamEntity;
+import openwrestling.model.SegmentItem;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
@@ -17,15 +17,20 @@ import static org.mockito.Mockito.mock;
 
 public class TagTeamManagerTest {
 
+    private WorkerManager workerManager;
+    private TagTeamManager tagTeamManager;
+
     @Before
     public void setUp() {
+        workerManager = new WorkerManager(mock(ContractManager.class));
+        tagTeamManager = new TagTeamManager(workerManager);
         Database.createNewDatabase("testdb");
     }
 
     @Test
     public void createTagTeams() {
-        Worker worker = Database.insertGameObject(PersonFactory.randomWorker());
-        Worker worker2 = Database.insertGameObject(PersonFactory.randomWorker());
+        Worker worker = workerManager.createWorker(PersonFactory.randomWorker());
+        Worker worker2 = workerManager.createWorker(PersonFactory.randomWorker());
 
         String name = RandomStringUtils.random(10);
         ActiveType activeType = ActiveType.ACTIVE;
@@ -38,16 +43,16 @@ public class TagTeamManagerTest {
                 .name(name)
                 .build();
 
-        TagTeamManager tagTeamManager = new TagTeamManager(mock(WorkerManager.class));
-
         tagTeamManager.createTagTeams(List.of(tagTeam));
 
-        List<TagTeam> tagTeams = Database.selectAll(TagTeam.class);
+        List<TagTeam> tagTeams = tagTeamManager.getTagTeams();
 
         assertThat(tagTeams).isNotNull().hasOnlyOneElementSatisfying(savedTagTeam -> {
             assertThat(savedTagTeam.getName()).isEqualTo(name);
             assertThat(savedTagTeam.getExperience()).isEqualTo(experience);
             assertThat(savedTagTeam.getActiveType()).isEqualTo(activeType);
+            assertThat(savedTagTeam.getSegmentItems()).extracting(SegmentItem::getLongName)
+                    .containsOnly(worker.getLongName(), worker2.getLongName());
         });
     }
 }

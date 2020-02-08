@@ -1,28 +1,37 @@
 package openwrestling.manager;
 
+import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Worker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagTeamManager implements Serializable {
+public class TagTeamManager extends GameObjectManager implements Serializable {
 
     private final WorkerManager workerManager;
-    private final List<TagTeam> tagTeams;
 
-    public TagTeamManager( WorkerManager workerManager) {
+    @Getter
+    private List<TagTeam> tagTeams;
+
+    public TagTeamManager(WorkerManager workerManager) {
         tagTeams = new ArrayList<>();
         this.workerManager = workerManager;
     }
 
-    public List<TagTeam> createTagTeams(List<TagTeam> tagTeams) {
-        List saved = Database.insertOrUpdateList(tagTeams);
-        this.tagTeams.addAll(saved);
-        return saved;
+    @Override
+    public void selectData() {
+        tagTeams = Database.selectAll(TagTeam.class);
+    }
+
+    public List<TagTeam> createTagTeams(List<TagTeam> toInsert) {
+        Database.insertList(toInsert);
+        tagTeams = Database.selectAll(TagTeam.class);
+        tagTeams.forEach(tagTeam -> tagTeam.setWorkers(workerManager.refreshWorkers(tagTeam.getWorkers())));
+        return tagTeams;
     }
 
 
@@ -44,13 +53,6 @@ public class TagTeamManager implements Serializable {
         tagTeams.add(tagTeam);
 
         return tagTeam;
-    }
-
-    /**
-     * @return the tagTeams
-     */
-    public List<TagTeam> getTagTeams() {
-        return tagTeams;
     }
 
 }

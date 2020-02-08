@@ -9,7 +9,6 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
 import openwrestling.model.segmentEnum.EventBroadcast;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -72,7 +71,7 @@ public class EventManagerTest {
         Event event = new Event();
         event.setDate(LocalDate.now());
         EventTemplate eventTemplate = EventTemplate.builder().build();
-        eventTemplate = Database.insertOrUpdateList(List.of(eventTemplate)).get(0);
+        eventTemplate = Database.insertList(List.of(eventTemplate)).get(0);
         event.setEventTemplate(eventTemplate);
 
         Segment segment = Segment.builder()

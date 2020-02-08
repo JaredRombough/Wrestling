@@ -1,4 +1,4 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import lombok.NoArgsConstructor;
 import openwrestling.database.Database;
@@ -25,11 +25,25 @@ import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
 
 @NoArgsConstructor
-public class NewsManager implements Serializable {
+public class NewsManager extends GameObjectManager implements Serializable {
 
     private List<NewsItem> newsItems = new ArrayList<>();
     private final Map<LocalDate, NewsItem> newsItemByDateMap = new HashMap();
     private final Map<Object, Map<LocalDate, List<NewsItem>>> newsItemBySegmentItemMap = new HashMap();
+
+    @Override
+    public void selectData() {
+        newsItems = Database.selectAll(NewsItem.class);
+        newsItems.forEach(newsItem -> {
+            if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
+                newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
+            }
+            if (CollectionUtils.isNotEmpty(newsItem.getWorkers())) {
+                newsItem.getWorkers().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
+            }
+        });
+    }
+
 
     /**
      * @return the newsItems
@@ -134,11 +148,11 @@ public class NewsManager implements Serializable {
     }
 
     private void addNews(NewsItem newsItem) {
-        NewsItem inserted = Database.insertOrUpdateList(List.of(newsItem)).get(0);
-        if(CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
+        NewsItem inserted = Database.insertList(List.of(newsItem)).get(0);
+        if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
             newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, inserted));
         }
-        if(CollectionUtils.isNotEmpty(newsItem.getWorkers())) {
+        if (CollectionUtils.isNotEmpty(newsItem.getWorkers())) {
             newsItem.getWorkers().forEach(promotion -> addSegmentItemNews(promotion, inserted));
         }
         newsItems.addAll(List.of(inserted));

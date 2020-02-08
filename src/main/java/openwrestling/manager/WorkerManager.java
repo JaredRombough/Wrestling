@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class WorkerManager implements Serializable {
+public class WorkerManager extends GameObjectManager implements Serializable {
 
     private final ContractManager contractManager;
     @Getter
@@ -23,6 +23,11 @@ public class WorkerManager implements Serializable {
     public WorkerManager(ContractManager contractManager) {
         this.contractManager = contractManager;
         this.workers = new ArrayList<>();
+    }
+
+    @Override
+    public void selectData() {
+        workers = Database.selectAll(Worker.class);
     }
 
     public Worker getWorker(long id) {
@@ -66,13 +71,13 @@ public class WorkerManager implements Serializable {
     }
 
     public List<Worker> createWorkers(List<Worker> workers) {
-        List savedWorkers = Database.insertOrUpdateList(workers);
+        List savedWorkers = Database.insertList(workers);
         this.workers = Database.selectAll(Worker.class);
         return savedWorkers;
     }
 
     public List<Worker> updateWorkers(List<Worker> workers) {
-        List<Worker> savedWorkers = Database.insertOrUpdateList(workers);
+        List<Worker> savedWorkers = Database.insertList(workers);
         savedWorkers.addAll(
                 this.workers.stream()
                         .filter(worker -> savedWorkers.stream().noneMatch(savedWorker -> savedWorker.getWorkerID() == worker.getWorkerID()))

@@ -14,9 +14,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
-public class BankAccountManager implements Serializable {
+public class BankAccountManager extends GameObjectManager implements Serializable {
 
     private List<BankAccount> bankAccounts;
+
+    @Override
+    public void selectData() {
+        bankAccounts = Database.selectAll(BankAccount.class);
+    }
 
     public BankAccountManager() {
         bankAccounts = new ArrayList();
@@ -36,13 +41,13 @@ public class BankAccountManager implements Serializable {
     }
 
     public List<BankAccount> createBankAccounts(List<BankAccount> bankAccounts) {
-        List<BankAccount> saved = Database.insertOrUpdateList(bankAccounts);
+        List<BankAccount> saved = Database.insertList(bankAccounts);
         this.bankAccounts.addAll(saved);
         return saved;
     }
 
     private List<Transaction> createTransactions(List<Transaction> transactions) {
-        List<Transaction> toInsert = Database.insertOrUpdateList(transactions);
+        List<Transaction> toInsert = Database.insertList(transactions);
         this.bankAccounts = Database.selectAll(BankAccount.class);
         return toInsert;
     }
@@ -52,8 +57,8 @@ public class BankAccountManager implements Serializable {
                 .flatMap(bankAccount -> bankAccount.getTransactions().stream())
                 .filter(transaction -> transaction.getTransactionID() == 0)
                 .collect(Collectors.toList());
-        List<Transaction> savedTransactions = Database.insertOrUpdateList(newTransactions);
-        List<BankAccount> savedBankAccounts = Database.insertOrUpdateList(bankAccounts);
+        List<Transaction> savedTransactions = Database.insertList(newTransactions);
+        List<BankAccount> savedBankAccounts = Database.insertList(bankAccounts);
         this.bankAccounts = Database.selectAll(BankAccount.class);
         return savedBankAccounts;
     }
@@ -71,8 +76,8 @@ public class BankAccountManager implements Serializable {
             }
         });
 
-        Database.insertOrUpdateList(transactions);
-        Database.insertOrUpdateList(new ArrayList<>(bankAccountMap.values()));
+        Database.insertList(transactions);
+        Database.insertList(new ArrayList<>(bankAccountMap.values()));
 
         bankAccounts = Database.selectAll(BankAccount.class);
 

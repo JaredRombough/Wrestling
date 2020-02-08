@@ -11,15 +11,11 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.manager.DateManager;
+import openwrestling.manager.DateManager;
 import openwrestling.manager.InjuryManager;
 import openwrestling.manager.RelationshipManager;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.EventUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,18 +45,27 @@ public class NextDayController extends Logging {
     private InjuryManager injuryManager;
 
     public void nextDay() {
+        long start = System.currentTimeMillis();
         logger.log(Level.DEBUG, "nextDay");
         List<Event> events = promotionManager.getPromotions().stream()
                 .filter(promotion -> !promotionManager.getPlayerPromotion().equals(promotion))
                 .map(this::eventOnDay)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
-        processEvents(events);
+        logger.log(Level.DEBUG, String.format("nextDay promo loop took %d ms",
+                System.currentTimeMillis() - start));
+        long start2 = System.currentTimeMillis();
+        if(CollectionUtils.isNotEmpty(events)) {
+            processEvents(events);
+        }
+        logger.log(Level.DEBUG, String.format("nextDay processEvents took %d ms",
+                System.currentTimeMillis() - start2));
 
     }
 
     public void processEvents(List<Event> events) {
+        long start = System.currentTimeMillis();
+        logger.log(Level.DEBUG, "processEvents");
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
         List<Injury> injuries = new ArrayList<>();
 
@@ -98,13 +103,33 @@ public class NextDayController extends Logging {
                 .collect(Collectors.toList());
 
 
-        updateBankAccounts(events);
-        relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
-        eventManager.createEvents(events);
-        eventManager.createEventTemplates(eventTemplates);
-        eventManager.createEvents(newEvents);
-        injuryManager.createInjuries(injuries);
+        logger.log(Level.DEBUG, String.format("processEvents a took %d ms",
+                System.currentTimeMillis() - start));
+        long start2 = System.currentTimeMillis();
 
+        updateBankAccounts(events);
+        logger.log(Level.DEBUG, String.format("processEvents updateBankAccounts took %d ms",
+                System.currentTimeMillis() - start2));
+        long start3 = System.currentTimeMillis();
+        relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
+        logger.log(Level.DEBUG, String.format("processEvents createOrUpdateMoraleRelationships took %d ms",
+                System.currentTimeMillis() - start3));
+        long start4 = System.currentTimeMillis();
+        eventManager.createEvents(events);
+        logger.log(Level.DEBUG, String.format("processEvents createEvents took %d ms",
+                System.currentTimeMillis() - start4));
+        long start5 = System.currentTimeMillis();
+        eventManager.updateEventTemplates(eventTemplates);
+        logger.log(Level.DEBUG, String.format("processEvents createEventTemplates took %d ms",
+                System.currentTimeMillis() - start5));
+        long start6 = System.currentTimeMillis();
+        eventManager.createEvents(newEvents);
+        logger.log(Level.DEBUG, String.format("processEvents createEvents took %d ms",
+                System.currentTimeMillis() - start6));
+        long start7 = System.currentTimeMillis();
+        injuryManager.createInjuries(injuries);
+        logger.log(Level.DEBUG, String.format("processEvents createInjuries took %d ms",
+                System.currentTimeMillis() - start7));
     }
 
     void updateBankAccounts(List<Event> events) {

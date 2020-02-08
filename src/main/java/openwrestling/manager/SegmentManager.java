@@ -12,7 +12,6 @@ import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -29,26 +28,44 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static openwrestling.model.utility.ModelUtils.slashShortNames;
 
 @Getter
-public class SegmentManager implements Serializable {
+public class SegmentManager extends GameObjectManager implements Serializable {
 
-    private List<Segment> segments;
+    //private List<Segment> segments;
+    private Map<Long, Segment> segmentMap;
     private List<SegmentTemplate> segmentTemplates;
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
 
     public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
-        segments = new ArrayList<>();
+      //  segments = new ArrayList<>();
+        segmentMap = new HashMap<>();
         segmentTemplates = new ArrayList<>();
         this.dateManager = dateManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
+    }
+
+    @Override
+    public void selectData() {
+        //segments = Database.selectAll(Segment.class);
+        List<Segment> segments = Database.selectAll(Segment.class);
+        segments.forEach(segment -> {
+            segmentMap.put(segment.getSegmentID(), segment);
+        });
+        segmentTemplates = Database.selectAll(SegmentTemplate.class);
+    }
+
+    public List<Segment> getSegments() {
+        return new ArrayList<>(segmentMap.values());
     }
 
     public void deleteSegmentTemplates(EventTemplate eventTemplate) {
@@ -68,19 +85,26 @@ public class SegmentManager implements Serializable {
                 .map(Segment::getChallengeSegment)
                 .collect(Collectors.toList());
 
-        Database.insertOrUpdateList(segmentTemplates);
-
-        List<Segment> savedSegments = Database.insertOrUpdateList(segments);
-
-        this.segments = Database.querySelect(new SegmentQuery());
-        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
-            this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+        if(CollectionUtils.isNotEmpty(segmentTemplates)) {
+            if(this.segmentTemplates == null) {
+                this.segmentTemplates = new ArrayList<>();
+            }
+            this.segmentTemplates.addAll(Database.insertList(segmentTemplates));
         }
+
+        List<Segment> savedSegments = Database.insertList(segments);
+        savedSegments.forEach(segment -> {
+            segmentMap.put(segment.getSegmentID(), segment);
+        });
+       // this.segments = Database.querySelect(new SegmentQuery());
+//        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
+//            this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+//        }
         return savedSegments;
     }
 
     public List<Segment> getSegments(Event event) {
-        return segments.stream()
+        return getSegments().stream()
                 .filter(segment -> segment.getEvent().getEventID() == event.getEventID())
                 .collect(Collectors.toList());
     }
@@ -91,9 +115,9 @@ public class SegmentManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public void addSegment(Segment segment) {
-        segments.add(segment);
-    }
+//    //public void addSegment(Segment segment) {
+//        segments.add(segment);
+//    }
 
 
     public List<Worker> getWorkers(Segment segment) {
@@ -129,7 +153,7 @@ public class SegmentManager implements Serializable {
                 break;
         }
         List<Segment> weekMatches = new ArrayList<>();
-        for (Segment segment : segments) {
+        for (Segment segment : getSegments()) {
             if (segment.getDate().isAfter(earliestDate) && segment.getSegmentType().equals(SegmentType.MATCH)) {
                 weekMatches.add(segment);
             }

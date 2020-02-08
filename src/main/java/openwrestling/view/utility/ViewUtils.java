@@ -307,11 +307,16 @@ public final class ViewUtils {
         dialog.getDialogPane().getStylesheets().add("style.css");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            return string;
-        }
+        return result.orElse(string);
+    }
+
+    public static String enterTextDialog(String header) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText(header);
+        dialog.getDialogPane().getStylesheets().add("style.css");
+
+        Optional<String> result = dialog.showAndWait();
+        return result.orElse("");
     }
 
     public static String editTextDialog(String string) {

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StaffManager implements Serializable {
+public class StaffManager extends GameObjectManager implements Serializable {
 
-    private final List<StaffMember> staffMembers = new ArrayList<>();
+    private List<StaffMember> staffMembers = new ArrayList<>();
 
     private final ContractManager contractManager;
 
@@ -22,8 +22,13 @@ public class StaffManager implements Serializable {
         this.contractManager = contractManager;
     }
 
+    @Override
+    public void selectData() {
+        staffMembers = Database.selectAll(StaffMember.class);
+    }
+
     public List<StaffMember> createStaffMembers(List<StaffMember> staffMembers) {
-        List saved = Database.insertOrUpdateList(staffMembers);
+        List saved = Database.insertList(staffMembers);
         this.staffMembers.addAll(saved);
         return saved;
     }

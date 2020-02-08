@@ -48,4 +48,10 @@ public class TagTeamEntity extends Entity {
                         .build()
         ).collect(Collectors.toList());
     }
+
+    public void selectChildren() {
+        workers = tagTeamWorkers.stream()
+                .map(TagTeamWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
+    }
 }

@@ -6,7 +6,6 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.DateManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;

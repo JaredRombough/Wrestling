@@ -1,12 +1,5 @@
 package openwrestling.view.start.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,11 +7,15 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
-/*
-popup dialog window for setting import paths and starting import game
- */
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+
 public class ImportDialogController extends ControllerBase implements Initializable {
 
     @FXML
@@ -58,8 +55,9 @@ public class ImportDialogController extends ControllerBase implements Initializa
         } else if (event.getSource() == dataPathButton) {
             dataPath = chooseDirectory(dataPath, "Scenario .DAT Files");
         } else if (event.getSource() == startGameButton) {
+            String fileName = ViewUtils.enterTextDialog("Enter a name for the new game database");
             stage.close();
-            mainApp.newImportGame(dataPath, picsPath, logosPath);
+            mainApp.newImportGame(dataPath, picsPath, logosPath, fileName);
         }
         updateLabels();
     }
@@ -81,31 +79,6 @@ public class ImportDialogController extends ControllerBase implements Initializa
         }
 
         return importFolder;
-    }
-
-    /**
-     * @param import folder to check
-     * @return String containing errors found
-     */
-    private String checkImportFolder(File importFolder) {
-        File promos = new File(importFolder.getPath() + "\\promos.dat");
-        File workers = new File(importFolder.getPath() + "\\wrestler.dat");
-        File belts = new File(importFolder.getPath() + "\\belt.dat");
-
-        List<File> filesNeeded = new ArrayList();
-        filesNeeded.addAll(Arrays.asList(
-                promos, workers, belts
-        ));
-
-        String errors = "";
-
-        for (File f : filesNeeded) {
-            if (!promos.exists() || promos.isDirectory()) {
-                errors += f.getName() + " not found!\n";
-            }
-        }
-
-        return errors;
     }
 
     @Override

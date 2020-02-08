@@ -8,8 +8,8 @@ import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
-import openwrestling.model.manager.DateManager;
-import openwrestling.model.manager.NewsManager;
+import openwrestling.manager.DateManager;
+import openwrestling.manager.NewsManager;
 import org.junit.Before;
 
 import static org.mockito.Mockito.mock;

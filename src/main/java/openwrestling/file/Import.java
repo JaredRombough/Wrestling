@@ -41,6 +41,7 @@ public class Import {
     ));
 
     public String tryImport(File importFolder) throws Exception {
+        long start = System.currentTimeMillis();
 
         StringBuilder sb = new StringBuilder();
         filesNeeded.stream().map((s) -> new File(importFolder.getPath() + "\\" + s + ".dat")).filter((f) -> (!f.exists() || f.isDirectory())).forEach((f) -> {
@@ -113,6 +114,10 @@ public class Import {
                 EvaluateData.evaluateData(allPromotions, allWorkers);
             }*/
         }
+
+        logger.log(Level.DEBUG, String.format("import took %d ms",
+                System.currentTimeMillis() - start)
+        );
 
         return sb.toString();
 

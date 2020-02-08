@@ -9,7 +9,7 @@ import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.manager.NewsManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.RelationshipManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        Database.insertOrUpdateList(List.of(worker));
+        Database.insertList(List.of(worker));
         List<Worker> workers = Database.selectAll(Worker.class);
         assertThat(workers).hasSize(1);
         Worker worker1 = workers.get(0);

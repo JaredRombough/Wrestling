@@ -1,7 +1,6 @@
 package openwrestling.manager;
 
 import lombok.Getter;
-import openwrestling.Logging;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
@@ -10,7 +9,6 @@ import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.manager.NewsManager;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import org.apache.logging.log4j.Level;
@@ -24,12 +22,12 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static openwrestling.model.utility.ContractUtils.isMoraleCheckDay;
 
-public class ContractManager extends Logging implements Serializable {
+public class ContractManager extends GameObjectManager implements Serializable {
 
     @Getter
-    private final List<Contract> contracts;
+    private List<Contract> contracts;
     @Getter
-    private final List<StaffContract> staffContracts;
+    private List<StaffContract> staffContracts;
 
     private final PromotionManager promotionManager;
     private final NewsManager newsManager;
@@ -46,6 +44,12 @@ public class ContractManager extends Logging implements Serializable {
         this.newsManager = newsManager;
         this.relationshipManager = relationshipManager;
         this.bankAccountManager = bankAccountManager;
+    }
+
+    @Override
+    public void selectData() {
+        contracts = Database.selectAll(Contract.class);
+        staffContracts = Database.selectAll(StaffContract.class);
     }
 
     public void dailyUpdate(LocalDate date) {
@@ -70,13 +74,13 @@ public class ContractManager extends Logging implements Serializable {
 
 
     public List<Contract> createContracts(List<Contract> contracts) {
-        List saved = Database.insertOrUpdateList(contracts);
+        List saved = Database.insertList(contracts);
         this.contracts.addAll(saved);
         return saved;
     }
 
     public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
-        List saved = Database.insertOrUpdateList(contracts);
+        List saved = Database.insertList(contracts);
         this.staffContracts.addAll(saved);
         return saved;
     }

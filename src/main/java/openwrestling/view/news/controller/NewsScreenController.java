@@ -93,7 +93,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             }
         });
 
-        gameController.getNewsManager().addWelcomeNewsItem(playerPromotion());
+
     }
 
     @FXML

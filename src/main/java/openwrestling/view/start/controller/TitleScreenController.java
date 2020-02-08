@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import openwrestling.view.utility.GameScreen;
@@ -16,6 +17,7 @@ import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.logging.log4j.Level;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -48,21 +50,23 @@ public class TitleScreenController extends ControllerBase implements Initializab
                 ViewUtils.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
             }
         } else if (event.getSource() == newImportGameButton) {
-
-            try {
-                showImportDialog();
-            } catch (IOException ex) {
-                logger.log(Level.ERROR, "Exception on import game", ex);
-                ViewUtils.generateAlert("Error", "Import game data failed", ex.getMessage()).showAndWait();
-            }
-
+            showImportDialog();
         } else if (event.getSource() == continueGameButton) {
-            logger.log(Level.DEBUG, "continueGameButton");
+            selectDatabaseFile();
         }
 
     }
 
-    private boolean showImportDialog() throws IOException {
+    private void selectDatabaseFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.titleProperty().set("Select database file to load");
+
+        File databaseFile = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+
+        mainApp.continueGame(databaseFile);
+    }
+
+    private void showImportDialog() {
         Stage importPopup = new Stage();
         importPopup.setResizable(false);
 
@@ -81,7 +85,6 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
         importPopup.showAndWait();
 
-        return true;
     }
 
     @Override
