@@ -76,8 +76,8 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build());
     }
 
-    public void addMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
-        addNews(NewsItem.builder()
+    public NewsItem getMoraleNewsItem(iContract contract, long daysBetween, int penalty, LocalDate date) {
+        return NewsItem.builder()
                 .headline(String.format("%s loses morale", contract.getWorker().getShortName()))
                 .summary(String.format("%s has not worked a show for %s in %d days, and loses %d morale.",
                         contract.getWorker().getLongName(),
@@ -87,7 +87,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .date(date)
                 .promotions(List.of(contract.getPromotion()))
                 .workers(List.of(contract.getWorker()))
-                .build());
+                .build();
     }
 
     public void addTrainingNewsItem(Worker worker, StaffMember trainer, Promotion promotion, String stat, LocalDate date) {
@@ -145,6 +145,19 @@ public class NewsManager extends GameObjectManager implements Serializable {
             }
         }
         return items;
+    }
+
+    public void addNewsItems(List<NewsItem> newsItems) {
+        List<NewsItem> inserted = Database.insertList(newsItems);
+        inserted.forEach(newsItem -> {
+            if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
+                newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
+            }
+            if (CollectionUtils.isNotEmpty(newsItem.getWorkers())) {
+                newsItem.getWorkers().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
+            }
+        });
+        newsItems.addAll(inserted);
     }
 
     private void addNews(NewsItem newsItem) {

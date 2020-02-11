@@ -117,7 +117,8 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        dbURL = Database.createNewDatabase("newRandom");
+        String fileName = ViewUtils.enterTextDialog("Enter a name for the new game database");
+        dbURL = Database.createNewDatabase(fileName);
         Database.connect(dbURL);
 
         randomGame = true;

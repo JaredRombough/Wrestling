@@ -143,6 +143,8 @@ public final class GameController extends Logging implements Serializable {
                 .relationshipManager(relationshipManager)
                 .bankAccountManager(bankAccountManager)
                 .injuryManager(injuryManager)
+                .newsManager(newsManager)
+                .contractManager(contractManager)
                 .build();
 
         if (randomGame) {

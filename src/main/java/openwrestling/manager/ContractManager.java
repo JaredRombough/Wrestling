@@ -18,10 +18,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
-import static openwrestling.model.utility.ContractUtils.isMoraleCheckDay;
-
 public class ContractManager extends GameObjectManager implements Serializable {
 
     @Getter
@@ -62,9 +58,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
 //            if (!nextDay(contract, date)) {
 //                titleManager.stripTitlesForExpiringContract(contract);
 //            }
-            if (isMoraleCheckDay(contract, date)) {
-                handleMoraleCheck(contract, date);
-            }
         }
         logger.log(Level.DEBUG, "dailyUpdate staff contracts " + date.toString());
         for (StaffContract contract : staffContracts) {
@@ -264,16 +257,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
             bld.append(current.getPromotion().getShortName());
         }
         return bld.toString();
-    }
-
-    private void handleMoraleCheck(iContract contract, LocalDate date) {
-        logger.log(Level.DEBUG, "handleMoraleCheck");
-        long daysBetween = DAYS.between(contract.getLastShowDate(), date);
-        int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
-        if (penalty > 0) {
-            relationshipManager.addRelationshipValue(contract.getWorker(), contract.getPromotion(), -penalty);
-            newsManager.addMoraleNewsItem(contract, daysBetween, penalty, date);
-        }
     }
 
 }
