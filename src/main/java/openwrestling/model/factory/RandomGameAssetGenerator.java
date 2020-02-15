@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 public class RandomGameAssetGenerator {
     private final static List<String> PROMOTION_NAMES = Arrays.asList(("Superb Wrestling Alliance, International Combat Order, Big Boss Pro Wrestling, Shocking Wrestle Union, Advanced Incorrigible Wrestling, Excellent Organization Of Wrestling, Extremely International Wrestling Organization, Big Fat Wrestling, Unparalleled Wrestling Execution, Regional Wrestling Superalliance, Desperate Wrestling Coalition, Confederation Of Absolute Wrestling Masters, Splendid Wrestling Pact, Impressive Allies Of Wrestling, Tremendous Combat Federation, Glorious Fighting Series, Sterling Wrestling Battlefield, Fabulous Warfare Association, Amzaing Wrestling Artistic Exhibition, Great Wrestling Group, Perpetual Wrestling Struggle, Competitive Pro Wrestling, Pro Wrestling Crusade, War Of Wrestlers International, Exquisite Wrestling Confrontation, Supreme Pro Wrestling Engagement, Fundamental Wrestling Experience, Quest For Wrestling Mastery, Global Touring Wrestling Exhibition").split(","));
+    public static final int MAX_LEVEL = 5;
 
     private final ContractFactory contractFactory;
 
@@ -93,31 +94,31 @@ public class RandomGameAssetGenerator {
     }
 
     List<Promotion> getInitialPromotions() {
-        int numberOfPromotions = 20;
         List<Double> levelRatios = List.of(0.3, 0.2, 0.2, 0.2, 0.1);
         List<String> promotionNames = new ArrayList<>(PROMOTION_NAMES);
+        int numberOfPromotions = promotionNames.size();
         Collections.shuffle(promotionNames);
 
-        return levelRatios.stream()
-                .flatMap(ratio -> {
-                    double target = numberOfPromotions * ratio;
-                    //levels are 1 to 5
-                    int currentLevel = 5 - levelRatios.indexOf(ratio);
-                    List<Promotion> promotions = new ArrayList<>();
-                    for (int i = 0; i < target; i++) {
-                        Promotion promotion = newPromotion();
-                        promotion.setLevel(currentLevel);
-                        promotion.setName(promotionNames.get(i).trim());
-                        String[] words = promotion.getName().split(" ");
-                        String shortName = "";
-                        for (String word : words) {
-                            shortName += StringUtils.upperCase(word.substring(0, 1));
-                        }
-                        promotion.setShortName(shortName);
-                        promotions.add(promotion);
-                    }
-                    return promotions.stream();
-                }).collect(Collectors.toList());
+        List<Promotion> promotions = new ArrayList<>();
+
+        for(Double ratio : levelRatios) {
+            double target = numberOfPromotions * ratio;
+            int currentLevel = MAX_LEVEL - levelRatios.indexOf(ratio);
+            for (int i = 0; i < target && promotions.size() < numberOfPromotions; i++) {
+                Promotion promotion = newPromotion();
+                promotion.setLevel(currentLevel);
+                promotion.setName(promotionNames.get(promotions.size()).trim());
+                String[] words = promotion.getName().split(" ");
+                String shortName = "";
+                for (String word : words) {
+                    shortName += StringUtils.upperCase(word.substring(0, 1));
+                }
+                promotion.setShortName(shortName);
+                promotions.add(promotion);
+            }
+        }
+
+        return promotions;
     }
 
     void setStartingFunds() {

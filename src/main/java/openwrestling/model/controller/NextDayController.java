@@ -109,7 +109,6 @@ public class NextDayController extends Logging {
                 .map(eventTemplate -> bookEventForTemplate(eventTemplate, eventTemplate.getBookedUntil()))
                 .collect(Collectors.toList());
 
-
         handleMoraleCheck();
         updateBankAccounts(events);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
