@@ -13,14 +13,14 @@ import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
-import openwrestling.model.gameObjects.Segment;
-import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -39,7 +39,6 @@ import openwrestling.view.utility.ButtonWrapper;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
-import openwrestling.view.utility.comparators.DateComparator;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -208,7 +207,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         List<Object> challengeOptions = new ArrayList<>();
         challengeOptions.add(ShowType.TONIGHT);
         List<EventTemplate> futureEvents = gameController.getEventManager().getEventTemplates(playerPromotion());
-        futureEvents.sort(new DateComparator());
         challengeOptions.addAll(futureEvents);
         angleOptionsController.setChallengeOptions(challengeOptions);
 
@@ -568,7 +566,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             if (angleOptions.getAngleType().equals(AngleType.CHALLENGE)) {
                 angleOptions.getChallengeSegment().getSegmentTeams().addAll(getSegmentTeamsForChallenge());
                 //TODO multiple titles
-                if(CollectionUtils.isNotEmpty(getTitles())) {
+                if (CollectionUtils.isNotEmpty(getTitles())) {
                     angleOptions.getChallengeSegment().setTitle(getTitles().get(0));
                 }
                 angleOptions.getChallengeSegment().setSourceEventDate(eventScreenController.getCurrentEvent().getDate());

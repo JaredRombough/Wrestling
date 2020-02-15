@@ -4,9 +4,9 @@ import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchFinish;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
@@ -31,7 +31,6 @@ public class TestUtils {
         Event event = new Event();
         event.setDate(LocalDate.now());
         EventTemplate eventTemplate = EventTemplate.builder().build();
-        eventTemplate.setNextDate(LocalDate.now());
         event.setEventTemplate(eventTemplate);
 
         Segment segment = Segment.builder()

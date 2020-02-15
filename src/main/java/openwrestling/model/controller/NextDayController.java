@@ -13,15 +13,14 @@ import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
-import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
+import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
-import openwrestling.model.utility.EventUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Level;
 
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
 import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
-import static openwrestling.model.factory.EventFactory.bookEventForTemplate;
+import static openwrestling.model.factory.EventFactory.bookEventForCompletedAnnualEventTemplateAfterDate;
 
 
 @Builder
@@ -99,22 +98,17 @@ public class NextDayController extends Logging {
                     });
                 });
 
-
-        List<EventTemplate> eventTemplates = events.stream()
+        List<Event> newAnnualEvents = events.stream()
                 .map(Event::getEventTemplate)
-                .peek(EventUtils::updateDatesAfterEvent)
-                .collect(Collectors.toList());
-
-        List<Event> newEvents = eventTemplates.stream()
-                .map(eventTemplate -> bookEventForTemplate(eventTemplate, eventTemplate.getBookedUntil()))
+                .filter(eventTemplate -> eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL))
+                .map(eventTemplate -> bookEventForCompletedAnnualEventTemplateAfterDate(eventTemplate, dateManager.today()))
                 .collect(Collectors.toList());
 
         handleMoraleCheck();
         updateBankAccounts(events);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
-        eventManager.updateEventTemplates(eventTemplates);
-        eventManager.createEvents(newEvents);
+        eventManager.createEvents(newAnnualEvents);
         injuryManager.createInjuries(injuries);
 
     }

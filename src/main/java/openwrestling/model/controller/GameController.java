@@ -188,7 +188,7 @@ public final class GameController extends Logging implements Serializable {
         eventManager.createEventTemplates(generatedEventTemplates);
 
         List<Event> initialEvents = eventManager.getEventTemplates().stream()
-                .flatMap(eventTemplate -> bookEventsForNewEventTemplate(eventTemplate).stream())
+                .flatMap(eventTemplate -> bookEventsForNewEventTemplate(eventTemplate, dateManager.today()).stream())
                 .collect(Collectors.toList());
 
         List<EventTemplate> updatedBookedUntilDates = initialEvents.stream()

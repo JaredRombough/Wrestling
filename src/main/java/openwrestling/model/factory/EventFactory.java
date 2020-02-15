@@ -4,7 +4,10 @@ import openwrestling.Logging;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.RelationshipManager;
+import openwrestling.manager.SegmentManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
@@ -13,15 +16,12 @@ import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iEvent;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.RelationshipManager;
-import openwrestling.manager.SegmentManager;
-import openwrestling.model.gameObjects.Segment;
-import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import static java.time.temporal.TemporalAdjusters.next;
 import static openwrestling.model.constants.GameConstants.*;
-import static openwrestling.model.utility.EventUtils.initializeEventTemplateDates;
+import static openwrestling.model.utility.EventUtils.dateForAnnualEvent;
 import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory extends Logging {
@@ -141,7 +141,6 @@ public class EventFactory extends Logging {
             } else {
                 template.setEventVenueSize(EventVenueSize.SMALL);
             }
-            initializeEventTemplateDates(template, startDate);
             eventTemplates.add(template);
 
 
@@ -149,25 +148,37 @@ public class EventFactory extends Logging {
         return eventTemplates;
     }
 
-    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate) {
+    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
         List<Event> newEvents = new ArrayList<>();
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
-            Event event = bookEventForTemplate(eventTemplate, eventTemplate.getNextDate());
+            Event event = bookEventForNewAnnualEventTemplateAfterDate(eventTemplate, startDate);
             newEvents.add(event);
-            eventTemplate.setBookedUntil(event.getDate());
         } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
-            LocalDate weeklyDate = eventTemplate.getNextDate();
+            LocalDate weeklyDate = startDate;
             for (int i = 0; i < WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT; i++) {
-                Event event = bookEventForTemplate(eventTemplate, weeklyDate);
+                Event event = bookEventForTemplateOnDate(eventTemplate, weeklyDate);
                 newEvents.add(event);
-                eventTemplate.setBookedUntil(weeklyDate);
                 weeklyDate = weeklyDate.with(next(eventTemplate.getDayOfWeek()));
             }
         }
         return newEvents;
     }
 
-    public static Event bookEventForTemplate(EventTemplate eventTemplate, LocalDate date) {
+    public static Event bookEventForCompletedAnnualEventTemplateAfterDate(EventTemplate eventTemplate, LocalDate startDate) {
+        LocalDate date = startDate.plusMonths(1).withDayOfMonth(1);
+        return bookEventForTemplateOnDate(eventTemplate,
+                dateForAnnualEvent(eventTemplate.getMonth(), eventTemplate.getDayOfWeek(), date)
+        );
+    }
+
+    public static Event bookEventForNewAnnualEventTemplateAfterDate(EventTemplate eventTemplate, LocalDate startDate) {
+        return bookEventForTemplateOnDate(eventTemplate,
+                dateForAnnualEvent(eventTemplate.getMonth(), eventTemplate.getDayOfWeek(), startDate)
+        );
+    }
+
+
+    public static Event bookEventForTemplateOnDate(EventTemplate eventTemplate, LocalDate date) {
         Event event = new Event();
         event.setDate(date);
         event.setPromotion(eventTemplate.getPromotion());
@@ -286,7 +297,8 @@ public class EventFactory extends Logging {
                     .filter(team -> team.getType().equals(TeamType.CHALLENGER) || ResponseType.YES.equals(team.getResponse()))
                     .collect(Collectors.toList());
             if (teams.size() < 2) {
-                segment.setChallengeSegment(null);}
+                segment.setChallengeSegment(null);
+            }
         }
     }
 

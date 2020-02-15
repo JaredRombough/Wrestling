@@ -72,7 +72,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
         calendarButton.setText(CALENDAR_ICON);
         calendarButton.setOnAction(e -> {
             mainApp.show(ScreenCode.CALENDAR,
-                    gameController.getEventManager().getNextEvent(eventTemplate));
+                    gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today()));
         });
         editBroadcastTeamButton.setText(EDIT_ICON);
         editBroadcastTeamButton.setOnAction(e -> {
@@ -131,7 +131,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
                     eventTemplate.getPromotion(),
                     playerPromotion());
 
-            nextEventLabel.setText(ModelUtils.dateString(eventTemplate.getNextDate()));
+            nextEventLabel.setText(ModelUtils.dateString(
+                    gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today()).getDate())
+            );
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());

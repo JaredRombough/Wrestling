@@ -52,7 +52,6 @@ public class EventManagerTest {
                 .eventBroadcast(EventBroadcast.TELEVISION)
                 .eventFrequency(EventFrequency.WEEKLY)
                 .eventVenueSize(EventVenueSize.LARGE)
-                .bookedUntil(LocalDate.now().plusDays(100))
                 .build();
 
         eventManager.createEventTemplates(List.of(eventTemplate));
