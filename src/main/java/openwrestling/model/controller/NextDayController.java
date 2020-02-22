@@ -59,14 +59,12 @@ public class NextDayController extends Logging {
                 .map(this::eventOnDay)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        logger.log(Level.DEBUG, String.format("nextDay promo loop took %d ms",
-                System.currentTimeMillis() - start));
-        long start2 = System.currentTimeMillis();
+
         if (CollectionUtils.isNotEmpty(events)) {
             processEvents(events);
         }
-        logger.log(Level.DEBUG, String.format("nextDay processEvents took %d ms",
-                System.currentTimeMillis() - start2));
+        logger.log(Level.DEBUG, String.format("nextDay took %d ms",
+                System.currentTimeMillis() - start));
 
     }
 

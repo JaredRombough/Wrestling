@@ -40,7 +40,7 @@ public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
-    private static final int PRE_RUN_DAYS = 0;
+    private static final int PRE_RUN_DAYS = 60;
     private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
     private static final String VERSION = "0.3.14";
     private final transient Logger logger;
@@ -279,14 +279,24 @@ public class MainApp extends Application {
     }
 
     private void preRun() {
+        long time = System.currentTimeMillis();
         preRun = PRE_RUN_DAYS > 0;
+        List<Long> dayTimes = new ArrayList<>();
 
         //number of days to run automatically at start of game
         for (int i = 0; i < PRE_RUN_DAYS; i++) {
+            long dayStartTime = System.currentTimeMillis();
             nextDay();
+            dayTimes.add(System.currentTimeMillis() - dayStartTime);
         }
 
         preRun = false;
+        logger.log(Level.DEBUG, "pre run for " + PRE_RUN_DAYS + " days took " +
+                (System.currentTimeMillis() - time));
+        if (PRE_RUN_DAYS > 0) {
+            Profile profile = new Profile();
+            profile.printEval(gameController, dayTimes);
+        }
     }
 
     private void loadScreens() {

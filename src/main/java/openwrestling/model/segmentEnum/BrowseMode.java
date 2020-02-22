@@ -277,7 +277,7 @@ public enum BrowseMode implements iBrowseMode {
     EVENTS {
         @Override
         public ObservableList comparators() {
-            return FXCollections.observableArrayList(new DateComparator(), new NameComparator());
+            return FXCollections.observableArrayList(new NameComparator());
         }
 
         @Override

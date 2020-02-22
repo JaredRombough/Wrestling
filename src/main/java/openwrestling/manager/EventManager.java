@@ -58,6 +58,26 @@ public class EventManager extends GameObjectManager implements Serializable {
         return new ArrayList<>(eventMap.values());
     }
 
+    public List<Event> getEvents(Promotion promotion) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getPastEvents(Promotion promotion, LocalDate date) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .filter(event -> event.getDate().isBefore(date))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getFutureEvents(Promotion promotion, LocalDate date) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .filter(event -> event.getDate().isAfter(date) || event.getDate().equals(date))
+                .collect(Collectors.toList());
+    }
+
     public List<EventTemplate> getEventTemplates() {
         return new ArrayList<>(eventTemplateMap.values());
     }
