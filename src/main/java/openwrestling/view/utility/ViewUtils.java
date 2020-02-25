@@ -42,6 +42,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import openwrestling.MainApp;
 import openwrestling.model.gameObjects.Relationship;
 import openwrestling.model.SegmentItem;
@@ -317,6 +319,15 @@ public final class ViewUtils {
 
         Optional<String> result = dialog.showAndWait();
         return result.orElse("");
+    }
+
+    public static File createDatabaseDialog(Stage stage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.titleProperty().set("Select a name and location for the new game database");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Database File", "*.db")
+        );
+        return fileChooser.showSaveDialog(stage);
     }
 
     public static String editTextDialog(String string) {

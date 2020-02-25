@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
 import java.io.File;
@@ -55,9 +54,8 @@ public class ImportDialogController extends ControllerBase implements Initializa
         } else if (event.getSource() == dataPathButton) {
             dataPath = chooseDirectory(dataPath, "Scenario .DAT Files");
         } else if (event.getSource() == startGameButton) {
-            String fileName = ViewUtils.enterTextDialog("Enter a name for the new game database");
             stage.close();
-            mainApp.newImportGame(dataPath, picsPath, logosPath, fileName);
+            mainApp.newImportGame(dataPath, picsPath, logosPath);
         }
         updateLabels();
     }

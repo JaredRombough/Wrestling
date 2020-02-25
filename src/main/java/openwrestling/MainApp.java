@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.file.Import;
 import openwrestling.model.SegmentItem;
@@ -38,12 +39,14 @@ import java.util.ResourceBundle;
 
 public class MainApp extends Application {
 
+    public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
+    public static final String VERSION = "0.4.0";
+
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
-    private static final int PRE_RUN_DAYS = 60;
-    private static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    private static final String VERSION = "0.3.14";
+    private static final int PRE_RUN_DAYS = 0;
     private final transient Logger logger;
+    @Getter
     private Stage primaryStage;
     private GameController gameController;
     private final List<GameScreen> screens;
@@ -51,10 +54,13 @@ public class MainApp extends Application {
     private File logosFolder;
     private File dataFolder;
     private boolean preRun = false;
+    @Getter
     private boolean randomGame;
     private final boolean cssEnabled;
+    @Getter
     private final ResourceBundle resx;
     private GameScreen currentScreen;
+    @Getter
     private double currentStageWidth;
     private double currentStageHeight;
 
@@ -117,59 +123,54 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        String fileName = ViewUtils.enterTextDialog("Enter a name for the new game database");
-        dbURL = Database.createNewDatabase(fileName);
-        Database.connect(dbURL);
-
-        randomGame = true;
-        try {
-            gameController = new GameController(true);
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, "Problem creating gameController, setting gameController null", ex);
-            gameController = null;
-            throw ex;
+        if (connectToNewDatabase()) {
+            randomGame = true;
+            try {
+                gameController = new GameController(true);
+            } catch (IOException ex) {
+                logger.log(Level.ERROR, "Problem creating gameController, setting gameController null", ex);
+                gameController = null;
+                throw ex;
+            }
+            initRootLayout();
+            showStartGameScreen();
         }
-        initRootLayout();
-        showStartGameScreen();
-
     }
 
-    public void newImportGame(File dataFolder, File picsFolder, File logosFolder, String fileName) throws Exception {
-        dbURL = Database.createNewDatabase(fileName);
-        Database.connect(dbURL);
+    public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
+        if (connectToNewDatabase()) {
+            randomGame = false;
+            this.dataFolder = dataFolder;
+            this.picsFolder = picsFolder;
+            this.logosFolder = logosFolder;
 
-        randomGame = false;
-        this.dataFolder = dataFolder;
-        this.picsFolder = picsFolder;
-        this.logosFolder = logosFolder;
+            Import importer = new Import();
 
-        Import importer = new Import();
+            String error = "";
+            try {
 
-        String error = "";
-        try {
+                error = importer.tryImport(dataFolder);
 
-            error = importer.tryImport(dataFolder);
+                if (!error.isEmpty()) {
 
-            if (!error.isEmpty()) {
+                    logger.log(Level.ERROR, error);
 
-                logger.log(Level.ERROR, error);
+                    ViewUtils.generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
 
-                ViewUtils.generateAlert("Import error", "Resources could not be validated.", error).showAndWait();
+                } else {
+                    this.gameController = importer.getGameController();
+                    initRootLayout();
+                    showStartGameScreen();
+                }
+            } catch (Exception ex) {
 
-            } else {
-                this.gameController = importer.getGameController();
-                initRootLayout();
-                showStartGameScreen();
+                logger.log(Level.ERROR, error, ex);
+
+                ViewUtils.generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
+
+                throw ex;
             }
-        } catch (Exception ex) {
-
-            logger.log(Level.ERROR, error, ex);
-
-            ViewUtils.generateAlert("Import error", "Resources could not be validated.", error + "\n" + ex.getMessage()).showAndWait();
-
-            throw ex;
         }
-
     }
 
     public void continueGame(File dbFile) {
@@ -197,8 +198,8 @@ public class MainApp extends Application {
             scene.getStylesheets().add("style.css");
         }
 
-        getPrimaryStage().setScene(scene);
-        getPrimaryStage().show();
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
         ((TitleScreenController) titleScreen.controller).setImage(loadImageFromPath("images/title.jpg"));
 
@@ -327,8 +328,8 @@ public class MainApp extends Application {
         if (cssEnabled) {
             scene.getStylesheets().add("style.css");
         }
-        getPrimaryStage().setScene(scene);
-        getPrimaryStage().show();
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public GameScreen show(ScreenCode code) {
@@ -449,11 +450,14 @@ public class MainApp extends Application {
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).setButtonsDisable(disable);
     }
 
-    /**
-     * @return the primaryStage
-     */
-    public Stage getPrimaryStage() {
-        return primaryStage;
+    private boolean connectToNewDatabase() {
+        File fileName = ViewUtils.createDatabaseDialog(primaryStage);
+        if (fileName == null) {
+            return false;
+        }
+        dbURL = Database.createNewDatabase(fileName);
+        Database.connect(dbURL);
+        return true;
     }
 
     /**
@@ -476,48 +480,6 @@ public class MainApp extends Application {
     public File getDataFolder() {
 
         return dataFolder == null ? new File(System.getProperty("user.dir") + "/DATA/") : dataFolder;
-    }
-
-    /**
-     * @return the VERSION
-     */
-    public String getVERSION() {
-        return VERSION;
-    }
-
-    /**
-     * @return the CONTACT
-     */
-    public String getCONTACT() {
-        return CONTACT;
-    }
-
-    /**
-     * @return the resx
-     */
-    public ResourceBundle getResx() {
-        return resx;
-    }
-
-    /**
-     * @return the currentStageSize
-     */
-    public double getCurrentStageWidth() {
-        return currentStageWidth;
-    }
-
-    /**
-     * @return the currentStageHeight
-     */
-    public double getCurrentStageHeight() {
-        return currentStageHeight;
-    }
-
-    /**
-     * @return the randomGame
-     */
-    public boolean isRandomGame() {
-        return randomGame;
     }
 
 }

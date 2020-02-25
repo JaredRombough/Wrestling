@@ -134,9 +134,9 @@ public class Database {
         dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
     }
 
-    public static String createNewDatabase(String fileName) {
+    public static String createNewDatabase(File file) {
 
-        String url = "jdbc:sqlite:C:/temp/" + fileName + ".db";
+        String url = "jdbc:sqlite:" + file.getPath();
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
