@@ -57,10 +57,6 @@ public class TitleScreenController extends ControllerBase implements Initializab
 
     }
 
-    //TODO
-    //hire staff
-    //player event
-
     private void selectDatabaseFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.titleProperty().set("Select database file to load");
