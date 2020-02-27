@@ -34,7 +34,7 @@ public class RelationshipManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
 
         relationshipManager = new RelationshipManager();
 

@@ -125,13 +125,7 @@ public class MainApp extends Application {
     public void newRandomGame() throws IOException {
         if (connectToNewDatabase()) {
             randomGame = true;
-            try {
-                gameController = new GameController(true);
-            } catch (IOException ex) {
-                logger.log(Level.ERROR, "Problem creating gameController, setting gameController null", ex);
-                gameController = null;
-                throw ex;
-            }
+            gameController = new GameController(true);
             initRootLayout();
             showStartGameScreen();
         }
@@ -175,15 +169,10 @@ public class MainApp extends Application {
 
     public void continueGame(File dbFile) {
         Database.setDbFile(dbFile);
-        try {
-            gameController = new GameController(false);
-            gameController.loadGameDataFromDatabase();
-            initRootLayout();
-            continueGame();
-        } catch (IOException e) {
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
-            throw new RuntimeException(e);
-        }
+        gameController = new GameController(false);
+        gameController.loadGameDataFromDatabase();
+        initRootLayout();
+        continueGame();
     }
 
 

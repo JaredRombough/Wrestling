@@ -52,9 +52,24 @@ public class TitleScreenController extends ControllerBase implements Initializab
         } else if (event.getSource() == newImportGameButton) {
             showImportDialog();
         } else if (event.getSource() == continueGameButton) {
-            mainApp.continueGame();
+            selectDatabaseFile();
         }
 
+    }
+
+    //TODO
+    //hire staff
+    //player event
+
+    private void selectDatabaseFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.titleProperty().set("Select database file to load");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Database File", "*.db")
+        );
+        File databaseFile = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+
+        mainApp.continueGame(databaseFile);
     }
 
     private void showImportDialog() {

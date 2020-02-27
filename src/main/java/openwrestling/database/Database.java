@@ -135,8 +135,12 @@ public class Database {
     }
 
     public static String createNewDatabase(File file) {
-
         String url = "jdbc:sqlite:" + file.getPath();
+        return createNewDatabase(url);
+    }
+
+
+    public static String createNewDatabase(String url) {
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -151,6 +155,13 @@ public class Database {
         createTables(url);
 
         return url;
+    }
+
+    public static String createNewTempDatabase(String dbname) {
+
+        String url = "jdbc:sqlite:C:/temp/" + dbname + ".db";
+
+        return createNewDatabase(url);
     }
 
 
@@ -327,7 +338,7 @@ public class Database {
 
     public static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
         if (gameObjects.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
         Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
 
@@ -352,7 +363,7 @@ public class Database {
 
     public static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
         if (entities.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(entities.get(0).getClass(), targetClass);

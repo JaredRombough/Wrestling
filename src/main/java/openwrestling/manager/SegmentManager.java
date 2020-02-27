@@ -57,7 +57,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     @Override
     public void selectData() {
         //segments = Database.selectAll(Segment.class);
-        List<Segment> segments = Database.selectAll(Segment.class);
+        List<Segment> segments = Database.querySelect(new SegmentQuery());
         segments.forEach(segment -> {
             segmentMap.put(segment.getSegmentID(), segment);
         });

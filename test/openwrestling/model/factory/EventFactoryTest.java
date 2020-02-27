@@ -59,7 +59,7 @@ public class EventFactoryTest {
     public void setUp() {
         today = LocalDate.now();
         matchFactory = new MatchFactory(segmentManager, mock(DateManager.class), mock(InjuryManager.class), workerManager, mock(StaffManager.class));
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
         when(bankAccountManager.getBankAccount(any(Promotion.class))).thenReturn(new BankAccount());
         relationshipManager = mock(RelationshipManager.class);
         eventFactory = new EventFactory(

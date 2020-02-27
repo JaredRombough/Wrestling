@@ -3,14 +3,14 @@ package openwrestling.file;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.RelationshipManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class DatabaseTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
     @Test

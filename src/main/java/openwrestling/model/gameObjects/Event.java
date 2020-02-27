@@ -33,19 +33,6 @@ public class Event extends GameObject implements Serializable, iEvent, iDate {
     private EventTemplate eventTemplate;
     private List<Segment> segments;
 
-    public Event(EventTemplate eventTemplate, LocalDate date) {
-        this.eventTemplate = eventTemplate;
-        this.promotion = eventTemplate.getPromotion();
-        this.date = date;
-        this.name = eventTemplate.getName();
-        this.defaultDuration = eventTemplate.getDefaultDuration();
-    }
-
-    public Event(Promotion promotion, LocalDate date) {
-        this.promotion = promotion;
-        this.date = date;
-    }
-
     @Override
     public String toString() {
         return StringUtils.containsIgnoreCase(name, promotion.getShortName())

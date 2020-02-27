@@ -29,12 +29,11 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import org.apache.logging.log4j.Level;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static openwrestling.model.constants.GameConstants.DEFAULT_START_DATE;
 import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
 
 @Getter
@@ -69,10 +68,8 @@ public final class GameController extends Logging implements Serializable {
 
     private final int EVENT_MONTHS = 6;
 
-    public GameController(boolean randomGame) throws IOException {
-        //set the initial date here
-        dateManager = new DateManager(LocalDate.of(2015, 1, 5));
-
+    public GameController(boolean randomGame) {
+        dateManager = new DateManager();
 
         bankAccountManager = new BankAccountManager();
         promotionManager = new PromotionManager(bankAccountManager);
@@ -148,6 +145,7 @@ public final class GameController extends Logging implements Serializable {
                 .build();
 
         if (randomGame) {
+            dateManager.setGameDate(DEFAULT_START_DATE);
             RandomGameAssetGenerator randomGameAssetGenerator = new RandomGameAssetGenerator(
                     contractFactory,
                     dateManager,

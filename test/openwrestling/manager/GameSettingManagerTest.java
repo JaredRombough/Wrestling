@@ -13,7 +13,7 @@ public class GameSettingManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
     @Test

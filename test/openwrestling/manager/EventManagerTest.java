@@ -36,7 +36,7 @@ public class EventManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         eventManager = new EventManager(mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));

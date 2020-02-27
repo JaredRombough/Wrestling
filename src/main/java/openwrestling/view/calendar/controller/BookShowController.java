@@ -165,8 +165,8 @@ public class BookShowController extends ControllerBase implements Initializable 
         Optional<EventTemplate> optionalResult = createShowDialog().showAndWait();
         optionalResult.ifPresent((EventTemplate template) -> {
 
-            gameController.getEventManager().createEventTemplates(List.of(template));
-            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(template, currentDate));
+            EventTemplate saved = gameController.getEventManager().createEventTemplates(List.of(template)).get(0);
+            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(saved, currentDate));
 
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getEventOnDate(
@@ -251,13 +251,6 @@ public class BookShowController extends ControllerBase implements Initializable 
             gameController.getEventManager().cancelEvent(toCancel);
             mainApp.show(ScreenCode.CALENDAR, currentDate);
         }
-    }
-
-    /**
-     * @return the confirmButton
-     */
-    public Button getConfirmButton() {
-        return confirmButton;
     }
 
     /**

@@ -11,8 +11,9 @@ public class DateManager extends GameObjectManager implements Serializable {
 
     private LocalDate gameDate;
 
-    public DateManager(LocalDate startDate) {
-        gameDate = startDate;
+    public void setGameDate(LocalDate gameDate) {
+        this.gameDate = gameDate;
+        GameSettingManager.setGameDate(GAME_DATE, gameDate);
     }
 
     @Override
