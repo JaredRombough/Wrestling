@@ -27,8 +27,8 @@ public class ContractFactory {
         return createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
-    public void createContract(StaffMember staff, Promotion promotion, LocalDate startDate, int duration) {
-        createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
+    public StaffContract createContract(StaffMember staff, Promotion promotion, LocalDate startDate, int duration) {
+        return createContract(staff, promotion, startDate, ContractUtils.contractEndDate(startDate, duration));
     }
 
     public Contract createContract(Worker worker, Promotion promotion, LocalDate startDate, boolean exclusive) {

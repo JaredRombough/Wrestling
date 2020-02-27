@@ -1,9 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ButtonType;
@@ -13,12 +9,19 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.interfaces.iPerson;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.utility.ViewUtils;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ContractDialog {
 
@@ -91,18 +94,19 @@ public class ContractDialog {
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.get() == ButtonType.OK) {
             if (person instanceof Worker) {
-                gameController.getContractFactory().createContract(
+                Contract contract = gameController.getContractFactory().createContract(
                         (Worker) person,
                         playerPromotion,
                         typeComboBox.getSelectionModel().selectedItemProperty().getValue().equals("Exclusive"),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1,
                         gameController.getDateManager().today());
+                gameController.getContractManager().createContracts(List.of(contract));
             } else if (person instanceof StaffMember) {
-                gameController.getContractFactory().createContract((StaffMember) person,
+                StaffContract staffContract = gameController.getContractFactory().createContract((StaffMember) person,
                         playerPromotion,
                         gameController.getDateManager().today(),
                         lengthComboBox.getSelectionModel().getSelectedIndex() + 1);
-
+                gameController.getContractManager().createStaffContracts(List.of(staffContract));
             }
         }
     }
