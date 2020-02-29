@@ -17,3 +17,8 @@ Then attach Intellij to port 8000.
 To compile executable jar
 
 > mvn clean package
+
+
+To build zip file for distribution
+
+> .\owbuild

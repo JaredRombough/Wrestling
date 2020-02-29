@@ -1,4 +1,5 @@
 call mvn clean package
+rmdir /Q /S ".\dist\"
 md ".\dist\Open Wrestling"
 xcopy ".\target\openwrestling-1.0-SNAPSHOT.jar" ".\dist\Open Wrestling" /y
 rename  ".\dist\Open Wrestling\openwrestling-1.0-SNAPSHOT.jar" "Open Wrestling.jar"
