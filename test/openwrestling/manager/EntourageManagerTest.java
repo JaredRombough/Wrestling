@@ -21,7 +21,7 @@ public class EntourageManagerTest {
     public void setUp() {
         workerManager = new WorkerManager(mock(ContractManager.class));
         entourageManager = new EntourageManager(workerManager);
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
     @Test

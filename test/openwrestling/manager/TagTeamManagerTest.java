@@ -24,7 +24,7 @@ public class TagTeamManagerTest {
     public void setUp() {
         workerManager = new WorkerManager(mock(ContractManager.class));
         tagTeamManager = new TagTeamManager(workerManager);
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
     @Test

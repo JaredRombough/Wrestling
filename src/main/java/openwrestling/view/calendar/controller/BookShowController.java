@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
-import static openwrestling.model.utility.EventUtils.initializeEventTemplateDates;
 
 public class BookShowController extends ControllerBase implements Initializable {
 
@@ -166,8 +165,8 @@ public class BookShowController extends ControllerBase implements Initializable 
         Optional<EventTemplate> optionalResult = createShowDialog().showAndWait();
         optionalResult.ifPresent((EventTemplate template) -> {
 
-            gameController.getEventManager().createEventTemplates(List.of(template));
-            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(template));
+            EventTemplate saved = gameController.getEventManager().createEventTemplates(List.of(template)).get(0);
+            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(saved, currentDate));
 
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getEventOnDate(
@@ -217,7 +216,6 @@ public class BookShowController extends ControllerBase implements Initializable 
                 template.setPromotion(playerPromotion());
                 template.setMonth(currentDate.getMonth().getValue());
                 template.setDayOfWeek(currentDate.getDayOfWeek());
-                initializeEventTemplateDates(template, gameController.getDateManager().today());
                 return template;
             }
             return null;
@@ -253,13 +251,6 @@ public class BookShowController extends ControllerBase implements Initializable 
             gameController.getEventManager().cancelEvent(toCancel);
             mainApp.show(ScreenCode.CALENDAR, currentDate);
         }
-    }
-
-    /**
-     * @return the confirmButton
-     */
-    public Button getConfirmButton() {
-        return confirmButton;
     }
 
     /**

@@ -21,7 +21,7 @@ public class BroadcastTeamManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
         broadcastTeamManager = new BroadcastTeamManager();
     }
 

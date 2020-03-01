@@ -2,12 +2,12 @@ package openwrestling.model.segmentEnum;
 
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
+import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.Description;
 import openwrestling.model.interfaces.iTeamType;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Title;
 
 import java.util.Arrays;
 import java.util.Collections;

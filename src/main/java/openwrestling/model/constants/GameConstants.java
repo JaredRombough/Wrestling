@@ -1,5 +1,7 @@
 package openwrestling.model.constants;
 
+import java.time.LocalDate;
+
 public class GameConstants {
 
     public static final int WORKERS_PER_MEDIC = 20;
@@ -20,7 +22,7 @@ public class GameConstants {
     public static final int MAX_INJURY_DAYS = 200;
 
     public static final int BASE_TRAINER_SUCCESS_RATE = 100;
-    
+
     public static final int MAX_RELATIONSHIP_LEVEL = 100;
     public static final int DEFAULT_RELATIONSHIP_LEVEL = 0;
     public static final int MIN_RELATIONSHIP_LEVEL = -100;
@@ -30,6 +32,8 @@ public class GameConstants {
     public static final int MORALE_BONUS_TITLE_MATCH_WIN = 1;
 
     public static final int WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT = 30;
-    
+
+    public static final LocalDate DEFAULT_START_DATE = LocalDate.of(2015, 1, 5);
+
 
 }

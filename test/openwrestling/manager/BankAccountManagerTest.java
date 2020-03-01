@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BankAccountManagerTest {
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
 

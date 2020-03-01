@@ -86,10 +86,6 @@ public class SegmentEntity extends Entity {
     @DatabaseField(foreign = true)
     private StableEntity joinStable;
 
-    //TODO #188
-//    @DatabaseField
-//    private SegmentTemplate challengeSegment;
-
     public List<? extends Entity> childrenToInsert() {
         teams.forEach(team -> team.setSegmentEntity(this));
         return new ArrayList<>(teams);

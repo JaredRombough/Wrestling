@@ -69,10 +69,6 @@ import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.gameObjects.gamesettings.GameSetting;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.sql.Connection;
@@ -89,7 +85,6 @@ import java.util.stream.Collectors;
 public class Database {
 
     private static String dbUrl;
-    private static Logger logger = LogManager.getLogger();
     private static MapperFactory mapperFactory;
 
     private static MapperFactory getMapperFactory() {
@@ -137,23 +132,23 @@ public class Database {
 
     public static void setDbFile(File dbFile) {
         dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
-        logger.log(Level.DEBUG, "database set to " + dbUrl);
     }
 
-    public static String createNewDatabase(String fileName) {
+    public static String createNewDatabase(File file) {
+        String url = "jdbc:sqlite:" + file.getPath();
+        return createNewDatabase(url);
+    }
 
-        String url = "jdbc:sqlite:C:/temp/" + fileName + ".db";
+
+    public static String createNewDatabase(String url) {
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                logger.log(Level.DEBUG, "The driver name is " + meta.getDriverName());
-                logger.log(Level.DEBUG, "A new database has been created. " + url);
                 dbUrl = url;
             }
 
         } catch (SQLException e) {
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
             throw new RuntimeException(e);
         }
 
@@ -162,13 +157,19 @@ public class Database {
         return url;
     }
 
+    public static String createNewTempDatabase(String dbname) {
+
+        String url = "jdbc:sqlite:C:/temp/" + dbname + ".db";
+
+        return createNewDatabase(url);
+    }
+
 
     public static Connection connect(String url) {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(url);
         } catch (SQLException e) {
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
             throw new RuntimeException(e);
         } finally {
             try {
@@ -176,7 +177,6 @@ public class Database {
                     connection.close();
                 }
             } catch (SQLException e) {
-                logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
                 throw new RuntimeException(e);
             }
         }
@@ -238,9 +238,6 @@ public class Database {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        logger.log(Level.DEBUG, String.format("selectAll %s took %d ms",
-                sourceClass.getName(), System.currentTimeMillis() - start)
-        );
         return list;
     }
 
@@ -257,9 +254,6 @@ public class Database {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        logger.log(Level.DEBUG, String.format("querySelect %s took %d ms",
-                query.sourceClass().getName(), System.currentTimeMillis() - start)
-        );
         return list;
     }
 
@@ -287,32 +281,13 @@ public class Database {
             if (gameObjects.isEmpty()) {
                 return gameObjects;
             }
-            long start = System.currentTimeMillis();
-            logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
-                    gameObjects.size(),
-                    gameObjects.get(0).getClass())
-            );
             List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
-            logger.log(Level.DEBUG, String.format("gameObjectsToEntities took %d ms",
-                    System.currentTimeMillis() - start)
-            );
-            long start2 = System.currentTimeMillis();
             List<? extends Entity> saved = insertOrUpdateEntityList(entities);
-            logger.log(Level.DEBUG, String.format("insertOrUpdateEntityList took %d ms",
-                    System.currentTimeMillis() - start2)
-            );
-            long start3 = System.currentTimeMillis();
             List updatedGameObjects = entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
-            logger.log(Level.DEBUG, String.format("entitiesToGameObjects took %d ms",
-                    System.currentTimeMillis() - start3)
-            );
-            logger.log(Level.DEBUG, String.format("insertOrUpdateList took %d ms",
-                    System.currentTimeMillis() - start)
-            );
+
             return updatedGameObjects;
         } catch (Exception e) {
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
@@ -321,22 +296,9 @@ public class Database {
             if (gameObjects.isEmpty()) {
                 return;
             }
-            long start = System.currentTimeMillis();
-            logger.log(Level.DEBUG, String.format("insertOrUpdateList size %d class %s",
-                    gameObjects.size(),
-                    gameObjects.get(0).getClass())
-            );
             List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
-            logger.log(Level.DEBUG, String.format("gameObjectsToEntities took %d ms",
-                    System.currentTimeMillis() - start)
-            );
-            long start2 = System.currentTimeMillis();
-            List<? extends Entity> saved = insertOrUpdateEntityList(entities);
-            logger.log(Level.DEBUG, String.format("insertOrUpdateEntityList took %d ms",
-                    System.currentTimeMillis() - start2)
-            );
+            insertOrUpdateEntityList(entities);
         } catch (Exception e) {
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
             throw e;
         }
     }
@@ -376,7 +338,7 @@ public class Database {
 
     public static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
         if (gameObjects.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
         Class<? extends Entity> targetClass = daoClassMap.get(gameObjects.get(0).getClass());
 
@@ -389,12 +351,10 @@ public class Database {
                         entity = targetClass.getConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
                         throw new RuntimeException(e);
                     }
 
                     Object result = boundedMapper.map(gameObject, entity);
-                    //     getMapperFactory().getMapperFacade().map(gameObject, entity);
                     return result;
                 })
                 .map(targetClass::cast)
@@ -403,7 +363,7 @@ public class Database {
 
     public static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
         if (entities.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         BoundMapperFacade boundedMapper = getMapperFactory().getMapperFacade(entities.get(0).getClass(), targetClass);

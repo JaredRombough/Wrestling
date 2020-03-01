@@ -14,7 +14,6 @@ import openwrestling.model.segmentEnum.EventVenueSize;
 
 import java.time.DayOfWeek;
 import java.util.Collection;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -29,12 +28,6 @@ public class EventTemplateEntity extends Entity {
 
     @DatabaseField(foreign = true)
     private PromotionEntity promotion;
-
-    @DatabaseField
-    private Date nextDate;
-
-    @DatabaseField
-    private Date bookedUntil;
 
     @DatabaseField
     private long defaultDuration;

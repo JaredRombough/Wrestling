@@ -30,7 +30,7 @@ public class InjuryManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         injuryManager = new InjuryManager(mock(NewsManager.class), mock(WorkerManager.class), mockDateManager);

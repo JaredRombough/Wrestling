@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PromotionManagerTest {
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
     }
 
 

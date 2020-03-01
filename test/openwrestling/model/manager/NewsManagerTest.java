@@ -30,7 +30,7 @@ public class NewsManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
 
         newsManager = new NewsManager();
 

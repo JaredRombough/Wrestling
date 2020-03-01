@@ -36,7 +36,7 @@ public class EventManagerTest {
 
     @Before
     public void setUp() {
-        Database.createNewDatabase("testdb");
+        Database.createNewTempDatabase("testdb");
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         eventManager = new EventManager(mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));
@@ -52,7 +52,6 @@ public class EventManagerTest {
                 .eventBroadcast(EventBroadcast.TELEVISION)
                 .eventFrequency(EventFrequency.WEEKLY)
                 .eventVenueSize(EventVenueSize.LARGE)
-                .bookedUntil(LocalDate.now().plusDays(100))
                 .build();
 
         eventManager.createEventTemplates(List.of(eventTemplate));

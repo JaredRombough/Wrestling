@@ -9,6 +9,7 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
+import openwrestling.view.utility.comparators.DateComparator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
@@ -20,7 +21,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,26 @@ public class EventManager extends GameObjectManager implements Serializable {
 
     public List<Event> getEvents() {
         return new ArrayList<>(eventMap.values());
+    }
+
+    public List<Event> getEvents(Promotion promotion) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getPastEvents(Promotion promotion, LocalDate date) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .filter(event -> event.getDate().isBefore(date))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getFutureEvents(Promotion promotion, LocalDate date) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getPromotion().equals(promotion))
+                .filter(event -> event.getDate().isAfter(date) || event.getDate().equals(date))
+                .collect(Collectors.toList());
     }
 
     public List<EventTemplate> getEventTemplates() {
@@ -116,9 +136,7 @@ public class EventManager extends GameObjectManager implements Serializable {
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {
-        EventTemplate template = event.getEventTemplate();
         event.setDate(newDate);
-        updateFirstAndLastEvents(template);
     }
 
     public void updateEventName(EventTemplate eventTemplate) {
@@ -129,42 +147,8 @@ public class EventManager extends GameObjectManager implements Serializable {
         }
     }
 
-    private void updateFirstAndLastEvents(EventTemplate template) {
-        if (template != null) {
-            Event event = getNextEvent(template,
-                    dateManager.today());
-            if (event != null) {
-                template.setNextDate(getNextEvent(template,
-                        dateManager.today()).getDate());
-                template.setBookedUntil(getLastEvent(template).getDate());
-            } else {
-                template.setNextDate(LocalDate.MIN);
-                template.setBookedUntil(LocalDate.MIN);
-            }
-
-        }
-    }
-
     public void cancelEvent(Event eventToCancel) {
-        EventTemplate template = eventToCancel.getEventTemplate();
-
         eventMap.remove(eventToCancel.getEventID());
-
-        if (template != null) {
-            updateFirstAndLastEvents(template);
-        }
-
-    }
-
-    public Event getNextEvent(EventTemplate template) {
-        for (Event event : getEvents()) {
-            if (event.getEventTemplate().equals(template)
-                    && event.getDate().equals(template.getNextDate())) {
-                return event;
-            }
-        }
-
-        return null;
     }
 
     public Event getNextEvent(EventTemplate template, LocalDate startDate) {
