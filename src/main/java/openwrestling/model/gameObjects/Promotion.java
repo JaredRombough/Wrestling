@@ -22,7 +22,7 @@ public class Promotion extends GameObject implements SegmentItem, Serializable {
     private String name;
     private String shortName;
     private String imagePath;
-    private int promotionID;
+    private long promotionID;
     private int importKey;
     @Builder.Default
     private int popularity = 50;

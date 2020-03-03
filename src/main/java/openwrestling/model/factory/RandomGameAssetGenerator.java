@@ -101,7 +101,7 @@ public class RandomGameAssetGenerator {
 
         List<Promotion> promotions = new ArrayList<>();
 
-        for(Double ratio : levelRatios) {
+        for (Double ratio : levelRatios) {
             double target = numberOfPromotions * ratio;
             int currentLevel = MAX_LEVEL - levelRatios.indexOf(ratio);
             for (int i = 0; i < target && promotions.size() < numberOfPromotions; i++) {
@@ -204,8 +204,10 @@ public class RandomGameAssetGenerator {
 
     public Promotion newPromotion() {
         Promotion promotion = new Promotion();
-        BankAccount bankAccount = new BankAccount(promotion);
-        bankAccount.setFunds(1000000);
+        BankAccount bankAccount = BankAccount.builder()
+                .promotion(promotion)
+                .funds(1000000)
+                .build();
         bankAccountManager.addBankAccount(bankAccount);
         return promotion;
     }

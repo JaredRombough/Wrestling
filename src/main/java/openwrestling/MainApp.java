@@ -44,7 +44,7 @@ public class MainApp extends Application {
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
-    private static final int PRE_RUN_DAYS = 0;
+    private static final int PRE_RUN_DAYS = 40;
     private final transient Logger logger;
     @Getter
     private Stage primaryStage;
