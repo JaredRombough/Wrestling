@@ -72,6 +72,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return saved;
     }
 
+    public List<Contract> updateContracts(List<Contract> contracts) {
+        List saved = Database.insertList(contracts);
+        this.contracts.addAll(saved);
+        return saved;
+    }
+
     public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
         List saved = Database.insertList(contracts);
         this.staffContracts.addAll(saved);
@@ -170,12 +176,15 @@ public class ContractManager extends GameObjectManager implements Serializable {
     public void appearance(LocalDate date, Worker worker, Promotion promotion) {
         Contract contract = getContract(worker, promotion);
         contract.setLastShowDate(date);
-        bankAccountManager.getBankAccount(contract.getPromotion()).removeFunds(contract.getAppearanceCost(), TransactionType.WORKER, date);
+        updateContracts(List.of(contract));
+        if(contract.getAppearanceCost() > 0) {
+            bankAccountManager.removeFunds(contract.getPromotion(), contract.getAppearanceCost(), TransactionType.WORKER, date);
+        }
     }
 
     public void payDay(LocalDate date, Contract contract) {
         if (contract.getMonthlyCost() != 0) {
-            bankAccountManager.getBankAccount(contract.getPromotion()).removeFunds(Math.toIntExact(contract.getMonthlyCost()),
+            bankAccountManager.removeFunds(contract.getPromotion(), Math.toIntExact(contract.getMonthlyCost()),
                     TransactionType.WORKER, date);
         }
     }
@@ -183,12 +192,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
     public void staffPayDay(LocalDate date, Promotion promotion) {
         staffContracts.stream()
                 .filter(contract -> contract.getPromotion().equals(promotion) && contract.getMonthlyCost() > 0)
-                .forEach(contract -> bankAccountManager.getBankAccount(promotion).removeFunds(contract.getMonthlyCost(),
+                .forEach(contract -> bankAccountManager.removeFunds(promotion, contract.getMonthlyCost(),
                         TransactionType.STAFF, date));
     }
 
     public void paySigningFee(LocalDate date, iContract contract) {
-        bankAccountManager.getBankAccount(contract.getPromotion()).removeFunds(
+        bankAccountManager.removeFunds(contract.getPromotion(),
                 ContractUtils.calculateSigningFee(contract.getPerson(), date),
                 contract.getPerson() instanceof Worker ? TransactionType.WORKER : TransactionType.STAFF,
                 date);

@@ -336,7 +336,7 @@ public class Database {
         }
     }
 
-    public static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
+    private static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
         if (gameObjects.isEmpty()) {
             return new ArrayList<>();
         }
@@ -361,7 +361,7 @@ public class Database {
                 .collect(Collectors.toList());
     }
 
-    public static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
+    private static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
         if (entities.isEmpty()) {
             return new ArrayList<>();
         }
