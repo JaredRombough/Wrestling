@@ -1,9 +1,10 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import openwrestling.TestUtils;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
@@ -18,6 +19,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static openwrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_LEVEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -28,18 +30,19 @@ public class RelationshipManagerTest {
     private Worker worker;
     private Worker worker2;
     private Promotion promotion;
+    private Database database;
 
     public RelationshipManagerTest() {
     }
 
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
 
-        relationshipManager = new RelationshipManager();
+        relationshipManager = new RelationshipManager(database);
 
-        PromotionManager promotionManager = new PromotionManager(mock(BankAccountManager.class));
-        WorkerManager workerManager = new WorkerManager(mock(ContractManager.class));
+        PromotionManager promotionManager = new PromotionManager(database, mock(BankAccountManager.class), mock(GameSettingManager.class));
+        WorkerManager workerManager = new WorkerManager(database, mock(ContractManager.class));
         worker = workerManager.createWorker(PersonFactory.randomWorker());
         worker2 = workerManager.createWorker(PersonFactory.randomWorker());
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);

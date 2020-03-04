@@ -20,14 +20,15 @@ public class WorkerManager extends GameObjectManager implements Serializable {
     @Getter
     private List<Worker> workers;
 
-    public WorkerManager(ContractManager contractManager) {
+    public WorkerManager(Database database, ContractManager contractManager) {
+        super(database);
         this.contractManager = contractManager;
         this.workers = new ArrayList<>();
     }
 
     @Override
     public void selectData() {
-        workers = Database.selectAll(Worker.class);
+        workers = getDatabase().selectAll(Worker.class);
     }
 
     public Worker getWorker(long id) {
@@ -71,13 +72,13 @@ public class WorkerManager extends GameObjectManager implements Serializable {
     }
 
     public List<Worker> createWorkers(List<Worker> workers) {
-        List savedWorkers = Database.insertList(workers);
-        this.workers = Database.selectAll(Worker.class);
+        List savedWorkers = getDatabase().insertList(workers);
+        this.workers = getDatabase().selectAll(Worker.class);
         return savedWorkers;
     }
 
     public List<Worker> updateWorkers(List<Worker> workers) {
-        List<Worker> savedWorkers = Database.insertList(workers);
+        List<Worker> savedWorkers = getDatabase().insertList(workers);
         savedWorkers.addAll(
                 this.workers.stream()
                         .filter(worker -> savedWorkers.stream().noneMatch(savedWorker -> savedWorker.getWorkerID() == worker.getWorkerID()))

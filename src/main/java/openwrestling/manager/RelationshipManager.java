@@ -2,7 +2,6 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Relationship;
@@ -20,15 +19,20 @@ import static openwrestling.model.constants.GameConstants.DEFAULT_RELATIONSHIP_L
 @Getter
 public class RelationshipManager extends GameObjectManager {
 
+    public RelationshipManager(Database database) {
+        super(database);
+    }
+
+
     private List<WorkerRelationship> workerRelationships = new ArrayList<>();
     //private List<MoraleRelationship> moraleRelationships = new ArrayList<>();
     private Map<Long, MoraleRelationship> moraleRelationshipMap = new HashMap<>();
 
     @Override
     public void selectData() {
-        workerRelationships = Database.selectAll(WorkerRelationship.class);
-        //moraleRelationships = Database.selectAll(MoraleRelationship.class);
-        List<MoraleRelationship> moraleRelationships = Database.selectAll(MoraleRelationship.class);
+        workerRelationships = getDatabase().selectAll(WorkerRelationship.class);
+        //moraleRelationships = getDatabase().selectAll(MoraleRelationship.class);
+        List<MoraleRelationship> moraleRelationships = getDatabase().selectAll(MoraleRelationship.class);
         moraleRelationships.forEach(relationship -> {
             moraleRelationshipMap.put(relationship.getRelationshipID(), relationship);
         });
@@ -72,12 +76,12 @@ public class RelationshipManager extends GameObjectManager {
                 .findFirst()
                 .orElse(null);
         if (moraleRelationship == null) {
-            MoraleRelationship saved = Database.insertGameObject(MoraleRelationship.builder()
+            MoraleRelationship saved = getDatabase().insertGameObject(MoraleRelationship.builder()
                     .level(DEFAULT_RELATIONSHIP_LEVEL)
                     .worker(worker)
                     .promotion(promotion)
                     .build());
-            //moraleRelationships = Database.selectAll(MoraleRelationship.class);
+            //moraleRelationships = getDatabase().selectAll(MoraleRelationship.class);
             moraleRelationshipMap.put(saved.getRelationshipID(), saved);
             return saved;
         }
@@ -107,15 +111,15 @@ public class RelationshipManager extends GameObjectManager {
                         .promotion(promotion)
                         .build()
                 );
-        Database.insertGameObject(moraleRelationship);
-        //moraleRelationships = Database.selectAll(MoraleRelationship.class);
+        getDatabase().insertGameObject(moraleRelationship);
+        //moraleRelationships = getDatabase().selectAll(MoraleRelationship.class);
         moraleRelationshipMap.put(moraleRelationship.getRelationshipID(), moraleRelationship);
     }
 
 
     public List<MoraleRelationship> createOrUpdateMoraleRelationships(List<MoraleRelationship> workerRelationships) {
-        List<MoraleRelationship> savedRelationships = Database.insertList(workerRelationships);
-        //this.moraleRelationships = Database.selectAll(MoraleRelationship.class);
+        List<MoraleRelationship> savedRelationships = getDatabase().insertList(workerRelationships);
+        //this.moraleRelationships = getDatabase().selectAll(MoraleRelationship.class);
         savedRelationships.forEach(moraleRelationship -> {
             moraleRelationshipMap.put(moraleRelationship.getRelationshipID(), moraleRelationship);
         });
@@ -123,8 +127,8 @@ public class RelationshipManager extends GameObjectManager {
     }
 
     public List<WorkerRelationship> createWorkerRelationships(List<WorkerRelationship> workerRelationships) {
-        List<WorkerRelationship> savedRelationships = Database.insertList(workerRelationships);
-        this.workerRelationships = Database.selectAll(WorkerRelationship.class);
+        List<WorkerRelationship> savedRelationships = getDatabase().insertList(workerRelationships);
+        this.workerRelationships = getDatabase().selectAll(WorkerRelationship.class);
         return savedRelationships;
     }
 }

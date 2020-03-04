@@ -13,28 +13,29 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TitleManagerTest {
-
+    private Database database;
     private TitleManager titleManager;
     private WorkerManager workerManager;
     private LocalDate today = LocalDate.now();
 
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(today);
-        workerManager = new WorkerManager(mock(ContractManager.class));
-        titleManager = new TitleManager(mockDateManager, workerManager);
+        workerManager = new WorkerManager(database, mock(ContractManager.class));
+        titleManager = new TitleManager(database, mockDateManager, workerManager);
     }
 
     @Test
     public void title_create_vacant() {
-        Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
+        Promotion promotion = database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
 
         Title title = Title.builder()
                 .promotion(promotion)
@@ -72,7 +73,7 @@ public class TitleManagerTest {
 
     @Test
     public void title_create_champions() {
-        Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
+        Promotion promotion = database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
         Worker worker = workerManager.createWorker(PersonFactory.randomWorker());
 
         Title title = Title.builder()
@@ -121,7 +122,7 @@ public class TitleManagerTest {
 
     @Test
     public void title_title_change() {
-        Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
+        Promotion promotion = database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
         Worker worker = workerManager.createWorker(PersonFactory.randomWorker());
         Worker worker2 = workerManager.createWorker(PersonFactory.randomWorker());
 

@@ -8,20 +8,24 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static openwrestling.TestUtils.randomPromotion;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class PromotionManagerTest {
+    private Database database;
+
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
     }
 
 
     @Test
     public void createPromotions() {
-        BankAccountManager bankAccountManager = new BankAccountManager();
-        PromotionManager promotionManager = new PromotionManager(bankAccountManager);
+        BankAccountManager bankAccountManager = new BankAccountManager(database);
+        PromotionManager promotionManager = new PromotionManager(database, bankAccountManager, mock(GameSettingManager.class));
         Promotion promotion = randomPromotion();
         Promotion savedPromotion = promotionManager.createPromotions(List.of(promotion)).get(0);
         assertThat(savedPromotion).isNotNull();

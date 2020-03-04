@@ -23,7 +23,8 @@ public class InjuryManager extends GameObjectManager implements Serializable {
     @Getter
     private List<Injury> injuries = new ArrayList<>();
 
-    public InjuryManager(NewsManager newsManager, WorkerManager workerManager, DateManager dateManager) {
+    public InjuryManager(Database database, NewsManager newsManager, WorkerManager workerManager, DateManager dateManager) {
+        super(database);
         this.newsManager = newsManager;
         this.workerManager = workerManager;
         this.dateManager = dateManager;
@@ -31,7 +32,7 @@ public class InjuryManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        injuries = Database.selectAll(Injury.class);
+        injuries = getDatabase().selectAll(Injury.class);
     }
 
     public void dailyUpdate(LocalDate date, Promotion promotion) {
@@ -54,7 +55,7 @@ public class InjuryManager extends GameObjectManager implements Serializable {
     }
 
     public void createInjuries(List<Injury> injuries) {
-        Database.insertList(injuries);
+        getDatabase().insertList(injuries);
         update();
     }
 
@@ -73,7 +74,7 @@ public class InjuryManager extends GameObjectManager implements Serializable {
     }
 
     private void update() {
-        this.injuries = (List<Injury>) Database.selectAll(Injury.class).stream()
+        this.injuries = (List<Injury>) getDatabase().selectAll(Injury.class).stream()
                 .filter(injury -> ((Injury) injury).getExpiryDate().isAfter(dateManager.today()))
                 .collect(Collectors.toList());
     }

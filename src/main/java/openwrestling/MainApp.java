@@ -11,7 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Getter;
-import openwrestling.database.Database;
 import openwrestling.file.Import;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
@@ -123,16 +122,18 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        if (connectToNewDatabase()) {
+        File dbFile = ViewUtils.createDatabaseDialog(primaryStage);
+        if (dbFile != null) {
             randomGame = true;
-            gameController = new GameController(true);
+            gameController = new GameController(dbFile, true);
             initRootLayout();
             showStartGameScreen();
         }
     }
 
     public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
-        if (connectToNewDatabase()) {
+        File dbFile = ViewUtils.createDatabaseDialog(primaryStage);
+        if (dbFile != null) {
             randomGame = false;
             this.dataFolder = dataFolder;
             this.picsFolder = picsFolder;
@@ -143,7 +144,7 @@ public class MainApp extends Application {
             String error = "";
             try {
 
-                error = importer.tryImport(dataFolder);
+                error = importer.tryImport(dbFile, dataFolder);
 
                 if (!error.isEmpty()) {
 
@@ -168,8 +169,7 @@ public class MainApp extends Application {
     }
 
     public void continueGame(File dbFile) {
-        Database.setDbFile(dbFile);
-        gameController = new GameController(false);
+        gameController = new GameController(dbFile, false);
         gameController.loadGameDataFromDatabase();
         initRootLayout();
         continueGame();
@@ -437,16 +437,6 @@ public class MainApp extends Application {
      */
     public void setRootLayoutButtonDisable(boolean disable) {
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).setButtonsDisable(disable);
-    }
-
-    private boolean connectToNewDatabase() {
-        File fileName = ViewUtils.createDatabaseDialog(primaryStage);
-        if (fileName == null) {
-            return false;
-        }
-        dbURL = Database.createNewDatabase(fileName);
-        Database.connect(dbURL);
-        return true;
     }
 
     /**

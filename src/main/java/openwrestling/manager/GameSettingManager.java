@@ -1,5 +1,6 @@
 package openwrestling.manager;
 
+
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.gamesettings.GameSetting;
 
@@ -7,18 +8,22 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class GameSettingManager {
+public class GameSettingManager extends GameObjectManager {
 
-    public static void setGameSettingLong(String key, long value) {
+    public GameSettingManager(Database database) {
+        super(database);
+    }
+
+    public void setGameSettingLong(String key, long value) {
         GameSetting gameSetting = GameSetting.builder()
                 .key(key)
                 .value(value + "")
                 .build();
-        Database.insertList(List.of(gameSetting));
+        getDatabase().insertList(List.of(gameSetting));
     }
 
-    public static void setGameDate(String key, LocalDate value) {
-        List<GameSetting> gameSettings = Database.selectAll(GameSetting.class);
+    public void setGameDate(String key, LocalDate value) {
+        List<GameSetting> gameSettings = getDatabase().selectAll(GameSetting.class);
         GameSetting dateSetting = gameSettings.stream()
                 .filter(gameSetting -> gameSetting.getKey().equals(key))
                 .findFirst()
@@ -31,11 +36,11 @@ public class GameSettingManager {
         } else {
             dateSetting.setValue(value.format(DateTimeFormatter.ISO_DATE));
         }
-        Database.insertList(List.of(dateSetting));
+        getDatabase().insertList(List.of(dateSetting));
     }
 
-    public static long getGameSettingLong(String key) {
-        List<GameSetting> gameSettings = Database.selectAll(GameSetting.class);
+    public long getGameSettingLong(String key) {
+        List<GameSetting> gameSettings = getDatabase().selectAll(GameSetting.class);
         return gameSettings.stream()
                 .filter(gameSetting -> gameSetting.getKey().equals(key))
                 .map(gameSetting -> Long.parseLong(gameSetting.getValue()))
@@ -43,13 +48,5 @@ public class GameSettingManager {
                 .orElseThrow();
     }
 
-    public static LocalDate getGameSettingDate(String key) {
-        List<GameSetting> gameSettings = Database.selectAll(GameSetting.class);
-        return gameSettings.stream()
-                .filter(gameSetting -> gameSetting.getKey().equals(key))
-                .map(gameSetting -> LocalDate.parse(gameSetting.getValue(), DateTimeFormatter.ISO_DATE))
-                .findFirst()
-                .orElseThrow();
-    }
 
 }
