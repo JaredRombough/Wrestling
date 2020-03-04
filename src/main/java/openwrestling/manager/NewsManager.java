@@ -1,6 +1,5 @@
 package openwrestling.manager;
 
-import lombok.NoArgsConstructor;
 import openwrestling.database.Database;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
@@ -24,16 +23,19 @@ import java.util.Map;
 import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
 
-@NoArgsConstructor
 public class NewsManager extends GameObjectManager implements Serializable {
 
     private List<NewsItem> newsItems = new ArrayList<>();
     private final Map<LocalDate, NewsItem> newsItemByDateMap = new HashMap();
     private final Map<Object, Map<LocalDate, List<NewsItem>>> newsItemBySegmentItemMap = new HashMap();
 
+    public NewsManager(Database database) {
+        super(database);
+    }
+
     @Override
     public void selectData() {
-        newsItems = Database.selectAll(NewsItem.class);
+        newsItems = getDatabase().selectAll(NewsItem.class);
         newsItems.forEach(newsItem -> {
             if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
                 newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
@@ -148,7 +150,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
     }
 
     public void addNewsItems(List<NewsItem> newsItems) {
-        List<NewsItem> inserted = Database.insertList(newsItems);
+        List<NewsItem> inserted = getDatabase().insertList(newsItems);
         inserted.forEach(newsItem -> {
             if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
                 newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
@@ -161,7 +163,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
     }
 
     private void addNews(NewsItem newsItem) {
-        NewsItem inserted = Database.insertList(List.of(newsItem)).get(0);
+        NewsItem inserted = getDatabase().insertList(List.of(newsItem)).get(0);
         if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
             newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, inserted));
         }

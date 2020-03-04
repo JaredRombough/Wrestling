@@ -10,6 +10,7 @@ import ma.glasnost.orika.BoundMapperFacade;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import openwrestling.Logging;
 import openwrestling.database.queries.GameObjectQuery;
 import openwrestling.entities.BankAccountEntity;
 import openwrestling.entities.BroadcastTeamMemberEntity;
@@ -69,6 +70,7 @@ import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.gameObjects.gamesettings.GameSetting;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.sql.Connection;
@@ -82,12 +84,171 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-public class Database {
+public class Database extends Logging {
 
-    private static String dbUrl;
-    private static MapperFactory mapperFactory;
+    private String dbUrl;
+    private MapperFactory mapperFactory;
 
-    private static MapperFactory getMapperFactory() {
+    public Database(String dbPath) {
+        dbUrl = "jdbc:sqlite:" + dbPath;
+        createNewDatabase(dbUrl);
+    }
+
+    public Database(File dbFile) {
+        dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
+        createNewDatabase(dbUrl);
+    }
+
+
+    public List selectList(GameObjectQuery gameObjectQuery) {
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(this.dbUrl);
+            MapperFacade mapper = this.getMapperFactory().getMapperFacade();
+            List<WorkerEntity> results = gameObjectQuery.getQueryBuilder(connectionSource).query();
+            List<Worker> roster = new ArrayList<>();
+            results.forEach(entity -> roster.add(mapper.map(entity, Worker.class)));
+            return roster;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> List selectAll(Class sourceClass) {
+        long start = System.currentTimeMillis();
+        List list;
+        try {
+            Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+            Dao dao = DaoManager.createDao(connectionSource, targetClass);
+
+            List<? extends Entity> entities = dao.queryForAll();
+            entities.forEach(Entity::selectChildren);
+            list = entitiesToGameObjects(entities, sourceClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        logger.log(Level.DEBUG,
+                String.format("selectAll class %s size %s took %d",
+                        sourceClass,
+                        list.size(),
+                        (System.currentTimeMillis() - start)));
+        return list;
+    }
+
+    public <T> List querySelect(GameObjectQuery query) {
+        long start = System.currentTimeMillis();
+        List list;
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+
+            List<? extends Entity> entities = query.getQueryBuilder(connectionSource).query();
+            entities.forEach(Entity::selectChildren);
+            list = entitiesToGameObjects(entities, query.sourceClass());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        logger.log(Level.DEBUG,
+                String.format("querySelect sourceClass %s size %s took %d",
+                        query.sourceClass(),
+                        list.size(),
+                        (System.currentTimeMillis() - start)));
+        return list;
+    }
+
+    public void deleteByID(Class sourceClass, long id) {
+        try {
+            Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+            Dao dao = DaoManager.createDao(connectionSource, targetClass);
+
+            dao.deleteById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T extends GameObject> T insertGameObject(GameObject gameObject) {
+        return (T) insertList(List.of(gameObject)).get(0);
+    }
+
+    public <T extends GameObject> List<T> insertList(List<T> gameObjects) {
+        long start = System.currentTimeMillis();
+        try {
+            if (gameObjects.isEmpty()) {
+                return gameObjects;
+            }
+            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+            List<? extends Entity> saved = insertOrUpdateEntityList(entities);
+            List updatedGameObjects = entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
+
+            logger.log(Level.DEBUG,
+                    String.format("insertList class %s size %s took %d",
+                            gameObjects.get(0).getClass(),
+                            updatedGameObjects.size(),
+                            (System.currentTimeMillis() - start)));
+
+            return updatedGameObjects;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T extends GameObject> void updateList(List<T> gameObjects) {
+        long start = System.currentTimeMillis();
+        try {
+            if (gameObjects.isEmpty()) {
+                return;
+            }
+            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
+            insertOrUpdateEntityList(entities);
+        } catch (Exception e) {
+            throw e;
+        }
+        logger.log(Level.DEBUG,
+                String.format("updateList sourceClass %s size %s took %d",
+                        gameObjects.get(0).getClass(),
+                        gameObjects.size(),
+                        (System.currentTimeMillis() - start)));
+    }
+
+    private <T extends Entity> List<T> insertOrUpdateEntityList(List<T> entities) {
+        if (entities.isEmpty()) {
+            return entities;
+        }
+
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
+
+            Class<? extends Entity> targetClass = entities.get(0).getClass();
+
+            Dao dao = DaoManager.createDao(connectionSource, targetClass);
+
+            dao.callBatchTasks((Callable<Void>) () -> {
+                for (Entity entity : entities) {
+                    if (isCreate(entity)) {
+                        dao.create(entity);
+                    } else {
+                        dao.update(entity);
+                    }
+                    insertOrUpdateChildList(entity.childrenToInsert(), connectionSource);
+                    insertOrUpdateChildList(entity.childrenToInsert2(), connectionSource);
+                }
+                return null;
+            });
+            return entities;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private MapperFactory getMapperFactory() {
         if (mapperFactory == null) {
             mapperFactory = new DefaultMapperFactory.Builder().build();
             mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
@@ -104,7 +265,7 @@ public class Database {
     }
 
 
-    public static Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
+    private Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
         put(Promotion.class, PromotionEntity.class);
         put(Worker.class, WorkerEntity.class);
         put(Stable.class, StableEntity.class);
@@ -130,17 +291,7 @@ public class Database {
         put(GameSetting.class, GameSettingEntity.class);
     }};
 
-    public static void setDbFile(File dbFile) {
-        dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
-    }
-
-    public static String createNewDatabase(File file) {
-        String url = "jdbc:sqlite:" + file.getPath();
-        return createNewDatabase(url);
-    }
-
-
-    public static String createNewDatabase(String url) {
+    private String createNewDatabase(String url) {
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -157,33 +308,7 @@ public class Database {
         return url;
     }
 
-    public static String createNewTempDatabase(String dbname) {
-
-        String url = "jdbc:sqlite:C:/temp/" + dbname + ".db";
-
-        return createNewDatabase(url);
-    }
-
-
-    public static Connection connect(String url) {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return connection;
-    }
-
-    private static void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
+    private void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
         if (toInsert.isEmpty()) {
             return;
         }
@@ -209,134 +334,7 @@ public class Database {
         }
     }
 
-    public static List selectList(GameObjectQuery gameObjectQuery) {
-        try {
-            ConnectionSource connectionSource = new JdbcConnectionSource(Database.dbUrl);
-            MapperFacade mapper = Database.getMapperFactory().getMapperFacade();
-            List<WorkerEntity> results = gameObjectQuery.getQueryBuilder(connectionSource).query();
-            List<Worker> roster = new ArrayList<>();
-            results.forEach(entity -> roster.add(mapper.map(entity, Worker.class)));
-            return roster;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T> List selectAll(Class sourceClass) {
-        long start = System.currentTimeMillis();
-        List list;
-        try {
-            Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
-            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
-            Dao dao = DaoManager.createDao(connectionSource, targetClass);
-
-            List<? extends Entity> entities = dao.queryForAll();
-            entities.forEach(Entity::selectChildren);
-            list = entitiesToGameObjects(entities, sourceClass);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
-
-    public static <T> List querySelect(GameObjectQuery query) {
-        long start = System.currentTimeMillis();
-        List list;
-        try {
-            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
-
-            List<? extends Entity> entities = query.getQueryBuilder(connectionSource).query();
-            entities.forEach(Entity::selectChildren);
-            list = entitiesToGameObjects(entities, query.sourceClass());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
-
-    public static void deleteByID(Class sourceClass, long id) {
-        try {
-            Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
-            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
-            Dao dao = DaoManager.createDao(connectionSource, targetClass);
-
-            dao.deleteById(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T extends GameObject> T insertGameObject(GameObject gameObject) {
-
-        return (T) insertList(List.of(gameObject)).get(0);
-
-    }
-
-    public static <T extends GameObject> List<T> insertList(List<T> gameObjects) {
-        try {
-            if (gameObjects.isEmpty()) {
-                return gameObjects;
-            }
-            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
-            List<? extends Entity> saved = insertOrUpdateEntityList(entities);
-            List updatedGameObjects = entitiesToGameObjects(saved, gameObjects.get(0).getClass()).stream().map(o -> (T) o).collect(Collectors.toList());
-
-            return updatedGameObjects;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T extends GameObject> void updateList(List<T> gameObjects) {
-        try {
-            if (gameObjects.isEmpty()) {
-                return;
-            }
-            List<? extends Entity> entities = gameObjectsToEntities(gameObjects);
-            insertOrUpdateEntityList(entities);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    public static <T extends Entity> List<T> insertOrUpdateEntityList(List<T> entities) {
-        if (entities.isEmpty()) {
-            return entities;
-        }
-
-        try {
-            ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
-
-            Class<? extends Entity> targetClass = entities.get(0).getClass();
-
-            Dao dao = DaoManager.createDao(connectionSource, targetClass);
-
-            dao.callBatchTasks((Callable<Void>) () -> {
-                for (Entity entity : entities) {
-                    if (isCreate(entity)) {
-                        dao.create(entity);
-                    } else {
-                        dao.update(entity);
-                    }
-                    insertOrUpdateChildList(entity.childrenToInsert(), connectionSource);
-                    insertOrUpdateChildList(entity.childrenToInsert2(), connectionSource);
-                }
-                return null;
-            });
-
-            return entities;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
+    private List<? extends Entity> gameObjectsToEntities(List<? extends GameObject> gameObjects) {
         if (gameObjects.isEmpty()) {
             return new ArrayList<>();
         }
@@ -361,7 +359,7 @@ public class Database {
                 .collect(Collectors.toList());
     }
 
-    private static List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
+    private List<? extends GameObject> entitiesToGameObjects(List<? extends Entity> entities, Class<? extends GameObject> targetClass) {
         if (entities.isEmpty()) {
             return new ArrayList<>();
         }
@@ -385,7 +383,7 @@ public class Database {
     }
 
 
-    private static boolean isCreate(Entity entity) {
+    private boolean isCreate(Entity entity) {
         return List.of(entity.getClass().getDeclaredFields()).stream().anyMatch(field -> {
                     try {
                         boolean isCreate = false;
@@ -404,7 +402,7 @@ public class Database {
         );
     }
 
-    private static void createTables(String url) {
+    private void createTables(String url) {
         try {
 
             ConnectionSource connectionSource = new JdbcConnectionSource(url);

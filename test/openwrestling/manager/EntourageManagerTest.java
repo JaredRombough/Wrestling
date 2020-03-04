@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -16,12 +17,13 @@ public class EntourageManagerTest {
 
     private EntourageManager entourageManager;
     private WorkerManager workerManager;
+    private Database database;
 
     @Before
     public void setUp() {
-        workerManager = new WorkerManager(mock(ContractManager.class));
-        entourageManager = new EntourageManager(workerManager);
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
+        workerManager = new WorkerManager(database, mock(ContractManager.class));
+        entourageManager = new EntourageManager(database, workerManager);
     }
 
     @Test

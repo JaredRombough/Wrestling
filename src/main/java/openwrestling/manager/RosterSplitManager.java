@@ -12,13 +12,17 @@ public class RosterSplitManager extends GameObjectManager {
     @Getter
     private List<RosterSplit> rosterSplits = new ArrayList<>();
 
+    public RosterSplitManager(Database database) {
+        super(database);
+    }
+
     @Override
     public void selectData() {
-        rosterSplits = Database.selectAll(RosterSplit.class);
+        rosterSplits = getDatabase().selectAll(RosterSplit.class);
     }
 
     public List<RosterSplit> createRosterSplits(List<RosterSplit> rosterSplits) {
-        List saved = Database.insertList(rosterSplits);
+        List saved = getDatabase().insertList(rosterSplits);
         this.rosterSplits.addAll(saved);
         return saved;
     }

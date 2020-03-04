@@ -45,8 +45,8 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
 
-    public SegmentManager(DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
-      //  segments = new ArrayList<>();
+    public SegmentManager(Database database, DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
+        super(database);
         segmentMap = new HashMap<>();
         segmentTemplates = new ArrayList<>();
         this.dateManager = dateManager;
@@ -56,12 +56,12 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        //segments = Database.selectAll(Segment.class);
-        List<Segment> segments = Database.querySelect(new SegmentQuery());
+        //segments = getDatabase().selectAll(Segment.class);
+        List<Segment> segments = getDatabase().querySelect(new SegmentQuery());
         segments.forEach(segment -> {
             segmentMap.put(segment.getSegmentID(), segment);
         });
-        segmentTemplates = Database.selectAll(SegmentTemplate.class);
+        segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
     }
 
     public List<Segment> getSegments() {
@@ -71,9 +71,9 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     public void deleteSegmentTemplates(EventTemplate eventTemplate) {
         getSegmentTemplates(eventTemplate)
                 .forEach(segmentTemplate ->
-                        Database.deleteByID(SegmentTemplate.class, segmentTemplate.getSegmentTemplateID())
+                        getDatabase().deleteByID(SegmentTemplate.class, segmentTemplate.getSegmentTemplateID())
                 );
-        this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+        this.segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
     }
 
     public List<Segment> createSegments(List<Segment> segments) {
@@ -85,20 +85,20 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 .map(Segment::getChallengeSegment)
                 .collect(Collectors.toList());
 
-        if(CollectionUtils.isNotEmpty(segmentTemplates)) {
-            if(this.segmentTemplates == null) {
+        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
+            if (this.segmentTemplates == null) {
                 this.segmentTemplates = new ArrayList<>();
             }
-            this.segmentTemplates.addAll(Database.insertList(segmentTemplates));
+            this.segmentTemplates.addAll(getDatabase().insertList(segmentTemplates));
         }
 
-        List<Segment> savedSegments = Database.insertList(segments);
+        List<Segment> savedSegments = getDatabase().insertList(segments);
         savedSegments.forEach(segment -> {
             segmentMap.put(segment.getSegmentID(), segment);
         });
-       // this.segments = Database.querySelect(new SegmentQuery());
+        // this.segments = getDatabase().querySelect(new SegmentQuery());
 //        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
-//            this.segmentTemplates = Database.selectAll(SegmentTemplate.class);
+//            this.segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
 //        }
         return savedSegments;
     }

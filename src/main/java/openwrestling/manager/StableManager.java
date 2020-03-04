@@ -12,13 +12,14 @@ public class StableManager extends GameObjectManager {
     @Getter
     private List<Stable> stables;
 
-    public StableManager() {
+    public StableManager(Database database) {
+        super(database);
         stables = new ArrayList<>();
     }
 
     @Override
     public void selectData() {
-        stables = Database.selectAll(Stable.class);
+        stables = getDatabase().selectAll(Stable.class);
     }
 
     public void addStable(Stable stable) {
@@ -26,7 +27,7 @@ public class StableManager extends GameObjectManager {
     }
 
     public List<Stable> createStables(List<Stable> stables) {
-        List saved = Database.insertList(stables);
+        List saved = getDatabase().insertList(stables);
         this.stables.addAll(saved);
         return this.stables;
     }

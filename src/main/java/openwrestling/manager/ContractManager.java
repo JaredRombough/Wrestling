@@ -30,10 +30,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
     private final RelationshipManager relationshipManager;
     private final BankAccountManager bankAccountManager;
 
-    public ContractManager(PromotionManager promotionManager,
+    public ContractManager(Database database,
+                           PromotionManager promotionManager,
                            NewsManager newsManager,
                            RelationshipManager relationshipManager,
                            BankAccountManager bankAccountManager) {
+        super(database);
         contracts = new ArrayList<>();
         staffContracts = new ArrayList<>();
         this.promotionManager = promotionManager;
@@ -44,8 +46,8 @@ public class ContractManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        contracts = Database.selectAll(Contract.class);
-        staffContracts = Database.selectAll(StaffContract.class);
+        contracts = getDatabase().selectAll(Contract.class);
+        staffContracts = getDatabase().selectAll(StaffContract.class);
     }
 
     public void dailyUpdate(LocalDate date) {
@@ -67,19 +69,19 @@ public class ContractManager extends GameObjectManager implements Serializable {
 
 
     public List<Contract> createContracts(List<Contract> contracts) {
-        List saved = Database.insertList(contracts);
+        List saved = getDatabase().insertList(contracts);
         this.contracts.addAll(saved);
         return saved;
     }
 
     public List<Contract> updateContracts(List<Contract> contracts) {
-        List saved = Database.insertList(contracts);
+        List saved = getDatabase().insertList(contracts);
         this.contracts.addAll(saved);
         return saved;
     }
 
     public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
-        List saved = Database.insertList(contracts);
+        List saved = getDatabase().insertList(contracts);
         this.staffContracts.addAll(saved);
         return saved;
     }
@@ -177,7 +179,7 @@ public class ContractManager extends GameObjectManager implements Serializable {
         Contract contract = getContract(worker, promotion);
         contract.setLastShowDate(date);
         updateContracts(List.of(contract));
-        if(contract.getAppearanceCost() > 0) {
+        if (contract.getAppearanceCost() > 0) {
             bankAccountManager.removeFunds(contract.getPromotion(), contract.getAppearanceCost(), TransactionType.WORKER, date);
         }
     }

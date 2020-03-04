@@ -1,9 +1,14 @@
 package openwrestling.manager;
 
+
+import openwrestling.database.Database;
+import openwrestling.model.gameObjects.gamesettings.GameSetting;
 import openwrestling.model.utility.ModelUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static openwrestling.model.constants.SettingKeys.GAME_DATE;
 
@@ -11,14 +16,18 @@ public class DateManager extends GameObjectManager implements Serializable {
 
     private LocalDate gameDate;
 
-    public void setGameDate(LocalDate gameDate) {
-        this.gameDate = gameDate;
-        GameSettingManager.setGameDate(GAME_DATE, gameDate);
+    public DateManager(Database database) {
+        super(database);
     }
 
     @Override
     public void selectData() {
-        gameDate = GameSettingManager.getGameSettingDate(GAME_DATE);
+        List<GameSetting> gameSettings = getDatabase().selectAll(GameSetting.class);
+        gameDate = gameSettings.stream()
+                .filter(gameSetting -> gameSetting.getKey().equals(GAME_DATE))
+                .map(gameSetting -> LocalDate.parse(gameSetting.getValue(), DateTimeFormatter.ISO_DATE))
+                .findFirst()
+                .orElseThrow();
     }
 
     public String todayString() {
@@ -26,9 +35,26 @@ public class DateManager extends GameObjectManager implements Serializable {
     }
 
     public void nextDay() {
-        //advance the day by one
         gameDate = LocalDate.from(gameDate).plusDays(1);
-        GameSettingManager.setGameDate(GAME_DATE, gameDate);
+        setGameDate(gameDate);
+    }
+
+    public void setGameDate(LocalDate gameDate) {
+        this.gameDate = gameDate;
+        List<GameSetting> gameSettings = getDatabase().selectAll(GameSetting.class);
+        GameSetting dateSetting = gameSettings.stream()
+                .filter(gameSetting -> gameSetting.getKey().equals(GAME_DATE))
+                .findFirst()
+                .orElse(null);
+        if (dateSetting == null) {
+            dateSetting = GameSetting.builder()
+                    .key(GAME_DATE)
+                    .value(gameDate.format(DateTimeFormatter.ISO_DATE))
+                    .build();
+        } else {
+            dateSetting.setValue(gameDate.format(DateTimeFormatter.ISO_DATE));
+        }
+        getDatabase().insertList(List.of(dateSetting));
     }
 
     /**

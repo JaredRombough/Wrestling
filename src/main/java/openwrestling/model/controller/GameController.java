@@ -2,6 +2,7 @@ package openwrestling.model.controller;
 
 import lombok.Getter;
 import openwrestling.Logging;
+import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.BroadcastTeamManager;
 import openwrestling.manager.ContractManager;
@@ -9,6 +10,7 @@ import openwrestling.manager.DateManager;
 import openwrestling.manager.EntourageManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.GameObjectManager;
+import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.InjuryManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
@@ -29,6 +31,7 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import org.apache.logging.log4j.Level;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +64,7 @@ public final class GameController extends Logging implements Serializable {
     private final EntourageManager entourageManager;
     private final NextDayController nextDayController;
     private final BroadcastTeamManager broadcastTeamManager;
+    private final GameSettingManager gameSettingManager;
 
     private List<GameObjectManager> managers;
 
@@ -68,38 +72,41 @@ public final class GameController extends Logging implements Serializable {
 
     private final int EVENT_MONTHS = 6;
 
-    public GameController(boolean randomGame) {
-        dateManager = new DateManager();
+    public GameController(File dbFile, boolean randomGame) {
+        Database database = new Database(dbFile);
+        dateManager = new DateManager(database);
+        gameSettingManager = new GameSettingManager(database);
 
-        bankAccountManager = new BankAccountManager();
-        promotionManager = new PromotionManager(bankAccountManager);
+        bankAccountManager = new BankAccountManager(database);
+        promotionManager = new PromotionManager(database, bankAccountManager, gameSettingManager);
 
-        newsManager = new NewsManager();
+        newsManager = new NewsManager(database);
 
-        stableManager = new StableManager();
-        relationshipManager = new RelationshipManager();
-        rosterSplitManager = new RosterSplitManager();
-        broadcastTeamManager = new BroadcastTeamManager();
+        stableManager = new StableManager(database);
+        relationshipManager = new RelationshipManager(database);
+        rosterSplitManager = new RosterSplitManager(database);
+        broadcastTeamManager = new BroadcastTeamManager(database);
 
-        contractManager = new ContractManager(promotionManager,
+        contractManager = new ContractManager(database, promotionManager,
                 newsManager,
                 relationshipManager,
                 bankAccountManager);
 
-        workerManager = new WorkerManager(contractManager);
-        staffManager = new StaffManager(contractManager);
-        titleManager = new TitleManager(dateManager, workerManager);
+        workerManager = new WorkerManager(database, contractManager);
+        staffManager = new StaffManager(database, contractManager);
+        titleManager = new TitleManager(database, dateManager, workerManager);
 
-        entourageManager = new EntourageManager(workerManager);
-        tagTeamManager = new TagTeamManager(workerManager);
-        segmentManager = new SegmentManager(dateManager, tagTeamManager, stableManager);
-        injuryManager = new InjuryManager(newsManager, workerManager, dateManager);
-        contractFactory = new ContractFactory(contractManager);
+        entourageManager = new EntourageManager(database, workerManager);
+        tagTeamManager = new TagTeamManager(database, workerManager);
+        segmentManager = new SegmentManager(database, dateManager, tagTeamManager, stableManager);
+        injuryManager = new InjuryManager(database, newsManager, workerManager, dateManager);
 
-        eventManager = new EventManager(
+        eventManager = new EventManager(database,
                 contractManager,
                 dateManager,
                 segmentManager);
+
+        contractFactory = new ContractFactory(contractManager);
 
         matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager, staffManager);
 

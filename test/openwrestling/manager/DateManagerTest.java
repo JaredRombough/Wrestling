@@ -6,14 +6,18 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 
-import static openwrestling.model.constants.SettingKeys.GAME_DATE;
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GameSettingManagerTest {
+public class DateManagerTest {
+
+    private Database database;
+    private DateManager dateManager;
 
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
+        dateManager = new DateManager(database);
     }
 
     @Test
@@ -22,13 +26,12 @@ public class GameSettingManagerTest {
         LocalDate date2 = LocalDate.now().plusDays(3);
         assertThat(date).isNotEqualTo(date2);
 
-        GameSettingManager.setGameDate(GAME_DATE, date);
-        LocalDate savedDate = GameSettingManager.getGameSettingDate(GAME_DATE);
+        dateManager.setGameDate(date);
+        LocalDate savedDate = dateManager.today();
         assertThat(savedDate).isEqualTo(date);
 
-        GameSettingManager.setGameDate(GAME_DATE, date2);
-        LocalDate savedDate2 = GameSettingManager.getGameSettingDate(GAME_DATE);
+        dateManager.setGameDate(date2);
+        LocalDate savedDate2 = dateManager.today();
         assertThat(savedDate2).isEqualTo(date2);
     }
-
 }
