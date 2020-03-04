@@ -23,6 +23,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,15 +32,17 @@ public class EventManagerTest {
 
 
     private EventManager eventManager;
-    private PromotionManager promotionManager = new PromotionManager(new BankAccountManager());
+    private PromotionManager promotionManager;
     private Promotion promotion;
+    private Database database;
 
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
-        eventManager = new EventManager(mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));
+        promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
 
@@ -56,7 +59,7 @@ public class EventManagerTest {
 
         eventManager.createEventTemplates(List.of(eventTemplate));
 
-        List<EventTemplate> eventTemplates = Database.selectAll(EventTemplate.class);
+        List<EventTemplate> eventTemplates = database.selectAll(EventTemplate.class);
 
         assertThat(eventTemplates).isNotNull().hasOnlyOneElementSatisfying(savedTemplate -> {
             assertThat(savedTemplate.getName()).isEqualTo(name);
@@ -70,7 +73,7 @@ public class EventManagerTest {
         Event event = new Event();
         event.setDate(LocalDate.now());
         EventTemplate eventTemplate = EventTemplate.builder().build();
-        eventTemplate = Database.insertList(List.of(eventTemplate)).get(0);
+        eventTemplate = database.insertList(List.of(eventTemplate)).get(0);
         event.setEventTemplate(eventTemplate);
 
         Segment segment = Segment.builder()

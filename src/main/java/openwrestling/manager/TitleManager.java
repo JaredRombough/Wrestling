@@ -24,7 +24,8 @@ public class TitleManager extends GameObjectManager implements Serializable {
     private final DateManager dateManager;
     private final WorkerManager workerManager;
 
-    public TitleManager(DateManager dateManager, WorkerManager workerManager) {
+    public TitleManager(Database database, DateManager dateManager, WorkerManager workerManager) {
+        super(database);
         this.titles = new ArrayList<>();
         this.dateManager = dateManager;
         this.workerManager = workerManager;
@@ -41,8 +42,8 @@ public class TitleManager extends GameObjectManager implements Serializable {
     }
 
     private void selectTitles() {
-        this.titles = Database.selectAll(Title.class);
-        List<TitleReign> titleReigns = Database.selectAll(TitleReign.class);
+        this.titles = getDatabase().selectAll(Title.class);
+        List<TitleReign> titleReigns = getDatabase().selectAll(TitleReign.class);
         titles.stream().forEach(title -> {
             title.setTitleReigns(
                     titleReigns.stream()
@@ -65,15 +66,15 @@ public class TitleManager extends GameObjectManager implements Serializable {
             }
 
             TitleReign titleReign = title.getTitleReigns().get(0);
-            Title saved = Database.insertGameObject(title);
+            Title saved = getDatabase().insertGameObject(title);
             titleReign.setTitle(saved);
-            Database.insertGameObject(titleReign);
+            getDatabase().insertGameObject(titleReign);
         });
         selectTitles();
     }
 
     public void updateTitle(Title title) {
-        Database.insertList(List.of(title));
+        getDatabase().insertList(List.of(title));
         selectTitles();
     }
 
@@ -109,7 +110,7 @@ public class TitleManager extends GameObjectManager implements Serializable {
                 .title(title)
                 .build();
 
-        Database.insertList(List.of(title.getChampionTitleReign(), newChamps));
+        getDatabase().insertList(List.of(title.getChampionTitleReign(), newChamps));
         selectTitles();
     }
 

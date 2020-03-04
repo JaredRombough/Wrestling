@@ -40,7 +40,7 @@ public class Import {
             "wrestler"
     ));
 
-    public String tryImport(File importFolder) throws Exception {
+    public String tryImport(File dbFile, File importFolder) throws Exception {
         long start = System.currentTimeMillis();
 
         StringBuilder sb = new StringBuilder();
@@ -50,7 +50,7 @@ public class Import {
 
         if (sb.length() == 0) {
             try {
-                gameController = new GameController(false);
+                gameController = new GameController(dbFile, false);
                 gameController.getDateManager().setGameDate(DEFAULT_START_DATE);
                 ImportHelper importHelper = new ImportHelper(importFolder);
 

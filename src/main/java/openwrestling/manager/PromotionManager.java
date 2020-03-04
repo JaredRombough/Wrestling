@@ -18,16 +18,19 @@ public class PromotionManager extends GameObjectManager implements Serializable 
     private List<Promotion> promotions;
     private Promotion playerPromotion;
     private BankAccountManager bankAccountManager;
+    private GameSettingManager gameSettingManager;
 
-    public PromotionManager(BankAccountManager bankAccountManager) {
+    public PromotionManager(Database database, BankAccountManager bankAccountManager, GameSettingManager gameSettingManager) {
+        super(database);
         promotions = new ArrayList();
         this.bankAccountManager = bankAccountManager;
+        this.gameSettingManager = gameSettingManager;
     }
 
     @Override
     public void selectData() {
-        promotions = Database.selectAll(Promotion.class);
-        long playerPromotionID = GameSettingManager.getGameSettingLong(PLAYER_PROMOTION);
+        promotions = getDatabase().selectAll(Promotion.class);
+        long playerPromotionID = gameSettingManager.getGameSettingLong(PLAYER_PROMOTION);
         playerPromotion = promotions.stream()
                 .filter(promotion -> playerPromotionID == promotion.getPromotionID())
                 .findFirst()
@@ -36,11 +39,11 @@ public class PromotionManager extends GameObjectManager implements Serializable 
 
     public void setPlayerPromotion(Promotion promotion) {
         playerPromotion = promotion;
-        GameSettingManager.setGameSettingLong(PLAYER_PROMOTION, promotion.getPromotionID());
+        gameSettingManager.setGameSettingLong(PLAYER_PROMOTION, promotion.getPromotionID());
     }
 
     public List<Promotion> createPromotions(List<Promotion> promotions) {
-        List<Promotion> saved = Database.insertList(promotions);
+        List<Promotion> saved = getDatabase().insertList(promotions);
         bankAccountManager.createBankAccounts(
                 saved.stream()
                         .map(promotion -> BankAccount.builder().promotion(promotion).build())
@@ -51,7 +54,7 @@ public class PromotionManager extends GameObjectManager implements Serializable 
     }
 
     public List<Promotion> updatePromotions(List<Promotion> promotions) {
-        List<Promotion> saved = Database.insertList(promotions);
+        List<Promotion> saved = getDatabase().insertList(promotions);
         saved.addAll(
                 this.promotions.stream()
                         .filter(promotion -> saved.stream().noneMatch(savedPromotion -> savedPromotion.getPromotionID() == promotion.getPromotionID()))

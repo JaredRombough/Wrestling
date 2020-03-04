@@ -1,5 +1,6 @@
 package openwrestling.manager;
 
+
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.EntourageMember;
 import openwrestling.model.gameObjects.Worker;
@@ -15,13 +16,14 @@ public class EntourageManager extends GameObjectManager implements Serializable 
     private List<EntourageMember> entourageMembers = new ArrayList<>();
     private WorkerManager workerManager;
 
-    public EntourageManager(WorkerManager workerManager) {
+    public EntourageManager(Database database, WorkerManager workerManager) {
+        super(database);
         this.workerManager = workerManager;
     }
 
     @Override
     public void selectData() {
-        entourageMembers = Database.selectAll(EntourageMember.class);
+        entourageMembers = getDatabase().selectAll(EntourageMember.class);
     }
 
     public List<Worker> getEntourage(Worker leader) {
@@ -39,8 +41,8 @@ public class EntourageManager extends GameObjectManager implements Serializable 
                 .follower(follower)
                 .active(true)
                 .build();
-        Database.insertGameObject(entourageMember);
-        entourageMembers = Database.selectAll(EntourageMember.class);
+        getDatabase().insertGameObject(entourageMember);
+        entourageMembers = getDatabase().selectAll(EntourageMember.class);
     }
 
     public void removeWorkerFromEntourage(Worker leader, Worker follower) {
@@ -52,8 +54,8 @@ public class EntourageManager extends GameObjectManager implements Serializable 
                 .orElse(null);
         if (entourageMember != null) {
             entourageMember.setActive(false);
-            Database.insertGameObject(entourageMember);
-            entourageMembers = Database.selectAll(EntourageMember.class);
+            getDatabase().insertGameObject(entourageMember);
+            entourageMembers = getDatabase().selectAll(EntourageMember.class);
         }
 
     }

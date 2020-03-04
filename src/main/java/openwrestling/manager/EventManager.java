@@ -9,7 +9,6 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.utility.ModelUtils;
-import openwrestling.view.utility.comparators.DateComparator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
@@ -41,12 +40,11 @@ public class EventManager extends GameObjectManager implements Serializable {
 
     private final transient Logger logger = LogManager.getLogger(getClass());
 
-    public EventManager(
-            ContractManager contractManager,
-            DateManager dateManager,
-            SegmentManager segmentManager) {
-        //   events = new ArrayList<>();
-        //   eventTemplates = new ArrayList<>();
+    public EventManager(Database database,
+                        ContractManager contractManager,
+                        DateManager dateManager,
+                        SegmentManager segmentManager) {
+        super(database);
         eventTemplateMap = new HashMap<>();
         eventMap = new HashMap<>();
         this.segmentManager = segmentManager;
@@ -84,24 +82,24 @@ public class EventManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        List<Event> events = Database.selectAll(Event.class);
+        List<Event> events = getDatabase().selectAll(Event.class);
         events.forEach(event -> {
             eventMap.put(event.getEventID(), event);
         });
-        List<EventTemplate> eventTemplates = Database.selectAll(EventTemplate.class);
+        List<EventTemplate> eventTemplates = getDatabase().selectAll(EventTemplate.class);
         eventTemplates.forEach(eventTemplate -> {
             eventTemplateMap.put(eventTemplate.getEventTemplateID(), eventTemplate);
         });
     }
 
     public List<EventTemplate> createEventTemplates(List<EventTemplate> eventTemplates) {
-        List<EventTemplate> saved = Database.insertList(eventTemplates);
+        List<EventTemplate> saved = getDatabase().insertList(eventTemplates);
         saved.forEach(savedEvent -> eventTemplateMap.put(savedEvent.getEventTemplateID(), savedEvent));
         return saved;
     }
 
     public void updateEventTemplates(List<EventTemplate> eventTemplates) {
-        Database.updateList(eventTemplates);
+        getDatabase().updateList(eventTemplates);
         eventTemplates.forEach(updatedEvent -> eventTemplateMap.put(updatedEvent.getEventTemplateID(), updatedEvent));
     }
 
@@ -118,14 +116,14 @@ public class EventManager extends GameObjectManager implements Serializable {
             }
         });
 
-        List<Event> savedEventsWithoutSegments = Database.insertList(eventsWithoutSegments);
+        List<Event> savedEventsWithoutSegments = getDatabase().insertList(eventsWithoutSegments);
         savedEventsWithoutSegments.forEach(event -> {
             eventMap.put(event.getEventID(), event);
         });
 
         eventsWithSegments.forEach(event -> {
             List<Segment> segments = event.getSegments();
-            Event savedEvent = Database.insertList(List.of(event)).get(0);
+            Event savedEvent = getDatabase().insertList(List.of(event)).get(0);
             segments.forEach(segment -> segment.setEvent(savedEvent));
             segmentsToSave.addAll(segments);
             eventMap.put(savedEvent.getEventID(), savedEvent);

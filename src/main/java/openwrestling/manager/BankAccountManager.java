@@ -20,13 +20,14 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
     private List<BankAccount> bankAccounts;
     private Map<Long, List<Transaction>> transactionMap = new HashMap<>();
 
-    @Override
-    public void selectData() {
-        bankAccounts = Database.selectAll(BankAccount.class);
+    public BankAccountManager(Database database) {
+        super(database);
+        bankAccounts = new ArrayList();
     }
 
-    public BankAccountManager() {
-        bankAccounts = new ArrayList();
+    @Override
+    public void selectData() {
+        bankAccounts = getDatabase().selectAll(BankAccount.class);
     }
 
     public void addBankAccount(BankAccount bankAccount) {
@@ -50,7 +51,7 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
     }
 
     public List<BankAccount> createBankAccounts(List<BankAccount> bankAccounts) {
-        List<BankAccount> saved = Database.insertList(bankAccounts);
+        List<BankAccount> saved = getDatabase().insertList(bankAccounts);
         this.bankAccounts.addAll(saved);
         return saved;
     }
@@ -58,7 +59,7 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
     public List<Transaction> insertTransactions(List<Transaction> transactions) {
         Map<Promotion, BankAccount> bankAccountMap = new HashMap<>();
         transactions.forEach(transaction -> {
-            if(TransactionType.WORKER.equals(transaction.getType())) {
+            if (TransactionType.WORKER.equals(transaction.getType())) {
                 int i = 0;
             }
             if (bankAccountMap.containsKey(transaction.getPromotion())) {
@@ -71,11 +72,11 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
             }
         });
 
-        List<Transaction> saved = Database.insertList(transactions);
+        List<Transaction> saved = getDatabase().insertList(transactions);
         saved.forEach(this::putTransactionInMap);
-        Database.insertList(new ArrayList<>(bankAccountMap.values()));
+        getDatabase().insertList(new ArrayList<>(bankAccountMap.values()));
 
-        bankAccounts = Database.selectAll(BankAccount.class);
+        bankAccounts = getDatabase().selectAll(BankAccount.class);
 
         return List.of();
     }

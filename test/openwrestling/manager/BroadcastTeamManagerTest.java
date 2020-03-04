@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BroadcastTeamManagerTest {
@@ -19,19 +20,22 @@ public class BroadcastTeamManagerTest {
 
     private BroadcastTeamManager broadcastTeamManager;
 
+
+    private Database database;
+
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
-        broadcastTeamManager = new BroadcastTeamManager();
+        database = new Database(TEST_DB_PATH);
+        broadcastTeamManager = new BroadcastTeamManager(database);
     }
 
     @Test
     public void setDefaultBroadcastTeam() {
-        Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
+        Promotion promotion = database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
 
-        StaffMember staffMember = Database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
-        StaffMember staffMember2 = Database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
-        StaffMember staffMember3 = Database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
+        StaffMember staffMember = database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
+        StaffMember staffMember2 = database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
+        StaffMember staffMember3 = database.insertGameObject(PersonFactory.randomStaff(1, StaffType.BROADCAST));
 
         broadcastTeamManager.setDefaultBroadcastTeam(promotion, List.of(staffMember, staffMember2));
 
