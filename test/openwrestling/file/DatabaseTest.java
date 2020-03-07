@@ -3,9 +3,6 @@ package openwrestling.file;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.PromotionManager;
-import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
@@ -76,12 +73,7 @@ public class DatabaseTest {
         Promotion promotion = database.insertGameObject(randomPromotion());
         Promotion promotion2 = database.insertGameObject(randomPromotion());
 
-        ContractManager contractManager = new ContractManager(
-                database,
-                mock(PromotionManager.class),
-                mock(NewsManager.class),
-                mock(RelationshipManager.class),
-                mock(BankAccountManager.class));
+        ContractManager contractManager = new ContractManager(database, mock(BankAccountManager.class));
         WorkerManager workerManager = new WorkerManager(database, contractManager);
 
         Contract contract1 = Contract.builder().promotion(promotion).worker(worker).active(true).build();

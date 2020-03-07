@@ -63,6 +63,21 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build());
     }
 
+    public NewsItem getJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
+        List<Worker> workers = new ArrayList<>(winners);
+        workers.add(worker);
+        return NewsItem.builder()
+                .headline(String.format("%s unhappy with loss", worker.getShortName()))
+                .summary(String.format("%s is unhappy with %s after their loss to %s",
+                        worker.getLongName(),
+                        promotion,
+                        ModelUtils.andItemsLongName(winners)))
+                .date(date)
+                .promotions(List.of(promotion))
+                .workers(workers)
+                .build();
+    }
+
     public void addJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
         List<Worker> workers = new ArrayList<>(winners);
         workers.add(worker);

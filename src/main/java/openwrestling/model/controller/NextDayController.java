@@ -12,6 +12,7 @@ import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
@@ -22,6 +23,7 @@ import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -71,13 +73,18 @@ public class NextDayController extends Logging {
     public void processEvents(List<Event> events) {
         logger.log(Level.DEBUG, "processEvents");
         Map<Worker, MoraleRelationship> relationships = new HashMap<>();
-        List<Injury> injuries = new ArrayList<>();
+        List<Injury> injuriesExtractedFromSegments = new ArrayList<>();
+        List<NewsItem> newsItemsExtractedFromSegments = new ArrayList<>();
 
         events.stream()
                 .flatMap(event -> event.getSegments().stream())
                 .forEach(segment -> {
+                    if (CollectionUtils.isNotEmpty(segment.getSegmentNewsItems())) {
+                        newsItemsExtractedFromSegments.addAll(segment.getSegmentNewsItems());
+                    }
+
                     if (CollectionUtils.isNotEmpty(segment.getInjuries())) {
-                        injuries.addAll(segment.getInjuries());
+                        injuriesExtractedFromSegments.addAll(segment.getInjuries());
                     }
 
                     segment.getWorkers().forEach(worker -> {
@@ -102,16 +109,28 @@ public class NextDayController extends Logging {
                 .map(eventTemplate -> bookEventForCompletedAnnualEventTemplateAfterDate(eventTemplate, dateManager.today()))
                 .collect(Collectors.toList());
 
-        handleMoraleCheck();
-        updateBankAccounts(events);
+        List<Contract> contracts = events.stream()
+                .flatMap(event ->
+                        event.getSegments().stream()
+                                .flatMap(segment -> segment.getWorkers().stream())
+                                .map(worker -> contractManager.getContract(worker, event.getPromotion()))
+                )
+                .peek(contract -> contract.setLastShowDate(dateManager.today()))
+                .collect(Collectors.toList());
+
+
+        contractManager.updateContracts(contracts);
+        List<NewsItem> moraleCheckNewsItems = updateRelationshipsForMoraleCheck();
+        newsManager.addNewsItems(ListUtils.union(moraleCheckNewsItems, newsItemsExtractedFromSegments));
+        updateBankAccounts(events, contracts);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
         eventManager.createEvents(newAnnualEvents);
-        injuryManager.createInjuries(injuries);
+        injuryManager.createInjuries(injuriesExtractedFromSegments);
 
     }
 
-    void updateBankAccounts(List<Event> events) {
+    void updateBankAccounts(List<Event> events, List<Contract> eventContracts) {
         List<Transaction> transactions = events.stream()
                 .map(event -> Transaction.builder()
                         .amount(event.getGate())
@@ -119,7 +138,56 @@ public class NextDayController extends Logging {
                         .promotion(event.getPromotion())
                         .build()).collect(Collectors.toList());
 
+        transactions.addAll(
+                eventContracts.stream()
+                        .filter(contract -> contract.getAppearanceCost() > 0)
+                        .map(contract ->
+                                Transaction.builder()
+                                        .promotion(contract.getPromotion())
+                                        .amount(contract.getAppearanceCost())
+                                        .date(dateManager.today())
+                                        .type(TransactionType.WORKER)
+                                        .build()
+                        )
+                        .collect(Collectors.toList())
+        );
+
+        if (dateManager.isPayDay()) {
+            transactions.addAll(getPayDayTransactions());
+        }
+
         bankAccountManager.insertTransactions(transactions);
+    }
+
+    private List<Transaction> getPayDayTransactions() {
+        List<Transaction> transactions = new ArrayList<>();
+
+        List<Transaction> workerTransactions = contractManager.getContracts().stream()
+                .filter(Contract::isExclusive)
+                .filter(contract -> contract.getMonthlyCost() > 0)
+                .map(contract -> Transaction.builder()
+                        .promotion(contract.getPromotion())
+                        .type(TransactionType.WORKER)
+                        .date(dateManager.today())
+                        .amount(contract.getMonthlyCost())
+                        .build())
+                .collect(Collectors.toList());
+
+        transactions.addAll(workerTransactions);
+
+        List<Transaction> staffTransactions = contractManager.getStaffContracts().stream()
+                .filter(contract -> contract.getMonthlyCost() > 0)
+                .map(contract -> Transaction.builder()
+                        .promotion(contract.getPromotion())
+                        .type(TransactionType.STAFF)
+                        .date(dateManager.today())
+                        .amount(contract.getMonthlyCost())
+                        .build())
+                .collect(Collectors.toList());
+
+        transactions.addAll(staffTransactions);
+
+        return transactions;
     }
 
     private Event eventOnDay(Promotion promotion) {
@@ -133,9 +201,9 @@ public class NextDayController extends Logging {
         return eventToday;
     }
 
-    private void handleMoraleCheck() {
+    private List<NewsItem> updateRelationshipsForMoraleCheck() {
         List<MoraleRelationship> moraleRelationships = new ArrayList<>();
-        List<NewsItem> newsItems = new ArrayList<>();
+        List<NewsItem> moraleNewsItems = new ArrayList<>();
         contractManager.getContracts().stream()
                 .filter(contract -> ContractUtils.isMoraleCheckDay(contract, dateManager.today()))
                 .forEach(contract -> {
@@ -145,11 +213,10 @@ public class NextDayController extends Logging {
                         MoraleRelationship moraleRelationship = relationshipManager.getMoraleRelationship(contract.getWorker(), contract.getPromotion());
                         moraleRelationship.setLevel(moraleRelationship.getLevel() - penalty);
                         moraleRelationships.add(moraleRelationship);
-                        newsItems.add(newsManager.getMoraleNewsItem(contract, daysBetween, penalty, dateManager.today()));
+                        moraleNewsItems.add(newsManager.getMoraleNewsItem(contract, daysBetween, penalty, dateManager.today()));
                     }
                 });
         relationshipManager.createOrUpdateMoraleRelationships(moraleRelationships);
-        newsManager.addNewsItems(newsItems);
-
+        return moraleNewsItems;
     }
 }

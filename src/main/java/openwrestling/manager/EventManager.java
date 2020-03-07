@@ -121,16 +121,16 @@ public class EventManager extends GameObjectManager implements Serializable {
             eventMap.put(event.getEventID(), event);
         });
 
-        eventsWithSegments.forEach(event -> {
-            List<Segment> segments = event.getSegments();
-            Event savedEvent = getDatabase().insertList(List.of(event)).get(0);
+        List<Event> savedEventsWithSegments = getDatabase().insertList(eventsWithSegments);
+        savedEventsWithSegments.forEach(event -> eventMap.put(event.getEventID(), event));
+        for (int i = 0; i < savedEventsWithSegments.size(); i++) {
+            List<Segment> segments = eventsWithSegments.get(i).getSegments();
+            Event savedEvent = savedEventsWithSegments.get(i);
             segments.forEach(segment -> segment.setEvent(savedEvent));
             segmentsToSave.addAll(segments);
-            eventMap.put(savedEvent.getEventID(), savedEvent);
-        });
+        }
 
         segmentManager.createSegments(segmentsToSave);
-        //selectData();
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {

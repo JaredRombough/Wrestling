@@ -2,6 +2,7 @@ package openwrestling.model.factory;
 
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
+import openwrestling.manager.DateManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.WorkerManager;
@@ -11,8 +12,8 @@ import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
-import openwrestling.manager.DateManager;
 import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.StaffUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,7 +138,18 @@ public class RandomGameAssetGenerator {
                     List<Contract> contracts = new ArrayList<>();
                     for (int i = 0; i < rosterSize; i++) {
                         Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
-                        contracts.add(contractFactory.createContract(worker, promotion, dateManager.today()));
+                        Contract contract = new Contract(dateManager.today(), worker, promotion);
+                        contract.setExclusive(promotion.getLevel() == 5);
+                        contract.setEndDate(ContractUtils.contractEndDate(dateManager.today(), RandomUtils.nextInt(0, 12)));
+
+                        if (contract.isExclusive()) {
+                            contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));
+
+                        } else {
+                            contract.setAppearanceCost(ContractUtils.calculateWorkerContractCost(worker, false));
+                        }
+
+                        contracts.add(contract);
                     }
                     return contracts.stream();
                 }).collect(Collectors.toList());

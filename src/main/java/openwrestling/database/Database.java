@@ -131,7 +131,7 @@ public class Database extends Logging {
         }
         logger.log(Level.DEBUG,
                 String.format("selectAll class %s size %s took %d",
-                        sourceClass,
+                        sourceClass.getName(),
                         list.size(),
                         (System.currentTimeMillis() - start)));
         return list;
@@ -152,7 +152,7 @@ public class Database extends Logging {
         }
         logger.log(Level.DEBUG,
                 String.format("querySelect sourceClass %s size %s took %d",
-                        query.sourceClass(),
+                        query.sourceClass().getName(),
                         list.size(),
                         (System.currentTimeMillis() - start)));
         return list;
@@ -187,7 +187,7 @@ public class Database extends Logging {
 
             logger.log(Level.DEBUG,
                     String.format("insertList class %s size %s took %d",
-                            gameObjects.get(0).getClass(),
+                            gameObjects.get(0).getClass().getName(),
                             updatedGameObjects.size(),
                             (System.currentTimeMillis() - start)));
 
@@ -210,7 +210,7 @@ public class Database extends Logging {
         }
         logger.log(Level.DEBUG,
                 String.format("updateList sourceClass %s size %s took %d",
-                        gameObjects.get(0).getClass(),
+                        gameObjects.get(0).getClass().getName(),
                         gameObjects.size(),
                         (System.currentTimeMillis() - start)));
     }

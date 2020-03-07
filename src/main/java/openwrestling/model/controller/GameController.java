@@ -87,10 +87,7 @@ public final class GameController extends Logging implements Serializable {
         rosterSplitManager = new RosterSplitManager(database);
         broadcastTeamManager = new BroadcastTeamManager(database);
 
-        contractManager = new ContractManager(database, promotionManager,
-                newsManager,
-                relationshipManager,
-                bankAccountManager);
+        contractManager = new ContractManager(database, bankAccountManager);
 
         workerManager = new WorkerManager(database, contractManager);
         staffManager = new StaffManager(database, contractManager);
@@ -218,9 +215,6 @@ public final class GameController extends Logging implements Serializable {
         for (Promotion promotion : promotionManager.getPromotions()) {
             injuryManager.dailyUpdate(dateManager.today(), promotion);
             promotionController.trainerUpdate(promotion);
-            if (dateManager.isPayDay()) {
-                promotionController.payDay(promotion, dateManager.today());
-            }
             if (!promotionManager.getPlayerPromotion().equals(promotion)) {
                 promotionController.dailyUpdate(promotion);
             }
