@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -20,7 +19,7 @@ import java.util.Date;
 public class ContractEntity extends Entity {
 
     @DatabaseField(generatedId = true)
-    private int contractID;
+    private long contractID;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private PromotionEntity promotion;

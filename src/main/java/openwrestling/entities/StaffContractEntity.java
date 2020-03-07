@@ -19,7 +19,7 @@ import java.util.Date;
 public class StaffContractEntity extends Entity {
 
     @DatabaseField(generatedId = true)
-    private int staffContractID;
+    private long staffContractID;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private PromotionEntity promotion;

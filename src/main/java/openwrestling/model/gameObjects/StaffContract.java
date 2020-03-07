@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class StaffContract extends GameObject implements Serializable, iContract {
 
+    private long staffContractID;
     private StaffMember staff;
     private Promotion promotion;
     private LocalDate startDate;

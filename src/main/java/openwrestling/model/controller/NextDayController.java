@@ -12,6 +12,7 @@ import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
@@ -102,8 +103,18 @@ public class NextDayController extends Logging {
                 .map(eventTemplate -> bookEventForCompletedAnnualEventTemplateAfterDate(eventTemplate, dateManager.today()))
                 .collect(Collectors.toList());
 
+        List<Contract> contracts = events.stream()
+                .flatMap(event ->
+                        event.getSegments().stream()
+                                .flatMap(segment -> segment.getWorkers().stream())
+                                .map(worker -> contractManager.getContract(worker, event.getPromotion()))
+                )
+                .peek(contract -> contract.setLastShowDate(dateManager.today()))
+                .collect(Collectors.toList());
+
+        contractManager.updateContracts(contracts);
         handleMoraleCheck();
-        updateBankAccounts(events);
+        updateBankAccounts(events, contracts);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
         eventManager.createEvents(newAnnualEvents);
@@ -111,13 +122,27 @@ public class NextDayController extends Logging {
 
     }
 
-    void updateBankAccounts(List<Event> events) {
+    void updateBankAccounts(List<Event> events, List<Contract> contracts) {
         List<Transaction> transactions = events.stream()
                 .map(event -> Transaction.builder()
                         .amount(event.getGate())
                         .type(TransactionType.GATE)
                         .promotion(event.getPromotion())
                         .build()).collect(Collectors.toList());
+
+        transactions.addAll(
+                contracts.stream()
+                        .filter(contract -> contract.getAppearanceCost() == 0)
+                        .map(contract ->
+                                Transaction.builder()
+                                        .promotion(contract.getPromotion())
+                                        .amount(contract.getAppearanceCost())
+                                        .date(dateManager.today())
+                                        .type(TransactionType.WORKER)
+                                        .build()
+                        )
+                        .collect(Collectors.toList())
+        );
 
         bankAccountManager.insertTransactions(transactions);
     }
