@@ -21,7 +21,6 @@ import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.interfaces.iEvent;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.EventVenueSize;
@@ -109,8 +108,6 @@ public class EventFactory extends Logging {
 
             event.setGate(eventManager.calculateGate(event));
 
-            processContracts(event, event.getSegments());
-
             logger.log(Level.DEBUG, "end process processEventView for " + event.getName());
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage());
@@ -192,13 +189,6 @@ public class EventFactory extends Logging {
         event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
-    }
-
-
-    private void processContracts(iEvent event, List<Segment> segments) {
-        eventManager.allWorkers(segments).stream().forEach((worker) -> {
-            contractManager.appearance(event.getDate(), worker, event.getPromotion());
-        });
     }
 
     public Segment processSegment(Event event, Segment toProcess) {

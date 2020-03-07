@@ -56,7 +56,7 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
         return saved;
     }
 
-    public List<Transaction> insertTransactions(List<Transaction> transactions) {
+    public void insertTransactions(List<Transaction> transactions) {
         Map<Promotion, BankAccount> bankAccountMap = new HashMap<>();
         transactions.forEach(transaction -> {
             if (TransactionType.WORKER.equals(transaction.getType())) {
@@ -77,8 +77,6 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
         getDatabase().insertList(new ArrayList<>(bankAccountMap.values()));
 
         bankAccounts = getDatabase().selectAll(BankAccount.class);
-
-        return List.of();
     }
 
     public int getTransactionTotal(Promotion promotion, TransactionType type, LocalDate startDate) {
