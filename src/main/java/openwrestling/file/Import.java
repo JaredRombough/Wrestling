@@ -51,7 +51,6 @@ public class Import {
         if (sb.length() == 0) {
             try {
                 gameController = new GameController(dbFile, false);
-                gameController.getDateManager().setGameDate(DEFAULT_START_DATE);
                 ImportHelper importHelper = new ImportHelper(importFolder);
 
                 List<Promotion> promotions = importHelper.promotionsDat("promos");

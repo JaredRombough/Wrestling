@@ -74,7 +74,10 @@ public final class GameController extends Logging implements Serializable {
 
     public GameController(File dbFile, boolean randomGame) {
         Database database = new Database(dbFile);
+
         dateManager = new DateManager(database);
+        dateManager.setGameDate(DEFAULT_START_DATE);
+
         gameSettingManager = new GameSettingManager(database);
 
         bankAccountManager = new BankAccountManager(database);
@@ -149,7 +152,6 @@ public final class GameController extends Logging implements Serializable {
                 .build();
 
         if (randomGame) {
-            dateManager.setGameDate(DEFAULT_START_DATE);
             RandomGameAssetGenerator randomGameAssetGenerator = new RandomGameAssetGenerator(
                     contractFactory,
                     dateManager,

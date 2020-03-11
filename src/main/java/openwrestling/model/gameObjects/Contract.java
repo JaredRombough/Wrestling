@@ -21,21 +21,13 @@ public class Contract extends GameObject implements Serializable, iContract {
     private long contractID;
     private Promotion promotion;
     private Worker worker;
-
     private boolean active = true;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
-
     private LocalDate lastShowDate;
-
     private boolean exclusive;
-
     private boolean pushed;
-
     private int appearanceCost;
-
     private int monthlyCost;
 
     public Contract(LocalDate startDate, Worker worker, Promotion promotion) {
