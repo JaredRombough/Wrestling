@@ -55,16 +55,15 @@ public class NextDayController extends Logging {
 
     public void nextDay() {
         long start = System.currentTimeMillis();
-        logger.log(Level.DEBUG, "nextDay");
+        logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
         List<Event> events = promotionManager.getPromotions().stream()
                 .filter(promotion -> !promotionManager.getPlayerPromotion().equals(promotion))
                 .map(this::eventOnDay)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        if (CollectionUtils.isNotEmpty(events)) {
-            processEvents(events);
-        }
+        processEvents(events);
+
         logger.log(Level.DEBUG, String.format("nextDay took %d ms",
                 System.currentTimeMillis() - start));
 
