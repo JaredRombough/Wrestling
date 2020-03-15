@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static openwrestling.model.constants.GameConstants.DEFAULT_START_DATE;
 import static openwrestling.model.constants.SettingKeys.GAME_DATE;
 
 public class DateManager extends GameObjectManager implements Serializable {
@@ -18,6 +19,10 @@ public class DateManager extends GameObjectManager implements Serializable {
 
     public DateManager(Database database) {
         super(database);
+        selectData();
+        if (gameDate == null) {
+            setGameDate(DEFAULT_START_DATE);
+        }
     }
 
     @Override
@@ -27,7 +32,7 @@ public class DateManager extends GameObjectManager implements Serializable {
                 .filter(gameSetting -> gameSetting.getKey().equals(GAME_DATE))
                 .map(gameSetting -> LocalDate.parse(gameSetting.getValue(), DateTimeFormatter.ISO_DATE))
                 .findFirst()
-                .orElseThrow();
+                .orElse(null);
     }
 
     public String todayString() {

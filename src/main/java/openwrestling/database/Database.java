@@ -73,10 +73,6 @@ import openwrestling.model.gameObjects.gamesettings.GameSetting;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,14 +85,18 @@ public class Database extends Logging {
     private String dbUrl;
     private MapperFactory mapperFactory;
 
+    //Test constructor
     public Database(String dbPath) {
         dbUrl = "jdbc:sqlite:" + dbPath;
-        createNewDatabase(dbUrl);
+        createNewDatabase();
     }
 
     public Database(File dbFile) {
         dbUrl = "jdbc:sqlite:" + dbFile.getPath().replace("\\", "/");
-        createNewDatabase(dbUrl);
+    }
+
+    public void createNewDatabase() {
+        createTables(dbUrl);
     }
 
 
@@ -290,23 +290,6 @@ public class Database extends Logging {
         put(NewsItem.class, NewsItemEntity.class);
         put(GameSetting.class, GameSettingEntity.class);
     }};
-
-    private String createNewDatabase(String url) {
-
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                dbUrl = url;
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        createTables(url);
-
-        return url;
-    }
 
     private void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
         if (toInsert.isEmpty()) {

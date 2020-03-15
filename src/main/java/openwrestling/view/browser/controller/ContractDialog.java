@@ -16,6 +16,7 @@ import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.utility.ContractUtils;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.ViewUtils;
 
 import java.time.LocalDate;
@@ -112,14 +113,14 @@ public class ContractDialog {
     }
 
     private void updateCostLabel(Label label) {
-        label.setText(String.format("$%d %s",
-                person instanceof Worker ? ContractUtils.calculateWorkerContractCost((Worker) person, exclusive)
-                        : ContractUtils.calculateStaffContractCost((StaffMember) person),
+        label.setText(String.format("%s %s",
+                ModelUtils.currencyString(person instanceof Worker ? ContractUtils.calculateWorkerContractCost((Worker) person, exclusive)
+                        : ContractUtils.calculateStaffContractCost((StaffMember) person)),
                 exclusive ? "Monthly" : "per Apperance"));
     }
 
     private void updateSigningFeeLabel(Label label, LocalDate startDate) {
-        label.setText(String.format("$%d",
+        label.setText(ModelUtils.currencyString(
                 exclusive ? ContractUtils.calculateSigningFee(person, startDate) : 0));
     }
 

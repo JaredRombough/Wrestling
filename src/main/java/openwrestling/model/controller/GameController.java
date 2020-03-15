@@ -31,12 +31,10 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import org.apache.logging.log4j.Level;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static openwrestling.model.constants.GameConstants.DEFAULT_START_DATE;
 import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
 
 @Getter
@@ -72,11 +70,9 @@ public final class GameController extends Logging implements Serializable {
 
     private final int EVENT_MONTHS = 6;
 
-    public GameController(File dbFile, boolean randomGame) {
-        Database database = new Database(dbFile);
+    public GameController(Database database, boolean randomGame) {
 
         dateManager = new DateManager(database);
-        dateManager.setGameDate(DEFAULT_START_DATE);
 
         gameSettingManager = new GameSettingManager(database);
 

@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Getter;
+import openwrestling.database.Database;
 import openwrestling.file.Import;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
@@ -125,7 +126,9 @@ public class MainApp extends Application {
         File dbFile = ViewUtils.createDatabaseDialog(primaryStage);
         if (dbFile != null) {
             randomGame = true;
-            gameController = new GameController(dbFile, true);
+            Database database = new Database(dbFile);
+            database.createNewDatabase();
+            gameController = new GameController(database, true);
             initRootLayout();
             showStartGameScreen();
         }
@@ -169,7 +172,8 @@ public class MainApp extends Application {
     }
 
     public void continueGame(File dbFile) {
-        gameController = new GameController(dbFile, false);
+        Database database = new Database(dbFile);
+        gameController = new GameController(database, false);
         gameController.loadGameDataFromDatabase();
         initRootLayout();
         continueGame();

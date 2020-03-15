@@ -8,6 +8,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.utility.ContractUtils;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
@@ -75,7 +76,7 @@ public class ContractController extends ControllerBase {
                 contractTypeLabel.setVisible(true);
                 contractTypeLabel.setText(playerPromotionContract.isExclusive() ? "Monthly" : "Appearance");
                 contractTypeText.setVisible(true);
-                contractTypeText.setText(String.format("$%d", playerPromotionContract.isExclusive() ? playerPromotionContract.getMonthlyCost() : playerPromotionContract.getAppearanceCost()));
+                contractTypeText.setText(ModelUtils.currencyString(playerPromotionContract.isExclusive() ? playerPromotionContract.getMonthlyCost() : playerPromotionContract.getAppearanceCost()));
                 contractDurationText.setText(ContractUtils.contractDurationString(playerPromotionContract, gameController.getDateManager().today()));
             } else {
                 contractTypeText.setVisible(false);

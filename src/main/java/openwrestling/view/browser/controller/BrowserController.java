@@ -21,6 +21,7 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segmentEnum.BrowseMode;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
@@ -109,10 +110,12 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             promotionComboBox.getSelectionModel().select(currentPromotion);
 
+            long funds = gameController.getBankAccountManager().getBankAccount(currentPromotion).getFunds();
+
             currentPromotionLabel.setText(currentPromotion.getName() + "\n"
                     + "Level " + currentPromotion.getLevel()
                     + "\tPopularity " + currentPromotion.getPopularity()
-                    + "\tFunds: " + gameController.getBankAccountManager().getBankAccount(currentPromotion).getFunds());
+                    + "\tFunds: " + ModelUtils.currencyString(funds));
 
             if (displaySubScreen != null && displaySubScreen.controller instanceof WorkerOverviewController) {
                 ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
