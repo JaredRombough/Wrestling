@@ -135,6 +135,7 @@ public class NextDayController extends Logging {
                 .map(event -> Transaction.builder()
                         .amount(event.getGate())
                         .type(TransactionType.GATE)
+                        .date(dateManager.today())
                         .promotion(event.getPromotion())
                         .build()).collect(Collectors.toList());
 

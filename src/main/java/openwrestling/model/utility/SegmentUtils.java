@@ -1,12 +1,13 @@
 package openwrestling.model.utility;
 
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
 import openwrestling.model.segmentEnum.TeamType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,6 +54,9 @@ public final class SegmentUtils {
     }
 
     public static List<Worker> getMatchObjectors(Segment segment) {
+        if (CollectionUtils.isEmpty(segment.getWinners())) {
+            return List.of();
+        }
         int winnerPopularity = getWinnerMaxPopularity(segment);
         return segment.getTeams(TeamType.LOSER).stream()
                 .flatMap(team -> team.getWorkers().stream())
