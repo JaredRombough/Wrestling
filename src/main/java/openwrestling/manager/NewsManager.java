@@ -1,6 +1,5 @@
 package openwrestling.manager;
 
-import lombok.NoArgsConstructor;
 import openwrestling.database.Database;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
@@ -24,16 +23,19 @@ import java.util.Map;
 import static openwrestling.model.constants.Words.ACTIVITIES;
 import static openwrestling.model.constants.Words.BODY_PARTS;
 
-@NoArgsConstructor
 public class NewsManager extends GameObjectManager implements Serializable {
 
     private List<NewsItem> newsItems = new ArrayList<>();
     private final Map<LocalDate, NewsItem> newsItemByDateMap = new HashMap();
     private final Map<Object, Map<LocalDate, List<NewsItem>>> newsItemBySegmentItemMap = new HashMap();
 
+    public NewsManager(Database database) {
+        super(database);
+    }
+
     @Override
     public void selectData() {
-        newsItems = Database.selectAll(NewsItem.class);
+        newsItems = getDatabase().selectAll(NewsItem.class);
         newsItems.forEach(newsItem -> {
             if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
                 newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
@@ -59,6 +61,21 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .date(LocalDate.MIN)
                 .promotions(List.of(promotion))
                 .build());
+    }
+
+    public NewsItem getJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
+        List<Worker> workers = new ArrayList<>(winners);
+        workers.add(worker);
+        return NewsItem.builder()
+                .headline(String.format("%s unhappy with loss", worker.getShortName()))
+                .summary(String.format("%s is unhappy with %s after their loss to %s",
+                        worker.getLongName(),
+                        promotion,
+                        ModelUtils.andItemsLongName(winners)))
+                .date(date)
+                .promotions(List.of(promotion))
+                .workers(workers)
+                .build();
     }
 
     public void addJobComplaintNewsItem(Worker worker, List<Worker> winners, Promotion promotion, LocalDate date) {
@@ -148,7 +165,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
     }
 
     public void addNewsItems(List<NewsItem> newsItems) {
-        List<NewsItem> inserted = Database.insertList(newsItems);
+        List<NewsItem> inserted = getDatabase().insertList(newsItems);
         inserted.forEach(newsItem -> {
             if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
                 newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));
@@ -161,7 +178,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
     }
 
     private void addNews(NewsItem newsItem) {
-        NewsItem inserted = Database.insertList(List.of(newsItem)).get(0);
+        NewsItem inserted = getDatabase().insertList(List.of(newsItem)).get(0);
         if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
             newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, inserted));
         }

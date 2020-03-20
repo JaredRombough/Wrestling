@@ -1,5 +1,6 @@
 package openwrestling.manager;
 
+
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
@@ -18,17 +19,18 @@ public class StaffManager extends GameObjectManager implements Serializable {
 
     private final ContractManager contractManager;
 
-    public StaffManager(ContractManager contractManager) {
+    public StaffManager(Database database, ContractManager contractManager) {
+        super(database);
         this.contractManager = contractManager;
     }
 
     @Override
     public void selectData() {
-        staffMembers = Database.selectAll(StaffMember.class);
+        staffMembers = getDatabase().selectAll(StaffMember.class);
     }
 
     public List<StaffMember> createStaffMembers(List<StaffMember> staffMembers) {
-        List saved = Database.insertList(staffMembers);
+        List saved = getDatabase().insertList(staffMembers);
         this.staffMembers.addAll(saved);
         return saved;
     }

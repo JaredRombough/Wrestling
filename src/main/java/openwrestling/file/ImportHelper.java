@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static openwrestling.file.ImportUtils.*;
 import static openwrestling.model.constants.GameConstants.*;
+import static openwrestling.model.utility.ContractUtils.calculateWorkerContractCost;
 
 @AllArgsConstructor
 public class ImportHelper {
@@ -454,14 +455,23 @@ public class ImportHelper {
             promotions.stream()
                     .filter(promotion -> ArrayUtils.contains(promoKeys, promotion.getImportKey()))
                     .forEach(promotion -> {
-                        contracts.add(Contract.builder()
+                        Contract contract = Contract.builder()
                                 .worker(worker)
                                 .promotion(promotion)
                                 .exclusive(exclusive)
                                 .active(true)
                                 .startDate(gameStartDate)
                                 .endDate(ContractUtils.contractEndDate(gameStartDate, RandomUtils.nextInt(0, 12)))
-                                .build());
+                                .build();
+                        int cost = calculateWorkerContractCost(worker, exclusive);
+
+                        if (exclusive) {
+                            contract.setMonthlyCost(cost);
+                        } else {
+                            contract.setAppearanceCost(cost);
+                        }
+
+                        contracts.add(contract);
                     });
         });
         return contracts;

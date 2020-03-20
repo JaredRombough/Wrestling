@@ -1,4 +1,4 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import openwrestling.TestUtils;
 import openwrestling.database.Database;
@@ -6,6 +6,7 @@ import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
 import openwrestling.manager.EventManager;
+import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.SegmentManager;
 import openwrestling.manager.StableManager;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.mock;
@@ -44,17 +46,18 @@ public class SegmentManagerTest {
     private EventManager eventManager;
     private SegmentManager segmentManager;
     private WorkerManager workerManager;
-    private PromotionManager promotionManager = new PromotionManager(new BankAccountManager());
+    private PromotionManager promotionManager;
     private Promotion promotion;
-
+    private Database database;
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
-        workerManager = new WorkerManager(mock(ContractManager.class));
-        segmentManager = new SegmentManager(mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
-        eventManager = new EventManager(mock(ContractManager.class), mockDateManager, segmentManager);
+        promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
+        workerManager = new WorkerManager(database, mock(ContractManager.class));
+        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager);
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
 

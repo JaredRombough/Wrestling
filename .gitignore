@@ -24,6 +24,7 @@ wrestlingsavegame.ser
 *.ser
 *.bin
 EvaluateData.java
+*.png
 
 
 #idea

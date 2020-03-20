@@ -1,22 +1,25 @@
 package openwrestling.view;
 
-import java.io.IOException;
-import java.net.URL;
-import static java.time.temporal.ChronoUnit.DAYS;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import openwrestling.model.gameObjects.Event;
-import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static openwrestling.model.constants.UIConstants.CALENDAR_ICON;
 
 public class RootLayoutController extends ControllerBase implements Initializable {
 
@@ -188,8 +191,9 @@ public class RootLayoutController extends ControllerBase implements Initializabl
     }
 
     private void updateCurrentFundsButton() {
-        financialButton.setText("\uD83D\uDCC8 Funds: $" + gameController.getBankAccountManager()
-                .getBankAccount(playerPromotion()).getFunds());
+        long funds = gameController.getBankAccountManager()
+                .getBankAccount(playerPromotion()).getFunds();
+        financialButton.setText("\uD83D\uDCC8 Funds: " + ModelUtils.currencyString(funds));
     }
 
     public void setButtonsDisable(boolean disable) {

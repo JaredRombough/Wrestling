@@ -30,13 +30,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EventFactoryTest {
-
+    private Database database;
     private final ContractManager contractManager = mock(ContractManager.class);
     private final EventManager eventManager = mock(EventManager.class);
     private final TitleManager titleManager = mock(TitleManager.class);
@@ -59,7 +60,7 @@ public class EventFactoryTest {
     public void setUp() {
         today = LocalDate.now();
         matchFactory = new MatchFactory(segmentManager, mock(DateManager.class), mock(InjuryManager.class), workerManager, mock(StaffManager.class));
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
         when(bankAccountManager.getBankAccount(any(Promotion.class))).thenReturn(new BankAccount());
         relationshipManager = mock(RelationshipManager.class);
         eventFactory = new EventFactory(

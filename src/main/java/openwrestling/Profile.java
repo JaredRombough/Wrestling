@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +35,8 @@ public class Profile extends Logging {
             logger.log(Level.DEBUG, "Events (future): " + futureEvents.size());
             BankAccount bankAccount = gameController.getBankAccountManager().getBankAccount(promotion);
             logger.log(Level.DEBUG, "Funds: " + bankAccount.getFunds());
-            logger.log(Level.DEBUG, "Transactions: " + bankAccount.getTransactions().size());
-            bankAccount.getTransactions().stream()
+            logger.log(Level.DEBUG, "Transactions: " + gameController.getBankAccountManager().getTransactions(promotion).size());
+            gameController.getBankAccountManager().getTransactions(promotion).stream()
                     .collect(groupingBy(Transaction::getType, toList()))
                     .forEach((transactionType, transactions) -> {
                         logger.log(Level.DEBUG, String.format("%s %d %d",
@@ -61,10 +62,12 @@ public class Profile extends Logging {
         });
 
 
-        map.entrySet().forEach(workerListEntry -> {
-            logger.log(Level.DEBUG, String.format("%s had %d matches",
-                    gameController.getWorkerManager().getWorker(workerListEntry.getKey()).getName(),
-                    workerListEntry.getValue().size()));
-        });
+        map.entrySet().stream()
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().size()))
+                .forEach(workerListEntry -> {
+                    logger.log(Level.DEBUG, String.format("%s had %d matches",
+                            gameController.getWorkerManager().getWorker(workerListEntry.getKey()).getName(),
+                            workerListEntry.getValue().size()));
+                });
     }
 }

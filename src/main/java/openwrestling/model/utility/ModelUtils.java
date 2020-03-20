@@ -1,19 +1,20 @@
 package openwrestling.model.utility;
 
 import openwrestling.model.SegmentItem;
-import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.SegmentTemplate;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.view.event.controller.TeamPaneWrapper;
 import openwrestling.view.utility.GameScreen;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,9 +22,17 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public final class ModelUtils {
+
+    public static String currencyString(long amount) {
+        Locale locale = new Locale("en", "US");
+        NumberFormat moneyFormat = NumberFormat.getCurrencyInstance(locale);
+        moneyFormat.setMaximumFractionDigits(0);
+        return moneyFormat.format(amount);
+    }
 
     public static String dateString(LocalDate localDate) {
         return localDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy (cccc)"));

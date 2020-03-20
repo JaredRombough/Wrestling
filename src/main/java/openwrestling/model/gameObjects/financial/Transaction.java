@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class Transaction extends GameObject {
 
     private long transactionID;
-    private int amount;
+    private long amount;
     private TransactionType type;
     private LocalDate date;
     private BankAccount bankAccount;

@@ -1,9 +1,10 @@
-package openwrestling.model.manager;
+package openwrestling.manager;
 
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
+import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.InjuryManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
@@ -17,23 +18,26 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class InjuryManagerTest {
-
+    private Database database;
     InjuryManager injuryManager;
 
-    private WorkerManager workerManager = new WorkerManager(mock(ContractManager.class));
-    private PromotionManager promotionManager = new PromotionManager(new BankAccountManager());
+    private WorkerManager workerManager;
+    private PromotionManager promotionManager;
 
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
-        injuryManager = new InjuryManager(mock(NewsManager.class), mock(WorkerManager.class), mockDateManager);
+        workerManager = new WorkerManager(database, mock(ContractManager.class));
+        promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
+        injuryManager = new InjuryManager(database, mock(NewsManager.class), mock(WorkerManager.class), mockDateManager);
     }
 
 

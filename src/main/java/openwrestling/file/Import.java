@@ -1,5 +1,6 @@
 package openwrestling.file;
 
+import openwrestling.database.Database;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -25,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static openwrestling.model.constants.GameConstants.DEFAULT_START_DATE;
-
 public class Import {
 
     private GameController gameController;
@@ -40,7 +39,7 @@ public class Import {
             "wrestler"
     ));
 
-    public String tryImport(File importFolder) throws Exception {
+    public String tryImport(File dbFile, File importFolder) throws Exception {
         long start = System.currentTimeMillis();
 
         StringBuilder sb = new StringBuilder();
@@ -50,8 +49,9 @@ public class Import {
 
         if (sb.length() == 0) {
             try {
-                gameController = new GameController(false);
-                gameController.getDateManager().setGameDate(DEFAULT_START_DATE);
+                Database database = new Database(dbFile);
+                database.createNewDatabase();
+                gameController = new GameController(database, false);
                 ImportHelper importHelper = new ImportHelper(importFolder);
 
                 List<Promotion> promotions = importHelper.promotionsDat("promos");

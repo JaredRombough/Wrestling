@@ -17,19 +17,20 @@ public class TagTeamManager extends GameObjectManager implements Serializable {
     @Getter
     private List<TagTeam> tagTeams;
 
-    public TagTeamManager(WorkerManager workerManager) {
+    public TagTeamManager(Database database, WorkerManager workerManager) {
+        super(database);
         tagTeams = new ArrayList<>();
         this.workerManager = workerManager;
     }
 
     @Override
     public void selectData() {
-        tagTeams = Database.selectAll(TagTeam.class);
+        tagTeams = getDatabase().selectAll(TagTeam.class);
     }
 
     public List<TagTeam> createTagTeams(List<TagTeam> toInsert) {
-        Database.insertList(toInsert);
-        tagTeams = Database.selectAll(TagTeam.class);
+        getDatabase().insertList(toInsert);
+        tagTeams = getDatabase().selectAll(TagTeam.class);
         tagTeams.forEach(tagTeam -> tagTeam.setWorkers(workerManager.refreshWorkers(tagTeam.getWorkers())));
         return tagTeams;
     }

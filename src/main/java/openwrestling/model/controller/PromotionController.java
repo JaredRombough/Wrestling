@@ -142,16 +142,6 @@ public class PromotionController extends Logging implements Serializable {
         logger.log(Level.DEBUG, "end dailyUpdate for " + promotion.getName());
     }
 
-    //pay everyone
-    public void payDay(Promotion promotion, LocalDate date) {
-
-        for (Contract c : contractManager.getContracts(promotion)) {
-            contractManager.payDay(date, c);
-        }
-
-        contractManager.staffPayDay(date, promotion);
-    }
-
     public void trainerUpdate(Promotion promotion) {
         for (StaffMember trainer : staffManager.getStaff(StaffType.TRAINER, promotion)) {
             if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {

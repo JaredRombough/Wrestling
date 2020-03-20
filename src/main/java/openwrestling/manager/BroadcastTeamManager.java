@@ -1,6 +1,5 @@
 package openwrestling.manager;
 
-import lombok.NoArgsConstructor;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -12,14 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor
 public class BroadcastTeamManager extends GameObjectManager implements Serializable {
 
     private List<BroadcastTeamMember> broadcastTeamMembers = new ArrayList<>();
 
+    public BroadcastTeamManager(Database database) {
+        super(database);
+    }
+
     @Override
     public void selectData() {
-        broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
+        broadcastTeamMembers = getDatabase().selectAll(BroadcastTeamMember.class);
     }
 
     public void setDefaultBroadcastTeam(Promotion promotion, List<StaffMember> newTeam) {
@@ -28,7 +30,7 @@ public class BroadcastTeamManager extends GameObjectManager implements Serializa
                 .collect(Collectors.toList());
 
         defaultBroadcastTeam.forEach(broadcastTeamMember ->
-                Database.deleteByID(BroadcastTeamMember.class, broadcastTeamMember.getBroadcastTeamID())
+                getDatabase().deleteByID(BroadcastTeamMember.class, broadcastTeamMember.getBroadcastTeamID())
         );
 
         List<BroadcastTeamMember> toInsert = newTeam.stream()
@@ -39,9 +41,9 @@ public class BroadcastTeamManager extends GameObjectManager implements Serializa
                                 .build())
                 .collect(Collectors.toList());
 
-        Database.insertList(toInsert);
+        getDatabase().insertList(toInsert);
 
-        broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
+        broadcastTeamMembers = getDatabase().selectAll(BroadcastTeamMember.class);
     }
 
     public void setDefaultBroadcastTeam(EventTemplate eventTemplate, List<StaffMember> newTeam) {
@@ -50,7 +52,7 @@ public class BroadcastTeamManager extends GameObjectManager implements Serializa
                 .collect(Collectors.toList());
 
         eventTemplateBroadcastTeam.forEach(broadcastTeamMember ->
-                Database.deleteByID(BroadcastTeamMember.class, broadcastTeamMember.getBroadcastTeamID())
+                getDatabase().deleteByID(BroadcastTeamMember.class, broadcastTeamMember.getBroadcastTeamID())
         );
 
         List<BroadcastTeamMember> toInsert = newTeam.stream()
@@ -61,9 +63,9 @@ public class BroadcastTeamManager extends GameObjectManager implements Serializa
                                 .build())
                 .collect(Collectors.toList());
 
-        Database.insertList(toInsert);
+        getDatabase().insertList(toInsert);
 
-        broadcastTeamMembers = Database.selectAll(BroadcastTeamMember.class);
+        broadcastTeamMembers = getDatabase().selectAll(BroadcastTeamMember.class);
     }
 
     public List<StaffMember> getDefaultBroadcastTeam(Promotion promotion) {

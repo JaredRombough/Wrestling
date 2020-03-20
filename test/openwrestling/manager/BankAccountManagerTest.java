@@ -12,78 +12,80 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class BankAccountManagerTest {
+
+    private Database database;
+
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
     }
 
 
     @Test
     public void createBankAccounts() {
-        BankAccountManager bankAccountManager = new BankAccountManager();
-        PromotionManager promotionManager = new PromotionManager(bankAccountManager);
+        BankAccountManager bankAccountManager = new BankAccountManager(database);
+        PromotionManager promotionManager = new PromotionManager(database, bankAccountManager, mock(GameSettingManager.class));
         Promotion promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
         BankAccount bankAccount = bankAccountManager.getBankAccount(promotion);
         assertThat(bankAccount).isNotNull();
-        assertThat(bankAccount.getTransactions()).isEmpty();
+        assertThat(bankAccountManager.getTransactions(promotion)).isEmpty();
         Transaction transaction = Transaction.builder()
                 .date(LocalDate.now())
                 .type(TransactionType.GATE)
                 .amount(123)
-                .bankAccount(bankAccount)
+                .promotion(promotion)
                 .build();
-        bankAccount.setTransactions(List.of(transaction));
-        bankAccountManager.updateBankAccounts(List.of(bankAccount));
+        bankAccountManager.insertTransactions(List.of(transaction));
 
-        List<Transaction> selectedTransactions = Database.selectAll(Transaction.class);
+        List<Transaction> selectedTransactions = database.selectAll(Transaction.class);
         assertThat(selectedTransactions).hasSize(1);
     }
 
     @Test
     public void insertTransactions() {
-        BankAccountManager bankAccountManager = new BankAccountManager();
-        PromotionManager promotionManager = new PromotionManager(bankAccountManager);
+        BankAccountManager bankAccountManager = new BankAccountManager(database);
+        PromotionManager promotionManager = new PromotionManager(database, bankAccountManager, mock(GameSettingManager.class));
         Promotion promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
         BankAccount bankAccount = bankAccountManager.getBankAccount(promotion);
         assertThat(bankAccount).isNotNull();
-        bankAccount.setFunds(100);
-        bankAccountManager.updateBankAccounts(List.of(bankAccount));
-
-        bankAccount = bankAccountManager.getBankAccount(promotion);
-        assertThat(bankAccount.getFunds()).isEqualTo(100);
 
         Transaction transaction = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(100)
                 .build();
 
         bankAccountManager.insertTransactions(List.of(transaction));
 
         bankAccount = bankAccountManager.getBankAccount(promotion);
-        assertThat(bankAccount.getFunds()).isEqualTo(200);
+        assertThat(bankAccount.getFunds()).isEqualTo(1000100);
 
         Transaction transaction2 = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(100)
                 .build();
 
         Transaction transaction3 = Transaction.builder()
                 .promotion(promotion)
-                .amount(-100)
+                .type(TransactionType.WORKER)
+                .amount(100)
                 .build();
 
         Transaction transaction4 = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(50)
                 .build();
 
         bankAccountManager.insertTransactions(List.of(transaction2, transaction3, transaction4));
 
         bankAccount = bankAccountManager.getBankAccount(promotion);
-        assertThat(bankAccount.getFunds()).isEqualTo(250);
-
+        assertThat(bankAccount.getFunds()).isEqualTo(1000150);
     }
 }

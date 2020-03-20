@@ -3,9 +3,6 @@ package openwrestling.file;
 import openwrestling.database.Database;
 import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.PromotionManager;
-import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
@@ -18,15 +15,18 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static openwrestling.TestUtils.randomPromotion;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class DatabaseTest {
 
+    private Database database;
+
     @Before
     public void setUp() {
-        Database.createNewTempDatabase("testdb");
+        database = new Database(TEST_DB_PATH);
     }
 
     @Test
@@ -35,8 +35,8 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        Database.insertList(List.of(worker));
-        List<Worker> workers = Database.selectAll(Worker.class);
+        database.insertList(List.of(worker));
+        List<Worker> workers = database.selectAll(Worker.class);
         assertThat(workers).hasSize(1);
         Worker worker1 = workers.get(0);
 
@@ -52,10 +52,10 @@ public class DatabaseTest {
         Promotion promotion = new Promotion();
         Contract contract = Contract.builder().promotion(promotion).worker(worker).build();
         worker.addContract(contract);
-        Worker returnedWorker = Database.insertGameObject(worker);
+        Worker returnedWorker = database.insertGameObject(worker);
         assertThat(returnedWorker).isNotNull();
         assertThat(returnedWorker.getWorkerID()).isNotEqualTo(0).isPositive();
-        List<Worker> selectedWorkers = Database.selectAll(Worker.class);
+        List<Worker> selectedWorkers = database.selectAll(Worker.class);
         assertThat(selectedWorkers).hasSize(1);
         Worker worker1 = selectedWorkers.get(0);
 
@@ -67,18 +67,14 @@ public class DatabaseTest {
 
     @Test
     public void roster() {
-        Worker worker = Database.insertGameObject(PersonFactory.randomWorker());
-        Worker worker2 = Database.insertGameObject(PersonFactory.randomWorker());
-        Worker worker3 = Database.insertGameObject(PersonFactory.randomWorker());
-        Promotion promotion = Database.insertGameObject(randomPromotion());
-        Promotion promotion2 = Database.insertGameObject(randomPromotion());
+        Worker worker = database.insertGameObject(PersonFactory.randomWorker());
+        Worker worker2 = database.insertGameObject(PersonFactory.randomWorker());
+        Worker worker3 = database.insertGameObject(PersonFactory.randomWorker());
+        Promotion promotion = database.insertGameObject(randomPromotion());
+        Promotion promotion2 = database.insertGameObject(randomPromotion());
 
-        ContractManager contractManager = new ContractManager(
-                mock(PromotionManager.class),
-                mock(NewsManager.class),
-                mock(RelationshipManager.class),
-                mock(BankAccountManager.class));
-        WorkerManager workerManager = new WorkerManager(contractManager);
+        ContractManager contractManager = new ContractManager(database, mock(BankAccountManager.class));
+        WorkerManager workerManager = new WorkerManager(database, contractManager);
 
         Contract contract1 = Contract.builder().promotion(promotion).worker(worker).active(true).build();
         Contract contract2 = Contract.builder().promotion(promotion).worker(worker2).active(true).build();
@@ -110,11 +106,11 @@ public class DatabaseTest {
 
     @Test
     public void contract() {
-        Worker worker = Database.insertGameObject(PersonFactory.randomWorker());
-        Promotion promotion = Database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
+        Worker worker = database.insertGameObject(PersonFactory.randomWorker());
+        Promotion promotion = database.insertGameObject(Promotion.builder().name(RandomStringUtils.random(10)).build());
 
         LocalDate startDate = LocalDate.now();
-        Contract contract = Database.insertGameObject(
+        Contract contract = database.insertGameObject(
                 Contract.builder()
                         .promotion(promotion)
                         .worker(worker)
@@ -124,7 +120,7 @@ public class DatabaseTest {
 
         assertThat(contract.getStartDate()).isEqualTo(startDate);
 
-        List<Contract> contracts = Database.selectAll(Contract.class);
+        List<Contract> contracts = database.selectAll(Contract.class);
 
         assertThat(contracts).hasSize(1);
         Contract savedContract = contracts.get(0);

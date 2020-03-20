@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 public class MainApp extends Application {
 
     public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    public static final String VERSION = "0.4.0";
+    public static final String VERSION = "0.4.1";
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
@@ -123,16 +123,20 @@ public class MainApp extends Application {
 
     //starts a new random game
     public void newRandomGame() throws IOException {
-        if (connectToNewDatabase()) {
+        File dbFile = ViewUtils.createDatabaseDialog(primaryStage);
+        if (dbFile != null) {
             randomGame = true;
-            gameController = new GameController(true);
+            Database database = new Database(dbFile);
+            database.createNewDatabase();
+            gameController = new GameController(database, true);
             initRootLayout();
             showStartGameScreen();
         }
     }
 
     public void newImportGame(File dataFolder, File picsFolder, File logosFolder) throws Exception {
-        if (connectToNewDatabase()) {
+        File dbFile = ViewUtils.createDatabaseDialog(primaryStage);
+        if (dbFile != null) {
             randomGame = false;
             this.dataFolder = dataFolder;
             this.picsFolder = picsFolder;
@@ -143,7 +147,7 @@ public class MainApp extends Application {
             String error = "";
             try {
 
-                error = importer.tryImport(dataFolder);
+                error = importer.tryImport(dbFile, dataFolder);
 
                 if (!error.isEmpty()) {
 
@@ -168,8 +172,8 @@ public class MainApp extends Application {
     }
 
     public void continueGame(File dbFile) {
-        Database.setDbFile(dbFile);
-        gameController = new GameController(false);
+        Database database = new Database(dbFile);
+        gameController = new GameController(database, false);
         gameController.loadGameDataFromDatabase();
         initRootLayout();
         continueGame();
@@ -437,16 +441,6 @@ public class MainApp extends Application {
      */
     public void setRootLayoutButtonDisable(boolean disable) {
         ((RootLayoutController) ViewUtils.getByCode(screens, ScreenCode.ROOT).controller).setButtonsDisable(disable);
-    }
-
-    private boolean connectToNewDatabase() {
-        File fileName = ViewUtils.createDatabaseDialog(primaryStage);
-        if (fileName == null) {
-            return false;
-        }
-        dbURL = Database.createNewDatabase(fileName);
-        Database.connect(dbURL);
-        return true;
     }
 
     /**

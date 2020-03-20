@@ -1,18 +1,20 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import openwrestling.model.interfaces.iContract;
-import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iContract;
+import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.utility.ContractUtils;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ContractController extends ControllerBase {
 
@@ -56,23 +58,26 @@ public class ContractController extends ControllerBase {
 
         if (person != null) {
 
-            boolean hasContract = person.getContract() != null;
+            iContract firstContract =
+                    gameController.getContractManager().getContracts(person).stream()
+                            .findFirst()
+                            .orElse(null);
 
-            contractText.setVisible(hasContract);
-            contractLabel.setVisible(hasContract);
+            contractText.setVisible(firstContract != null);
+            contractLabel.setVisible(firstContract != null);
 
-            if (hasContract) {
-                contractLabel.setText(person.getContract().isExclusive() ? "Exclusive Contract" : "Open Contract");
+            if (firstContract != null) {
+                contractLabel.setText(firstContract.isExclusive() ? "Exclusive Contract" : "Open Contract");
             }
 
-            iContract contract = person.getContract(playerPromotion());
+            iContract playerPromotionContract = gameController.getContractManager().getContract(person, playerPromotion());
 
-            if (contract != null) {
+            if (playerPromotionContract != null) {
                 contractTypeLabel.setVisible(true);
-                contractTypeLabel.setText(contract.isExclusive() ? "Monthly" : "Appearance");
+                contractTypeLabel.setText(playerPromotionContract.isExclusive() ? "Monthly" : "Appearance");
                 contractTypeText.setVisible(true);
-                contractTypeText.setText(String.format("$%d", contract.isExclusive() ? contract.getMonthlyCost() : contract.getAppearanceCost()));
-                contractDurationText.setText(ContractUtils.contractDurationString(contract, gameController.getDateManager().today()));
+                contractTypeText.setText(ModelUtils.currencyString(playerPromotionContract.isExclusive() ? playerPromotionContract.getMonthlyCost() : playerPromotionContract.getAppearanceCost()));
+                contractDurationText.setText(ContractUtils.contractDurationString(playerPromotionContract, gameController.getDateManager().today()));
             } else {
                 contractTypeText.setVisible(false);
                 contractTypeLabel.setVisible(false);
@@ -90,12 +95,12 @@ public class ContractController extends ControllerBase {
                     contractDialog.createDialog(person, gameController);
                     mainApp.updateLabels(ScreenCode.BROWSER);
                 });
-            } else if (person.getContract(playerPromotion()) != null) {
+            } else if (playerPromotionContract != null) {
                 contractButton.setVisible(true);
                 contractButton.setText("Release Worker");
                 contractButton.setOnAction(e -> {
                     if (ViewUtils.releaseWorkerDialog(person, playerPromotion(), today())) {
-                        gameController.getContractManager().terminateContract(contract);
+                        gameController.getContractManager().terminateContract(playerPromotionContract);
                         mainApp.updateLabels(ScreenCode.BROWSER);
                     }
                 });

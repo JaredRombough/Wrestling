@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.segmentEnum.AngleType;
 import openwrestling.model.segmentEnum.JoinTeamType;
@@ -59,6 +60,7 @@ public class Segment extends GameObject implements Serializable {
     private Stable joinStable;
     private SegmentTemplate challengeSegment;
     private List<Injury> injuries = new ArrayList<>();
+    private List<NewsItem> segmentNewsItems = new ArrayList<>();
 
     private MatchFinish matchFinish = MatchFinish.CLEAN;
     private MatchRule matchRule = MatchRule.DEFAULT;
@@ -88,7 +90,7 @@ public class Segment extends GameObject implements Serializable {
             segmentItems.addAll(team.getEntourage());
         }
         segmentItems.addAll(titles);
-        if(CollectionUtils.isNotEmpty(broadcastTeam)) {
+        if (CollectionUtils.isNotEmpty(broadcastTeam)) {
             broadcastTeam.forEach(broadcastTeamMember -> {
                 if (broadcastTeamMember.getWorker() != null) {
                     segmentItems.add(broadcastTeamMember.getWorker());
