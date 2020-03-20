@@ -56,6 +56,7 @@ public class BankAccountManagerTest {
 
         Transaction transaction = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(100)
                 .build();
 
@@ -66,16 +67,19 @@ public class BankAccountManagerTest {
 
         Transaction transaction2 = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(100)
                 .build();
 
         Transaction transaction3 = Transaction.builder()
                 .promotion(promotion)
-                .amount(-100)
+                .type(TransactionType.WORKER)
+                .amount(100)
                 .build();
 
         Transaction transaction4 = Transaction.builder()
                 .promotion(promotion)
+                .type(TransactionType.GATE)
                 .amount(50)
                 .build();
 
@@ -83,6 +87,5 @@ public class BankAccountManagerTest {
 
         bankAccount = bankAccountManager.getBankAccount(promotion);
         assertThat(bankAccount.getFunds()).isEqualTo(1000150);
-
     }
 }
