@@ -38,11 +38,17 @@ public class StableEntity extends Entity {
 
     public List<? extends Entity> childrenToInsert() {
         return workers.stream().map(worker ->
-            StableWorkerEntity.builder()
-                    .workerEntity(worker)
-                    .stableEntity(this)
-                    .build()
+                StableWorkerEntity.builder()
+                        .workerEntity(worker)
+                        .stableEntity(this)
+                        .build()
         ).collect(Collectors.toList());
+    }
+
+    public void selectChildren() {
+        workers = stableWorkers.stream()
+                .map(StableWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
     }
 
 }

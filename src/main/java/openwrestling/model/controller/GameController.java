@@ -81,7 +81,6 @@ public final class GameController extends Logging implements Serializable {
 
         newsManager = new NewsManager(database);
 
-        stableManager = new StableManager(database);
         relationshipManager = new RelationshipManager(database);
         rosterSplitManager = new RosterSplitManager(database);
         broadcastTeamManager = new BroadcastTeamManager(database);
@@ -91,7 +90,7 @@ public final class GameController extends Logging implements Serializable {
         workerManager = new WorkerManager(database, contractManager);
         staffManager = new StaffManager(database, contractManager);
         titleManager = new TitleManager(database, dateManager, workerManager);
-
+        stableManager = new StableManager(database, workerManager);
         entourageManager = new EntourageManager(database, workerManager);
         tagTeamManager = new TagTeamManager(database, workerManager);
         segmentManager = new SegmentManager(database, dateManager, tagTeamManager, stableManager);
