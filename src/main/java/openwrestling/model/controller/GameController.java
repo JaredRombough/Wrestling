@@ -22,6 +22,9 @@ import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
+import openwrestling.model.controller.nextDay.ContractUpdate;
+import openwrestling.model.controller.nextDay.EventBooker;
+import openwrestling.model.controller.nextDay.NextDayController;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
@@ -60,11 +63,14 @@ public final class GameController extends Logging implements Serializable {
     private final BankAccountManager bankAccountManager;
     private final RosterSplitManager rosterSplitManager;
     private final EntourageManager entourageManager;
-    private final NextDayController nextDayController;
     private final BroadcastTeamManager broadcastTeamManager;
     private final GameSettingManager gameSettingManager;
 
     private List<GameObjectManager> managers;
+
+    private final NextDayController nextDayController;
+    private final EventBooker eventBooker;
+    private final ContractUpdate contractUpdate;
 
     private final PromotionController promotionController;
 
@@ -133,12 +139,27 @@ public final class GameController extends Logging implements Serializable {
                 newsManager,
                 staffManager);
 
-        nextDayController = NextDayController.builder()
-                .promotionController(promotionController)
-                .dateManager(dateManager)
+        eventBooker = EventBooker.builder()
                 .eventManager(eventManager)
+                .dateManager(dateManager)
                 .workerManager(workerManager)
                 .promotionManager(promotionManager)
+                .promotionController(promotionController)
+                .build();
+
+        contractUpdate = ContractUpdate.builder()
+                .contractFactory(contractFactory)
+                .contractManager(contractManager)
+                .promotionManager(promotionManager)
+                .dateManager(dateManager)
+                .workerManager(workerManager)
+                .build();
+
+        nextDayController = NextDayController.builder()
+                .contractUpdate(contractUpdate)
+                .eventBooker(eventBooker)
+                .dateManager(dateManager)
+                .eventManager(eventManager)
                 .relationshipManager(relationshipManager)
                 .bankAccountManager(bankAccountManager)
                 .injuryManager(injuryManager)

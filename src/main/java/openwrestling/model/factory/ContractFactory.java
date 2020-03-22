@@ -57,7 +57,24 @@ public class ContractFactory {
         return contract;
     }
 
-    private StaffContract createContract(StaffMember staff, Promotion promotion, LocalDate startDate, LocalDate endDate) {
+    public Contract contractForNextDay(Worker worker, Promotion promotion, LocalDate startDate) {
+        boolean exclusive = promotion.getLevel() == 5;
+
+        Contract contract = new Contract(startDate, worker, promotion);
+        contract.setExclusive(exclusive);
+        contract.setEndDate(startDate.plusDays(90));
+
+        if (exclusive) {
+            contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));
+        } else {
+            contract.setAppearanceCost(ContractUtils.calculateWorkerContractCost(worker, false));
+        }
+
+        return contract;
+    }
+
+    private StaffContract createContract(StaffMember staff, Promotion promotion, LocalDate startDate, LocalDate
+            endDate) {
         StaffContract contract = new StaffContract(startDate, staff, promotion);
         contract.setMonthlyCost(ContractUtils.calculateStaffContractCost(staff));
         contract.setEndDate(endDate);

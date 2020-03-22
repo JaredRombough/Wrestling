@@ -135,7 +135,7 @@ public class PromotionController extends Logging implements Serializable {
         }
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
         while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
-            signContract(promotion);
+            //signContract(promotion);
             activeRosterSize++;
         }
 

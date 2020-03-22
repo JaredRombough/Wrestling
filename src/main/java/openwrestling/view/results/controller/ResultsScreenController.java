@@ -77,7 +77,7 @@ public class ResultsScreenController extends ControllerBase implements Initializ
 
     private void showSummary() {
         gameController.getEventFactory().processEventView(event, false);
-        gameController.getNextDayController().processEvents(List.of(event));
+        gameController.getNextDayController().playerEvent(event);
         showNextDisplay(event);
     }
 
