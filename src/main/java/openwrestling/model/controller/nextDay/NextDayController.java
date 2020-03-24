@@ -53,9 +53,11 @@ public class NextDayController extends Logging {
     private List<Transaction> transactions;
     private Map<Long, Contract> contractsMap;
     private List<Contract> newContracts;
+    private List<NewsItem> newsItems;
 
 
     public void nextDay() {
+        clearCache();
         long start = System.currentTimeMillis();
         logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
 
@@ -68,6 +70,8 @@ public class NextDayController extends Logging {
         contractUpdate.updateContracts(contractsMap);
         newContracts = contractUpdate.getNewContracts();
         transactions.addAll(getNewContractTransactions(newContracts));
+        newsItems.addAll(expiringContractsNewsItems(new ArrayList<>(contractsMap.values())));
+        newsItems.addAll(newContractsNewsItems(newContracts));
 
 
         processCache();
@@ -77,8 +81,26 @@ public class NextDayController extends Logging {
 
     }
 
+    private List<NewsItem> expiringContractsNewsItems(List<Contract> updatedContracts) {
+        List<NewsItem> expiringContractNewsItems = new ArrayList<>();
+        updatedContracts.forEach(contract -> {
+            if (contract.getEndDate().equals(dateManager.today())) {
+                expiringContractNewsItems.add(
+                        newsManager.getExpiringContractNewsItem(contract, dateManager.today())
+                );
+            }
+        });
+        return expiringContractNewsItems;
+    }
+
+    private List<NewsItem> newContractsNewsItems(List<Contract> newContracts) {
+        return newContracts.stream()
+                .map(contract -> newsManager.getNewContractNewsItem(contract, dateManager.today()))
+                .collect(Collectors.toList());
+    }
 
     public void playerEvent(Event event) {
+        clearCache();
         processEvents(List.of(event));
         processCache();
     }
@@ -133,7 +155,7 @@ public class NextDayController extends Logging {
 
 
         List<NewsItem> moraleCheckNewsItems = updateRelationshipsForMoraleCheck();
-        newsManager.addNewsItems(ListUtils.union(moraleCheckNewsItems, newsItemsExtractedFromSegments));
+        newsItems.addAll(ListUtils.union(moraleCheckNewsItems, newsItemsExtractedFromSegments));
         addEventTransactionsToCache(events, new ArrayList<>(contractsMap.values()));
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
         eventManager.createEvents(events);
@@ -230,11 +252,13 @@ public class NextDayController extends Logging {
         bankAccountManager.insertTransactions(transactions);
         contractManager.updateContracts(new ArrayList<>(contractsMap.values()));
         contractManager.createContracts(newContracts);
+        newsManager.addNewsItems(newsItems);
         clearCache();
     }
 
     private void clearCache() {
         transactions = new ArrayList<>();
         contractsMap = new HashMap<>();
+        newsItems = new ArrayList<>();
     }
 }

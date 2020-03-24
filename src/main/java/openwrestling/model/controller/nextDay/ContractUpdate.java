@@ -34,17 +34,40 @@ public class ContractUpdate extends Logging {
     }
 
     public List<Contract> getNewContracts() {
-        return promotionManager.getPromotions().stream()
-                .flatMap(promotion -> getNewContractsToReplaceExpiring(promotion).stream())
+        List<Contract> newContracts = new ArrayList<>();
+        promotionManager.getPromotions()
+                .forEach(promotion -> {
+                    freeAgents = getFreeAgentsForPromotion(promotion, newContracts);
+                    newContracts.addAll(getNewContractsToReplaceExpiring(promotion));
+                });
+
+        return newContracts;
+    }
+
+    private List<Worker> getFreeAgentsForPromotion(Promotion promotion, List<Contract> newContracts) {
+        return new ArrayList<>(workerManager.freeAgents(promotion)).stream()
+                .filter(worker -> worker.getPopularity() <= ModelUtils.maxPopularity(promotion))
+                .filter(worker -> contractManager.getContracts(worker).size() < 3)
+                .filter(worker ->
+                        newContracts.stream()
+                                .filter(contract -> contract.getWorker().equals(worker))
+                                .filter(Contract::isExclusive)
+                                .noneMatch(obj -> true))
+                .filter(worker ->
+                        newContracts.stream()
+                                .filter(contract -> contract.getWorker().equals(worker))
+                                .filter(contract -> !contract.isExclusive())
+                                .count() < 3)
                 .collect(Collectors.toList());
     }
 
     private List<Contract> getNewContractsToReplaceExpiring(Promotion promotion) {
         List<Contract> contracts = new ArrayList<>();
-        freeAgents = new ArrayList<>(workerManager.freeAgents(promotion));
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
-        while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
-            contracts.add(signContract(promotion));
+        while (activeRosterSize < idealRosterSize(promotion) && !freeAgents.isEmpty()) {
+            Contract contract = contractFactory.contractForNextDay(freeAgents.get(0), promotion, dateManager.today());
+            freeAgents.remove(contract.getWorker());
+            contracts.add(contract);
             activeRosterSize++;
         }
         return contracts;
@@ -62,22 +85,6 @@ public class ContractUpdate extends Logging {
                         contractMap.put(contract.getContractID(), contract);
                     }
                 });
-    }
-
-
-    private Contract signContract(Promotion promotion) {
-        Contract contract = null;
-        for (Worker worker : freeAgents) {
-            if (worker.getPopularity() <= ModelUtils.maxPopularity(promotion)) {
-                contract = contractFactory.contractForNextDay(worker, promotion, dateManager.today());
-                break;
-            }
-        }
-        if (contract != null) {
-            freeAgents.remove(contract.getWorker());
-        }
-
-        return contract;
     }
 
 
