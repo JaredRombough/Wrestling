@@ -4,12 +4,17 @@ import lombok.Builder;
 import openwrestling.Logging;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.WorkerManager;
+import openwrestling.model.NewsItem;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.financial.Transaction;
+import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.ModelUtils;
 
 import java.util.ArrayList;
@@ -19,13 +24,14 @@ import java.util.stream.Collectors;
 
 
 @Builder
-public class ContractUpdate extends Logging {
+public class DailyContractUpdate extends Logging {
 
     private PromotionManager promotionManager;
     private DateManager dateManager;
     private WorkerManager workerManager;
     private ContractManager contractManager;
     private ContractFactory contractFactory;
+    private NewsManager newsManager;
 
     private List<Worker> freeAgents;
 
@@ -60,6 +66,36 @@ public class ContractUpdate extends Logging {
                                 .count() < 3)
                 .collect(Collectors.toList());
     }
+
+    public List<NewsItem> getNewContractsNewsItems(List<Contract> newContracts) {
+        return newContracts.stream()
+                .map(contract -> newsManager.getNewContractNewsItem(contract, dateManager.today()))
+                .collect(Collectors.toList());
+    }
+
+    public List<NewsItem> getExpiringContractsNewsItems(List<Contract> updatedContracts) {
+        List<NewsItem> expiringContractNewsItems = new ArrayList<>();
+        updatedContracts.forEach(contract -> {
+            if (contract.getEndDate().equals(dateManager.today())) {
+                expiringContractNewsItems.add(
+                        newsManager.getExpiringContractNewsItem(contract, dateManager.today())
+                );
+            }
+        });
+        return expiringContractNewsItems;
+    }
+
+    public List<Transaction> getNewContractTransactions(List<Contract> newContracts) {
+        return newContracts.stream()
+                .map(contract -> Transaction.builder()
+                        .type(TransactionType.WORKER)
+                        .date(dateManager.today())
+                        .amount(ContractUtils.calculateSigningFee(contract.getWorker(), dateManager.today()))
+                        .promotion(contract.getPromotion())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
     private List<Contract> getNewContractsToReplaceExpiring(Promotion promotion) {
         List<Contract> contracts = new ArrayList<>();

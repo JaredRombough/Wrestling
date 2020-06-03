@@ -22,8 +22,10 @@ import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
-import openwrestling.model.controller.nextDay.ContractUpdate;
-import openwrestling.model.controller.nextDay.EventBooker;
+import openwrestling.model.controller.nextDay.DailyContractUpdate;
+import openwrestling.model.controller.nextDay.DailyEventBooker;
+import openwrestling.model.controller.nextDay.DailyRelationshipUpdate;
+import openwrestling.model.controller.nextDay.DailyTransactions;
 import openwrestling.model.controller.nextDay.NextDayController;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
@@ -69,8 +71,10 @@ public final class GameController extends Logging implements Serializable {
     private List<GameObjectManager> managers;
 
     private final NextDayController nextDayController;
-    private final EventBooker eventBooker;
-    private final ContractUpdate contractUpdate;
+    private final DailyEventBooker dailyEventBooker;
+    private final DailyContractUpdate dailyContractUpdate;
+    private final DailyTransactions dailyTransactions;
+    private final DailyRelationshipUpdate dailyRelationshipUpdate;
 
     private final PromotionController promotionController;
 
@@ -139,7 +143,7 @@ public final class GameController extends Logging implements Serializable {
                 newsManager,
                 staffManager);
 
-        eventBooker = EventBooker.builder()
+        dailyEventBooker = DailyEventBooker.builder()
                 .eventManager(eventManager)
                 .dateManager(dateManager)
                 .workerManager(workerManager)
@@ -147,17 +151,30 @@ public final class GameController extends Logging implements Serializable {
                 .promotionController(promotionController)
                 .build();
 
-        contractUpdate = ContractUpdate.builder()
+        dailyContractUpdate = DailyContractUpdate.builder()
                 .contractFactory(contractFactory)
                 .contractManager(contractManager)
                 .promotionManager(promotionManager)
                 .dateManager(dateManager)
                 .workerManager(workerManager)
+                .newsManager(newsManager)
+                .build();
+
+        dailyTransactions = DailyTransactions.builder()
+                .contractManager(contractManager)
+                .dateManager(dateManager)
+                .build();
+
+        dailyRelationshipUpdate = DailyRelationshipUpdate.builder()
+                .relationshipManager(relationshipManager)
+                .contractManager(contractManager)
+                .dateManager(dateManager)
+                .newsManager(newsManager)
                 .build();
 
         nextDayController = NextDayController.builder()
-                .contractUpdate(contractUpdate)
-                .eventBooker(eventBooker)
+                .dailyContractUpdate(dailyContractUpdate)
+                .dailyEventBooker(dailyEventBooker)
                 .dateManager(dateManager)
                 .eventManager(eventManager)
                 .relationshipManager(relationshipManager)
@@ -165,6 +182,9 @@ public final class GameController extends Logging implements Serializable {
                 .injuryManager(injuryManager)
                 .newsManager(newsManager)
                 .contractManager(contractManager)
+                .dailyTransactions(dailyTransactions)
+                .dailyRelationshipUpdate(dailyRelationshipUpdate)
+                .dailyContractUpdate(dailyContractUpdate)
                 .build();
 
         if (randomGame) {

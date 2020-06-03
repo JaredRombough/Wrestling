@@ -27,13 +27,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContractUpdateTest {
+public class DailyContractUpdateTest {
     private SegmentManager segmentManager;
     private WorkerManager workerManager;
     private PromotionManager promotionManager;
     private ContractManager contractManager;
 
-    private ContractUpdate contractUpdate;
+    private DailyContractUpdate dailyContractUpdate;
 
     private Database database;
 
@@ -74,7 +74,7 @@ public class ContractUpdateTest {
         worker4 = workerManager.createWorker(PersonFactory.randomWorker());
         worker5 = workerManager.createWorker(PersonFactory.randomWorker());
 
-        contractUpdate = ContractUpdate.builder()
+        dailyContractUpdate = DailyContractUpdate.builder()
                 .promotionManager(promotionManager)
                 .dateManager(mockDateManager)
                 .workerManager(workerManager)
@@ -85,7 +85,7 @@ public class ContractUpdateTest {
 
     @Test
     public void getNewContracts() {
-        List<Contract> newContracts = contractUpdate.getNewContracts();
+        List<Contract> newContracts = dailyContractUpdate.getNewContracts();
         assertThat(newContracts).isNotEmpty();
     }
 }

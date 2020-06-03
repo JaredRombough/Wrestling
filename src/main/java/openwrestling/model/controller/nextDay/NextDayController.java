@@ -18,9 +18,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.segmentEnum.EventFrequency;
 import openwrestling.model.segmentEnum.TransactionType;
-import openwrestling.model.utility.ContractUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -30,9 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.time.temporal.ChronoUnit.DAYS;
 import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
-import static openwrestling.model.constants.GameConstants.MORALE_PENALTY_DAYS_BETWEEN;
 import static openwrestling.model.factory.EventFactory.bookEventForCompletedAnnualEventTemplateAfterDate;
 
 
@@ -47,13 +43,16 @@ public class NextDayController extends Logging {
     private ContractManager contractManager;
     private NewsManager newsManager;
 
-    private EventBooker eventBooker;
-    private ContractUpdate contractUpdate;
+    private DailyEventBooker dailyEventBooker;
+    private DailyContractUpdate dailyContractUpdate;
+    private DailyTransactions dailyTransactions;
+    private DailyRelationshipUpdate dailyRelationshipUpdate;
 
-    private List<Transaction> transactions;
-    private Map<Long, Contract> contractsMap;
-    private List<Contract> newContracts;
-    private List<NewsItem> newsItems;
+    private List<Transaction> cachedTransactions;
+    private Map<Long, Contract> cachedContractsMap;
+    private List<Contract> cachedNewContracts;
+    private List<NewsItem> cachedNewsItems;
+    private Map<Worker, MoraleRelationship> cachedMoraleRelationshipMap;
 
 
     public void nextDay() {
@@ -61,42 +60,24 @@ public class NextDayController extends Logging {
         long start = System.currentTimeMillis();
         logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
 
-        processEvents(eventBooker.getEvents());
+        processEvents(dailyEventBooker.getEvents());
 
-        if (dateManager.isPayDay()) {
-            transactions.addAll(getPayDayTransactions());
-        }
+        cachedTransactions.addAll(dailyTransactions.getPayDayTransactions());
 
-        contractUpdate.updateContracts(contractsMap);
-        newContracts = contractUpdate.getNewContracts();
-        transactions.addAll(getNewContractTransactions(newContracts));
-        newsItems.addAll(expiringContractsNewsItems(new ArrayList<>(contractsMap.values())));
-        newsItems.addAll(newContractsNewsItems(newContracts));
+        dailyContractUpdate.updateContracts(cachedContractsMap);
+        cachedNewContracts = dailyContractUpdate.getNewContracts();
+        cachedNewsItems.addAll(dailyContractUpdate.getExpiringContractsNewsItems(new ArrayList<>(cachedContractsMap.values())));
+        cachedNewsItems.addAll(dailyContractUpdate.getNewContractsNewsItems(cachedNewContracts));
 
+        List<MoraleRelationship> updatedRelationshipsAfterDailyMoraleCheck = dailyRelationshipUpdate.getUpdatedRelationshipsForDailyMoraleCheck();
+        cachedNewsItems.addAll(dailyRelationshipUpdate.getUpdatedMoraleRelationshipNewsItems(updatedRelationshipsAfterDailyMoraleCheck));
+        dailyRelationshipUpdate.updateRelationshipMap(cachedMoraleRelationshipMap, updatedRelationshipsAfterDailyMoraleCheck);
+
+        cachedTransactions.addAll(dailyContractUpdate.getNewContractTransactions(cachedNewContracts));
 
         processCache();
 
-        logger.log(Level.DEBUG, String.format("nextDay took %d ms",
-                System.currentTimeMillis() - start));
-
-    }
-
-    private List<NewsItem> expiringContractsNewsItems(List<Contract> updatedContracts) {
-        List<NewsItem> expiringContractNewsItems = new ArrayList<>();
-        updatedContracts.forEach(contract -> {
-            if (contract.getEndDate().equals(dateManager.today())) {
-                expiringContractNewsItems.add(
-                        newsManager.getExpiringContractNewsItem(contract, dateManager.today())
-                );
-            }
-        });
-        return expiringContractNewsItems;
-    }
-
-    private List<NewsItem> newContractsNewsItems(List<Contract> newContracts) {
-        return newContracts.stream()
-                .map(contract -> newsManager.getNewContractNewsItem(contract, dateManager.today()))
-                .collect(Collectors.toList());
+        logger.log(Level.DEBUG, String.format("nextDay took %d ms", System.currentTimeMillis() - start));
     }
 
     public void playerEvent(Event event) {
@@ -107,7 +88,6 @@ public class NextDayController extends Logging {
 
     public void processEvents(List<Event> events) {
         logger.log(Level.DEBUG, "processEvents");
-        Map<Worker, MoraleRelationship> relationships = new HashMap<>();
         List<Injury> injuriesExtractedFromSegments = new ArrayList<>();
         List<NewsItem> newsItemsExtractedFromSegments = new ArrayList<>();
 
@@ -123,17 +103,17 @@ public class NextDayController extends Logging {
                     }
 
                     segment.getWorkers().forEach(worker -> {
-                        if (!relationships.containsKey(worker)) {
-                            relationships.put(worker, relationshipManager.getMoraleRelationship(worker, segment.getPromotion()));
+                        if (!cachedMoraleRelationshipMap.containsKey(worker)) {
+                            cachedMoraleRelationshipMap.put(worker, relationshipManager.getMoraleRelationship(worker, segment.getPromotion()));
                         }
-                        relationships.get(worker).modifyValue(APPEARANCE_MORALE_BONUS);
+                        cachedMoraleRelationshipMap.get(worker).modifyValue(APPEARANCE_MORALE_BONUS);
                     });
 
                     segment.getMoraleRelationshipMap().forEach((key, value) -> {
-                        if (!relationships.containsKey(key)) {
-                            relationships.put(key, value);
+                        if (!cachedMoraleRelationshipMap.containsKey(key)) {
+                            cachedMoraleRelationshipMap.put(key, value);
                         } else {
-                            relationships.get(key).modifyValue(value.getLevel());
+                            cachedMoraleRelationshipMap.get(key).modifyValue(value.getLevel());
                         }
                     });
                 });
@@ -144,7 +124,7 @@ public class NextDayController extends Logging {
                 .map(eventTemplate -> bookEventForCompletedAnnualEventTemplateAfterDate(eventTemplate, dateManager.today()))
                 .collect(Collectors.toList());
 
-        contractsMap = events.stream()
+        cachedContractsMap = events.stream()
                 .flatMap(event ->
                         event.getSegments().stream()
                                 .flatMap(segment -> segment.getWorkers().stream())
@@ -154,17 +134,15 @@ public class NextDayController extends Logging {
                 .collect(Collectors.toMap(Contract::getContractID, Function.identity()));
 
 
-        List<NewsItem> moraleCheckNewsItems = updateRelationshipsForMoraleCheck();
-        newsItems.addAll(ListUtils.union(moraleCheckNewsItems, newsItemsExtractedFromSegments));
-        addEventTransactionsToCache(events, new ArrayList<>(contractsMap.values()));
-        relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(relationships.values()));
+        cachedNewsItems.addAll(newsItemsExtractedFromSegments);
+        addEventTransactionsToCache(events, new ArrayList<>(cachedContractsMap.values()));
         eventManager.createEvents(events);
         eventManager.createEvents(newAnnualEvents);
         injuryManager.createInjuries(injuriesExtractedFromSegments);
     }
 
     void addEventTransactionsToCache(List<Event> events, List<Contract> eventContracts) {
-        transactions = events.stream()
+        cachedTransactions = events.stream()
                 .map(event -> Transaction.builder()
                         .amount(event.getGate())
                         .type(TransactionType.GATE)
@@ -172,7 +150,7 @@ public class NextDayController extends Logging {
                         .promotion(event.getPromotion())
                         .build()).collect(Collectors.toList());
 
-        transactions.addAll(
+        cachedTransactions.addAll(
                 eventContracts.stream()
                         .filter(contract -> contract.getAppearanceCost() > 0)
                         .map(contract ->
@@ -187,78 +165,20 @@ public class NextDayController extends Logging {
         );
     }
 
-    private List<Transaction> getPayDayTransactions() {
-        List<Transaction> transactions = new ArrayList<>();
-
-        List<Transaction> workerTransactions = contractManager.getContracts().stream()
-                .filter(Contract::isExclusive)
-                .filter(contract -> contract.getMonthlyCost() > 0)
-                .map(contract -> Transaction.builder()
-                        .promotion(contract.getPromotion())
-                        .type(TransactionType.WORKER)
-                        .date(dateManager.today())
-                        .amount(contract.getMonthlyCost())
-                        .build())
-                .collect(Collectors.toList());
-
-        transactions.addAll(workerTransactions);
-
-        List<Transaction> staffTransactions = contractManager.getStaffContracts().stream()
-                .filter(contract -> contract.getMonthlyCost() > 0)
-                .map(contract -> Transaction.builder()
-                        .promotion(contract.getPromotion())
-                        .type(TransactionType.STAFF)
-                        .date(dateManager.today())
-                        .amount(contract.getMonthlyCost())
-                        .build())
-                .collect(Collectors.toList());
-
-        transactions.addAll(staffTransactions);
-
-        return transactions;
-    }
-
-    private List<NewsItem> updateRelationshipsForMoraleCheck() {
-        List<MoraleRelationship> moraleRelationships = new ArrayList<>();
-        List<NewsItem> moraleNewsItems = new ArrayList<>();
-        contractManager.getContracts().stream()
-                .filter(contract -> ContractUtils.isMoraleCheckDay(contract, dateManager.today()))
-                .forEach(contract -> {
-                    long daysBetween = DAYS.between(contract.getLastShowDate(), dateManager.today());
-                    int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
-                    if (penalty > 0) {
-                        MoraleRelationship moraleRelationship = relationshipManager.getMoraleRelationship(contract.getWorker(), contract.getPromotion());
-                        moraleRelationship.setLevel(moraleRelationship.getLevel() - penalty);
-                        moraleRelationships.add(moraleRelationship);
-                        moraleNewsItems.add(newsManager.getMoraleNewsItem(contract, daysBetween, penalty, dateManager.today()));
-                    }
-                });
-        relationshipManager.createOrUpdateMoraleRelationships(moraleRelationships);
-        return moraleNewsItems;
-    }
-
-    private List<Transaction> getNewContractTransactions(List<Contract> newContracts) {
-        return newContracts.stream()
-                .map(contract -> Transaction.builder()
-                        .type(TransactionType.WORKER)
-                        .date(dateManager.today())
-                        .amount(ContractUtils.calculateSigningFee(contract.getWorker(), dateManager.today()))
-                        .promotion(contract.getPromotion())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
     private void processCache() {
-        bankAccountManager.insertTransactions(transactions);
-        contractManager.updateContracts(new ArrayList<>(contractsMap.values()));
-        contractManager.createContracts(newContracts);
-        newsManager.addNewsItems(newsItems);
+        bankAccountManager.insertTransactions(cachedTransactions);
+        contractManager.updateContracts(new ArrayList<>(cachedContractsMap.values()));
+        contractManager.createContracts(cachedNewContracts);
+        newsManager.addNewsItems(cachedNewsItems);
+        relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(cachedMoraleRelationshipMap.values()));
         clearCache();
     }
 
     private void clearCache() {
-        transactions = new ArrayList<>();
-        contractsMap = new HashMap<>();
-        newsItems = new ArrayList<>();
+        cachedTransactions = new ArrayList<>();
+        cachedContractsMap = new HashMap<>();
+        cachedNewsItems = new ArrayList<>();
+        cachedMoraleRelationshipMap = new HashMap<>();
+        cachedNewContracts = new ArrayList<>();
     }
 }

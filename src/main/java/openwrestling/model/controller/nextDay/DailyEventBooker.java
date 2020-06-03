@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 
 @Builder
-public class EventBooker extends Logging {
+public class DailyEventBooker extends Logging {
 
     private PromotionManager promotionManager;
     private EventManager eventManager;
