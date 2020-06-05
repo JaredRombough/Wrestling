@@ -40,7 +40,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
+import static openwrestling.model.factory.EventFactory.getInitialEventsForEventTemplate;
 
 @Getter
 public final class GameController extends Logging implements Serializable {
@@ -228,7 +228,7 @@ public final class GameController extends Logging implements Serializable {
         eventManager.createEventTemplates(generatedEventTemplates);
 
         List<Event> initialEvents = eventManager.getEventTemplates().stream()
-                .flatMap(eventTemplate -> bookEventsForNewEventTemplate(eventTemplate, dateManager.today()).stream())
+                .flatMap(eventTemplate -> getInitialEventsForEventTemplate(eventTemplate, dateManager.today()).stream())
                 .collect(Collectors.toList());
 
         List<EventTemplate> updatedBookedUntilDates = initialEvents.stream()

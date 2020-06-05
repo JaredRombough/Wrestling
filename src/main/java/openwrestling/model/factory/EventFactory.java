@@ -145,13 +145,15 @@ public class EventFactory extends Logging {
         return eventTemplates;
     }
 
-    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
+    public static List<Event> getInitialEventsForEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
         List<Event> newEvents = new ArrayList<>();
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
             Event event = bookEventForNewAnnualEventTemplateAfterDate(eventTemplate, startDate);
             newEvents.add(event);
         } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
-            LocalDate weeklyDate = startDate;
+            LocalDate weeklyDate = startDate.getDayOfWeek().equals(eventTemplate.getDayOfWeek()) ?
+                    startDate :
+                    startDate.with(next(eventTemplate.getDayOfWeek()));
             for (int i = 0; i < WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT; i++) {
                 Event event = bookEventForTemplateOnDate(eventTemplate, weeklyDate);
                 newEvents.add(event);
@@ -189,6 +191,7 @@ public class EventFactory extends Logging {
         event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
+        event.setRating(eventManager.calculateRating(segments, event.getDefaultDuration()));
     }
 
     public Segment processSegment(Event event, Segment toProcess) {

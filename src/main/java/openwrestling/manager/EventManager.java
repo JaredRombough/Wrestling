@@ -399,6 +399,18 @@ public class EventManager extends GameObjectManager implements Serializable {
         return attendance;
     }
 
+    public int calculateRating(List<Segment> segments, int duration) {
+        Integer totalCrowd = segments.stream()
+                .map(segment -> (segment.getSegmentLength() * segment.getCrowdRating()))
+                .reduce(0, Integer::sum);
+
+        Integer totalWork = segments.stream()
+                .map(segment -> (segment.getSegmentLength() * segment.getWorkRating()))
+                .reduce(0, Integer::sum);
+
+        return (totalCrowd + totalWork) / duration / 2;
+    }
+
     public String generateSummaryString(Event event) {
 
         StringBuilder sb = new StringBuilder();
@@ -429,6 +441,8 @@ public class EventManager extends GameObjectManager implements Serializable {
             sb.append("Attendance: ").append(event.getAttendance());
             sb.append("\n");
             sb.append("Gross profit: $").append(event.getGate());
+            sb.append("\n");
+            sb.append("Rating: ").append(event.getRating());
         } else {
             sb.append("Event information not available.\n");
         }

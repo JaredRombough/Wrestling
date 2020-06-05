@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
+import static openwrestling.model.factory.EventFactory.getInitialEventsForEventTemplate;
 
 public class BookShowController extends ControllerBase implements Initializable {
 
@@ -166,7 +166,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         optionalResult.ifPresent((EventTemplate template) -> {
 
             EventTemplate saved = gameController.getEventManager().createEventTemplates(List.of(template)).get(0);
-            gameController.getEventManager().createEvents(bookEventsForNewEventTemplate(saved, currentDate));
+            gameController.getEventManager().createEvents(getInitialEventsForEventTemplate(saved, currentDate));
 
             mainApp.show(ScreenCode.CALENDAR,
                     gameController.getEventManager().getEventOnDate(
