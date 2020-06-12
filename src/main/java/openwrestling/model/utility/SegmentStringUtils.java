@@ -105,7 +105,7 @@ public final class SegmentStringUtils {
                 string += " tonight";
                 break;
             default:
-                string += String.format(" at %s", segment.getChallengeSegment().getEventTemplate().getLongName());
+                string += String.format(" at %s", segment.getChallengeEventName());
                 break;
         }
 

@@ -73,6 +73,9 @@ public class SegmentEntity extends Entity {
     private AngleType angleType;
 
     @DatabaseField
+    private String challengeEventName;
+
+    @DatabaseField
     private JoinTeamType joinTeamType;
 
     @DatabaseField
@@ -88,7 +91,7 @@ public class SegmentEntity extends Entity {
     private StableEntity joinStable;
 
     public List<? extends Entity> childrenToInsert() {
-        if(CollectionUtils.isEmpty(teams)) {
+        if (CollectionUtils.isEmpty(teams)) {
             return List.of();
         }
         teams.forEach(team -> team.setSegmentEntity(this));
