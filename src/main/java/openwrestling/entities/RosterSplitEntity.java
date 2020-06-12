@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +38,9 @@ public class RosterSplitEntity extends Entity {
     private Collection<WorkerEntity> workers;
 
     public List<? extends Entity> childrenToInsert() {
+        if(CollectionUtils.isEmpty(workers)) {
+            return List.of();
+        }
         return workers.stream().map(worker ->
                 RosterSplitWorkerEntity.builder()
                         .workerEntity(worker)

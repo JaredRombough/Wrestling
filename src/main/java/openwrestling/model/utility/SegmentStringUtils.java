@@ -1,9 +1,9 @@
 package openwrestling.model.utility;
 
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.gameObjects.SegmentTeam;
-import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.TeamType;
 

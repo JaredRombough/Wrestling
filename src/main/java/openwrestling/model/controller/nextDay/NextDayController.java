@@ -8,12 +8,14 @@ import openwrestling.manager.DateManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.InjuryManager;
 import openwrestling.manager.NewsManager;
+import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
 import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.MoraleRelationship;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.segmentEnum.EventFrequency;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 
 import static openwrestling.model.constants.GameConstants.APPEARANCE_MORALE_BONUS;
 import static openwrestling.model.factory.EventFactory.bookEventForCompletedAnnualEventTemplateAfterDate;
+import static openwrestling.model.utility.ModelUtils.distinctByKey;
+import static openwrestling.model.utility.PromotionUtils.*;
 
 
 @Builder
@@ -42,6 +46,7 @@ public class NextDayController extends Logging {
     private InjuryManager injuryManager;
     private ContractManager contractManager;
     private NewsManager newsManager;
+    private PromotionManager promotionManager;
 
     private DailyEventBooker dailyEventBooker;
     private DailyContractUpdate dailyContractUpdate;
@@ -53,6 +58,7 @@ public class NextDayController extends Logging {
     private List<Contract> cachedNewContracts;
     private List<NewsItem> cachedNewsItems;
     private Map<Worker, MoraleRelationship> cachedMoraleRelationshipMap;
+    private List<Promotion> cachedPromotions;
 
 
     public void nextDay() {
@@ -87,7 +93,6 @@ public class NextDayController extends Logging {
     }
 
     public void processEvents(List<Event> events) {
-        logger.log(Level.DEBUG, "processEvents");
         List<Injury> injuriesExtractedFromSegments = new ArrayList<>();
         List<NewsItem> newsItemsExtractedFromSegments = new ArrayList<>();
 
@@ -118,6 +123,18 @@ public class NextDayController extends Logging {
                     });
                 });
 
+        events.forEach(event -> {
+            Promotion promotion = event.getPromotion();
+            int targetScore = getEventTargetScore(promotion);
+            if (event.getRating() > targetScore) {
+                gainPopularity(promotion);
+                cachedPromotions.add(promotion);
+            } else if (event.getRating() < targetScore) {
+                losePopularity(promotion);
+                cachedPromotions.add(promotion);
+            }
+        });
+
         List<Event> newAnnualEvents = events.stream()
                 .map(Event::getEventTemplate)
                 .filter(eventTemplate -> eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL))
@@ -130,6 +147,7 @@ public class NextDayController extends Logging {
                                 .flatMap(segment -> segment.getWorkers().stream())
                                 .map(worker -> contractManager.getContract(worker, event.getPromotion()))
                 )
+                .filter(distinctByKey(Contract::getContractID))
                 .peek(contract -> contract.setLastShowDate(dateManager.today()))
                 .collect(Collectors.toMap(Contract::getContractID, Function.identity()));
 
@@ -171,6 +189,7 @@ public class NextDayController extends Logging {
         contractManager.createContracts(cachedNewContracts);
         newsManager.addNewsItems(cachedNewsItems);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(cachedMoraleRelationshipMap.values()));
+        promotionManager.updatePromotions(cachedPromotions);
         clearCache();
     }
 
@@ -180,5 +199,6 @@ public class NextDayController extends Logging {
         cachedNewsItems = new ArrayList<>();
         cachedMoraleRelationshipMap = new HashMap<>();
         cachedNewContracts = new ArrayList<>();
+        cachedPromotions = new ArrayList<>();
     }
 }

@@ -117,27 +117,20 @@ public final class GameController extends Logging implements Serializable {
 
 
         eventFactory = new EventFactory(
-                contractManager,
                 eventManager,
                 matchFactory,
-                promotionManager,
                 titleManager,
                 workerManager,
                 tagTeamManager,
                 stableManager,
                 relationshipManager,
-                newsManager,
-                bankAccountManager,
-                segmentManager);
-
+                newsManager);
 
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
-                matchFactory,
                 contractManager,
                 dateManager,
-                eventManager,
                 titleManager,
                 workerManager,
                 newsManager,
@@ -185,6 +178,7 @@ public final class GameController extends Logging implements Serializable {
                 .dailyTransactions(dailyTransactions)
                 .dailyRelationshipUpdate(dailyRelationshipUpdate)
                 .dailyContractUpdate(dailyContractUpdate)
+                .promotionManager(promotionManager)
                 .build();
 
         if (randomGame) {

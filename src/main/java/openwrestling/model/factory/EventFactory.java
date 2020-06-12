@@ -1,13 +1,9 @@
 package openwrestling.model.factory;
 
 import openwrestling.Logging;
-import openwrestling.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.NewsManager;
-import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
-import openwrestling.manager.SegmentManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
@@ -49,45 +45,33 @@ import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory extends Logging {
 
-    private final ContractManager contractManager;
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
     private final MatchFactory matchFactory;
-    private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
     private final RelationshipManager relationshipManager;
     private final NewsManager newsManager;
-    private final BankAccountManager bankAccountManager;
-    private final SegmentManager segmentManager;
 
     public EventFactory(
-            ContractManager contractManager,
             EventManager eventManager,
             MatchFactory matchFactory,
-            PromotionManager promotionManager,
             TitleManager titleManager,
             WorkerManager workerManager,
             TagTeamManager tagTeamManager,
             StableManager stableManager,
             RelationshipManager relationshipManager,
-            NewsManager newsManager,
-            BankAccountManager bankAccountManager,
-            SegmentManager segmentManager
+            NewsManager newsManager
     ) {
-        this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
-        this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
         this.relationshipManager = relationshipManager;
         this.newsManager = newsManager;
-        this.bankAccountManager = bankAccountManager;
-        this.segmentManager = segmentManager;
     }
 
     public Event processEventView(Event event, boolean processSegments) {

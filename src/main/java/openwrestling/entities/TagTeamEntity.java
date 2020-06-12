@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.segmentEnum.ActiveType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,9 @@ public class TagTeamEntity extends Entity {
     private int experience;
 
     public List<? extends Entity> childrenToInsert() {
+        if (CollectionUtils.isEmpty(workers)) {
+            return List.of();
+        }
         return workers.stream().map(worker ->
                 TagTeamWorkerEntity.builder()
                         .workerEntity(worker)

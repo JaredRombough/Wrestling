@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,9 @@ public class SegmentTemplateEntity extends Entity {
     private String sourceEventName;
 
     public List<? extends Entity> childrenToInsert() {
+        if (CollectionUtils.isEmpty(segmentTeams)) {
+            return List.of();
+        }
         segmentTeams.forEach(segmentTeamEntity -> segmentTeamEntity.setSegmentTemplateEntity(this));
         return new ArrayList<>(segmentTeams);
     }
