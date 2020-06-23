@@ -1,15 +1,13 @@
 package openwrestling.model.controller;
 
 import openwrestling.manager.ContractManager;
-import openwrestling.manager.EventManager;
+import openwrestling.manager.DateManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
-import openwrestling.model.factory.MatchFactory;
-import openwrestling.manager.DateManager;
-import openwrestling.manager.NewsManager;
 import org.junit.Before;
 
 import static org.mockito.Mockito.mock;
@@ -24,10 +22,8 @@ public class PromotionControllerTest {
         promotionController = new PromotionController(
                 mock(ContractFactory.class),
                 mock(EventFactory.class),
-                mock(MatchFactory.class),
                 mock(ContractManager.class),
                 mock(DateManager.class),
-                mock(EventManager.class),
                 mock(TitleManager.class),
                 mock(WorkerManager.class),
                 mock(NewsManager.class),
