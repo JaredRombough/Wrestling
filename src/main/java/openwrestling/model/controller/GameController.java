@@ -22,6 +22,11 @@ import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
+import openwrestling.model.controller.nextDay.DailyContractUpdate;
+import openwrestling.model.controller.nextDay.DailyEventBooker;
+import openwrestling.model.controller.nextDay.DailyRelationshipUpdate;
+import openwrestling.model.controller.nextDay.DailyTransactions;
+import openwrestling.model.controller.nextDay.NextDayController;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
 import openwrestling.model.factory.MatchFactory;
@@ -35,7 +40,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static openwrestling.model.factory.EventFactory.bookEventsForNewEventTemplate;
+import static openwrestling.model.factory.EventFactory.getInitialEventsForEventTemplate;
 
 @Getter
 public final class GameController extends Logging implements Serializable {
@@ -60,11 +65,16 @@ public final class GameController extends Logging implements Serializable {
     private final BankAccountManager bankAccountManager;
     private final RosterSplitManager rosterSplitManager;
     private final EntourageManager entourageManager;
-    private final NextDayController nextDayController;
     private final BroadcastTeamManager broadcastTeamManager;
     private final GameSettingManager gameSettingManager;
 
     private List<GameObjectManager> managers;
+
+    private final NextDayController nextDayController;
+    private final DailyEventBooker dailyEventBooker;
+    private final DailyContractUpdate dailyContractUpdate;
+    private final DailyTransactions dailyTransactions;
+    private final DailyRelationshipUpdate dailyRelationshipUpdate;
 
     private final PromotionController promotionController;
 
@@ -81,7 +91,6 @@ public final class GameController extends Logging implements Serializable {
 
         newsManager = new NewsManager(database);
 
-        stableManager = new StableManager(database);
         relationshipManager = new RelationshipManager(database);
         rosterSplitManager = new RosterSplitManager(database);
         broadcastTeamManager = new BroadcastTeamManager(database);
@@ -91,7 +100,7 @@ public final class GameController extends Logging implements Serializable {
         workerManager = new WorkerManager(database, contractManager);
         staffManager = new StaffManager(database, contractManager);
         titleManager = new TitleManager(database, dateManager, workerManager);
-
+        stableManager = new StableManager(database, workerManager);
         entourageManager = new EntourageManager(database, workerManager);
         tagTeamManager = new TagTeamManager(database, workerManager);
         segmentManager = new SegmentManager(database, dateManager, tagTeamManager, stableManager);
@@ -108,43 +117,68 @@ public final class GameController extends Logging implements Serializable {
 
 
         eventFactory = new EventFactory(
-                contractManager,
                 eventManager,
                 matchFactory,
-                promotionManager,
                 titleManager,
                 workerManager,
                 tagTeamManager,
                 stableManager,
                 relationshipManager,
-                newsManager,
-                bankAccountManager,
-                segmentManager);
-
+                newsManager);
 
         promotionController = new PromotionController(
                 contractFactory,
                 eventFactory,
-                matchFactory,
                 contractManager,
                 dateManager,
-                eventManager,
                 titleManager,
                 workerManager,
                 newsManager,
                 staffManager);
 
-        nextDayController = NextDayController.builder()
-                .promotionController(promotionController)
-                .dateManager(dateManager)
+        dailyEventBooker = DailyEventBooker.builder()
                 .eventManager(eventManager)
+                .dateManager(dateManager)
                 .workerManager(workerManager)
                 .promotionManager(promotionManager)
+                .promotionController(promotionController)
+                .build();
+
+        dailyContractUpdate = DailyContractUpdate.builder()
+                .contractFactory(contractFactory)
+                .contractManager(contractManager)
+                .promotionManager(promotionManager)
+                .dateManager(dateManager)
+                .workerManager(workerManager)
+                .newsManager(newsManager)
+                .build();
+
+        dailyTransactions = DailyTransactions.builder()
+                .contractManager(contractManager)
+                .dateManager(dateManager)
+                .build();
+
+        dailyRelationshipUpdate = DailyRelationshipUpdate.builder()
+                .relationshipManager(relationshipManager)
+                .contractManager(contractManager)
+                .dateManager(dateManager)
+                .newsManager(newsManager)
+                .build();
+
+        nextDayController = NextDayController.builder()
+                .dailyContractUpdate(dailyContractUpdate)
+                .dailyEventBooker(dailyEventBooker)
+                .dateManager(dateManager)
+                .eventManager(eventManager)
                 .relationshipManager(relationshipManager)
                 .bankAccountManager(bankAccountManager)
                 .injuryManager(injuryManager)
                 .newsManager(newsManager)
                 .contractManager(contractManager)
+                .dailyTransactions(dailyTransactions)
+                .dailyRelationshipUpdate(dailyRelationshipUpdate)
+                .dailyContractUpdate(dailyContractUpdate)
+                .promotionManager(promotionManager)
                 .build();
 
         if (randomGame) {
@@ -174,9 +208,10 @@ public final class GameController extends Logging implements Serializable {
                 segmentManager,
                 stableManager,
                 staffManager,
+                workerManager,
                 tagTeamManager,
-                titleManager,
-                workerManager);
+                titleManager
+        );
 
     }
 
@@ -188,7 +223,7 @@ public final class GameController extends Logging implements Serializable {
         eventManager.createEventTemplates(generatedEventTemplates);
 
         List<Event> initialEvents = eventManager.getEventTemplates().stream()
-                .flatMap(eventTemplate -> bookEventsForNewEventTemplate(eventTemplate, dateManager.today()).stream())
+                .flatMap(eventTemplate -> getInitialEventsForEventTemplate(eventTemplate, dateManager.today()).stream())
                 .collect(Collectors.toList());
 
         List<EventTemplate> updatedBookedUntilDates = initialEvents.stream()

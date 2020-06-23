@@ -14,6 +14,7 @@ import openwrestling.model.segmentEnum.ResponseType;
 import openwrestling.model.segmentEnum.SuccessType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -66,6 +67,9 @@ public class SegmentTeamEntity extends Entity {
     private ResponseType response;
 
     public List<? extends Entity> childrenToInsert() {
+        if (CollectionUtils.isEmpty(workers)) {
+            return List.of();
+        }
         return workers.stream().map(worker ->
                 SegmentTeamWorkerEntity.builder()
                         .workerEntity(worker)

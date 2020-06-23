@@ -28,6 +28,7 @@ public class Event extends GameObject implements Serializable, iEvent, iDate {
     private int cost;
     private int gate;
     private int attendance;
+    private int rating;
     private int defaultDuration;
     private String name;
     private EventTemplate eventTemplate;

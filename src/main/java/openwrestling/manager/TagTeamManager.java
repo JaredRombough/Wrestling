@@ -26,6 +26,7 @@ public class TagTeamManager extends GameObjectManager implements Serializable {
     @Override
     public void selectData() {
         tagTeams = getDatabase().selectAll(TagTeam.class);
+        tagTeams.forEach(tagTeam -> tagTeam.setWorkers(workerManager.refreshWorkers(tagTeam.getWorkers())));
     }
 
     public List<TagTeam> createTagTeams(List<TagTeam> toInsert) {

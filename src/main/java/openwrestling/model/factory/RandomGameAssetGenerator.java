@@ -140,7 +140,7 @@ public class RandomGameAssetGenerator {
                         Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
                         Contract contract = new Contract(dateManager.today(), worker, promotion);
                         contract.setExclusive(promotion.getLevel() == 5);
-                        contract.setEndDate(ContractUtils.contractEndDate(dateManager.today(), RandomUtils.nextInt(0, 12)));
+                        contract.setEndDate(ContractUtils.contractEndDate(dateManager.today(), 1));
 
                         if (contract.isExclusive()) {
                             contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));

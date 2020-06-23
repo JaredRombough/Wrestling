@@ -1,6 +1,8 @@
 # Open Wrestling
 Wrestling booking simulation
 
+https://openwrestling.itch.io/open-wrestling
+
 To compile and run, use Intellij with the JavaFX maven plugin.
 
 > javafx:compile

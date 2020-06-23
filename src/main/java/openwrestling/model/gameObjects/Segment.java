@@ -58,6 +58,7 @@ public class Segment extends GameObject implements Serializable {
     private PromoType promoType;
     private ShowType showType;
     private Stable joinStable;
+    private String challengeEventName;
     private SegmentTemplate challengeSegment;
     private List<Injury> injuries = new ArrayList<>();
     private List<NewsItem> segmentNewsItems = new ArrayList<>();

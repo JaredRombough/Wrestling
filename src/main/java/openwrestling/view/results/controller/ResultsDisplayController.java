@@ -9,9 +9,9 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import openwrestling.model.gameObjects.Event;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.segmentEnum.TimingType;
@@ -123,9 +123,9 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
         sb.append(String.format("Attendance: %d\n", event.getAttendance()));
         sb.append(String.format("Gate: %d\n", event.getGate()));
         sb.append(String.format("Costs: %d\n", event.getCost()));
+        sb.append(String.format("Rating: %d\n", event.getRating()));
         text.setText(sb.toString());
         flowPane.getChildren().add(text);
-
     }
 
     private void populateView() {
