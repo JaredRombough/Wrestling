@@ -95,7 +95,7 @@ public final class SegmentStringUtils {
                 }
         }
 
-        return string += getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
+        return string + getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
     }
 
     public static String getChallengeString(Segment segment) {
@@ -109,7 +109,7 @@ public final class SegmentStringUtils {
                 break;
         }
 
-        return string += getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
+        return string + getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
     }
 
     private static String getResponseString(List<SegmentTeam> teams, String keyword) {

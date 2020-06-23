@@ -208,9 +208,10 @@ public final class GameController extends Logging implements Serializable {
                 segmentManager,
                 stableManager,
                 staffManager,
+                workerManager,
                 tagTeamManager,
-                titleManager,
-                workerManager);
+                titleManager
+        );
 
     }
 
