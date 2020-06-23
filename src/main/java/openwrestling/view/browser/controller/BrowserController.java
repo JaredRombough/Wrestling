@@ -77,7 +77,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private List<Button> browseButtons;
 
     @FXML
-    private ComboBox promotionComboBox;
+    private ComboBox<Promotion> promotionComboBox;
 
     @FXML
     private Label currentPromotionLabel;
@@ -102,7 +102,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private SortControl sortControlController;
 
     private void setCurrentPromotion(Promotion newPromotion) {
-        currentPromotion = newPromotion;
+        currentPromotion = gameController.getPromotionManager().getPromotion(newPromotion.getPromotionID());
         sortControlController.setCurrentPromotion(newPromotion);
 
         if (currentPromotion != null) {
@@ -219,18 +219,13 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     }
 
-    private void initializePromotionCombobox() {
-
-        //set up the promotion combobox
+    private void initializePromotionComboBox() {
         promotionComboBox.getItems().addAll(gameController.getPromotionManager().getPromotions());
 
-        // show the promotion acronym
-        Callback cellFactory = (Callback<ListView<Promotion>, ListCell<Promotion>>) (ListView<Promotion> p) -> new ListCell<Promotion>() {
-
+        Callback<ListView<Promotion>, ListCell<Promotion>> cellFactory = (ListView<Promotion> p) -> new ListCell<>() {
             @Override
             protected void updateItem(Promotion item, boolean empty) {
                 super.updateItem(item, empty);
-
                 if (item == null || empty) {
                     setText(null);
                 } else {
@@ -240,22 +235,17 @@ public class BrowserController extends ControllerBase implements Initializable {
         };
 
         promotionComboBox.setCellFactory(cellFactory);
-        promotionComboBox.setButtonCell((ListCell) cellFactory.call(null));
+        promotionComboBox.setButtonCell(cellFactory.call(null));
 
-        promotionComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Promotion>() {
-            @Override
-            public void changed(ObservableValue<? extends Promotion> observable, Promotion oldValue, Promotion newValue) {
-                setCurrentPromotion(newValue);
-
-            }
-        });
+        promotionComboBox.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> setCurrentPromotion(newValue));
 
     }
 
     @Override
     public void initializeMore() {
         try {
-            initializePromotionCombobox();
+            initializePromotionComboBox();
 
             sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
             sortControlController = (SortControl) sortControl.controller;

@@ -1,9 +1,9 @@
 package openwrestling.model.utility;
 
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.gameObjects.SegmentTeam;
-import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.segmentEnum.MatchRule;
 import openwrestling.model.segmentEnum.TeamType;
 
@@ -95,7 +95,7 @@ public final class SegmentStringUtils {
                 }
         }
 
-        return string += getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
+        return string + getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
     }
 
     public static String getChallengeString(Segment segment) {
@@ -105,11 +105,11 @@ public final class SegmentStringUtils {
                 string += " tonight";
                 break;
             default:
-                string += String.format(" at %s", segment.getChallengeSegment().getEventTemplate().getLongName());
+                string += String.format(" at %s", segment.getChallengeEventName());
                 break;
         }
 
-        return string += getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
+        return string + getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
     }
 
     private static String getResponseString(List<SegmentTeam> teams, String keyword) {

@@ -1,13 +1,9 @@
 package openwrestling.model.factory;
 
 import openwrestling.Logging;
-import openwrestling.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
 import openwrestling.manager.EventManager;
 import openwrestling.manager.NewsManager;
-import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
-import openwrestling.manager.SegmentManager;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.TitleManager;
@@ -49,45 +45,33 @@ import static openwrestling.model.utility.SegmentUtils.getMatchMoralePenalties;
 
 public class EventFactory extends Logging {
 
-    private final ContractManager contractManager;
     private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
     private final MatchFactory matchFactory;
-    private final PromotionManager promotionManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
     private final RelationshipManager relationshipManager;
     private final NewsManager newsManager;
-    private final BankAccountManager bankAccountManager;
-    private final SegmentManager segmentManager;
 
     public EventFactory(
-            ContractManager contractManager,
             EventManager eventManager,
             MatchFactory matchFactory,
-            PromotionManager promotionManager,
             TitleManager titleManager,
             WorkerManager workerManager,
             TagTeamManager tagTeamManager,
             StableManager stableManager,
             RelationshipManager relationshipManager,
-            NewsManager newsManager,
-            BankAccountManager bankAccountManager,
-            SegmentManager segmentManager
+            NewsManager newsManager
     ) {
-        this.contractManager = contractManager;
         this.eventManager = eventManager;
         this.matchFactory = matchFactory;
-        this.promotionManager = promotionManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
         this.relationshipManager = relationshipManager;
         this.newsManager = newsManager;
-        this.bankAccountManager = bankAccountManager;
-        this.segmentManager = segmentManager;
     }
 
     public Event processEventView(Event event, boolean processSegments) {
@@ -145,13 +129,15 @@ public class EventFactory extends Logging {
         return eventTemplates;
     }
 
-    public static List<Event> bookEventsForNewEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
+    public static List<Event> getInitialEventsForEventTemplate(EventTemplate eventTemplate, LocalDate startDate) {
         List<Event> newEvents = new ArrayList<>();
         if (eventTemplate.getEventFrequency().equals(EventFrequency.ANNUAL)) {
             Event event = bookEventForNewAnnualEventTemplateAfterDate(eventTemplate, startDate);
             newEvents.add(event);
         } else if (eventTemplate.getEventFrequency().equals(EventFrequency.WEEKLY)) {
-            LocalDate weeklyDate = startDate;
+            LocalDate weeklyDate = startDate.getDayOfWeek().equals(eventTemplate.getDayOfWeek()) ?
+                    startDate :
+                    startDate.with(next(eventTemplate.getDayOfWeek()));
             for (int i = 0; i < WEEKLY_EVENTS_TO_ADVANCE_BOOK_ON_INIT; i++) {
                 Event event = bookEventForTemplateOnDate(eventTemplate, weeklyDate);
                 newEvents.add(event);
@@ -189,6 +175,7 @@ public class EventFactory extends Logging {
         event.setCost(eventManager.calculateCost(segments, event.getPromotion()));
         event.setGate(eventManager.calculateGate(segments, event.getPromotion()));
         event.setAttendance(eventManager.calculateAttendance(segments, event.getPromotion()));
+        event.setRating(eventManager.calculateRating(segments, event.getDefaultDuration()));
     }
 
     public Segment processSegment(Event event, Segment toProcess) {

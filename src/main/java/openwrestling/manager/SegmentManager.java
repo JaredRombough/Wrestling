@@ -38,7 +38,6 @@ import static openwrestling.model.utility.ModelUtils.slashShortNames;
 @Getter
 public class SegmentManager extends GameObjectManager implements Serializable {
 
-    //private List<Segment> segments;
     private Map<Long, Segment> segmentMap;
     private List<SegmentTemplate> segmentTemplates;
     private final DateManager dateManager;
@@ -56,7 +55,6 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        //segments = getDatabase().selectAll(Segment.class);
         List<Segment> segments = getDatabase().querySelect(new SegmentQuery());
         segments.forEach(segment -> {
             segmentMap.put(segment.getSegmentID(), segment);
@@ -96,10 +94,6 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         savedSegments.forEach(segment -> {
             segmentMap.put(segment.getSegmentID(), segment);
         });
-        // this.segments = getDatabase().querySelect(new SegmentQuery());
-//        if (CollectionUtils.isNotEmpty(segmentTemplates)) {
-//            this.segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
-//        }
         return savedSegments;
     }
 
@@ -114,11 +108,6 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 .filter(segment -> segment.getEventTemplate().getEventTemplateID() == eventTemplate.getEventTemplateID())
                 .collect(Collectors.toList());
     }
-
-//    //public void addSegment(Segment segment) {
-//        segments.add(segment);
-//    }
-
 
     public List<Worker> getWorkers(Segment segment) {
         return segment.getTeams().stream()

@@ -2,32 +2,29 @@ package openwrestling.model.controller;
 
 import openwrestling.Logging;
 import openwrestling.manager.ContractManager;
-import openwrestling.manager.EventManager;
+import openwrestling.manager.DateManager;
+import openwrestling.manager.NewsManager;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
-import openwrestling.model.factory.MatchFactory;
-import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.manager.DateManager;
-import openwrestling.manager.NewsManager;
-import openwrestling.model.gameObjects.Segment;
-import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,11 +38,9 @@ public class PromotionController extends Logging implements Serializable {
 
     private final ContractFactory contractFactory;
     private final EventFactory eventFactory;
-    private final MatchFactory matchFactory;
 
     private final ContractManager contractManager;
     private final DateManager dateManager;
-    private final EventManager eventManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
     private final NewsManager newsManager;
@@ -54,20 +49,16 @@ public class PromotionController extends Logging implements Serializable {
     public PromotionController(
             ContractFactory contractFactory,
             EventFactory eventFactory,
-            MatchFactory matchFactory,
             ContractManager contractManager,
             DateManager dateManager,
-            EventManager eventManager,
             TitleManager titleManager,
             WorkerManager workerManager,
             NewsManager newsManager,
             StaffManager staffManager) {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
-        this.matchFactory = matchFactory;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
-        this.eventManager = eventManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
         this.newsManager = newsManager;
@@ -109,22 +100,6 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-    public void gainPopularity(Promotion promotion) {
-        int increment = 1;
-        int maxPop = 100;
-        int maxLevel = 5;
-        int basePop = 10;
-        promotion.setPopularity(promotion.getPopularity() + increment);
-
-        if (promotion.getPopularity() >= maxPop) {
-            if (promotion.getLevel() != maxLevel) {
-                promotion.setLevel(promotion.getLevel() + increment);
-                promotion.setPopularity(basePop);
-            } else {
-                promotion.setPopularity(maxPop);
-            }
-        }
-    }
 
     //call this method every day for each ai
     //put the general decision making sequence here
@@ -135,7 +110,7 @@ public class PromotionController extends Logging implements Serializable {
         }
         int activeRosterSize = contractManager.getActiveRoster(promotion).size();
         while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
-            signContract(promotion);
+            //signContract(promotion);
             activeRosterSize++;
         }
 
@@ -202,7 +177,7 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-    private List<Segment> bookSegments(Promotion promotion) {
+    private List<Segment> bookSegments(Promotion promotion, int duration) {
         //maximum segments for the event
         int maxSegments = 8;
 
@@ -362,12 +337,16 @@ public class PromotionController extends Logging implements Serializable {
             }
         }
 
+        if (CollectionUtils.isNotEmpty(segments)) {
+            segments.forEach(segment -> segment.setSegmentLength(duration / segments.size()));
+        }
+
         return segments;
     }
 
     //book an event
     public Event bookEvent(Event event, Promotion promotion) {
-        event.setSegments(bookSegments(promotion));
+        event.setSegments(bookSegments(promotion, event.getDefaultDuration()));
         return eventFactory.processEventView(
                 event,
                 true);

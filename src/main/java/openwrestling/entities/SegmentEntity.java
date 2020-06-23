@@ -16,6 +16,7 @@ import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.PromoType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +73,9 @@ public class SegmentEntity extends Entity {
     private AngleType angleType;
 
     @DatabaseField
+    private String challengeEventName;
+
+    @DatabaseField
     private JoinTeamType joinTeamType;
 
     @DatabaseField
@@ -87,6 +91,9 @@ public class SegmentEntity extends Entity {
     private StableEntity joinStable;
 
     public List<? extends Entity> childrenToInsert() {
+        if (CollectionUtils.isEmpty(teams)) {
+            return List.of();
+        }
         teams.forEach(team -> team.setSegmentEntity(this));
         return new ArrayList<>(teams);
     }

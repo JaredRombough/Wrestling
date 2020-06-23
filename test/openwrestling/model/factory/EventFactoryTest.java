@@ -64,18 +64,14 @@ public class EventFactoryTest {
         when(bankAccountManager.getBankAccount(any(Promotion.class))).thenReturn(new BankAccount());
         relationshipManager = mock(RelationshipManager.class);
         eventFactory = new EventFactory(
-                contractManager,
                 eventManager,
                 matchFactory,
-                promotionManager,
                 titleManager,
                 workerManager,
                 tagTeamManager,
                 stableManager,
                 relationshipManager,
-                newsManager,
-                bankAccountManager,
-                segmentManager);
+                newsManager);
 
     }
 

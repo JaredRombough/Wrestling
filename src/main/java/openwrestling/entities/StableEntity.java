@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,12 +38,21 @@ public class StableEntity extends Entity {
     private Collection<WorkerEntity> workers;
 
     public List<? extends Entity> childrenToInsert() {
+        if (CollectionUtils.isEmpty(workers)) {
+            return List.of();
+        }
         return workers.stream().map(worker ->
-            StableWorkerEntity.builder()
-                    .workerEntity(worker)
-                    .stableEntity(this)
-                    .build()
+                StableWorkerEntity.builder()
+                        .workerEntity(worker)
+                        .stableEntity(this)
+                        .build()
         ).collect(Collectors.toList());
+    }
+
+    public void selectChildren() {
+        workers = stableWorkers.stream()
+                .map(StableWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
     }
 
 }

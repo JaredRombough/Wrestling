@@ -41,6 +41,9 @@ public class EventEntity extends Entity {
     private int attendance;
 
     @DatabaseField
+    private int rating;
+
+    @DatabaseField
     private int defaultDuration;
 
     @DatabaseField

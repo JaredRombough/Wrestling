@@ -107,6 +107,31 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build();
     }
 
+    public NewsItem getExpiringContractNewsItem(iContract contract, LocalDate date) {
+        return NewsItem.builder()
+                .headline(String.format("%s contract expires", contract.getWorker().getShortName()))
+                .summary(String.format("%s is no longer under contract with %s.",
+                        contract.getWorker().getLongName(),
+                        contract.getPromotion().getName()))
+                .date(date)
+                .promotions(List.of(contract.getPromotion()))
+                .workers(List.of(contract.getWorker()))
+                .build();
+    }
+
+    public NewsItem getNewContractNewsItem(iContract contract, LocalDate date) {
+        return NewsItem.builder()
+                .headline(String.format("%s signs %s", contract.getPromotion().getShortName(), contract.getWorker().getShortName()))
+                .summary(String.format("%s has signed a new contract with %s. It will expire on %s",
+                        contract.getWorker().getLongName(),
+                        contract.getPromotion().getName(),
+                        contract.getEndDate().toString()))
+                .date(date)
+                .promotions(List.of(contract.getPromotion()))
+                .workers(List.of(contract.getWorker()))
+                .build();
+    }
+
     public void addTrainingNewsItem(Worker worker, StaffMember trainer, Promotion promotion, String stat, LocalDate date) {
         addNews(NewsItem.builder()
                 .headline(String.format("%s training", worker.getLongName()))
@@ -164,8 +189,8 @@ public class NewsManager extends GameObjectManager implements Serializable {
         return items;
     }
 
-    public void addNewsItems(List<NewsItem> newsItems) {
-        List<NewsItem> inserted = getDatabase().insertList(newsItems);
+    public void addNewsItems(List<NewsItem> newsItemsToAdd) {
+        List<NewsItem> inserted = getDatabase().insertList(newsItemsToAdd);
         inserted.forEach(newsItem -> {
             if (CollectionUtils.isNotEmpty(newsItem.getPromotions())) {
                 newsItem.getPromotions().forEach(promotion -> addSegmentItemNews(promotion, newsItem));

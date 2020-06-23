@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static openwrestling.model.constants.UIConstants.EDIT_ICON;
+
 public class EditLabel extends ControllerBase implements Initializable {
 
     @FXML
@@ -37,6 +39,8 @@ public class EditLabel extends ControllerBase implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         label.setText("");
+        editButton.setText(EDIT_ICON);
+        createButton.setText("+");
     }
 
     @Override
