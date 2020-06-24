@@ -71,6 +71,7 @@ public class Import {
                 gameController.getPromotionManager().updatePromotions(updatedPromotions);
 
                 List<RosterSplit> rosterSplits = importHelper.rosterSplits("promos", promotions);
+                rosterSplits = importHelper.assignWorkersToRosterSplits(workers, rosterSplits);
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
 
                 List<Contract> contracts = importHelper.contracts(workers, promotions, gameController.getDateManager().today());

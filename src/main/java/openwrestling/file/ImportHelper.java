@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -135,6 +136,7 @@ public class ImportHelper {
                             RosterSplit.builder()
                                     .name(name.trim())
                                     .owner(promotion)
+                                    .workers(new ArrayList<>())
                                     .build()
                     );
                 }
@@ -452,6 +454,7 @@ public class ImportHelper {
             int c = hexStringToInt(hexLine.get(69));
             int[] promoKeys = new int[]{a, b, c};
             boolean exclusive = hexStringToLetter(hexLine.get(71)).equals("W");
+
             promotions.stream()
                     .filter(promotion -> ArrayUtils.contains(promoKeys, promotion.getImportKey()))
                     .forEach(promotion -> {
@@ -475,6 +478,35 @@ public class ImportHelper {
                     });
         });
         return contracts;
+    }
+
+    List<RosterSplit> assignWorkersToRosterSplits(List<Worker> workers, List<RosterSplit> rosterSplits) {
+        List<List<String>> hexLines = getHexLines(importFolder, "wrestler", 307);
+
+        hexLines.forEach(hexLine -> {
+            String currentLine = hexLineToTextString(hexLine);
+            List<String> rosterSplitNames = List.of(currentLine.substring(91, 100), currentLine.substring(101, 110), currentLine.substring(111, 120))
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(rosterSplitName -> !rosterSplitName.equals("None"))
+                    .collect(Collectors.toList());
+
+            rosterSplitNames.forEach(rosterSplitName -> {
+                rosterSplits.stream()
+                        .filter(rosterSplit -> rosterSplit.getName().equals(rosterSplitName))
+                        .findFirst()
+                        .ifPresent(split ->
+                                workers.stream()
+                                        .filter(worker1 -> worker1.getImportKey() == hexStringToInt(hexLine.get(1) + hexLine.get(2)))
+                                        .findFirst()
+                                        .ifPresent(worker -> split.getWorkers().add(worker))
+                        );
+            });
+
+
+        });
+        return rosterSplits;
     }
 
 
