@@ -1,10 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,14 +8,20 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.manager.WorkerManager;
-import openwrestling.model.gameObjects.WorkerGroup;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.gameObjects.WorkerGroup;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class StableController extends ControllerBase {
 
@@ -34,7 +35,7 @@ public class StableController extends ControllerBase {
     private GridPane gridPane;
 
     @FXML
-    private ListView listView;
+    private ListView<Worker> listView;
 
     @FXML
     private Button addButton;
@@ -109,7 +110,9 @@ public class StableController extends ControllerBase {
     public void updateLabels() {
         if (workerGroup != null) {
             ownerLabel.setText(workerGroup.getOwner().getName());
-            listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
+            if (CollectionUtils.isNotEmpty(workerGroup.getWorkers())) {
+                listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
+            }
         }
 
         gridPane.setVisible(workerGroup != null);

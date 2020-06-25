@@ -38,7 +38,7 @@ public class RosterSplitEntity extends Entity {
     private Collection<WorkerEntity> workers;
 
     public List<? extends Entity> childrenToInsert() {
-        if(CollectionUtils.isEmpty(workers)) {
+        if (CollectionUtils.isEmpty(workers)) {
             return List.of();
         }
         return workers.stream().map(worker ->
@@ -48,4 +48,11 @@ public class RosterSplitEntity extends Entity {
                         .build()
         ).collect(Collectors.toList());
     }
+
+    public void selectChildren() {
+        workers = rosterSplitWorkers.stream()
+                .map(RosterSplitWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
+    }
+
 }
