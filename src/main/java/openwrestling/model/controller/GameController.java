@@ -92,12 +92,13 @@ public final class GameController extends Logging implements Serializable {
         newsManager = new NewsManager(database);
 
         relationshipManager = new RelationshipManager(database);
-        rosterSplitManager = new RosterSplitManager(database);
+
         broadcastTeamManager = new BroadcastTeamManager(database);
 
         contractManager = new ContractManager(database, bankAccountManager);
 
         workerManager = new WorkerManager(database, contractManager);
+        rosterSplitManager = new RosterSplitManager(database, workerManager);
         staffManager = new StaffManager(database, contractManager);
         titleManager = new TitleManager(database, dateManager, workerManager);
         stableManager = new StableManager(database, workerManager);
@@ -204,11 +205,11 @@ public final class GameController extends Logging implements Serializable {
                 newsManager,
                 promotionManager,
                 relationshipManager,
-                rosterSplitManager,
                 segmentManager,
-                stableManager,
                 staffManager,
                 workerManager,
+                stableManager,
+                rosterSplitManager,
                 tagTeamManager,
                 titleManager
         );
