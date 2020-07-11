@@ -73,4 +73,8 @@ public class DateManager extends GameObjectManager implements Serializable {
         return gameDate.getDayOfMonth() == 1;
     }
 
+    public boolean isLastDayOfMonth() {
+        return gameDate.withDayOfMonth(gameDate.lengthOfMonth()).equals(gameDate);
+    }
+
 }

@@ -12,6 +12,7 @@ import openwrestling.manager.EventManager;
 import openwrestling.manager.GameObjectManager;
 import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.InjuryManager;
+import openwrestling.manager.MonthlyReviewManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
@@ -26,6 +27,7 @@ import openwrestling.model.controller.nextDay.DailyContractUpdate;
 import openwrestling.model.controller.nextDay.DailyEventBooker;
 import openwrestling.model.controller.nextDay.DailyRelationshipUpdate;
 import openwrestling.model.controller.nextDay.DailyTransactions;
+import openwrestling.model.controller.nextDay.MonthlyReviewController;
 import openwrestling.model.controller.nextDay.NextDayController;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.EventFactory;
@@ -67,6 +69,7 @@ public final class GameController extends Logging implements Serializable {
     private final EntourageManager entourageManager;
     private final BroadcastTeamManager broadcastTeamManager;
     private final GameSettingManager gameSettingManager;
+    private final MonthlyReviewManager monthlyReviewManager;
 
     private List<GameObjectManager> managers;
 
@@ -75,6 +78,7 @@ public final class GameController extends Logging implements Serializable {
     private final DailyContractUpdate dailyContractUpdate;
     private final DailyTransactions dailyTransactions;
     private final DailyRelationshipUpdate dailyRelationshipUpdate;
+    private final MonthlyReviewController monthlyReviewController;
 
     private final PromotionController promotionController;
 
@@ -106,6 +110,7 @@ public final class GameController extends Logging implements Serializable {
         tagTeamManager = new TagTeamManager(database, workerManager);
         segmentManager = new SegmentManager(database, dateManager, tagTeamManager, stableManager);
         injuryManager = new InjuryManager(database, newsManager, workerManager, dateManager);
+        monthlyReviewManager = new MonthlyReviewManager(database);
 
         eventManager = new EventManager(database,
                 contractManager,
@@ -166,6 +171,11 @@ public final class GameController extends Logging implements Serializable {
                 .newsManager(newsManager)
                 .build();
 
+        monthlyReviewController = MonthlyReviewController.builder()
+                .monthlyReviewManager(monthlyReviewManager)
+                .bankAccountManager(bankAccountManager)
+                .build();
+
         nextDayController = NextDayController.builder()
                 .dailyContractUpdate(dailyContractUpdate)
                 .dailyEventBooker(dailyEventBooker)
@@ -180,6 +190,7 @@ public final class GameController extends Logging implements Serializable {
                 .dailyRelationshipUpdate(dailyRelationshipUpdate)
                 .dailyContractUpdate(dailyContractUpdate)
                 .promotionManager(promotionManager)
+                .monthlyReviewController(monthlyReviewController)
                 .build();
 
         if (randomGame) {
@@ -211,7 +222,8 @@ public final class GameController extends Logging implements Serializable {
                 stableManager,
                 rosterSplitManager,
                 tagTeamManager,
-                titleManager
+                titleManager,
+                monthlyReviewManager
         );
 
     }

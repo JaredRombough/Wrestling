@@ -22,6 +22,7 @@ import openwrestling.entities.EventTemplateEntity;
 import openwrestling.entities.GameSettingEntity;
 import openwrestling.entities.InjuryEntity;
 import openwrestling.entities.MatchTitleEntity;
+import openwrestling.entities.MonthlyReviewEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
 import openwrestling.entities.NewsItemEntity;
 import openwrestling.entities.NewsItemPromotionEntity;
@@ -54,6 +55,7 @@ import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Injury;
+import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
@@ -289,6 +291,7 @@ public class Database extends Logging {
         put(SegmentTemplate.class, SegmentTemplateEntity.class);
         put(NewsItem.class, NewsItemEntity.class);
         put(GameSetting.class, GameSettingEntity.class);
+        put(MonthlyReview.class, MonthlyReviewEntity.class);
     }};
 
     private void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
@@ -423,7 +426,8 @@ public class Database extends Logging {
                     NewsItemEntity.class,
                     NewsItemWorkerEntity.class,
                     NewsItemPromotionEntity.class,
-                    GameSettingEntity.class);
+                    GameSettingEntity.class,
+                    MonthlyReviewEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);
