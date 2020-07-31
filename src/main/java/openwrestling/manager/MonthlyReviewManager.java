@@ -27,9 +27,12 @@ public class MonthlyReviewManager extends GameObjectManager implements Serializa
     }
 
     public MonthlyReview createMonthlyReview(MonthlyReview monthlyReview) {
+        return createMonthlyReviews(List.of(monthlyReview)).get(0);
+    }
 
-        MonthlyReview saved = getDatabase().insertList(List.of(monthlyReview)).get(0);
-        this.monthlyReviews.add(saved);
+    public List<MonthlyReview> createMonthlyReviews(List<MonthlyReview> monthlyReviews) {
+        List<MonthlyReview> saved = getDatabase().insertList(monthlyReviews);
+        this.monthlyReviews.addAll(saved);
         return saved;
     }
 
@@ -38,7 +41,7 @@ public class MonthlyReviewManager extends GameObjectManager implements Serializa
         return monthlyReviews.stream()
                 .filter(monthlyReview -> monthlyReview.getDate().isAfter(boundary) &&
                         monthlyReview.getDate().isBefore(date))
-                .sorted(Comparator.comparing(MonthlyReview::getDate))
+                .sorted(Comparator.comparing(MonthlyReview::getDate).reversed())
                 .collect(Collectors.toList());
     }
 
