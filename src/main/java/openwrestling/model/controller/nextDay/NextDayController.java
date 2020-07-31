@@ -83,7 +83,7 @@ public class NextDayController extends Logging {
         cachedTransactions.addAll(dailyContractUpdate.getNewContractTransactions(cachedNewContracts));
 
         if (dateManager.isLastDayOfMonth()) {
-            monthlyReviewController.doStuff(promotionManager.getPlayerPromotion(), dateManager.today());
+            monthlyReviewController.createMonthlyReview(promotionManager.getPlayerPromotion(), dateManager.today());
         }
 
         processCache();

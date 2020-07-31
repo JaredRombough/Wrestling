@@ -18,7 +18,7 @@ public class MonthlyReviewController extends Logging {
     private BankAccountManager bankAccountManager;
 
 
-    public void doStuff(Promotion promotion, LocalDate date) {
+    public void createMonthlyReview(Promotion promotion, LocalDate date) {
 
         BankAccount bankAccount = bankAccountManager.getBankAccount(promotion);
 

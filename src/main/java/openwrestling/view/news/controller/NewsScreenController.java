@@ -1,11 +1,5 @@
 package openwrestling.view.news.controller;
 
-import java.net.URL;
-import java.time.DayOfWeek;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,16 +17,27 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import org.apache.logging.log4j.LogManager;
-import openwrestling.model.interfaces.iNewsItem;
+import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.StaffMember;
+import openwrestling.model.interfaces.iNewsItem;
 import openwrestling.model.segmentEnum.NewsFilter;
+import openwrestling.model.utility.MonthlyReviewUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NewsItemComparator;
 import openwrestling.view.utility.interfaces.ControllerBase;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+
+import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class NewsScreenController extends ControllerBase implements Initializable {
 
@@ -56,6 +61,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @FXML
     public ListView<iNewsItem> newsListView;
+
+    @FXML
+    public Label ownerMessageText;
 
     private List<Button> timeButtons;
     private ChronoUnit chronoUnit;
@@ -121,7 +129,28 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
         newsListView.setItems(new SortedList<>(filteredList, new NewsItemComparator()));
         newsListView.getSelectionModel().selectFirst();
+        ownerMessageText.setText(getOwnerMessageText());
+    }
 
+    private String getOwnerMessageText() {
+        StaffMember owner = gameController.getStaffManager().getOwner(playerPromotion());
+        if (owner == null) {
+            return "";
+        }
+        List<MonthlyReview> recentReviews = gameController.getMonthlyReviewManager().getRecentReviews(
+                gameController.getDateManager().today()
+        );
+
+        if (CollectionUtils.isEmpty(recentReviews)) {
+            return String.format("%s will be reviewing your performance monthly.", owner.getName());
+        }
+
+        if (recentReviews.size() == 1) {
+            return String.format("%s will be reviewing your performance monthly.", owner.getName());
+        }
+
+        return String.format("%s/n%s", MonthlyReviewUtils.fundsString(recentReviews, owner.getName()),
+                MonthlyReviewUtils.popularityString(recentReviews, owner.getName()));
     }
 
     public void nextDay() {
@@ -139,10 +168,10 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
         List<Segment> topMatches
                 = gameController.getSegmentManager().getTopMatches(
-                        gameController.getDateManager().today(),
-                        unit,
-                        units,
-                        matchesToShow);
+                gameController.getDateManager().today(),
+                unit,
+                units,
+                matchesToShow);
 
         ObservableList<Segment> items = FXCollections.observableArrayList(topMatches);
 
