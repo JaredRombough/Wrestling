@@ -15,13 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MonthlyReviewManagerTest {
 
     private MonthlyReviewManager monthlyReviewManager;
-    private Database database;
 
     @Before
     public void setUp() {
-        database = new Database(TEST_DB_PATH);
-
-        monthlyReviewManager = new MonthlyReviewManager(database);
+        monthlyReviewManager = new MonthlyReviewManager(new Database(TEST_DB_PATH));
     }
 
     @Test
