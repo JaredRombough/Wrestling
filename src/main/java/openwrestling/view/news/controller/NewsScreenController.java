@@ -149,7 +149,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             return String.format("%s will be reviewing your performance monthly.", owner.getName());
         }
 
-        return String.format("%s/n%s", MonthlyReviewUtils.fundsString(recentReviews, owner.getName()),
+        return String.format("%s\n%s", MonthlyReviewUtils.fundsString(recentReviews, owner.getName()),
                 MonthlyReviewUtils.popularityString(recentReviews, owner.getName()));
     }
 

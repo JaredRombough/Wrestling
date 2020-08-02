@@ -12,12 +12,15 @@ public class MonthlyReviewUtils {
             return "";
         }
 
-        MonthlyReview thisReview = recentReviews.get(0);
-        MonthlyReview lastReview = recentReviews.get(1);
-        boolean popUp = popularityDecreased(thisReview, lastReview);
+        MonthlyReview thisReview = recentReviews.remove(0);
+        MonthlyReview lastReview = recentReviews.get(0);
 
-        if (popUp) {
+        if (popularityIncreased(thisReview, lastReview)) {
             return ownerName + " is happy popularity increased this month.";
+        }
+
+        if (popularityStable(thisReview, lastReview)) {
+            return ownerName + " is satisfied that popularity remained stable this month.";
         }
 
         int count = 0;
@@ -39,12 +42,15 @@ public class MonthlyReviewUtils {
             return "";
         }
 
-        MonthlyReview thisReview = recentReviews.get(0);
-        MonthlyReview lastReview = recentReviews.get(1);
-        boolean fundsIncreased = thisReview.getFunds() > lastReview.getFunds();
+        MonthlyReview thisReview = recentReviews.remove(0);
+        MonthlyReview lastReview = recentReviews.get(0);
 
-        if (fundsIncreased) {
+        if (thisReview.getFunds() > lastReview.getFunds()) {
             return ownerName + " is happy funds increased this month.";
+        }
+
+        if (thisReview.getFunds() == lastReview.getFunds()) {
+            return ownerName + " is satisfied that funds remained stable this month.";
         }
 
         int count = 0;
@@ -62,8 +68,20 @@ public class MonthlyReviewUtils {
     }
 
     private static boolean popularityDecreased(MonthlyReview thisMonth, MonthlyReview lastMonth) {
-        return thisMonth.getPopularity() > lastMonth.getPopularity() &&
-                thisMonth.getLevel() >= lastMonth.getLevel();
+        return thisMonth.getLevel() < lastMonth.getLevel() ||
+                thisMonth.getPopularity() < lastMonth.getPopularity() &&
+                        thisMonth.getLevel() == lastMonth.getLevel();
+    }
+
+    private static boolean popularityIncreased(MonthlyReview thisMonth, MonthlyReview lastMonth) {
+        return thisMonth.getLevel() > lastMonth.getLevel() ||
+                thisMonth.getPopularity() > lastMonth.getPopularity() &&
+                        thisMonth.getLevel() == lastMonth.getLevel();
+    }
+
+    private static boolean popularityStable(MonthlyReview thisMonth, MonthlyReview lastMonth) {
+        return thisMonth.getPopularity() == lastMonth.getPopularity() &&
+                thisMonth.getLevel() == lastMonth.getLevel();
     }
 
 
