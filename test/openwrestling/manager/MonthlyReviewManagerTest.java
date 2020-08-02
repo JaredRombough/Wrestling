@@ -22,20 +22,20 @@ public class MonthlyReviewManagerTest {
     }
 
     @Test
-    public void getRecentReviews_returnsSortedReviews() {
+    public void getSortedReviews_returnsSortedReviewsByDate() {
         LocalDate date1 = LocalDate.now();
         LocalDate date2 = LocalDate.now().minusWeeks(1);
         LocalDate date3 = LocalDate.now().minusMonths(1);
         LocalDate date4 = LocalDate.now().minusMonths(2);
-        List<MonthlyReview> reviews = List.of(date1, date2, date3, date4).stream()
+        List<MonthlyReview> reviews = List.of(date1, date3, date2, date4).stream()
                 .map(date -> MonthlyReview.builder()
                         .date(date)
                         .build())
                 .collect(Collectors.toList());
         monthlyReviewManager.createMonthlyReviews(reviews);
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(date1);
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
         assertThat(recentReviews).extracting(MonthlyReview::getDate)
-                .containsExactly(date2, date3, date4);
+                .containsExactly(date1, date2, date3, date4);
     }
 }

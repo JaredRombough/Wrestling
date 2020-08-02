@@ -34,7 +34,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -56,7 +56,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -78,7 +78,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -99,7 +99,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -120,7 +120,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -142,7 +142,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -164,7 +164,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 
@@ -185,7 +185,7 @@ public class MonthlyReviewUtilsTest extends TestCase {
                 List.of(monthlyReview1, monthlyReview2, monthlyReview3, monthlyReview4)
         );
 
-        List<MonthlyReview> recentReviews = monthlyReviewManager.getRecentReviews(LocalDate.now());
+        List<MonthlyReview> recentReviews = monthlyReviewManager.getSortedReviews();
 
         String ownerName = RandomStringUtils.random(10);
 

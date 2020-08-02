@@ -55,16 +55,12 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @FXML
     public Button yearButton;
-
-    @FXML
-    private AnchorPane sortControlPane;
-
     @FXML
     public ListView<iNewsItem> newsListView;
-
     @FXML
     public Label ownerMessageText;
-
+    @FXML
+    private AnchorPane sortControlPane;
     private List<Button> timeButtons;
     private ChronoUnit chronoUnit;
     private GameScreen sortControl;
@@ -137,20 +133,18 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         if (owner == null) {
             return "";
         }
-        List<MonthlyReview> recentReviews = gameController.getMonthlyReviewManager().getRecentReviews(
-                gameController.getDateManager().today()
-        );
+        List<MonthlyReview> monthlyReviews = gameController.getMonthlyReviewManager().getSortedReviews();
 
-        if (CollectionUtils.isEmpty(recentReviews)) {
+        if (CollectionUtils.isEmpty(monthlyReviews)) {
             return String.format("%s will be reviewing your performance monthly.", owner.getName());
         }
 
-        if (recentReviews.size() == 1) {
+        if (monthlyReviews.size() == 1) {
             return String.format("%s will be reviewing your performance monthly.", owner.getName());
         }
 
-        return String.format("%s\n%s", MonthlyReviewUtils.fundsString(recentReviews, owner.getName()),
-                MonthlyReviewUtils.popularityString(recentReviews, owner.getName()));
+        return String.format("%s\n%s", MonthlyReviewUtils.fundsString(monthlyReviews, owner.getName()),
+                MonthlyReviewUtils.popularityString(monthlyReviews, owner.getName()));
     }
 
     public void nextDay() {
