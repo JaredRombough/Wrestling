@@ -575,7 +575,9 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             segment.setAngleType(angleOptions.getAngleType());
             segment.setJoinStable(angleOptions.getJoinStable());
             segment.setJoinTeamType(angleOptions.getJoinTeamType());
-            segment.setChallengeEventName(angleOptions.getChallengeSegment().getSourceEventName());
+            if (angleOptions.getChallengeSegment() != null) {
+                segment.setChallengeEventName(angleOptions.getChallengeSegment().getSourceEventName());
+            }
             segment.setChallengeSegment(angleOptions.getChallengeSegment());
             segment.setPresenceType(angleOptions.getPresenceType());
             segment.setPromoType(angleOptions.getPromoType());

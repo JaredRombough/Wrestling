@@ -45,9 +45,6 @@ public class DepartmentController extends ControllerBase {
 
     }
 
-    /**
-     * @param object
-     */
     @Override
     public void setCurrent(Object object) {
         if (object instanceof StaffType) {

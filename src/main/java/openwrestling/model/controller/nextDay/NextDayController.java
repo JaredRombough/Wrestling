@@ -52,6 +52,7 @@ public class NextDayController extends Logging {
     private DailyContractUpdate dailyContractUpdate;
     private DailyTransactions dailyTransactions;
     private DailyRelationshipUpdate dailyRelationshipUpdate;
+    private MonthlyReviewController monthlyReviewController;
 
     private List<Transaction> cachedTransactions;
     private Map<Long, Contract> cachedContractsMap;
@@ -80,6 +81,10 @@ public class NextDayController extends Logging {
         dailyRelationshipUpdate.updateRelationshipMap(cachedMoraleRelationshipMap, updatedRelationshipsAfterDailyMoraleCheck);
 
         cachedTransactions.addAll(dailyContractUpdate.getNewContractTransactions(cachedNewContracts));
+
+        if (dateManager.isLastDayOfMonth()) {
+            monthlyReviewController.createMonthlyReview(promotionManager.getPlayerPromotion(), dateManager.today());
+        }
 
         processCache();
 

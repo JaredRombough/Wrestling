@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 public class MainApp extends Application {
 
     public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    public static final String VERSION = "0.4.3";
+    public static final String VERSION = "0.4.4";
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;

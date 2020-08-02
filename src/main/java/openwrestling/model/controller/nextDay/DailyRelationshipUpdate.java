@@ -31,7 +31,7 @@ public class DailyRelationshipUpdate extends Logging {
 
     public List<MoraleRelationship> getUpdatedRelationshipsForDailyMoraleCheck() {
         List<MoraleRelationship> relationships = new ArrayList<>();
-        contractManager.getContracts().stream()
+        contractManager.getActiveContracts().stream()
                 .filter(contract -> ContractUtils.isMoraleCheckDay(contract, dateManager.today()))
                 .forEach(contract -> {
                     long daysBetween = DAYS.between(contract.getLastShowDate(), dateManager.today());

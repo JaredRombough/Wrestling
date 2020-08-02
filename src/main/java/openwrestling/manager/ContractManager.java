@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ContractManager extends GameObjectManager implements Serializable {
 
@@ -43,6 +44,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
 
     public List<Contract> getContracts() {
         return new ArrayList<>(contractMap.values());
+    }
+
+    public List<Contract> getActiveContracts() {
+        return contractMap.values().stream()
+                .filter(Contract::isActive)
+                .collect(Collectors.toList());
     }
 
     public List<StaffContract> getStaffContracts() {
