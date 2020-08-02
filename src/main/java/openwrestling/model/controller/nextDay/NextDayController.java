@@ -91,22 +91,6 @@ public class NextDayController extends Logging {
         logger.log(Level.DEBUG, String.format("nextDay took %d ms", System.currentTimeMillis() - start));
     }
 
-    //if last day of month
-    //check if review for last month exists
-    //if no, create initial review
-    //if yes, create routine review
-    //initial review info
-    //company pop on last day
-    //company funds on last day
-    //(fun generic message welcome aboard I'm keeping an eye on you)
-    //additional routine review info
-    //display last month pop
-    //display change
-    //display last month funds
-    //display change
-    //owner message
-
-
     public void playerEvent(Event event) {
         clearCache();
         processEvents(List.of(event));
