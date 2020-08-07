@@ -4,14 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
-import openwrestling.view.utility.GameScreen;
-import openwrestling.view.utility.ScreenCode;
-import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
 import java.net.URL;
@@ -22,44 +17,15 @@ import java.util.ResourceBundle;
 
 public class FinancialScreenController extends ControllerBase implements Initializable {
 
-    private List<Label> sheetLabels;
-
-    @FXML
-    private AnchorPane medicalBase;
-
-    @FXML
-    private AnchorPane creativeBase;
-
-    @FXML
-    private AnchorPane roadAgentBase;
-
-    @FXML
-    private AnchorPane trainerBase;
-
-    @FXML
-    private AnchorPane productionBase;
-
-    @FXML
-    private AnchorPane refereeBase;
-
-    @FXML
-    private AnchorPane broadcastBase;
-
-    @FXML
-    private AnchorPane ownerBase;
-
-    @FXML
-    private GridPane balanceSheetGrid;
-
-    private List<GameScreen> departmentScreens;
-
     private final int GATE_ROW = 2;
     private final int WORKER_EXPENSE_ROW = 4;
     private final int STAFF_EXPENSE_ROW = 5;
     private final int TOTAL_ROW = 6;
+    private List<Label> sheetLabels;
+    @FXML
+    private GridPane balanceSheetGrid;
 
     private int sheetCell(TransactionType type, int monthsAgo) {
-
         LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
 
         return gameController.getBankAccountManager().getTransactionTotal(playerPromotion(), type, startDate);
@@ -82,10 +48,6 @@ public class FinancialScreenController extends ControllerBase implements Initial
         addSheetLabel(-1,
                 gameController.getStaffManager().getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 STAFF_EXPENSE_ROW);
-
-        for (GameScreen screen : departmentScreens) {
-            screen.controller.updateLabels();
-        }
     }
 
     private void addSheetLabel(int monthsAgo, int amount, int row) {
@@ -108,43 +70,6 @@ public class FinancialScreenController extends ControllerBase implements Initial
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         sheetLabels = new ArrayList<>();
-        departmentScreens = new ArrayList<>();
-    }
-
-    @Override
-    public void initializeMore() {
-        GameScreen medical = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, medicalBase);
-        medical.controller.setCurrent(StaffType.MEDICAL);
-        departmentScreens.add(medical);
-
-        GameScreen roadAgents = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, roadAgentBase);
-        roadAgents.controller.setCurrent(StaffType.ROAD_AGENT);
-        departmentScreens.add(roadAgents);
-
-        GameScreen creative = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, creativeBase);
-        creative.controller.setCurrent(StaffType.CREATIVE);
-        departmentScreens.add(creative);
-
-        GameScreen trainers = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, trainerBase);
-        trainers.controller.setCurrent(StaffType.TRAINER);
-        departmentScreens.add(trainers);
-
-        GameScreen production = ViewUtils.loadScreenFromResource(ScreenCode.DEPARTMENT, mainApp, gameController, productionBase);
-        production.controller.setCurrent(StaffType.PRODUCTION);
-        departmentScreens.add(production);
-
-        GameScreen referee = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, refereeBase);
-        referee.controller.setCurrent(StaffType.REFEREE);
-        departmentScreens.add(referee);
-
-        GameScreen broadcast = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, broadcastBase);
-        broadcast.controller.setCurrent(StaffType.BROADCAST);
-        departmentScreens.add(broadcast);
-
-        GameScreen owner = ViewUtils.loadScreenFromResource(ScreenCode.RINGSIDE, mainApp, gameController, ownerBase);
-        owner.controller.setCurrent(StaffType.OWNER);
-        departmentScreens.add(owner);
-
     }
 
 }

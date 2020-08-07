@@ -14,7 +14,6 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ContractUtils;
-import openwrestling.model.utility.StaffUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,9 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RandomGameAssetGenerator {
-    private final static List<String> PROMOTION_NAMES = Arrays.asList(("Superb Wrestling Alliance, International Combat Order, Big Boss Pro Wrestling, Shocking Wrestle Union, Advanced Incorrigible Wrestling, Excellent Organization Of Wrestling, Extremely International Wrestling Organization, Big Fat Wrestling, Unparalleled Wrestling Execution, Regional Wrestling Superalliance, Desperate Wrestling Coalition, Confederation Of Absolute Wrestling Masters, Splendid Wrestling Pact, Impressive Allies Of Wrestling, Tremendous Combat Federation, Glorious Fighting Series, Sterling Wrestling Battlefield, Fabulous Warfare Association, Amzaing Wrestling Artistic Exhibition, Great Wrestling Group, Perpetual Wrestling Struggle, Competitive Pro Wrestling, Pro Wrestling Crusade, War Of Wrestlers International, Exquisite Wrestling Confrontation, Supreme Pro Wrestling Engagement, Fundamental Wrestling Experience, Quest For Wrestling Mastery, Global Touring Wrestling Exhibition").split(","));
     public static final int MAX_LEVEL = 5;
-
+    private final static List<String> PROMOTION_NAMES = Arrays.asList(("Superb Wrestling Alliance, International Combat Order, Big Boss Pro Wrestling, Shocking Wrestle Union, Advanced Incorrigible Wrestling, Excellent Organization Of Wrestling, Extremely International Wrestling Organization, Big Fat Wrestling, Unparalleled Wrestling Execution, Regional Wrestling Superalliance, Desperate Wrestling Coalition, Confederation Of Absolute Wrestling Masters, Splendid Wrestling Pact, Impressive Allies Of Wrestling, Tremendous Combat Federation, Glorious Fighting Series, Sterling Wrestling Battlefield, Fabulous Warfare Association, Amzaing Wrestling Artistic Exhibition, Great Wrestling Group, Perpetual Wrestling Struggle, Competitive Pro Wrestling, Pro Wrestling Crusade, War Of Wrestlers International, Exquisite Wrestling Confrontation, Supreme Pro Wrestling Engagement, Fundamental Wrestling Experience, Quest For Wrestling Mastery, Global Touring Wrestling Exhibition").split(","));
     private final ContractFactory contractFactory;
 
     private final DateManager dateManager;
@@ -175,7 +173,7 @@ public class RandomGameAssetGenerator {
                         List.of(StaffType.values()).stream()
                                 .flatMap(staffType -> {
                                     List<StaffMember> staffMembers = new ArrayList<>();
-                                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
+                                    int ideal = 0;
                                     int rand = RandomUtils.nextInt(0, 6);
                                     if (rand == 1) {
                                         ideal += 1;
@@ -198,7 +196,7 @@ public class RandomGameAssetGenerator {
                         List.of(StaffType.values()).stream()
                                 .flatMap(staffType -> {
                                     List<StaffContract> staffContracts = new ArrayList<>();
-                                    int ideal = StaffUtils.idealStaffCount(promotion, staffType, workerManager.selectRoster(promotion));
+                                    int ideal = 0;
                                     int rand = RandomUtils.nextInt(0, 6);
                                     if (rand == 1) {
                                         ideal += 1;

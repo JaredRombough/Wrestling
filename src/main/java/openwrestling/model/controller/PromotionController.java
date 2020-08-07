@@ -13,11 +13,9 @@ import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
-import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,11 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static openwrestling.model.constants.GameConstants.BASE_TRAINER_SUCCESS_RATE;
 
 public class PromotionController extends Logging implements Serializable {
 
@@ -100,9 +94,6 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-
-    //call this method every day for each ai
-    //put the general decision making sequence here
     public void dailyUpdate(Promotion promotion) {
         logger.log(Level.DEBUG, "start dailyUpdate for " + promotion.getName());
         if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
@@ -117,52 +108,7 @@ public class PromotionController extends Logging implements Serializable {
         logger.log(Level.DEBUG, "end dailyUpdate for " + promotion.getName());
     }
 
-    public void trainerUpdate(Promotion promotion) {
-        for (StaffMember trainer : staffManager.getStaff(StaffType.TRAINER, promotion)) {
-            if (RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) == 1 && RandomUtils.nextInt(0, BASE_TRAINER_SUCCESS_RATE) < trainer.getSkill()) {
-                List<Worker> roster = workerManager.selectRoster(promotion);
-                Worker worker = roster.get(RandomUtils.nextInt(0, roster.size() - 1));
-                Map<String, Integer> properties = new HashMap<>();
-                properties.put("striking", worker.getStriking());
-                properties.put("flying", worker.getFlying());
-                properties.put("wrestling", worker.getWrestling());
-                properties.put("charisma", worker.getCharisma());
-                List keys = new ArrayList(properties.keySet());
-                Collections.shuffle(keys);
-                boolean success = false;
-                String stat = "";
-                for (Object o : keys) {
-                    int value = properties.get(o.toString());
-                    if (value < trainer.getSkill()) {
-                        stat = o.toString();
-                        switch (o.toString()) {
-                            case "striking":
-                                worker.setStriking(value + 1);
-                                break;
-                            case "flying":
-                                worker.setStriking(value + 1);
-                                break;
-                            case "wrestling":
-                                worker.setStriking(value + 1);
-                                break;
-                            case "charisma":
-                                worker.setStriking(value + 1);
-                                break;
-                        }
-                        success = true;
-                        break;
-                    }
-
-                }
-                if (success) {
-                    newsManager.addTrainingNewsItem(worker, trainer, promotion, stat, dateManager.today());
-                }
-            }
-        }
-    }
-
     private void sortByPopularity(List<Worker> workerList) {
-        //sort roster by popularity
         Collections.sort(workerList, (Worker w1, Worker w2) -> -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity()));
     }
 

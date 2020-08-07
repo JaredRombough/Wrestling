@@ -1,17 +1,13 @@
 package openwrestling.model.factory;
 
+import openwrestling.manager.DateManager;
 import openwrestling.manager.StaffManager;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.Injury;
-import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
-import openwrestling.manager.DateManager;
-import openwrestling.manager.InjuryManager;
-import openwrestling.manager.SegmentManager;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
+import openwrestling.model.gameObjects.Title;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.AngleLength;
 import openwrestling.model.segmentEnum.MatchLength;
 import openwrestling.model.segmentEnum.MatchRule;
@@ -30,21 +26,12 @@ import static openwrestling.model.constants.GameConstants.*;
 
 public class MatchFactory implements Serializable {
 
-    private final SegmentManager matchManager;
     private final DateManager dateManager;
-    private final InjuryManager injuryManager;
-    private final WorkerManager workerManager;
     private final StaffManager staffManager;
 
-    public MatchFactory(SegmentManager matchManager,
-                        DateManager dateManager,
-                        InjuryManager injuryManager,
-                        WorkerManager workerManager,
+    public MatchFactory(DateManager dateManager,
                         StaffManager staffManager) {
-        this.matchManager = matchManager;
         this.dateManager = dateManager;
-        this.injuryManager = injuryManager;
-        this.workerManager = workerManager;
         this.staffManager = staffManager;
     }
 
@@ -68,8 +55,6 @@ public class MatchFactory implements Serializable {
 
         if (isMatch) {
             segmentRating = getSegmentRatingWithMatchModifiers(segment, segmentRating);
-        } else {
-            segmentRating = getSegmentRatingWithAngleModifiers(segment, segmentRating);
         }
 
         segmentRating = getSegmentRatingWithTimeModifier(segment, segmentRating);
@@ -81,29 +66,17 @@ public class MatchFactory implements Serializable {
         int maxTime = segment.getSegmentType().equals(SegmentType.MATCH) ? MatchLength.MAXIMUM.value() : AngleLength.MAXIMUM.value();
         int actual = segment.getSegmentLength() / maxTime * 100;
 
-        int timeDiff = (int) actual - baseRating;
+        int timeDiff = actual - baseRating;
 
         int penalty = timeDiff > 0 ? TIME_OVERRUN_PENALTY_WEIGHT : TIME_UNDERRUN_PENALTY_WEIGHT;
 
         return baseRating - Math.abs(timeDiff) / penalty;
     }
 
-    private int getSegmentRatingWithAngleModifiers(Segment segment, int baseRating) {
-        baseRating = modifyRating(baseRating,
-                staffManager.getStaffSkillAverage(StaffType.CREATIVE, segment.getPromotion()),
-                CREATIVE_MODIFIER_WEIGHT);
-
-        return baseRating;
-    }
-
     private int getSegmentRatingWithMatchModifiers(Segment segment, int baseRating) {
         baseRating = modifyRating(baseRating,
                 staffManager.getStaffSkillAverage(StaffType.REFEREE, segment.getPromotion()),
                 REF_MODIFIER_WEIGHT);
-        baseRating = modifyRating(baseRating,
-                staffManager.getStaffSkillAverage(StaffType.ROAD_AGENT, segment.getPromotion()),
-                ROAD_AGENT_MODIFIER_WEIGHT);
-
         return baseRating;
     }
 
@@ -143,13 +116,6 @@ public class MatchFactory implements Serializable {
             int titleAvg = titleTotal / segment.getTitles().size();
             crowdRating = modifyRating(crowdRating, titleAvg, TITLE_MODIFIER_WEIGHT);
         }
-
-        crowdRating = modifyRating(crowdRating,
-                staffManager.getStaffSkillAverage(StaffType.CREATIVE, segment.getPromotion()),
-                CREATIVE_MODIFIER_WEIGHT);
-        crowdRating = modifyRating(crowdRating,
-                staffManager.getStaffSkillAverage(StaffType.PRODUCTION, segment.getPromotion()),
-                PRODUCTION_MODIFIER_WEIGHT);
 
         return crowdRating;
     }
@@ -253,9 +219,8 @@ public class MatchFactory implements Serializable {
 
     private void processInjuries(Segment segment) {
         List<Worker> matchWorkers = segment.getMatchParticipants();
-        matchWorkers.stream().forEach((w) -> {
-            Promotion promotion = segment.getPromotion();
-            int medicModifier = staffManager.getStaffSkillModifier(StaffType.MEDICAL, promotion, workerManager.selectRoster(promotion));
+        matchWorkers.forEach((w) -> {
+            int medicModifier = 100;
             int injuryRate = BASE_INJURY_RATE - segment.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
             if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
