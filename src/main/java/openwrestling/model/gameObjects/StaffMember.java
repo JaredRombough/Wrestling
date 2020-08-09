@@ -11,6 +11,7 @@ import openwrestling.model.segmentEnum.StaffType;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -38,14 +39,14 @@ public class StaffMember extends GameObject implements Serializable, SegmentItem
     }
 
     @Override
-    public void setShortName(String name) {
-        // no short name
-    }
-
-    @Override
     public String getShortName() {
         String[] splitName = name.split(" ");
         return splitName[splitName.length - 1];
+    }
+
+    @Override
+    public void setShortName(String name) {
+        // no short name
     }
 
     @Override
@@ -57,6 +58,12 @@ public class StaffMember extends GameObject implements Serializable, SegmentItem
     @Override
     public List<? extends iContract> getContracts() {
         return staffContract != null ? Collections.singletonList(staffContract) : Collections.emptyList();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof StaffMember &&
+                Objects.equals(((StaffMember) object).getStaffMemberID(), staffMemberID);
     }
 
 }

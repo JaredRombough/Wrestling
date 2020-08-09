@@ -3,16 +3,21 @@ package openwrestling.view.financial.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.StaffMember;
+import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
+import openwrestling.view.browser.controller.EditBroadcastTeamDialog;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FinancialScreenController extends ControllerBase implements Initializable {
@@ -22,13 +27,15 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private final int STAFF_EXPENSE_ROW = 5;
     private final int TOTAL_ROW = 6;
     private List<Label> sheetLabels;
+
+    @FXML
+    private Button editDefaultBroadcastTeamButton;
     @FXML
     private GridPane balanceSheetGrid;
 
-    private int sheetCell(TransactionType type, int monthsAgo) {
-        LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
-
-        return gameController.getBankAccountManager().getTransactionTotal(playerPromotion(), type, startDate);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        sheetLabels = new ArrayList<>();
     }
 
     @Override
@@ -48,7 +55,27 @@ public class FinancialScreenController extends ControllerBase implements Initial
         addSheetLabel(-1,
                 gameController.getStaffManager().getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 STAFF_EXPENSE_ROW);
+
+        editDefaultBroadcastTeamButton.setOnAction(e -> {
+            EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
+            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
+                    gameController.getStaffManager().getStaff(StaffType.BROADCAST, playerPromotion()),
+                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion()),
+                    playerPromotion().getLongName()
+            ).showAndWait();
+            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
+                gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(playerPromotion(), broadcastTeam);
+                updateLabels();
+            });
+        });
     }
+
+    private int sheetCell(TransactionType type, int monthsAgo) {
+        LocalDate startDate = gameController.getDateManager().today().minusMonths(monthsAgo).withDayOfMonth(1);
+
+        return gameController.getBankAccountManager().getTransactionTotal(playerPromotion(), type, startDate);
+    }
+
 
     private void addSheetLabel(int monthsAgo, int amount, int row) {
         Label label = new Label();
@@ -65,11 +92,6 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private int totalText(int monthsAgo) {
         return gameController.getBankAccountManager().getMonthlyNet(playerPromotion(),
                 gameController.getDateManager().today().minusMonths(monthsAgo));
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        sheetLabels = new ArrayList<>();
     }
 
 }
