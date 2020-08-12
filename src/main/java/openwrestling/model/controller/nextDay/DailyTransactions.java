@@ -30,7 +30,7 @@ public class DailyTransactions extends Logging {
                 .filter(contract -> contract.getMonthlyCost() > 0)
                 .map(contract -> Transaction.builder()
                         .promotion(contract.getPromotion())
-                        .type(TransactionType.WORKER)
+                        .type(TransactionType.WORKER_MONTHLY)
                         .date(dateManager.today())
                         .amount(contract.getMonthlyCost())
                         .build())

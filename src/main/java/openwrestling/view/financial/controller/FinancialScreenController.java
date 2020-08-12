@@ -23,9 +23,10 @@ import java.util.ResourceBundle;
 public class FinancialScreenController extends ControllerBase implements Initializable {
 
     private final int GATE_ROW = 2;
-    private final int WORKER_EXPENSE_ROW = 4;
-    private final int STAFF_EXPENSE_ROW = 5;
-    private final int TOTAL_ROW = 6;
+    private final int WORKER_MONTHLY_EXPENSE_ROW = 4;
+    private final int WORKER_APPEARANCE_EXPENSE_ROW = 5;
+    private final int STAFF_EXPENSE_ROW = 6;
+    private final int TOTAL_ROW = 7;
     private List<Label> sheetLabels;
 
     @FXML
@@ -43,14 +44,15 @@ public class FinancialScreenController extends ControllerBase implements Initial
         balanceSheetGrid.getChildren().removeAll(sheetLabels);
         for (int i = 0; i < 3; i++) {
             addSheetLabel(i, sheetCell(TransactionType.GATE, i), GATE_ROW);
-            addSheetLabel(i, sheetCell(TransactionType.WORKER, i), WORKER_EXPENSE_ROW);
+            addSheetLabel(i, sheetCell(TransactionType.WORKER_MONTHLY, i), WORKER_MONTHLY_EXPENSE_ROW);
+            addSheetLabel(i, sheetCell(TransactionType.WORKER_APPEARANCE, i), WORKER_APPEARANCE_EXPENSE_ROW);
             addSheetLabel(i, sheetCell(TransactionType.STAFF, i), STAFF_EXPENSE_ROW);
             addSheetLabel(i, totalText(i), TOTAL_ROW);
         }
 
         addSheetLabel(-1,
                 ContractUtils.getWorkerPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion(), gameController.getWorkerManager().selectRoster(playerPromotion())),
-                WORKER_EXPENSE_ROW);
+                WORKER_MONTHLY_EXPENSE_ROW);
 
         addSheetLabel(-1,
                 gameController.getStaffManager().getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
@@ -78,6 +80,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
 
 
     private void addSheetLabel(int monthsAgo, int amount, int row) {
+        int columnOffset = 4;
         Label label = new Label();
         label.setText(String.format("$%,d", amount));
         if (monthsAgo != 0) {
@@ -85,7 +88,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
         }
         sheetLabels.add(label);
         GridPane.setHalignment(label, HPos.RIGHT);
-        balanceSheetGrid.add(label, 3 - monthsAgo, row);
+        balanceSheetGrid.add(label, columnOffset - monthsAgo, row);
 
     }
 

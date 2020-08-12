@@ -88,7 +88,7 @@ public class DailyContractUpdate extends Logging {
     public List<Transaction> getNewContractTransactions(List<Contract> newContracts) {
         return newContracts.stream()
                 .map(contract -> Transaction.builder()
-                        .type(TransactionType.WORKER)
+                        .type(TransactionType.WORKER_MONTHLY)
                         .date(dateManager.today())
                         .amount(ContractUtils.calculateSigningFee(contract.getWorker(), dateManager.today()))
                         .promotion(contract.getPromotion())

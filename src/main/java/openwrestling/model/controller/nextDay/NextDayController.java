@@ -181,7 +181,7 @@ public class NextDayController extends Logging {
                                         .promotion(contract.getPromotion())
                                         .amount(contract.getAppearanceCost())
                                         .date(dateManager.today())
-                                        .type(TransactionType.WORKER)
+                                        .type(TransactionType.WORKER_APPEARANCE)
                                         .build()
                         )
                         .collect(Collectors.toList())

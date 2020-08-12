@@ -23,10 +23,9 @@ import java.util.stream.Collectors;
 public class ContractManager extends GameObjectManager implements Serializable {
 
 
+    private final BankAccountManager bankAccountManager;
     private Map<Long, Contract> contractMap = new HashMap<>();
     private Map<Long, StaffContract> staffContractMap = new HashMap<>();
-
-    private final BankAccountManager bankAccountManager;
 
     public ContractManager(Database database,
                            BankAccountManager bankAccountManager) {
@@ -197,9 +196,16 @@ public class ContractManager extends GameObjectManager implements Serializable {
     }
 
     public void paySigningFee(LocalDate date, iContract contract) {
+        TransactionType type;
+        if (contract.getPerson() instanceof Worker) {
+            type = TransactionType.WORKER_MONTHLY;
+        } else {
+            type = TransactionType.STAFF;
+        }
+
         bankAccountManager.removeFunds(contract.getPromotion(),
                 ContractUtils.calculateSigningFee(contract.getPerson(), date),
-                contract.getPerson() instanceof Worker ? TransactionType.WORKER : TransactionType.STAFF,
+                type,
                 date);
     }
 
