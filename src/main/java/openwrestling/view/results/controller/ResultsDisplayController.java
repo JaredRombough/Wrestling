@@ -71,7 +71,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             segmentTitle.setText(gameController.getSegmentManager().getSegmentTitle(segment));
             StringBuilder sb = new StringBuilder();
 
-            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getSegmentTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.BEFORE)) {
                     sb.append(getInterferenceNote(team));
                 }
@@ -80,13 +80,13 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
             sb.append(gameController.getSegmentManager().getSegmentString(segment));
             sb.append("\n");
 
-            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getSegmentTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.DURING)) {
                     sb.append(getInterferenceNote(team));
                 }
             }
 
-            for (SegmentTeam team : segment.getTeams(TeamType.INTERFERENCE)) {
+            for (SegmentTeam team : segment.getSegmentTeams(TeamType.INTERFERENCE)) {
                 if (team.getTiming().equals(TimingType.AFTER)) {
                     sb.append(getInterferenceNote(team));
                 }
@@ -160,7 +160,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     }
 
     private void populateAngle() {
-        List<SegmentTeam> teams = segment.getTeams();
+        List<SegmentTeam> teams = segment.getSegmentTeams();
         for (SegmentTeam team : teams) {
             List<GameScreen> workerCards = new ArrayList<>();
             for (Worker worker : team.getWorkers()) {

@@ -2,12 +2,6 @@ package openwrestling.manager;
 
 import openwrestling.TestUtils;
 import openwrestling.database.Database;
-import openwrestling.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
-import openwrestling.manager.GameSettingManager;
-import openwrestling.manager.PromotionManager;
-import openwrestling.manager.RelationshipManager;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;

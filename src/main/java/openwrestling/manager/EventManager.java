@@ -31,16 +31,12 @@ import static openwrestling.model.utility.ModelUtils.currencyString;
 @Getter
 public class EventManager extends GameObjectManager implements Serializable {
 
-    // private List<Event> events;
-    // private List<EventTemplate> eventTemplates;
-    private Map<Long, EventTemplate> eventTemplateMap;
-    private Map<Long, Event> eventMap;
-
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
     private final ContractManager contractManager;
-
     private final transient Logger logger = LogManager.getLogger(getClass());
+    private Map<Long, EventTemplate> eventTemplateMap;
+    private Map<Long, Event> eventMap;
 
     public EventManager(Database database,
                         ContractManager contractManager,
@@ -119,12 +115,11 @@ public class EventManager extends GameObjectManager implements Serializable {
         });
 
         List<Event> savedEventsWithoutSegments = getDatabase().insertList(eventsWithoutSegments);
-        savedEventsWithoutSegments.forEach(event -> {
-            eventMap.put(event.getEventID(), event);
-        });
+        savedEventsWithoutSegments.forEach(event -> eventMap.put(event.getEventID(), event));
 
         List<Event> savedEventsWithSegments = getDatabase().insertList(eventsWithSegments);
         savedEventsWithSegments.forEach(event -> eventMap.put(event.getEventID(), event));
+
         for (int i = 0; i < savedEventsWithSegments.size(); i++) {
             List<Segment> segments = eventsWithSegments.get(i).getSegments();
             Event savedEvent = savedEventsWithSegments.get(i);
@@ -354,7 +349,7 @@ public class EventManager extends GameObjectManager implements Serializable {
 
         //how many workers are draws?
         long draws = event.getSegments().stream()
-                .flatMap(segment -> segment.getTeams().stream())
+                .flatMap(segment -> segment.getSegmentTeams().stream())
                 .flatMap(segmentTeam -> segmentTeam.getWorkers().stream())
                 .filter(worker -> worker.getPopularity() > ModelUtils.maxPopularity(event.getPromotion()) - 10)
                 .count();
@@ -414,7 +409,6 @@ public class EventManager extends GameObjectManager implements Serializable {
     }
 
     public String generateSummaryString(Event event) {
-
         StringBuilder sb = new StringBuilder();
 
         if (event.getDate().isAfter(dateManager.today())) {
@@ -424,30 +418,29 @@ public class EventManager extends GameObjectManager implements Serializable {
         if (event.getDate().equals(dateManager.today())) {
             return sb.append("This event is scheduled for later today.\n").toString();
         }
-        if (event != null) {
-            List<Segment> segments = segmentManager.getSegments(event);
-            for (Segment segment : segments) {
-                if (!segment.getWorkers().isEmpty()) {
-                    sb.append(segmentManager.getIsolatedSegmentString(segment));
-                } else {
-                    logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
-                }
 
-                sb.append("\n");
+        sb.append(event.getVerboseEventTitle());
+
+        List<Segment> segments = segmentManager.getSegments(event);
+        for (Segment segment : segments) {
+            if (!segment.getWorkers().isEmpty()) {
+                sb.append(segmentManager.getIsolatedSegmentString(segment));
+            } else {
+                logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }
 
             sb.append("\n");
-
-            sb.append(String.format("Total cost: %s", currencyString(event.getCost())));
-            sb.append("\n");
-            sb.append("Attendance: ").append(event.getAttendance());
-            sb.append("\n");
-            sb.append(String.format("Gross profit: %s", currencyString(event.getGate())));
-            sb.append("\n");
-            sb.append("Rating: ").append(event.getRating());
-        } else {
-            sb.append("Event information not available.\n");
         }
+
+        sb.append("\n");
+
+        sb.append(String.format("Total cost: %s", currencyString(event.getCost())));
+        sb.append("\n");
+        sb.append("Attendance: ").append(event.getAttendance());
+        sb.append("\n");
+        sb.append(String.format("Gross profit: %s", currencyString(event.getGate())));
+        sb.append("\n");
+        sb.append("Rating: ").append(event.getRating());
 
         return sb.toString();
     }

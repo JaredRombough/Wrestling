@@ -16,11 +16,9 @@ import openwrestling.model.segmentEnum.PresenceType;
 import openwrestling.model.segmentEnum.PromoType;
 import openwrestling.model.segmentEnum.SegmentType;
 import openwrestling.model.segmentEnum.ShowType;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -33,9 +31,6 @@ public class SegmentEntity extends Entity {
     @DatabaseField(generatedId = true)
     private long segmentID;
 
-    @ForeignCollectionField(eager = true)
-    private Collection<SegmentTeamEntity> teams;
-
     @ForeignCollectionField
     private Collection<MatchTitleEntity> titles;
 
@@ -45,8 +40,11 @@ public class SegmentEntity extends Entity {
     @DatabaseField
     private SegmentType segmentType;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true)
     private EventEntity event;
+
+    @DatabaseField
+    private Date date;
 
     @DatabaseField(foreign = true)
     private StaffMemberEntity referee;
@@ -89,12 +87,4 @@ public class SegmentEntity extends Entity {
 
     @DatabaseField(foreign = true)
     private StableEntity joinStable;
-
-    public List<? extends Entity> childrenToInsert() {
-        if (CollectionUtils.isEmpty(teams)) {
-            return List.of();
-        }
-        teams.forEach(team -> team.setSegmentEntity(this));
-        return new ArrayList<>(teams);
-    }
 }

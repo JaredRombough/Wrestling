@@ -1,13 +1,14 @@
 package openwrestling.model.utility;
 
-import java.util.ArrayList;
-import java.util.List;
 import openwrestling.model.gameObjects.Event;
-import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.OutcomeType;
 import openwrestling.model.segmentEnum.SegmentType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class TestUtils {
 
@@ -61,7 +62,7 @@ public final class TestUtils {
 
             teams.add(team);
         }
-        segment.setTeams(teams);
+        segment.setSegmentTeams(teams);
         return segment;
 
     }

@@ -32,7 +32,7 @@ public class SegmentTeamEntity extends Entity {
     private long segmentTeamID;
 
     @DatabaseField(foreign = true)
-    private SegmentEntity segmentEntity;
+    private SegmentEntity segment;
 
     @DatabaseField(foreign = true)
     private SegmentTemplateEntity segmentTemplateEntity;

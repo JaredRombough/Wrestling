@@ -241,7 +241,7 @@ public class PromotionController extends Logging implements Serializable {
                 }
 
                 Segment segment = new Segment(SegmentType.MATCH);
-                segment.setTeams(matchTeams);
+                segment.setSegmentTeams(matchTeams);
                 segment.addTitle(title);
                 segments.add(segment);
             }
@@ -271,7 +271,7 @@ public class PromotionController extends Logging implements Serializable {
                     );
 
                     Segment segment = new Segment(SegmentType.MATCH);
-                    segment.setTeams(teams);
+                    segment.setSegmentTeams(teams);
 
                     segments.add(segment);
                 }

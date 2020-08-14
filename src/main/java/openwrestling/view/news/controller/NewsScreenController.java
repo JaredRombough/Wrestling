@@ -151,6 +151,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         updateTopMatches(chronoUnit, 1);
     }
 
+    //TODO fix event name display
     public void updateTopMatches(ChronoUnit unit, int units) {
 
         int matchesToShow = 10;

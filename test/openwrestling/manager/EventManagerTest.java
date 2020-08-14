@@ -91,7 +91,7 @@ public class EventManagerTest {
                 .workers(List.of(loserWorker))
                 .type(TeamType.LOSER)
                 .build();
-        segment.setTeams(List.of(winnerTeam, loserTeam));
+        segment.setSegmentTeams(List.of(winnerTeam, loserTeam));
         event.setSegments(List.of(segment));
         event.setPromotion(promotion);
         eventManager.createEvents(List.of(event));

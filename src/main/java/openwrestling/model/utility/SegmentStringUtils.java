@@ -13,7 +13,7 @@ import java.util.List;
 public final class SegmentStringUtils {
 
     public static String getMatchTitle(Segment segment) {
-        List<SegmentTeam> teams = segment.getTeams();
+        List<SegmentTeam> teams = segment.getSegmentTeams();
         MatchRule rules = segment.getMatchRule();
 
         String string = "";
@@ -95,7 +95,7 @@ public final class SegmentStringUtils {
                 }
         }
 
-        return string + getResponseString(segment.getTeams(TeamType.OFFEREE), "offer");
+        return string + getResponseString(segment.getSegmentTeams(TeamType.OFFEREE), "offer");
     }
 
     public static String getChallengeString(Segment segment) {
@@ -109,7 +109,7 @@ public final class SegmentStringUtils {
                 break;
         }
 
-        return string + getResponseString(segment.getTeams(TeamType.CHALLENGED), "challenge");
+        return string + getResponseString(segment.getSegmentTeams(TeamType.CHALLENGED), "challenge");
     }
 
     private static String getResponseString(List<SegmentTeam> teams, String keyword) {

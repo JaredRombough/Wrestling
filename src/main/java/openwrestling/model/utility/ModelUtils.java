@@ -218,7 +218,7 @@ public final class ModelUtils {
                 SegmentTeam segmentTeam = new SegmentTeam();
                 segmentTeam.setType(TeamType.CHALLENGER.equals(team.getType()) ? TeamType.WINNER : TeamType.LOSER);
                 segmentTeam.setWorkers(team.getWorkers());
-                challengeMatch.getTeams().add(segmentTeam);
+                challengeMatch.getSegmentTeams().add(segmentTeam);
             }
         });
         return challengeMatch;

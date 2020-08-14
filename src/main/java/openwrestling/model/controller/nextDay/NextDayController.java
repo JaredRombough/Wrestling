@@ -68,18 +68,20 @@ public class NextDayController extends Logging {
         logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
 
         processEvents(dailyEventBooker.getEvents());
-
+        logger.log(Level.DEBUG, String.format("processEvents took %d ms", System.currentTimeMillis() - start));
         cachedTransactions.addAll(dailyTransactions.getPayDayTransactions());
-
+        logger.log(Level.DEBUG, String.format("cachedTransactions took %d ms", System.currentTimeMillis() - start));
         dailyContractUpdate.updateContracts(cachedContractsMap);
+        logger.log(Level.DEBUG, String.format("dailyContractUpdate took %d ms", System.currentTimeMillis() - start));
+        //TODO performance
         cachedNewContracts = dailyContractUpdate.getNewContracts();
+        logger.log(Level.DEBUG, String.format("cachedNewContracts took %d ms", System.currentTimeMillis() - start));
         cachedNewsItems.addAll(dailyContractUpdate.getExpiringContractsNewsItems(new ArrayList<>(cachedContractsMap.values())));
         cachedNewsItems.addAll(dailyContractUpdate.getNewContractsNewsItems(cachedNewContracts));
 
         List<MoraleRelationship> updatedRelationshipsAfterDailyMoraleCheck = dailyRelationshipUpdate.getUpdatedRelationshipsForDailyMoraleCheck();
         cachedNewsItems.addAll(dailyRelationshipUpdate.getUpdatedMoraleRelationshipNewsItems(updatedRelationshipsAfterDailyMoraleCheck));
         dailyRelationshipUpdate.updateRelationshipMap(cachedMoraleRelationshipMap, updatedRelationshipsAfterDailyMoraleCheck);
-
         cachedTransactions.addAll(dailyContractUpdate.getNewContractTransactions(cachedNewContracts));
 
         if (dateManager.isLastDayOfMonth()) {

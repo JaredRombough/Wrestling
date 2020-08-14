@@ -74,33 +74,6 @@ public class EventFactory extends Logging {
         this.newsManager = newsManager;
     }
 
-    public Event processEventView(Event event, boolean processSegments) {
-        logger.log(Level.DEBUG, "start process processEventView for " + event.getName());
-        try {
-
-            if (processSegments) {
-                logger.log(Level.DEBUG, "processing " + event.getSegments().size() + " segments");
-                for (Segment segment : event.getSegments()) {
-                    processSegment(event, segment);
-                }
-            }
-
-            logger.log(Level.DEBUG, "after processSegments for " + event.getName());
-
-
-            setEventStats(event, event.getSegments());
-
-            event.setGate(eventManager.calculateGate(event));
-
-            logger.log(Level.DEBUG, "end process processEventView for " + event.getName());
-        } catch (Exception e) {
-            logger.log(Level.ERROR, e.getMessage());
-            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
-            throw e;
-        }
-        return event;
-    }
-
     public static List<EventTemplate> generateMonthlyEventTemplates(Promotion promotion, LocalDate startDate) {
         List<EventTemplate> eventTemplates = new ArrayList<>();
         Month month = Month.JANUARY;
@@ -160,7 +133,6 @@ public class EventFactory extends Logging {
         );
     }
 
-
     public static Event bookEventForTemplateOnDate(EventTemplate eventTemplate, LocalDate date) {
         Event event = new Event();
         event.setDate(date);
@@ -168,6 +140,25 @@ public class EventFactory extends Logging {
         event.setName(eventTemplate.getName());
         event.setEventTemplate(eventTemplate);
         event.setDefaultDuration(eventTemplate.getDefaultDuration());
+        return event;
+    }
+
+    public Event processEventView(Event event, boolean processSegments) {
+        try {
+            if (processSegments) {
+                for (Segment segment : event.getSegments()) {
+                    processSegment(event, segment);
+                }
+            }
+
+            setEventStats(event, event.getSegments());
+
+            event.setGate(eventManager.calculateGate(event));
+        } catch (Exception e) {
+            logger.log(Level.ERROR, e.getMessage());
+            logger.log(Level.ERROR, ExceptionUtils.getStackTrace(e));
+            throw e;
+        }
         return event;
     }
 
@@ -179,15 +170,13 @@ public class EventFactory extends Logging {
     }
 
     public Segment processSegment(Event event, Segment toProcess) {
-        logger.log(Level.DEBUG, "start processSegment for " + event.getName());
         toProcess.setEvent(event);
+        toProcess.setDate(event.getDate());
         Segment segment = matchFactory.saveSegment(toProcess);
         if (SegmentType.MATCH.equals(segment.getSegmentType())) {
-            logger.log(Level.DEBUG, "processing match");
             List<Worker> winners = toProcess.getWinners();
             Map<Worker, MoraleRelationship> relationshipMap = new HashMap<>();
             winners.forEach((worker) -> {
-                logger.log(Level.DEBUG, "processing winner " + worker.getName());
                 workerManager.gainPopularity(worker);
                 relationshipMap.put(worker, relationshipManager.getMoraleRelationship(worker, event.getPromotion()));
                 relationshipMap.get(worker).modifyValue(MORALE_BONUS_MATCH_WIN);
@@ -221,8 +210,8 @@ public class EventFactory extends Logging {
     }
 
     private void processOffer(Segment segment) {
-        SegmentTeam offerer = segment.getTeams(TeamType.OFFERER).stream().findFirst().orElse(null);
-        List<SegmentTeam> offerees = new ArrayList<>(segment.getTeams(TeamType.OFFEREE));
+        SegmentTeam offerer = segment.getSegmentTeams(TeamType.OFFERER).stream().findFirst().orElse(null);
+        List<SegmentTeam> offerees = new ArrayList<>(segment.getSegmentTeams(TeamType.OFFEREE));
 
         if (JoinTeamType.TAG_TEAM.equals(segment.getJoinTeamType())) {
             SegmentTeam offeree = offerees.get(0);

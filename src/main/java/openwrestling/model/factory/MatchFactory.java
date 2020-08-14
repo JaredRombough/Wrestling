@@ -47,11 +47,11 @@ public class MatchFactory implements Serializable {
         int workRatingTotal = 0;
         boolean isMatch = segment.getSegmentType().equals(SegmentType.MATCH);
 
-        for (SegmentTeam team : segment.getTeams()) {
+        for (SegmentTeam team : segment.getSegmentTeams()) {
             workRatingTotal += getWorkRating(team, segment.getMatchRule());
         }
 
-        int segmentRating = workRatingTotal / segment.getTeams().size();
+        int segmentRating = workRatingTotal / segment.getSegmentTeams().size();
 
         if (isMatch) {
             segmentRating = getSegmentRatingWithMatchModifiers(segment, segmentRating);
@@ -84,7 +84,7 @@ public class MatchFactory implements Serializable {
         int teamCount = 0;
         int totalPop = 0;
 
-        for (SegmentTeam team : segment.getTeams()) {
+        for (SegmentTeam team : segment.getSegmentTeams()) {
             int teamPopTotal = 0;
             for (Worker worker : team.getWorkers()) {
                 teamPopTotal += worker.getPopularity();
@@ -92,7 +92,7 @@ public class MatchFactory implements Serializable {
 
             int teamPop = team.getWorkers().isEmpty() ? 0 : teamPopTotal / team.getWorkers().size();
 
-            if (!team.getEntourage().isEmpty()) {
+            if (CollectionUtils.isNotEmpty(team.getEntourage())) {
                 int entouragePopTotal = 0;
                 for (Worker entourage : team.getEntourage()) {
                     entouragePopTotal += entourage.getPopularity();
@@ -153,16 +153,30 @@ public class MatchFactory implements Serializable {
         segment.setCrowdRating(crowdRating);
     }
 
-    private int getWorkRating(SegmentTeam team, MatchRule matchRule) {
-        if (team.getWorkers().isEmpty()) {
+    private int getWorkRating(SegmentTeam segmentTeam, MatchRule matchRule) {
+        if (CollectionUtils.isEmpty(segmentTeam.getWorkers())) {
+            return 0;
+        }
+
+        int totalTeamScore = getTotalTeamScore(segmentTeam, matchRule);
+        int entourageTotalScore = getTotalEntourageScore(segmentTeam);
+
+        if (entourageTotalScore > 0) {
+            int entourageAvg = entourageTotalScore / segmentTeam.getEntourage().size();
+            totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_MODIFIER_WEIGHT);
+        }
+
+        return totalTeamScore / segmentTeam.getWorkers().size();
+    }
+
+    private int getTotalTeamScore(SegmentTeam segmentTeam, MatchRule matchRule) {
+        if (CollectionUtils.isEmpty(segmentTeam.getWorkers())) {
             return 0;
         }
 
         int totalTeamScore = 0;
-        int entourageTotalScore = 0;
-
-        for (Worker worker : team.getWorkers()) {
-            switch (team.getType()) {
+        for (Worker worker : segmentTeam.getWorkers()) {
+            switch (segmentTeam.getType()) {
                 case OFFERER:
                 case OFFEREE:
                 case CHALLENGER:
@@ -173,7 +187,7 @@ public class MatchFactory implements Serializable {
                     totalTeamScore += worker.getCharisma();
                 }
                 case PROMO_TARGET: {
-                    if (team.getPresence().equals(PresenceType.PRESENT)) {
+                    if (segmentTeam.getPresence().equals(PresenceType.PRESENT)) {
                         totalTeamScore += worker.getCharisma();
                     } else {
                         totalTeamScore += worker.getPopularity();
@@ -186,8 +200,19 @@ public class MatchFactory implements Serializable {
             }
         }
 
-        for (Worker worker : team.getEntourage()) {
-            switch (team.getType()) {
+        return totalTeamScore;
+    }
+
+
+    private int getTotalEntourageScore(SegmentTeam segmentTeam) {
+        if (CollectionUtils.isEmpty(segmentTeam.getEntourage())) {
+            return 0;
+        }
+
+        int entourageTotalScore = 0;
+
+        for (Worker worker : segmentTeam.getEntourage()) {
+            switch (segmentTeam.getType()) {
                 case OFFERER:
                 case OFFEREE:
                 case CHALLENGER:
@@ -198,7 +223,7 @@ public class MatchFactory implements Serializable {
                     entourageTotalScore += worker.getCharisma();
                 }
                 case PROMO_TARGET: {
-                    if (team.getPresence().equals(PresenceType.PRESENT)) {
+                    if (segmentTeam.getPresence().equals(PresenceType.PRESENT)) {
                         entourageTotalScore += worker.getCharisma();
                     } else {
                         entourageTotalScore += worker.getPopularity();
@@ -210,11 +235,7 @@ public class MatchFactory implements Serializable {
             }
         }
 
-        if (!team.getEntourage().isEmpty() && entourageTotalScore > 0) {
-            int entourageAvg = entourageTotalScore / team.getEntourage().size();
-            totalTeamScore = modifyRating(totalTeamScore, entourageAvg, ENTOURAGE_MODIFIER_WEIGHT);
-        }
-        return totalTeamScore / team.getWorkers().size();
+        return entourageTotalScore;
     }
 
     private void processInjuries(Segment segment) {

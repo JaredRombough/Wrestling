@@ -2,16 +2,6 @@ package openwrestling.manager;
 
 import openwrestling.TestUtils;
 import openwrestling.database.Database;
-import openwrestling.manager.BankAccountManager;
-import openwrestling.manager.ContractManager;
-import openwrestling.manager.DateManager;
-import openwrestling.manager.EventManager;
-import openwrestling.manager.GameSettingManager;
-import openwrestling.manager.PromotionManager;
-import openwrestling.manager.SegmentManager;
-import openwrestling.manager.StableManager;
-import openwrestling.manager.TagTeamManager;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -49,6 +39,7 @@ public class SegmentManagerTest {
     private PromotionManager promotionManager;
     private Promotion promotion;
     private Database database;
+
     @Before
     public void setUp() {
         database = new Database(TEST_DB_PATH);
@@ -84,14 +75,14 @@ public class SegmentManagerTest {
                 .workers(List.of(loserWorker))
                 .type(TeamType.LOSER)
                 .build();
-        segment.setTeams(List.of(winnerTeam, loserTeam));
+        segment.setSegmentTeams(List.of(winnerTeam, loserTeam));
 
         event.setSegments(List.of(segment));
         event.setPromotion(promotion);
         eventManager.createEvents(List.of(event));
         List<Event> events = eventManager.getEvents();
 
-       List<Segment> segments = segmentManager.getSegments();
+        List<Segment> segments = segmentManager.getSegments();
         assertThat(segments).hasSize(1);
 
         Segment savedSegment = segments.get(0);
@@ -101,8 +92,12 @@ public class SegmentManagerTest {
         assertThat(savedSegment.getMatchFinish()).isEqualTo(MatchFinish.CLEAN);
         assertThat(savedSegment.getMatchRule()).isEqualTo(MatchRule.DEFAULT);
         assertThat(savedSegment.getEvent().getEventID()).isEqualTo(events.get(0).getEventID());
-        assertThat(savedSegment.getTeams()).hasSize(2);
-        SegmentTeam winner = savedSegment.getTeams().stream()
+        assertThat(savedSegment.getSegmentTeams()).hasSize(2);
+        assertThat(savedSegment.getSegmentTeams())
+                .extracting(SegmentTeam::getSegmentTeamID)
+                .hasSize(2)
+                .doesNotContainNull();
+        SegmentTeam winner = savedSegment.getSegmentTeams().stream()
                 .filter(segmentTeam -> segmentTeam.getType().equals(TeamType.WINNER))
                 .findFirst()
                 .orElse(null);
@@ -138,8 +133,7 @@ public class SegmentManagerTest {
                 .type(TeamType.CHALLENGED)
                 .response(ResponseType.YES)
                 .build();
-        segment.setTeams(List.of(challengerTeam, challengedTeam));
-
+        segment.setSegmentTeams(List.of(challengerTeam, challengedTeam));
 
         SegmentTeam winners = SegmentTeam.builder()
                 .workers(List.of(winnerWorker))
@@ -197,8 +191,6 @@ public class SegmentManagerTest {
                             tuple(losers.getWorkers().get(0).getWorkerID(), losers.getWorkers().get(0).getName())
                     );
         });
-
-
     }
 
 }
