@@ -80,6 +80,21 @@ public class SegmentManagerTest {
         event.setSegments(List.of(segment));
         event.setPromotion(promotion);
         eventManager.createEvents(List.of(event));
+
+        verify(winnerWorker);
+
+
+        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
+
+        segmentManager.selectData();
+        eventManager.selectData();
+
+        verify(winnerWorker);
+
+    }
+
+    private void verify(Worker winnerWorker) {
         List<Event> events = eventManager.getEvents();
 
         List<Segment> segments = segmentManager.getSegments();

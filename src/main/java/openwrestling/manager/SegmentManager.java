@@ -2,7 +2,7 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.database.queries.SegmentQuery;
+import openwrestling.database.queries.SegmentTeamQuery;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -41,7 +41,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
-    private Map<Long, Segment> segmentMap;
+    private final Map<Long, Segment> segmentMap;
     private List<SegmentTemplate> segmentTemplates;
 
     public SegmentManager(Database database, DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
@@ -55,8 +55,13 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        List<Segment> segments = getDatabase().querySelect(new SegmentQuery());
+        List<Segment> segments = getDatabase().selectAll(Segment.class);
         segments.forEach(segment -> segmentMap.put(segment.getSegmentID(), segment));
+        List<SegmentTeam> segmentTeams = getDatabase().querySelect(new SegmentTeamQuery());
+        segmentTeams.stream()
+                .collect(Collectors.groupingBy(segmentTeam -> segmentTeam.getSegment().getSegmentID()))
+                .forEach((segmentID, teams) -> segmentMap.get(segmentID).setSegmentTeams(teams));
+
         segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
     }
 
@@ -183,9 +188,9 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         return segment.getAngleType().description();
     }
 
-    public String getIsolatedSegmentString(Segment segment) {
+    public String getIsolatedSegmentString(Segment segment, Event event) {
         StringBuilder stringBuilder = new StringBuilder();
-
+        stringBuilder.append(event.getVerboseEventTitle());
         stringBuilder.append("\n");
         stringBuilder.append(getSegmentString(segment));
         stringBuilder.append("\n");

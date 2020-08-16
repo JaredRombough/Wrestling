@@ -85,7 +85,7 @@ public class DailyContractUpdateTest {
 
     @Test
     public void getNewContracts() {
-        List<Contract> newContracts = dailyContractUpdate.getNewContracts();
+        List<Contract> newContracts = dailyContractUpdate.getNewContracts(LocalDate.now());
         assertThat(newContracts).isNotEmpty();
     }
 }

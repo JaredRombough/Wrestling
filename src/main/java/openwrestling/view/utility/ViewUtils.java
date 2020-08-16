@@ -45,10 +45,10 @@ import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import openwrestling.MainApp;
-import openwrestling.model.gameObjects.Relationship;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Relationship;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Title;
@@ -532,10 +532,9 @@ public final class ViewUtils {
         );
     }
 
-    public static boolean releaseWorkerDialog(iPerson person, Promotion promotion, LocalDate date) {
+    public static boolean releaseWorkerDialog(iPerson person, Promotion promotion, iContract contract, LocalDate date) {
         String prompt;
-        iContract contract = person.getContract(promotion);
-        if (!person.getContract(promotion).isExclusive()) {
+        if (!contract.isExclusive()) {
             prompt = String.format("%s has an open contract with %s, and can be released at no cost.",
                     person.getName(),
                     promotion.getShortName());

@@ -130,6 +130,10 @@ public class EventManager extends GameObjectManager implements Serializable {
         segmentManager.createSegments(segmentsToSave);
     }
 
+    public Event refreshEvent(Event event) {
+        return eventMap.get(event.getEventID());
+    }
+
     public void rescheduleEvent(Event event, LocalDate newDate) {
         event.setDate(newDate);
     }
@@ -419,12 +423,11 @@ public class EventManager extends GameObjectManager implements Serializable {
             return sb.append("This event is scheduled for later today.\n").toString();
         }
 
-        sb.append(event.getVerboseEventTitle());
 
         List<Segment> segments = segmentManager.getSegments(event);
         for (Segment segment : segments) {
             if (!segment.getWorkers().isEmpty()) {
-                sb.append(segmentManager.getIsolatedSegmentString(segment));
+                sb.append(segmentManager.getIsolatedSegmentString(segment, event));
             } else {
                 logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }

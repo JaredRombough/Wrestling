@@ -99,7 +99,11 @@ public class ContractController extends ControllerBase {
                 contractButton.setVisible(true);
                 contractButton.setText("Release Worker");
                 contractButton.setOnAction(e -> {
-                    if (ViewUtils.releaseWorkerDialog(person, playerPromotion(), today())) {
+                    if (ViewUtils.releaseWorkerDialog(person,
+                            playerPromotion(),
+                            playerPromotionContract,
+                            today())
+                    ) {
                         gameController.getContractManager().terminateContract(playerPromotionContract);
                         mainApp.updateLabels(ScreenCode.BROWSER);
                     }

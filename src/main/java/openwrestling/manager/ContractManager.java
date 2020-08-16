@@ -115,7 +115,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
                 workerContracts.add(contract);
             }
         }
-
         return workerContracts;
     }
 

@@ -78,4 +78,10 @@ public class SegmentTeamEntity extends Entity {
         ).collect(Collectors.toList());
     }
 
+    public void selectChildren() {
+        workers = segmentTeamWorkers.stream()
+                .map(SegmentTeamWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
+    }
+
 }

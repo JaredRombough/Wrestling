@@ -16,7 +16,10 @@ import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.ModelUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.Level;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,28 +42,40 @@ public class DailyContractUpdate extends Logging {
         updateExpiringContracts(contractMap);
     }
 
-    public List<Contract> getNewContracts() {
+    public List<Contract> getNewContracts(LocalDate today) {
+
+        List<Contract> expiringContracts = contractManager.getContracts().stream()
+                .filter(Contract::isActive)
+                .filter(contract -> today.equals(contract.getEndDate()))
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(expiringContracts)) {
+            return new ArrayList<>();
+        }
+
         List<Contract> newContracts = new ArrayList<>();
-        promotionManager.getPromotions()
-                .forEach(promotion -> {
-                    freeAgents = getFreeAgentsForPromotion(promotion, newContracts);
-                    newContracts.addAll(getNewContractsToReplaceExpiring(promotion));
-                });
+        expiringContracts.forEach(expiringContract -> {
+            Promotion promotion = promotionManager.refreshPromotion(expiringContract.getPromotion());
+            freeAgents = getFreeAgentsForPromotion(promotion, newContracts);
+            newContracts.addAll(getNewContractsToReplaceExpiring(promotion));
+        });
+
 
         return newContracts;
     }
 
     private List<Worker> getFreeAgentsForPromotion(Promotion promotion, List<Contract> newContracts) {
+        Map<Worker, List<Contract>> newContractMap = newContracts.stream()
+                .collect(Collectors.groupingBy(Contract::getWorker));
         return new ArrayList<>(workerManager.freeAgents(promotion)).stream()
                 .filter(worker -> worker.getPopularity() <= ModelUtils.maxPopularity(promotion))
                 .filter(worker -> contractManager.getContracts(worker).size() < 3)
-                .filter(worker ->
-                        newContracts.stream()
-                                .filter(contract -> contract.getWorker().equals(worker))
+                .filter(worker -> !newContractMap.containsKey(worker) ||
+                        newContractMap.get(worker).stream()
                                 .filter(Contract::isExclusive)
                                 .noneMatch(obj -> true))
-                .filter(worker ->
-                        newContracts.stream()
+                .filter(worker -> !newContractMap.containsKey(worker) ||
+                        newContractMap.get(worker).stream()
                                 .filter(contract -> contract.getWorker().equals(worker))
                                 .filter(contract -> !contract.isExclusive())
                                 .count() < 3)

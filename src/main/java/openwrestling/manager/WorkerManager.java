@@ -7,6 +7,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.util.ArrayList;
