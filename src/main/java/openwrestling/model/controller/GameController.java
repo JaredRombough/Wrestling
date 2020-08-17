@@ -251,8 +251,6 @@ public final class GameController extends Logging implements Serializable {
     public void nextDay() {
         long start = System.currentTimeMillis();
 
-        contractManager.dailyUpdate(dateManager.today());
-
         for (Promotion promotion : promotionManager.getPromotions()) {
             injuryManager.dailyUpdate(dateManager.today(), promotion);
         }

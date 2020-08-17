@@ -67,14 +67,18 @@ public class NextDayController extends Logging {
         long start = System.currentTimeMillis();
         logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
 
+        dailyContractUpdate.updateExpiringContracts();
+        logger.log(Level.DEBUG, String.format("updateExpiringContracts took %d ms", System.currentTimeMillis() - start));
+
         processEvents(dailyEventBooker.getEvents());
         logger.log(Level.DEBUG, String.format("processEvents took %d ms", System.currentTimeMillis() - start));
+
         cachedTransactions.addAll(dailyTransactions.getPayDayTransactions());
         logger.log(Level.DEBUG, String.format("cachedTransactions took %d ms", System.currentTimeMillis() - start));
-        dailyContractUpdate.updateContracts(cachedContractsMap);
-        logger.log(Level.DEBUG, String.format("dailyContractUpdate took %d ms", System.currentTimeMillis() - start));
+
         cachedNewContracts.addAll(dailyContractUpdate.getNewContracts(dateManager.today()));
         logger.log(Level.DEBUG, String.format("cachedNewContracts took %d ms", System.currentTimeMillis() - start));
+
         cachedNewsItems.addAll(dailyContractUpdate.getExpiringContractsNewsItems(new ArrayList<>(cachedContractsMap.values())));
         cachedNewsItems.addAll(dailyContractUpdate.getNewContractsNewsItems(cachedNewContracts));
 

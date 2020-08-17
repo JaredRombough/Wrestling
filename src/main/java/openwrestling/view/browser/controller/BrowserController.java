@@ -110,12 +110,6 @@ public class BrowserController extends ControllerBase implements Initializable {
 
             promotionComboBox.getSelectionModel().select(currentPromotion);
 
-            long funds = gameController.getBankAccountManager().getBankAccount(currentPromotion).getFunds();
-
-            currentPromotionLabel.setText(currentPromotion.getName() + "\n"
-                    + "Level " + currentPromotion.getLevel()
-                    + "\tPopularity " + currentPromotion.getPopularity()
-                    + "\tFunds: " + ModelUtils.currencyString(funds));
 
             if (displaySubScreen != null && displaySubScreen.controller instanceof WorkerOverviewController) {
                 ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
@@ -128,6 +122,15 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     @Override
     public void updateLabels() {
+
+        if (currentPromotion != null) {
+            long funds = gameController.getBankAccountManager().getBankAccount(currentPromotion).getFunds();
+
+            currentPromotionLabel.setText(currentPromotion.getName() + "\n"
+                    + "Level " + currentPromotion.getLevel()
+                    + "\tPopularity " + currentPromotion.getPopularity()
+                    + "\tFunds: " + ModelUtils.currencyString(funds));
+        }
 
         List currentListToBrowse = currentListToBrowse();
         if (currentListToBrowse != null) {

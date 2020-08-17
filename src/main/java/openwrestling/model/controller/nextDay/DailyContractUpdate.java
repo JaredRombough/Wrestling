@@ -6,11 +6,13 @@ import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
+import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.NewsItem;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.segmentEnum.TransactionType;
@@ -36,12 +38,9 @@ public class DailyContractUpdate extends Logging {
     private ContractManager contractManager;
     private ContractFactory contractFactory;
     private NewsManager newsManager;
+    private TitleManager titleManager;
 
     private List<Worker> freeAgents;
-
-    public void updateContracts(Map<Long, Contract> contractMap) {
-        updateExpiringContracts(contractMap);
-    }
 
     public List<Contract> getNewContracts(LocalDate today) {
 
@@ -135,19 +134,19 @@ public class DailyContractUpdate extends Logging {
         return contracts;
     }
 
-    private void updateExpiringContracts(Map<Long, Contract> contractMap) {
+    public void updateExpiringContracts() {
         contractManager.getContracts().stream()
                 .filter(Contract::isActive)
                 .filter(contract -> contract.getEndDate().equals(dateManager.today()))
                 .forEach(contract -> {
-                    if (contractMap.containsKey(contract.getContractID())) {
-                        contractMap.get(contract.getContractID()).setActive(false);
-                    } else {
-                        contract.setActive(false);
-                        contractMap.put(contract.getContractID(), contract);
-                    }
+                    contractManager.terminateContract(contract, dateManager.today());
+                    titleManager.stripTitlesForExpiringContract(contract);
                 });
-    }
 
+        contractManager.getStaffContracts().stream()
+                .filter(StaffContract::isActive)
+                .filter(contract -> contract.getEndDate().equals(dateManager.today()))
+                .forEach(contract -> contractManager.terminateStaffContract(contract, dateManager.today()));
+    }
 
 }
