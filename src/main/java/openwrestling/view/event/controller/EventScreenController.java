@@ -67,32 +67,25 @@ import static openwrestling.model.utility.SegmentUtils.getMatchObjectors;
 
 public class EventScreenController extends ControllerBase implements Initializable {
 
+    private final List<Pane> segmentPanes = new ArrayList<>();
+    private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
     private int defaultSegments;
-
     @FXML
     private Button runEventButton;
-
     @FXML
     private Button addSegmentButton;
-
     @FXML
     private ListView<SegmentNameItem> segmentListView;
-
     @FXML
     private Label totalCostLabel;
-
     @FXML
     private ListView<SegmentItem> segmentItemListView;
-
     @FXML
     private AnchorPane segmentPaneHolder;
-
     @FXML
     private Label eventTitleLabel;
-
     @FXML
     private AnchorPane sortControlPane;
-
     @FXML
     private Label totalTimeLabel;
     @FXML
@@ -100,10 +93,6 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private Label remainingTimeLabel;
     private List<Label> timeLabels;
-
-    private final List<Pane> segmentPanes = new ArrayList<>();
-    private final List<SegmentPaneController> segmentPaneControllers = new ArrayList<>();
-
     private SortControl sortControl;
 
     private Event currentEvent;
@@ -271,7 +260,7 @@ public class EventScreenController extends ControllerBase implements Initializab
         mainApp.setRootLayoutButtonDisable(true);
         boolean testing = false;
         if (testing) {
-            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), gameController.getWorkerManager().selectRoster(playerPromotion()), mainApp.isRandomGame()));
+            mainApp.show(ScreenCode.RESULTS, TestUtils.testEventView(getCurrentEvent(), gameController.getWorkerManager().getRoster(playerPromotion()), mainApp.isRandomGame()));
         } else {
             currentEvent.setSegments(removeEmpty(getSegments()));
             mainApp.show(ScreenCode.RESULTS, currentEvent);
@@ -756,11 +745,11 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     public static class SegmentNameItem {
 
+        ObjectProperty<Segment> segment = new SimpleObjectProperty();
+
         public static Callback<SegmentNameItem, Observable[]> extractor() {
             return (SegmentNameItem param) -> new Observable[]{param.segment};
         }
-
-        ObjectProperty<Segment> segment = new SimpleObjectProperty();
 
     }
 

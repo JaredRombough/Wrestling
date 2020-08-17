@@ -158,19 +158,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return workerContract;
     }
 
-    public List<Worker> getActiveRoster(Promotion promotion) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contractMap.values()) {
-            if (contract.isActive() && contract.getPromotion().equals(promotion)
-                    && contract.getWorker().isFullTime()) {
-                roster.add(contract.getWorker());
-            }
-        }
-
-        return roster;
-    }
-
     public List<Worker> getPushed(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contractMap.values()) {
@@ -252,6 +239,18 @@ public class ContractManager extends GameObjectManager implements Serializable {
         boolean canNegotiate = true;
 
         for (iContract contract : getContracts(person)) {
+            if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                canNegotiate = false;
+            }
+        }
+
+        return canNegotiate;
+    }
+
+    public boolean canNegotiate(Worker worker, Promotion promotion) {
+        boolean canNegotiate = true;
+
+        for (iContract contract : getContracts(worker)) {
             if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
                 canNegotiate = false;
             }

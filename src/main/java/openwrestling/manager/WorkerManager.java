@@ -7,7 +7,6 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class WorkerManager extends GameObjectManager implements Serializable {
         return this.workers.stream().filter(workers::contains).collect(Collectors.toList());
     }
 
-    public List<Worker> selectRoster(Promotion promotion) {
+    public List<Worker> getRoster(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
         contractManager.getContracts().forEach(contract -> {
             if (contract.isActive() && contract.getPromotion().getPromotionID() == promotion.getPromotionID()) {
@@ -57,7 +56,7 @@ public class WorkerManager extends GameObjectManager implements Serializable {
     public int averageWorkerPopularity(Promotion promotion) {
         int totalPop = 0;
         int averagePop = 0;
-        List<Worker> roster = selectRoster(promotion);
+        List<Worker> roster = getRoster(promotion);
         if (!roster.isEmpty()) {
             for (Worker worker : roster) {
                 totalPop += worker.getPopularity();

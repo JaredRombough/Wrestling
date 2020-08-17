@@ -250,19 +250,19 @@ public final class GameController extends Logging implements Serializable {
     //only called by MainApp
     public void nextDay() {
         long start = System.currentTimeMillis();
-        logger.log(Level.DEBUG, "nextDay start");
+
         contractManager.dailyUpdate(dateManager.today());
-        logger.log(Level.DEBUG, "promotion loop");
+
         for (Promotion promotion : promotionManager.getPromotions()) {
             injuryManager.dailyUpdate(dateManager.today(), promotion);
-            if (!promotionManager.getPlayerPromotion().equals(promotion)) {
-                promotionController.dailyUpdate(promotion);
-            }
         }
+
         logger.log(Level.DEBUG, String.format("nextDay before controller %d", System.currentTimeMillis() - start));
+
         nextDayController.nextDay();
 
         dateManager.nextDay();
+
         logger.log(Level.DEBUG, String.format("nextDay end total time %d", System.currentTimeMillis() - start));
     }
 

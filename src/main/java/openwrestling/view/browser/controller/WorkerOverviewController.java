@@ -165,7 +165,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         entourageButtonHoverListener = ViewUtils.buttonHoverListener(entourageButton);
 
         entourageButton.setOnAction(a -> {
-            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(promotion));
+            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(promotion));
             workers.removeAll(gameController.getEntourageManager().getEntourage(worker));
             workers.remove(worker);
             Optional<Worker> result = ViewUtils.selectWorkerDialog(
@@ -250,7 +250,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void updateLabels() {
-        List<Worker> roster = gameController.getWorkerManager().selectRoster(promotion);
+        List<Worker> roster = gameController.getWorkerManager().getRoster(promotion);
         if (worker != null && roster.stream().anyMatch(w -> w.getWorkerID() == worker.getWorkerID())
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
             nameLabel.setText(worker.getName());
@@ -332,7 +332,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
             managerButton.setOnAction(a -> {
-                List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(playerPromotion()));
+                List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(playerPromotion()));
                 workers.remove(worker);
                 Optional<Worker> result = ViewUtils.selectWorkerDialog(
                         workers,
@@ -355,7 +355,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managerButton.setVisible(false);
             managedLabel.setVisible(false);
         }
-        List<Worker> managed = new ArrayList<>(gameController.getWorkerManager().selectRoster(promotion).stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
+        List<Worker> managed = new ArrayList<>(gameController.getWorkerManager().getRoster(promotion).stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
         if (!managed.isEmpty()) {
             managedLabel.setVisible(true);
             managedListView.setVisible(true);

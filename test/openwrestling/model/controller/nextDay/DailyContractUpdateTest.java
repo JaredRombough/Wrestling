@@ -13,17 +13,14 @@ import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.PersonFactory;
-import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static openwrestling.TestUtils.TEST_DB_PATH;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -83,9 +80,4 @@ public class DailyContractUpdateTest {
                 .build();
     }
 
-    @Test
-    public void getNewContracts() {
-        List<Contract> newContracts = dailyContractUpdate.getNewContracts(LocalDate.now());
-        assertThat(newContracts).isNotEmpty();
-    }
 }

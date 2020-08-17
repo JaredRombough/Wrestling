@@ -16,6 +16,10 @@ public class PromotionUtils {
         return ((promotion.getLevel() - 1) * 20) + (promotion.getPopularity() / 20);
     }
 
+    public static int idealRosterSize(Promotion promotion) {
+        return 10 + (promotion.getLevel() * 10);
+    }
+
     private static void modifyPopularity(Promotion promotion, int amount) {
         int maxPop = 100;
         int minPop = 1;
@@ -40,5 +44,6 @@ public class PromotionUtils {
             }
         }
     }
+
 
 }

@@ -37,7 +37,7 @@ public class DailyEventBooker extends Logging {
     private Event eventOnDay(Promotion promotion) {
         Event eventToday = eventManager.getEventOnDate(promotion, dateManager.today());
         if (eventToday != null) {
-            List<Worker> roster = workerManager.selectRoster(promotion);
+            List<Worker> roster = workerManager.getRoster(promotion);
             if (roster.size() >= 2) {
                 eventToday = promotionController.bookEvent(eventToday, promotion);
             }

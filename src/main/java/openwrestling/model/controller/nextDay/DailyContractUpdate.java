@@ -17,13 +17,14 @@ import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.Level;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static openwrestling.model.utility.PromotionUtils.idealRosterSize;
 
 
 @Builder
@@ -60,6 +61,16 @@ public class DailyContractUpdate extends Logging {
             newContracts.addAll(getNewContractsToReplaceExpiring(promotion));
         });
 
+        promotionManager.getAiPromotions().forEach(promotion -> {
+            int activeRosterSize = workerManager.getRoster(promotion).size();
+            int toSign = idealRosterSize(promotion) - activeRosterSize;
+            if (toSign > 0) {
+                List<Worker> freeAgents = getFreeAgentsForPromotion(promotion, newContracts);
+                for (int i = 0; i < toSign && i < freeAgents.size(); i++) {
+                    newContracts.add(contractFactory.contractForNextDay(freeAgents.get(0), promotion, dateManager.today()));
+                }
+            }
+        });
 
         return newContracts;
     }
@@ -114,7 +125,7 @@ public class DailyContractUpdate extends Logging {
 
     private List<Contract> getNewContractsToReplaceExpiring(Promotion promotion) {
         List<Contract> contracts = new ArrayList<>();
-        int activeRosterSize = contractManager.getActiveRoster(promotion).size();
+        int activeRosterSize = workerManager.getRoster(promotion).size();
         while (activeRosterSize < idealRosterSize(promotion) && !freeAgents.isEmpty()) {
             Contract contract = contractFactory.contractForNextDay(freeAgents.get(0), promotion, dateManager.today());
             freeAgents.remove(contract.getWorker());
@@ -138,9 +149,5 @@ public class DailyContractUpdate extends Logging {
                 });
     }
 
-
-    private int idealRosterSize(Promotion promotion) {
-        return 10 + (promotion.getLevel() * 10);
-    }
 
 }

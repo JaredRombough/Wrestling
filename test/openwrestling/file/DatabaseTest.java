@@ -82,8 +82,8 @@ public class DatabaseTest {
 
         contractManager.createContracts(List.of(contract1, contract2, contract3));
 
-        List<Worker> promotionRoster = workerManager.selectRoster(promotion);
-        List<Worker> promotion2Roster = workerManager.selectRoster(promotion2);
+        List<Worker> promotionRoster = workerManager.getRoster(promotion);
+        List<Worker> promotion2Roster = workerManager.getRoster(promotion2);
 
         assertThat(promotionRoster).hasSize(2);
         Worker rosterWorker = promotionRoster.stream()

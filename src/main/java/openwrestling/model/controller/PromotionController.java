@@ -20,7 +20,6 @@ import openwrestling.model.segmentEnum.TeamType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,10 +58,6 @@ public class PromotionController extends Logging implements Serializable {
         this.staffManager = staffManager;
     }
 
-    private int idealRosterSize(Promotion promotion) {
-        return 10 + (promotion.getLevel() * 10);
-    }
-
     private int maxPushListSize(Promotion promotion) {
         return 2 + (promotion.getLevel() * 2);
     }
@@ -74,7 +69,7 @@ public class PromotionController extends Logging implements Serializable {
 
         if (diff > 0) {
             int i = 0;
-            List<Worker> roster = workerManager.selectRoster(promotion);
+            List<Worker> roster = workerManager.getRoster(promotion);
             for (Worker worker : roster) {
                 if (!pushList.contains(worker) && worker.isFullTime()) {
                     contractManager.getContract(worker, promotion).setPushed(true);
@@ -94,22 +89,8 @@ public class PromotionController extends Logging implements Serializable {
         }
     }
 
-    public void dailyUpdate(Promotion promotion) {
-        logger.log(Level.DEBUG, "start dailyUpdate for " + promotion.getName());
-        if (contractManager.getPushed(promotion).size() != maxPushListSize(promotion)) {
-            updatePushed(promotion);
-        }
-        int activeRosterSize = contractManager.getActiveRoster(promotion).size();
-        while (activeRosterSize < idealRosterSize(promotion) && !workerManager.freeAgents(promotion).isEmpty()) {
-            //signContract(promotion);
-            activeRosterSize++;
-        }
-
-        logger.log(Level.DEBUG, "end dailyUpdate for " + promotion.getName());
-    }
-
     private void sortByPopularity(List<Worker> workerList) {
-        Collections.sort(workerList, (Worker w1, Worker w2) -> -Integer.valueOf(w1.getPopularity()).compareTo(w2.getPopularity()));
+        workerList.sort((Worker w1, Worker w2) -> -Integer.compare(w1.getPopularity(), w2.getPopularity()));
     }
 
     //sign a contract with the first suitable worker found
@@ -129,13 +110,17 @@ public class PromotionController extends Logging implements Serializable {
 
         List<Worker> pushList = contractManager.getPushed(promotion);
 
+        if (pushList.size() != maxPushListSize(promotion)) {
+            updatePushed(promotion);
+        }
+
         //bigger promotions get more segments
         if (promotion.getLevel() > 3) {
             maxSegments += 2;
         }
         //lists to track workers the event roster
         //and workers that are already booked on this date
-        List<Worker> eventRoster = workerManager.selectRoster(promotion);
+        List<Worker> eventRoster = workerManager.getRoster(promotion);
 
         //list to track workers on the pushlist that are still available
         List<Worker> pushListPresent = new ArrayList<>();
