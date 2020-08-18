@@ -74,7 +74,7 @@ public class TagTeamController extends ControllerBase implements Initializable {
         if (tagTeam != null) {
             ComboBox comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
-                    gameController.getWorkerManager().selectRoster(playerPromotion()).containsAll(tagTeam.getWorkers()),
+                    gameController.getWorkerManager().getRoster(playerPromotion()).containsAll(tagTeam.getWorkers()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     tagTeam.getActiveType());
             comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {

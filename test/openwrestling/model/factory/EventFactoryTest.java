@@ -5,7 +5,6 @@ import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
 import openwrestling.manager.EventManager;
-import openwrestling.manager.InjuryManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
@@ -37,19 +36,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EventFactoryTest {
-    private Database database;
     private final ContractManager contractManager = mock(ContractManager.class);
     private final EventManager eventManager = mock(EventManager.class);
     private final TitleManager titleManager = mock(TitleManager.class);
     private final WorkerManager workerManager = mock(WorkerManager.class);
-    private MatchFactory matchFactory;
     private final PromotionManager promotionManager = mock(PromotionManager.class);
     private final TagTeamManager tagTeamManager = mock(TagTeamManager.class);
     private final StableManager stableManager = mock(StableManager.class);
     private final NewsManager newsManager = mock(NewsManager.class);
     private final BankAccountManager bankAccountManager = mock(BankAccountManager.class);
     private final SegmentManager segmentManager = mock(SegmentManager.class);
-
+    private Database database;
+    private MatchFactory matchFactory;
     private RelationshipManager relationshipManager;
 
     private LocalDate today;
@@ -59,7 +57,7 @@ public class EventFactoryTest {
     @Before
     public void setUp() {
         today = LocalDate.now();
-        matchFactory = new MatchFactory(segmentManager, mock(DateManager.class), mock(InjuryManager.class), workerManager, mock(StaffManager.class));
+        matchFactory = new MatchFactory(mock(DateManager.class), mock(StaffManager.class));
         database = new Database(TEST_DB_PATH);
         when(bankAccountManager.getBankAccount(any(Promotion.class))).thenReturn(new BankAccount());
         relationshipManager = mock(RelationshipManager.class);
@@ -72,7 +70,6 @@ public class EventFactoryTest {
                 stableManager,
                 relationshipManager,
                 newsManager);
-
     }
 
 

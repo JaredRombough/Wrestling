@@ -83,7 +83,7 @@ public class StableController extends ControllerBase {
 
         addButton.setOnAction(a -> {
 
-            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(playerPromotion()));
+            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(playerPromotion()));
             workers.removeAll(workerGroup.getWorkers());
 
             Optional<Worker> result = ViewUtils.selectWorkerDialog(

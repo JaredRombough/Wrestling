@@ -248,21 +248,8 @@ public class ImportHelper {
                 case 3:
                     staff.setStaffType(StaffType.REFEREE);
                     break;
-                case 4:
-                    staff.setStaffType(StaffType.PRODUCTION);
-                    break;
-                case 5:
-                    staff.setStaffType(StaffType.MEDICAL);
-                    break;
-                case 6:
-                    staff.setStaffType(StaffType.CREATIVE);
-                    break;
-                case 7:
-                    staff.setStaffType(StaffType.ROAD_AGENT);
-                    break;
-                case 8:
-                    staff.setStaffType(StaffType.TRAINER);
-                    break;
+                default:
+                    return;
             }
             staff.setImportKey(hexStringToInt(hexLine.get(1) + hexLine.get(2)));
 
@@ -281,6 +268,10 @@ public class ImportHelper {
                     .filter(staff -> staff.getImportKey() == hexStringToInt(hexLine.get(1) + hexLine.get(2)))
                     .findFirst()
                     .orElse(null);
+
+            if (staffMember == null) {
+                return;
+            }
             Optional<Promotion> promotion = promotions.stream().filter(promo -> promo.getImportKey() == hexStringToInt(hexLine.get(54))).findFirst();
             promotion.ifPresent(promo -> {
                 StaffContract staffContract = StaffContract.builder()

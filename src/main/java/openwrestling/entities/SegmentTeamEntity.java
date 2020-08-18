@@ -32,7 +32,7 @@ public class SegmentTeamEntity extends Entity {
     private long segmentTeamID;
 
     @DatabaseField(foreign = true)
-    private SegmentEntity segmentEntity;
+    private SegmentEntity segment;
 
     @DatabaseField(foreign = true)
     private SegmentTemplateEntity segmentTemplateEntity;
@@ -76,6 +76,12 @@ public class SegmentTeamEntity extends Entity {
                         .segmentTeamEntity(this)
                         .build()
         ).collect(Collectors.toList());
+    }
+
+    public void selectChildren() {
+        workers = segmentTeamWorkers.stream()
+                .map(SegmentTeamWorkerEntity::getWorkerEntity)
+                .collect(Collectors.toList());
     }
 
 }

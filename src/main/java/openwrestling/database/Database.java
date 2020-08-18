@@ -60,6 +60,7 @@ import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Segment;
+import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffContract;
@@ -86,6 +87,33 @@ public class Database extends Logging {
 
     private String dbUrl;
     private MapperFactory mapperFactory;
+    private Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
+        put(Promotion.class, PromotionEntity.class);
+        put(Worker.class, WorkerEntity.class);
+        put(Stable.class, StableEntity.class);
+        put(RosterSplit.class, RosterSplitEntity.class);
+        put(Contract.class, ContractEntity.class);
+        put(TagTeam.class, TagTeamEntity.class);
+        put(Title.class, TitleEntity.class);
+        put(TitleReign.class, TitleReignEntity.class);
+        put(EventTemplate.class, EventTemplateEntity.class);
+        put(StaffMember.class, StaffMemberEntity.class);
+        put(StaffContract.class, StaffContractEntity.class);
+        put(WorkerRelationship.class, WorkerRelationshipEntity.class);
+        put(MoraleRelationship.class, MoraleRelationshipEntity.class);
+        put(BankAccount.class, BankAccountEntity.class);
+        put(Transaction.class, TransactionEntity.class);
+        put(EntourageMember.class, EntourageMemberEntity.class);
+        put(Event.class, EventEntity.class);
+        put(Segment.class, SegmentEntity.class);
+        put(SegmentTeam.class, SegmentTeamEntity.class);
+        put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
+        put(Injury.class, InjuryEntity.class);
+        put(SegmentTemplate.class, SegmentTemplateEntity.class);
+        put(NewsItem.class, NewsItemEntity.class);
+        put(GameSetting.class, GameSettingEntity.class);
+        put(MonthlyReview.class, MonthlyReviewEntity.class);
+    }};
 
     //Test constructor
     public Database(String dbPath) {
@@ -100,7 +128,6 @@ public class Database extends Logging {
     public void createNewDatabase() {
         createTables(dbUrl);
     }
-
 
     public List selectList(GameObjectQuery gameObjectQuery) {
         try {
@@ -249,7 +276,6 @@ public class Database extends Logging {
         }
     }
 
-
     private MapperFactory getMapperFactory() {
         if (mapperFactory == null) {
             mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -258,41 +284,9 @@ public class Database extends Logging {
                     .byDefault()
                     .customize(new SegmentTemplateMapper()
                     ).register();
-            mapperFactory.classMap(SegmentEntity.class, Segment.class)
-                    .byDefault()
-                    .customize(new SegmentMapper()
-                    ).register();
         }
         return mapperFactory;
     }
-
-
-    private Map<Class<? extends GameObject>, Class<? extends Entity>> daoClassMap = new HashMap<>() {{
-        put(Promotion.class, PromotionEntity.class);
-        put(Worker.class, WorkerEntity.class);
-        put(Stable.class, StableEntity.class);
-        put(RosterSplit.class, RosterSplitEntity.class);
-        put(Contract.class, ContractEntity.class);
-        put(TagTeam.class, TagTeamEntity.class);
-        put(Title.class, TitleEntity.class);
-        put(TitleReign.class, TitleReignEntity.class);
-        put(EventTemplate.class, EventTemplateEntity.class);
-        put(StaffMember.class, StaffMemberEntity.class);
-        put(StaffContract.class, StaffContractEntity.class);
-        put(WorkerRelationship.class, WorkerRelationshipEntity.class);
-        put(MoraleRelationship.class, MoraleRelationshipEntity.class);
-        put(BankAccount.class, BankAccountEntity.class);
-        put(Transaction.class, TransactionEntity.class);
-        put(EntourageMember.class, EntourageMemberEntity.class);
-        put(Event.class, EventEntity.class);
-        put(Segment.class, SegmentEntity.class);
-        put(BroadcastTeamMember.class, BroadcastTeamMemberEntity.class);
-        put(Injury.class, InjuryEntity.class);
-        put(SegmentTemplate.class, SegmentTemplateEntity.class);
-        put(NewsItem.class, NewsItemEntity.class);
-        put(GameSetting.class, GameSettingEntity.class);
-        put(MonthlyReview.class, MonthlyReviewEntity.class);
-    }};
 
     private void insertOrUpdateChildList(List<? extends Entity> toInsert, ConnectionSource connectionSource) {
         if (toInsert.isEmpty()) {

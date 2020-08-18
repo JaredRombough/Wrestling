@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
@@ -26,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,9 +38,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Button relationshipButton;
-
-    @FXML
-    private GridPane gridPane;
 
     @FXML
     private Label nameLabel;
@@ -72,9 +67,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label ageLabel;
 
     @FXML
-    private Label development;
-
-    @FXML
     private Label genderLabel;
 
     @FXML
@@ -85,9 +77,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Label manager;
-
-    @FXML
-    private Label managerLabel;
 
     @FXML
     private Label moraleLabel;
@@ -129,9 +118,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Worker) {
-            Worker newWorker = (Worker) obj;
-
-            worker = newWorker;
+            worker = (Worker) obj;
 
             feedPaneScreen.controller.setCurrent(worker);
             contractScreen.controller.setCurrent(worker);
@@ -178,7 +165,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         entourageButtonHoverListener = ViewUtils.buttonHoverListener(entourageButton);
 
         entourageButton.setOnAction(a -> {
-            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(promotion));
+            List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(promotion));
             workers.removeAll(gameController.getEntourageManager().getEntourage(worker));
             workers.remove(worker);
             Optional<Worker> result = ViewUtils.selectWorkerDialog(
@@ -263,7 +250,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void updateLabels() {
-        List<Worker> roster = gameController.getWorkerManager().selectRoster(promotion);
+        List<Worker> roster = gameController.getWorkerManager().getRoster(promotion);
         if (worker != null && roster.stream().anyMatch(w -> w.getWorkerID() == worker.getWorkerID())
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
             nameLabel.setText(worker.getName());
@@ -333,23 +320,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
                 l.getStyleClass().add(style);
             }
 
-            if (!worker.isMainRoster()) {
-                development.setText("Development");
-            } else {
-                development.setText("");
-            }
-
         }
-//        else if (roster.stream().noneMatch(w -> w.getWorkerID() == worker.getWorkerID())) {
-//            worker = null;
-//
-//            nameLabel.setText("");
-//            wrestlingLabel.setText("");
-//            flyingLabel.setText("");
-//            strikingLabel.setText("");
-//            behaviourLabel.setText("");
-//            popularityLabel.setText("");
-//        }
 
         feedPaneScreen.controller.updateLabels();
         contractScreen.controller.updateLabels();
@@ -361,7 +332,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         if (playerPromotion().equals(promotion) && !gameController.getContractManager().canNegotiate(worker, promotion)) {
             managerButton.setOnAction(a -> {
-                List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().selectRoster(playerPromotion()));
+                List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(playerPromotion()));
                 workers.remove(worker);
                 Optional<Worker> result = ViewUtils.selectWorkerDialog(
                         workers,
@@ -384,11 +355,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             managerButton.setVisible(false);
             managedLabel.setVisible(false);
         }
-        List<Worker> managed = new ArrayList<>(gameController.getWorkerManager().selectRoster(promotion).stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
+        List<Worker> managed = new ArrayList<>(gameController.getWorkerManager().getRoster(promotion).stream().filter(w -> worker.equals(w.getManager())).collect(Collectors.toList()));
         if (!managed.isEmpty()) {
             managedLabel.setVisible(true);
             managedListView.setVisible(true);
-            Collections.sort(managed, new NameComparator());
+            managed.sort(new NameComparator());
             managedListView.setItems(FXCollections.observableArrayList(managed));
         } else {
             managedLabel.setVisible(false);

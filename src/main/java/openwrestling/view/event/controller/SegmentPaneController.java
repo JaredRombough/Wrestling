@@ -414,17 +414,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return wrapperScreen;
     }
 
-    private void setSegmentType(SegmentType type) {
-        segmentType = type;
-        segmentLengthWrapper.setItems(FXCollections.observableArrayList(SegmentType.MATCH.equals(type)
-                ? MatchLength.values() : AngleLength.values()));
-        segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
-        refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
-        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptionsController.getAngleOptions().getAngleType()));
-        eventScreenController.segmentsChanged();
-        eventScreenController.updateLabels();
-    }
-
     private boolean getXButtonVisible(int index, TeamType teamType) {
         int minTeams = getSegmentType().equals(SegmentType.MATCH)
                 ? 2
@@ -542,7 +531,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     public Segment getSegment() {
         Segment segment = new Segment(segmentType);
         segment.setSegmentLength(segmentLength.value());
-        segment.setTeams(getSegmentTeams());
+        segment.setSegmentTeams(getSegmentTeams());
         segment.addTitles(getTitles());
         segment.setReferee(getRef());
         segment.setBroadcastTeam(
@@ -634,10 +623,30 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         return segmentType;
     }
 
+    private void setSegmentType(SegmentType type) {
+        segmentType = type;
+        segmentLengthWrapper.setItems(FXCollections.observableArrayList(SegmentType.MATCH.equals(type)
+                ? MatchLength.values() : AngleLength.values()));
+        segmentLength = (iSegmentLength) segmentLengthWrapper.getSelected();
+        refScreen.pane.setVisible(SegmentType.MATCH.equals(type));
+        titlesWrapper.pane.setVisible(SegmentType.MATCH.equals(type) || AngleType.CHALLENGE.equals(angleOptionsController.getAngleOptions().getAngleType()));
+        eventScreenController.segmentsChanged();
+        eventScreenController.updateLabels();
+    }
+
     private StaffMember getRef() {
         return refsController != null && !refsController.getSegmentItems().isEmpty()
                 ? (StaffMember) refsController.getSegmentItems().get(0)
                 : null;
+    }
+
+    /**
+     * @param ref the ref to set
+     */
+    public void setRef(StaffMember ref) {
+        refsController.setAutoSet(false);
+        refsController.setSegmentItems(Collections.singletonList(ref));
+        eventScreenController.autoUpdateRefs();
     }
 
     public boolean isAutoSetRef() {
@@ -649,15 +658,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
      */
     public void setRefAuto(StaffMember ref) {
         refsController.setSegmentItems(Collections.singletonList(ref));
-    }
-
-    /**
-     * @param ref the ref to set
-     */
-    public void setRef(StaffMember ref) {
-        refsController.setAutoSet(false);
-        refsController.setSegmentItems(Collections.singletonList(ref));
-        eventScreenController.autoUpdateRefs();
     }
 
     public void clearRef() {

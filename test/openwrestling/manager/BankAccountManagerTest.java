@@ -73,7 +73,7 @@ public class BankAccountManagerTest {
 
         Transaction transaction3 = Transaction.builder()
                 .promotion(promotion)
-                .type(TransactionType.WORKER)
+                .type(TransactionType.WORKER_APPEARANCE)
                 .amount(100)
                 .build();
 

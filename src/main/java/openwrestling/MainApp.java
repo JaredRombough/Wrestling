@@ -40,35 +40,30 @@ import java.util.ResourceBundle;
 public class MainApp extends Application {
 
     public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    public static final String VERSION = "0.4.4";
+    public static final String VERSION = "0.4.5";
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
+    public static String dbURL;
     private final transient Logger logger;
+    private final List<GameScreen> screens;
+    private final boolean cssEnabled;
+    @Getter
+    private final ResourceBundle resx;
     @Getter
     private Stage primaryStage;
     private GameController gameController;
-    private final List<GameScreen> screens;
     private File picsFolder;
     private File logosFolder;
     private File dataFolder;
     private boolean preRun = false;
     @Getter
     private boolean randomGame;
-    private final boolean cssEnabled;
-    @Getter
-    private final ResourceBundle resx;
     private GameScreen currentScreen;
     @Getter
     private double currentStageWidth;
     private double currentStageHeight;
-
-    public static String dbURL;
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     public MainApp() {
         this.screens = new ArrayList<>();
@@ -87,6 +82,10 @@ public class MainApp extends Application {
         resx = ResourceBundle.getBundle("openwrestling.Language", locale);
 
         currentStageWidth = WINDOW_MIN_WIDTH;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override

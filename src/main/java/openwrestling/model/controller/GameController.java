@@ -70,19 +70,15 @@ public final class GameController extends Logging implements Serializable {
     private final BroadcastTeamManager broadcastTeamManager;
     private final GameSettingManager gameSettingManager;
     private final MonthlyReviewManager monthlyReviewManager;
-
-    private List<GameObjectManager> managers;
-
     private final NextDayController nextDayController;
     private final DailyEventBooker dailyEventBooker;
     private final DailyContractUpdate dailyContractUpdate;
     private final DailyTransactions dailyTransactions;
     private final DailyRelationshipUpdate dailyRelationshipUpdate;
     private final MonthlyReviewController monthlyReviewController;
-
     private final PromotionController promotionController;
-
     private final int EVENT_MONTHS = 6;
+    private List<GameObjectManager> managers;
 
     public GameController(Database database, boolean randomGame) {
 
@@ -119,8 +115,7 @@ public final class GameController extends Logging implements Serializable {
 
         contractFactory = new ContractFactory(contractManager);
 
-        matchFactory = new MatchFactory(segmentManager, dateManager, injuryManager, workerManager, staffManager);
-
+        matchFactory = new MatchFactory(dateManager, staffManager);
 
         eventFactory = new EventFactory(
                 eventManager,
@@ -255,20 +250,17 @@ public final class GameController extends Logging implements Serializable {
     //only called by MainApp
     public void nextDay() {
         long start = System.currentTimeMillis();
-        logger.log(Level.DEBUG, "nextDay start");
-        contractManager.dailyUpdate(dateManager.today());
-        logger.log(Level.DEBUG, "promotion loop");
+
         for (Promotion promotion : promotionManager.getPromotions()) {
             injuryManager.dailyUpdate(dateManager.today(), promotion);
-            promotionController.trainerUpdate(promotion);
-            if (!promotionManager.getPlayerPromotion().equals(promotion)) {
-                promotionController.dailyUpdate(promotion);
-            }
         }
+
         logger.log(Level.DEBUG, String.format("nextDay before controller %d", System.currentTimeMillis() - start));
+
         nextDayController.nextDay();
 
         dateManager.nextDay();
+
         logger.log(Level.DEBUG, String.format("nextDay end total time %d", System.currentTimeMillis() - start));
     }
 

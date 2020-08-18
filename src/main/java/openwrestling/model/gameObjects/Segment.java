@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -37,13 +38,14 @@ public class Segment extends GameObject implements Serializable {
     private long segmentID;
 
     @Builder.Default
-    private List<SegmentTeam> teams = new ArrayList<>();
+    private List<SegmentTeam> segmentTeams = new ArrayList<>();
 
     @Builder.Default
     private List<Title> titles = new ArrayList<>();
 
     private SegmentType segmentType;
     private Event event;
+    private LocalDate date;
     private StaffMember referee;
     @Builder.Default
     private List<BroadcastTeamMember> broadcastTeam = new ArrayList<>();
@@ -66,19 +68,15 @@ public class Segment extends GameObject implements Serializable {
     private MatchFinish matchFinish = MatchFinish.CLEAN;
     private MatchRule matchRule = MatchRule.DEFAULT;
 
-    public LocalDate getDate() {
-        return event.getDate();
-    }
-
     public Segment(SegmentType segmentType) {
         this.segmentType = segmentType;
-        teams = new ArrayList<>();
+        segmentTeams = new ArrayList<>();
         titles = new ArrayList<>();
     }
 
     public List<Worker> getWorkers() {
         List<Worker> workers = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentTeams) {
             workers.addAll(team.getWorkers());
         }
         return workers;
@@ -86,7 +84,7 @@ public class Segment extends GameObject implements Serializable {
 
     public List<SegmentItem> getSegmentItems() {
         List<SegmentItem> segmentItems = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentTeams) {
             segmentItems.addAll(team.getWorkers());
             segmentItems.addAll(team.getEntourage());
         }
@@ -107,13 +105,13 @@ public class Segment extends GameObject implements Serializable {
     /**
      * @return the teams
      */
-    public List<SegmentTeam> getTeams() {
-        return teams;
+    public List<SegmentTeam> getSegmentTeams() {
+        return segmentTeams;
     }
 
     public List<SegmentTeam> getMatchParticipantTeams() {
         List<SegmentTeam> participants = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentTeams) {
             if (team.getType().equals(TeamType.WINNER)
                     || team.getType().equals(TeamType.LOSER)
                     || team.getType().equals(TeamType.DRAW)) {
@@ -125,7 +123,7 @@ public class Segment extends GameObject implements Serializable {
 
     public List<Worker> getMatchParticipants() {
         List<Worker> participants = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentTeams) {
             if (team.getType().equals(TeamType.WINNER)
                     || team.getType().equals(TeamType.LOSER)
                     || team.getType().equals(TeamType.DRAW)) {
@@ -135,9 +133,9 @@ public class Segment extends GameObject implements Serializable {
         return participants;
     }
 
-    public List<SegmentTeam> getTeams(TeamType type) {
+    public List<SegmentTeam> getSegmentTeams(TeamType type) {
         List<SegmentTeam> teamTypeTeams = new ArrayList<>();
-        for (SegmentTeam team : teams) {
+        for (SegmentTeam team : segmentTeams) {
             if (team.getType().equals(type)) {
                 teamTypeTeams.add(team);
             }
@@ -146,7 +144,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public SegmentTeam getWinner() {
-        List<SegmentTeam> defaultTeams = getTeams(TeamType.WINNER);
+        List<SegmentTeam> defaultTeams = getSegmentTeams(TeamType.WINNER);
         if (!defaultTeams.isEmpty()) {
             return defaultTeams.get(0);
         }
@@ -154,7 +152,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public List<Worker> getWinners() {
-        List<SegmentTeam> defaultTeams = getTeams(TeamType.WINNER);
+        List<SegmentTeam> defaultTeams = getSegmentTeams(TeamType.WINNER);
         if (!defaultTeams.isEmpty()) {
             return defaultTeams.get(0).getWorkers();
         }
@@ -162,7 +160,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public SegmentTeam getTeam(Worker worker) {
-        for (SegmentTeam team : getTeams()) {
+        for (SegmentTeam team : getSegmentTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team;
             }
@@ -171,7 +169,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public TeamType getTeamType(Worker worker) {
-        for (SegmentTeam team : getTeams()) {
+        for (SegmentTeam team : getSegmentTeams()) {
             if (team.getWorkers().contains(worker)) {
                 return team.getType();
             }
@@ -183,8 +181,8 @@ public class Segment extends GameObject implements Serializable {
         if (getWorkers().isEmpty()) {
             return SegmentValidation.EMPTY;
         } else {
-            for (SegmentTeam team : getTeams()) {
-                if (team.getWorkers().isEmpty()) {
+            for (SegmentTeam team : getSegmentTeams()) {
+                if (CollectionUtils.isEmpty(team.getWorkers())) {
                     return SegmentValidation.INCOMPLETE;
                 }
             }
@@ -206,6 +204,12 @@ public class Segment extends GameObject implements Serializable {
 
     public Promotion getPromotion() {
         return event.getPromotion();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Segment &&
+                Objects.equals(((Segment) object).getSegmentID(), segmentID);
     }
 
 }

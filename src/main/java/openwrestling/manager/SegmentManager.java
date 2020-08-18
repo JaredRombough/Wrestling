@@ -2,7 +2,7 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
-import openwrestling.database.queries.SegmentQuery;
+import openwrestling.database.queries.SegmentTeamQuery;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -38,11 +38,11 @@ import static openwrestling.model.utility.ModelUtils.slashShortNames;
 @Getter
 public class SegmentManager extends GameObjectManager implements Serializable {
 
-    private Map<Long, Segment> segmentMap;
-    private List<SegmentTemplate> segmentTemplates;
     private final DateManager dateManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
+    private final Map<Long, Segment> segmentMap;
+    private List<SegmentTemplate> segmentTemplates;
 
     public SegmentManager(Database database, DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
         super(database);
@@ -55,10 +55,13 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
     @Override
     public void selectData() {
-        List<Segment> segments = getDatabase().querySelect(new SegmentQuery());
-        segments.forEach(segment -> {
-            segmentMap.put(segment.getSegmentID(), segment);
-        });
+        List<Segment> segments = getDatabase().selectAll(Segment.class);
+        segments.forEach(segment -> segmentMap.put(segment.getSegmentID(), segment));
+        List<SegmentTeam> segmentTeams = getDatabase().querySelect(new SegmentTeamQuery());
+        segmentTeams.stream()
+                .collect(Collectors.groupingBy(segmentTeam -> segmentTeam.getSegment().getSegmentID()))
+                .forEach((segmentID, teams) -> segmentMap.get(segmentID).setSegmentTeams(teams));
+
         segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
     }
 
@@ -90,10 +93,29 @@ public class SegmentManager extends GameObjectManager implements Serializable {
             this.segmentTemplates.addAll(getDatabase().insertList(segmentTemplates));
         }
 
+
         List<Segment> savedSegments = getDatabase().insertList(segments);
+
+        List<SegmentTeam> segmentTeamsToSave = new ArrayList<>();
+        for (int i = 0; i < savedSegments.size(); i++) {
+            List<SegmentTeam> segmentTeams = segments.get(i).getSegmentTeams();
+            Segment savedSegment = savedSegments.get(i);
+            segmentTeams.forEach(segmentTeam -> segmentTeam.setSegment(savedSegment));
+            segmentTeamsToSave.addAll(segmentTeams);
+        }
+
+        List<SegmentTeam> savedSegmentTeams = getDatabase().insertList(segmentTeamsToSave);
+
         savedSegments.forEach(segment -> {
+            segment.setSegmentTeams(
+                    savedSegmentTeams.stream()
+                            .filter(segmentTeam -> segment.equals(segmentTeam.getSegment()))
+                            .collect(Collectors.toList())
+            );
             segmentMap.put(segment.getSegmentID(), segment);
         });
+
+
         return savedSegments;
     }
 
@@ -110,7 +132,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     }
 
     public List<Worker> getWorkers(Segment segment) {
-        return segment.getTeams().stream()
+        return segment.getSegmentTeams().stream()
                 .flatMap(segmentTeam -> segmentTeam.getWorkers().stream())
                 .collect(Collectors.toList());
     }
@@ -166,10 +188,9 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         return segment.getAngleType().description();
     }
 
-    public String getIsolatedSegmentString(Segment segment) {
+    public String getIsolatedSegmentString(Segment segment, Event event) {
         StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(segment.getEvent().getVerboseEventTitle());
+        stringBuilder.append(event.getVerboseEventTitle());
         stringBuilder.append("\n");
         stringBuilder.append(getSegmentString(segment));
         stringBuilder.append("\n");
@@ -181,22 +202,14 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     }
 
     public String getSegmentString(Segment segment) {
-        return getSegmentString(segment, false);
-    }
-
-    public String getSegmentString(Segment segment, boolean verbose) {
-        String segmentString = segment.getSegmentType().equals(SegmentType.MATCH)
-                ? getMatchString(segment, verbose)
+        return segment.getSegmentType().equals(SegmentType.MATCH)
+                ? getMatchString(segment)
                 : getAngleString(segment);
-        if (verbose) {
-            segmentString += " @ " + segment.getEvent().toString();
-        }
-        return segmentString;
     }
 
     public String getAngleString(Segment segment) {
         AngleType angleType = segment.getAngleType();
-        List<SegmentTeam> mainTeam = segment.getTeams(angleType.mainTeamType());
+        List<SegmentTeam> mainTeam = segment.getSegmentTeams(angleType.mainTeamType());
         String mainTeamString;
         String pluralString;
         if (mainTeam.isEmpty()) {
@@ -207,7 +220,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
             pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
         }
         List<String> andTeamNames = new ArrayList<>();
-        for (SegmentTeam tesm : segment.getTeams(angleType.addTeamType())) {
+        for (SegmentTeam tesm : segment.getSegmentTeams(angleType.addTeamType())) {
             andTeamNames.add(generateTeamName(tesm.getWorkers()));
         }
 
@@ -216,7 +229,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 pluralString,
                 ModelUtils.joinGrammatically(andTeamNames));
 
-        if (angleType.equals(AngleType.PROMO) && segment.getTeams(TeamType.PROMO_TARGET).isEmpty()) {
+        if (angleType.equals(AngleType.PROMO) && segment.getSegmentTeams(TeamType.PROMO_TARGET).isEmpty()) {
             string = string.split("targeting")[0];
             string = string.replace(" targeting", "");
         }
@@ -273,7 +286,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     }
 
     public String getVsMatchString(Segment segment) {
-        List<SegmentTeam> teams = segment.getTeams();
+        List<SegmentTeam> teams = segment.getSegmentTeams();
         int teamsSize = segment.getMatchParticipantTeams().size();
         String matchString = "";
 
@@ -284,7 +297,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
                 matchString += generateTeamName(team, false, teams.get(t).getType());
 
-                if (!teams.get(t).getEntourage().isEmpty()) {
+                if (CollectionUtils.isNotEmpty(teams.get(t).getEntourage())) {
                     matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
                 }
 
@@ -310,8 +323,8 @@ public class SegmentManager extends GameObjectManager implements Serializable {
 
     }
 
-    public String getMatchString(Segment segment, boolean verbose) {
-        List<SegmentTeam> teams = segment.getTeams();
+    public String getMatchString(Segment segment) {
+        List<SegmentTeam> teams = segment.getSegmentTeams();
         MatchFinish finish = segment.getMatchFinish();
         int teamsSize = segment.getMatchParticipantTeams().size();
         String matchString = "";
@@ -321,9 +334,9 @@ public class SegmentManager extends GameObjectManager implements Serializable {
             for (int t = 0; t < teamsSize; t++) {
                 List<Worker> team = teams.get(t).getWorkers();
 
-                matchString += generateTeamName(team, verbose, teams.get(t).getType());
+                matchString += generateTeamName(team, false, teams.get(t).getType());
 
-                if (!teams.get(t).getEntourage().isEmpty()) {
+                if (CollectionUtils.isNotEmpty(teams.get(t).getEntourage())) {
                     matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
                 }
 

@@ -52,6 +52,16 @@ public class PromotionManager extends GameObjectManager implements Serializable 
         return new ArrayList<>(promotionMap.values());
     }
 
+    public List<Promotion> getAiPromotions() {
+        return new ArrayList<>(promotionMap.values()).stream()
+                .filter(promotion -> !playerPromotion.equals(promotion))
+                .collect(Collectors.toList());
+    }
+
+    public Promotion refreshPromotion(Promotion promotion) {
+        return promotionMap.get(promotion.getPromotionID());
+    }
+
     public List<Promotion> createPromotions(List<Promotion> promotions) {
         List<Promotion> saved = getDatabase().insertList(promotions);
         bankAccountManager.createBankAccounts(

@@ -3,6 +3,8 @@ package openwrestling.view.browser.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import openwrestling.model.gameObjects.Contract;
+import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
@@ -99,8 +101,17 @@ public class ContractController extends ControllerBase {
                 contractButton.setVisible(true);
                 contractButton.setText("Release Worker");
                 contractButton.setOnAction(e -> {
-                    if (ViewUtils.releaseWorkerDialog(person, playerPromotion(), today())) {
-                        gameController.getContractManager().terminateContract(playerPromotionContract);
+                    if (ViewUtils.releaseWorkerDialog(person,
+                            playerPromotion(),
+                            playerPromotionContract,
+                            today())
+                    ) {
+                        if (playerPromotionContract.getWorker() != null) {
+                            gameController.getContractManager().terminateContract((Contract) playerPromotionContract, today());
+                            gameController.getTitleManager().stripTitlesForExpiringContract((Contract) playerPromotionContract);
+                        } else if (playerPromotionContract.getStaff() != null) {
+                            gameController.getContractManager().terminateStaffContract((StaffContract) playerPromotionContract, today());
+                        }
                         mainApp.updateLabels(ScreenCode.BROWSER);
                     }
                 });

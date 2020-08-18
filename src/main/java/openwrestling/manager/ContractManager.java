@@ -10,7 +10,6 @@ import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.segmentEnum.TransactionType;
 import openwrestling.model.utility.ContractUtils;
-import org.apache.logging.log4j.Level;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -23,10 +22,9 @@ import java.util.stream.Collectors;
 public class ContractManager extends GameObjectManager implements Serializable {
 
 
+    private final BankAccountManager bankAccountManager;
     private Map<Long, Contract> contractMap = new HashMap<>();
     private Map<Long, StaffContract> staffContractMap = new HashMap<>();
-
-    private final BankAccountManager bankAccountManager;
 
     public ContractManager(Database database,
                            BankAccountManager bankAccountManager) {
@@ -56,24 +54,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return new ArrayList<>(staffContractMap.values());
     }
 
-    public void dailyUpdate(LocalDate date) {
-        logger.log(Level.DEBUG, "dailyUpdate contracts " + date.toString());
-        for (Contract contract : contractMap.values()) {
-            if (!contract.isActive()) {
-                continue;
-            }
-            //TODO strip titles for expiring contracts
-//            if (!nextDay(contract, date)) {
-//                titleManager.stripTitlesForExpiringContract(contract);
-//            }
-        }
-        logger.log(Level.DEBUG, "dailyUpdate staff contracts " + date.toString());
-        for (StaffContract contract : staffContractMap.values()) {
-            nextDay(contract, date);
-        }
-    }
-
-
     public List<Contract> createContracts(List<Contract> contracts) {
         List<Contract> saved = getDatabase().insertList(contracts);
         saved.forEach(contract -> contractMap.put(contract.getContractID(), contract));
@@ -83,6 +63,11 @@ public class ContractManager extends GameObjectManager implements Serializable {
     public void updateContracts(List<Contract> contracts) {
         getDatabase().updateList(contracts);
         contracts.forEach(contract -> contractMap.put(contract.getContractID(), contract));
+    }
+
+    public void updateStaffContracts(List<StaffContract> staffContracts) {
+        getDatabase().updateList(staffContracts);
+        staffContracts.forEach(contract -> staffContractMap.put(contract.getStaffContractID(), contract));
     }
 
     public List<StaffContract> createStaffContracts(List<StaffContract> contracts) {
@@ -116,7 +101,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
                 workerContracts.add(contract);
             }
         }
-
         return workerContracts;
     }
 
@@ -160,19 +144,6 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return workerContract;
     }
 
-    public List<Worker> getActiveRoster(Promotion promotion) {
-
-        List<Worker> roster = new ArrayList<>();
-        for (Contract contract : contractMap.values()) {
-            if (contract.isActive() && contract.getPromotion().equals(promotion)
-                    && contract.getWorker().isFullTime()) {
-                roster.add(contract.getWorker());
-            }
-        }
-
-        return roster;
-    }
-
     public List<Worker> getPushed(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
         for (Contract contract : contractMap.values()) {
@@ -186,20 +157,23 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return roster;
     }
 
-    //depreciates monthly contracts
-    public boolean nextDay(iContract contract, LocalDate today) {
+    public void nextDay(StaffContract contract, LocalDate today) {
         if (contract.getEndDate().isBefore(today)) {
-            terminateContract(contract);
-            return false;
+            terminateStaffContract(contract, today);
         }
-
-        return true;
     }
 
     public void paySigningFee(LocalDate date, iContract contract) {
+        TransactionType type;
+        if (contract.getPerson() instanceof Worker) {
+            type = TransactionType.WORKER_MONTHLY;
+        } else {
+            type = TransactionType.STAFF;
+        }
+
         bankAccountManager.removeFunds(contract.getPromotion(),
                 ContractUtils.calculateSigningFee(contract.getPerson(), date),
-                contract.getPerson() instanceof Worker ? TransactionType.WORKER : TransactionType.STAFF,
+                type,
                 date);
     }
 
@@ -221,14 +195,34 @@ public class ContractManager extends GameObjectManager implements Serializable {
         }
     }
 
-    public void terminateContract(iContract contract) {
-        if (contract.getWorker() != null) {
-            contract.getWorker().removeContract((Contract) contract);
-        } else if (contract.getStaff() != null) {
-            contract.getStaff().setStaffContract(null);
-        }
+    public void terminateContract(Contract contract, LocalDate date) {
+        int fee = ContractUtils.calculateTerminationFee(contract, date);
+
         contract.setActive(false);
-        //TODO update db? #196
+        contract.setEndDate(date);
+        updateContracts(List.of(contract));
+
+        if (fee > 0) {
+            bankAccountManager.removeFunds(contract.getPromotion(),
+                    fee,
+                    TransactionType.WORKER_MONTHLY,
+                    date);
+        }
+    }
+
+    public void terminateStaffContract(StaffContract staffContract, LocalDate date) {
+        int fee = ContractUtils.calculateTerminationFee(staffContract, date);
+
+        staffContract.setActive(false);
+        staffContract.setEndDate(date);
+        updateStaffContracts(List.of(staffContract));
+
+        if (fee > 0) {
+            bankAccountManager.removeFunds(staffContract.getPromotion(),
+                    fee,
+                    TransactionType.STAFF,
+                    date);
+        }
     }
 
     public String getTerms(iContract contract) {
@@ -247,6 +241,18 @@ public class ContractManager extends GameObjectManager implements Serializable {
         boolean canNegotiate = true;
 
         for (iContract contract : getContracts(person)) {
+            if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
+                canNegotiate = false;
+            }
+        }
+
+        return canNegotiate;
+    }
+
+    public boolean canNegotiate(Worker worker, Promotion promotion) {
+        boolean canNegotiate = true;
+
+        for (iContract contract : getContracts(worker)) {
             if (contract.isExclusive() || contract.getPromotion().equals(promotion)) {
                 canNegotiate = false;
             }

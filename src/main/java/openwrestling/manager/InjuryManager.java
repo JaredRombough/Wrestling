@@ -37,7 +37,7 @@ public class InjuryManager extends GameObjectManager implements Serializable {
 
     public void dailyUpdate(LocalDate date, Promotion promotion) {
         if (randomInjury()) {
-            List<Worker> roster = workerManager.selectRoster(promotion);
+            List<Worker> roster = workerManager.getRoster(promotion);
             int workerIndex = RandomUtils.nextInt(0, roster.size());
             createRandomInjury(roster.get(workerIndex), date, promotion);
         }

@@ -4,7 +4,6 @@ package openwrestling.manager;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segmentEnum.StaffType;
 
 import java.io.Serializable;
@@ -15,9 +14,8 @@ import java.util.stream.Collectors;
 
 public class StaffManager extends GameObjectManager implements Serializable {
 
-    private List<StaffMember> staffMembers = new ArrayList<>();
-
     private final ContractManager contractManager;
+    private List<StaffMember> staffMembers = new ArrayList<>();
 
     public StaffManager(Database database, ContractManager contractManager) {
         super(database);
@@ -67,7 +65,6 @@ public class StaffManager extends GameObjectManager implements Serializable {
         return availableStaff;
     }
 
-
     public int getStaffSkillAverage(StaffType staffType, Promotion promotion) {
         double total = 0;
         List<StaffMember> staffOfType = getStaff(staffType, promotion);
@@ -75,28 +72,6 @@ public class StaffManager extends GameObjectManager implements Serializable {
             total += staff.getSkill();
         }
         return (int) Math.ceil(total / staffOfType.size());
-    }
-
-    public int getStaffSkillModifier(StaffType staffType, Promotion promotion, List<Worker> roster) {
-        double coverage = getStaffCoverage(promotion, staffType, roster);
-        double averageSkill = getStaffSkillAverage(staffType, promotion);
-        if (coverage > 100) {
-            return (int) averageSkill;
-        }
-        return (int) (coverage / 100 * averageSkill);
-    }
-
-    public int getStaffCoverage(Promotion promotion, StaffType staffType, List<Worker> roster) {
-
-        float staffCount = getStaff(staffType, promotion).size();
-        float ratio;
-        if (staffType.equals(StaffType.PRODUCTION)) {
-            ratio = staffCount / (promotion.getLevel() * 2);
-        } else {
-            float staffCoverage = staffCount * staffType.workerRatio();
-            ratio = staffCoverage / roster.size();
-        }
-        return Math.round(ratio * 100);
     }
 
     public int getStaffPayrollForMonth(LocalDate date, Promotion promotion) {

@@ -1,11 +1,6 @@
 package openwrestling.view.start.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,11 +11,15 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import openwrestling.manager.WorkerManager;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class StartGameScreenController extends ControllerBase implements Initializable {
 
@@ -81,7 +80,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
     }
 
     private void updateWorkersListView(Promotion newValue) {
-        List<Worker> roster = gameController.getWorkerManager().selectRoster(newValue);
+        List<Worker> roster = gameController.getWorkerManager().getRoster(newValue);
         currentPromotionName.setText(newValue.toString().trim());
         currentPromotionText.setText("Level: " + newValue.getLevel() + "\n"
                 + "Workers: " + roster.size() + "\n"

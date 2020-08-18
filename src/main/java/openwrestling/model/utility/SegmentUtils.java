@@ -27,7 +27,7 @@ public final class SegmentUtils {
 
         int size = segment.getMatchParticipantTeams().get(0).getWorkers().size();
         for (SegmentTeam team : segment.getMatchParticipantTeams()) {
-            if (team.getWorkers().size() != size && !team.getWorkers().isEmpty()) {
+            if (CollectionUtils.isNotEmpty(team.getWorkers()) && team.getWorkers().size() != size) {
                 handicap = true;
                 break;
 
@@ -58,7 +58,7 @@ public final class SegmentUtils {
             return List.of();
         }
         int winnerPopularity = getWinnerMaxPopularity(segment);
-        return segment.getTeams(TeamType.LOSER).stream()
+        return segment.getSegmentTeams(TeamType.LOSER).stream()
                 .flatMap(team -> team.getWorkers().stream())
                 .filter(worker -> worker.getPopularity() > winnerPopularity + 10)
                 .collect(Collectors.toList());

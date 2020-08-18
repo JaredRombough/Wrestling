@@ -1,7 +1,6 @@
 package openwrestling.view.browser.controller;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,6 +12,7 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segmentEnum.BrowseMode;
 import openwrestling.model.segmentEnum.EventVenueSize;
+import openwrestling.model.segmentEnum.StaffType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -76,15 +76,7 @@ public class EventTemplateController extends ControllerBase implements Initializ
         });
         editBroadcastTeamButton.setText(EDIT_ICON);
         editBroadcastTeamButton.setOnAction(e -> {
-            EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
-                    gameController,
-                    playerPromotion(),
-                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
-                            ? gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())
-                            : gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate)
-            ).showAndWait();
-            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
+            showEditDefaultBroadcastTeamDialog().ifPresent((List<StaffMember> broadcastTeam) -> {
                 gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(eventTemplate, broadcastTeam);
                 updateLabels();
             });
@@ -118,12 +110,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
                     EventVenueSize.values(),
                     eventTemplate.getEventVenueSize());
 
-            comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EventVenueSize>() {
-                @Override
-                public void changed(ObservableValue<? extends EventVenueSize> observable, EventVenueSize oldValue, EventVenueSize newValue) {
-                    eventTemplate.setEventVenueSize(newValue);
-                }
-            });
+            comboBox.getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener((ChangeListener<EventVenueSize>) (observable, oldValue, newValue) -> eventTemplate.setEventVenueSize(newValue));
 
             updateRosterSplitComboBox(rosterSplitComboBox,
                     gameController.getRosterSplitManager().getRosterSplits(),
@@ -144,6 +133,18 @@ public class EventTemplateController extends ControllerBase implements Initializ
             editLabel.setCurrent(BrowseMode.EVENTS);
         }
 
+    }
+
+    private Optional<List<StaffMember>> showEditDefaultBroadcastTeamDialog() {
+        EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
+        List<StaffMember> defaultBroadCastTeam = gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
+                ? gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion())
+                : gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate);
+        return dialog.getDialog(
+                gameController.getStaffManager().getStaff(StaffType.BROADCAST, playerPromotion()),
+                defaultBroadCastTeam,
+                eventTemplate.getName()
+        ).showAndWait();
     }
 
 }

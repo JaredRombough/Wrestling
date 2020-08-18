@@ -58,14 +58,10 @@ public class BankAccountManager extends GameObjectManager implements Serializabl
         return saved;
     }
 
-    private boolean isExpense(Transaction transaction) {
-        return transaction.getType().equals(TransactionType.WORKER) || transaction.getType().equals(TransactionType.STAFF);
-    }
-
     public void insertTransactions(List<Transaction> transactions) {
         Map<Promotion, BankAccount> bankAccountMap = new HashMap<>();
         transactions.forEach(transaction -> {
-            long amount = isExpense(transaction) ? -transaction.getAmount() : transaction.getAmount();
+            long amount = transaction.getType().isExpense() ? -transaction.getAmount() : transaction.getAmount();
             if (bankAccountMap.containsKey(transaction.getPromotion())) {
                 BankAccount bankAccount = bankAccountMap.get(transaction.getPromotion());
                 bankAccount.setFunds(bankAccount.getFunds() + amount);
