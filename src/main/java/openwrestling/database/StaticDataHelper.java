@@ -6,10 +6,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import openwrestling.entities.MatchRulesEntity;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 public class StaticDataHelper {
 
@@ -24,17 +21,15 @@ public class StaticDataHelper {
     }
 
     private String readFile() {
-        URL res = getClass().getClassLoader().getResource("static_data.sql");
-
         byte[] encoded;
 
-        try {
-            assert res != null;
-            encoded = Files.readAllBytes(Paths.get(res.toURI()));
-        } catch (IOException | URISyntaxException e) {
+        try (InputStream in = getClass().getResourceAsStream("/static_data.sql")) {
+            encoded = in.readAllBytes();
+        } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+
         return new String(encoded, java.nio.charset.StandardCharsets.UTF_8);
     }
 
