@@ -8,14 +8,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.JoinTeamType;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.PromoType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.ShowType;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.JoinTeamType;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.PromoType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.ShowType;
 
 import java.util.Collection;
 import java.util.Date;
@@ -61,8 +60,8 @@ public class SegmentEntity extends Entity {
     @DatabaseField
     private MatchFinish matchFinish;
 
-    @DatabaseField
-    private MatchRule matchRule;
+    @DatabaseField(foreign = true)
+    private MatchRulesEntity matchRules;
 
     @DatabaseField
     private int segmentLength;

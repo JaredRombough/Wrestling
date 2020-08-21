@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iEvent;
-import openwrestling.model.segmentEnum.EventType;
+import openwrestling.model.segment.constants.EventType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;

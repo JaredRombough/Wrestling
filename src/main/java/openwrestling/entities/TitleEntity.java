@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segment.constants.ActiveType;
 
 import java.util.Collection;
 

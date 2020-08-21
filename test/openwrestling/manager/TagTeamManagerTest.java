@@ -5,7 +5,7 @@ import openwrestling.model.SegmentItem;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segment.constants.ActiveType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;

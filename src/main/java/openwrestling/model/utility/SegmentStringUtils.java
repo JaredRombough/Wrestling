@@ -4,17 +4,19 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static openwrestling.model.constants.GameConstants.DEFAULT_MATCH_RULE;
 
 public final class SegmentStringUtils {
 
     public static String getMatchTitle(Segment segment) {
         List<SegmentTeam> teams = segment.getSegmentTeams();
-        MatchRule rules = segment.getMatchRule();
+        MatchRules rules = segment.getMatchRules();
 
         String string = "";
 
@@ -30,7 +32,7 @@ public final class SegmentStringUtils {
         if (SegmentUtils.isHandicapMatch(segment)) {
             string += "Handicap";
 
-        } else if (rules.equals(MatchRule.DEFAULT) && string.isEmpty()) {
+        } else if (rules != null && rules.getMatchRulesID() == DEFAULT_MATCH_RULE && string.isEmpty()) {
 
             int teamsSize = segment.getMatchParticipantTeams().size();
 
@@ -62,8 +64,8 @@ public final class SegmentStringUtils {
                     string += teamsSize + "-Way";
                     break;
             }
-        } else if (!rules.equals(MatchRule.DEFAULT)) {
-            string += rules.description();
+        } else if (rules.getMatchRulesID() != DEFAULT_MATCH_RULE) {
+            string += rules.getDescription();
         }
 
         if (string.lastIndexOf(' ') != string.length() - 1) {

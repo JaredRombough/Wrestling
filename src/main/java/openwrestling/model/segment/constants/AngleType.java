@@ -1,4 +1,4 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 import openwrestling.model.interfaces.iAngleType;
@@ -191,13 +191,13 @@ public enum AngleType implements Description, iAngleType {
 
     };
 
+    public static String label() {
+        return "Type: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-
-    public static String label() {
-        return "Type: ";
     }
 
 }

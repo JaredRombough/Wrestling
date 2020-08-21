@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segment.constants.ActiveType;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
@@ -24,12 +24,10 @@ import java.util.stream.Collectors;
 @DatabaseTable(tableName = "tag_teams")
 public class TagTeamEntity extends Entity {
 
-    @DatabaseField(generatedId = true)
-    private long tagTeamID;
-
     @ForeignCollectionField(eager = true)
     public ForeignCollection<TagTeamWorkerEntity> tagTeamWorkers;
-
+    @DatabaseField(generatedId = true)
+    private long tagTeamID;
     private Collection<WorkerEntity> workers;
 
     @DatabaseField

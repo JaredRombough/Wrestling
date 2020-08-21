@@ -1,9 +1,10 @@
 package openwrestling.model;
 
+import openwrestling.model.segment.constants.ActiveType;
+import openwrestling.model.segment.constants.Gender;
+
 import java.util.ArrayList;
 import java.util.List;
-import openwrestling.model.segmentEnum.ActiveType;
-import openwrestling.model.segmentEnum.Gender;
 
 public interface SegmentItem {
 

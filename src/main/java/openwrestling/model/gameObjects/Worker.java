@@ -5,7 +5,7 @@ import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segment.constants.Gender;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,13 +16,12 @@ import java.util.Objects;
 @Setter
 public class Worker extends GameObject implements Serializable, SegmentItem, iPerson {
 
+    private final List<Contract> contracts = new ArrayList<>();
     private long workerID;
     private String name;
     private String shortName;
     private String imageString;
-
     private int importKey;
-
     private int striking;
     private int flying;
     private int wrestling;
@@ -30,16 +29,10 @@ public class Worker extends GameObject implements Serializable, SegmentItem, iPe
     private int behaviour;
     private int popularity;
     private int age;
-
     private Gender gender;
-
     private boolean fullTime;
     private boolean mainRoster;
-
     private int minimumPopularity = 0;
-
-    private final List<Contract> contracts = new ArrayList<>();
-
     private Worker manager;
 
     public void addContract(Contract contract) {

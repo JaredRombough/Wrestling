@@ -20,7 +20,7 @@ import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;
-import openwrestling.model.segmentEnum.BrowseMode;
+import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;

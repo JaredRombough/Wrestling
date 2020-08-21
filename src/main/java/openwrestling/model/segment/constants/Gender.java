@@ -1,25 +1,25 @@
+package openwrestling.model.segment.constants;
 
-package openwrestling.model.segmentEnum;
+import openwrestling.model.interfaces.iSortFilter;
 
-public enum ActiveType {
+public enum Gender implements iSortFilter {
     ALL {
         @Override
         public String toString() {
             return "All";
         }
     },
-    ACTIVE {
+    MALE {
         @Override
         public String toString() {
-            return "Active";
+            return "Male";
         }
     },
-    INACTIVE {
+    FEMALE {
         @Override
         public String toString() {
-            return "Inactive";
+            return "Female";
         }
-
     }
 
 }

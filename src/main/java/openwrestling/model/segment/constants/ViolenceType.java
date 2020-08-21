@@ -1,13 +1,13 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum JoinTeamType implements Description {
+public enum ViolenceType implements Description {
 
-    TAG_TEAM {
+    NO_BUMP {
         @Override
         public String description() {
-            return "New Tag Team";
+            return "No Bump";
         }
 
         @Override
@@ -16,10 +16,10 @@ public enum JoinTeamType implements Description {
         }
 
     },
-    NEW_STABLE {
+    ATTACK {
         @Override
         public String description() {
-            return "New Stable";
+            return "Attack";
         }
 
         @Override
@@ -28,10 +28,10 @@ public enum JoinTeamType implements Description {
         }
 
     },
-    STABLE {
+    DEFEND {
         @Override
         public String description() {
-            return "Existing Stable";
+            return "Defend";
         }
 
         @Override
@@ -40,14 +40,14 @@ public enum JoinTeamType implements Description {
         }
 
     };
-    
+
+    public static String label() {
+        return "Violence: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-    
-    public static String label() {
-        return "Join: ";
     }
 
 }

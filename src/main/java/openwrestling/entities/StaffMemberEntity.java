@@ -7,9 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.gameObjects.StaffContract;
-import openwrestling.model.segmentEnum.Gender;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.Gender;
+import openwrestling.model.segment.constants.StaffType;
 
 @Getter
 @Setter
@@ -48,7 +47,6 @@ public class StaffMemberEntity extends Entity {
 
     @DatabaseField(foreign = true)
     private StaffContractEntity staffContract;
-
 
 
 }

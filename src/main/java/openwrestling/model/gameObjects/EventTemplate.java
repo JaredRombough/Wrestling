@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.segmentEnum.EventBroadcast;
-import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventVenueSize;
+import openwrestling.model.segment.constants.EventBroadcast;
+import openwrestling.model.segment.constants.EventFrequency;
+import openwrestling.model.segment.constants.EventVenueSize;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;

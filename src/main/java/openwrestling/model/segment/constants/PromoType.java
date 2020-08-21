@@ -1,13 +1,13 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum ViolenceType implements Description {
+public enum PromoType implements Description {
 
-    NO_BUMP {
+    PROMO {
         @Override
         public String description() {
-            return "No Bump";
+            return "Promo";
         }
 
         @Override
@@ -16,10 +16,10 @@ public enum ViolenceType implements Description {
         }
 
     },
-    ATTACK {
+    OFFER {
         @Override
         public String description() {
-            return "Attack";
+            return "Offer";
         }
 
         @Override
@@ -28,10 +28,22 @@ public enum ViolenceType implements Description {
         }
 
     },
-    DEFEND {
+    CHALLENGE {
         @Override
         public String description() {
-            return "Defend";
+            return "Challenge";
+        }
+
+        @Override
+        public String result() {
+            return "";
+        }
+
+    },
+    ANNOUNCEMENT {
+        @Override
+        public String description() {
+            return "Announcement";
         }
 
         @Override
@@ -41,13 +53,13 @@ public enum ViolenceType implements Description {
 
     };
 
+    public static String label() {
+        return "Promo: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-    
-    public static String label() {
-        return "Violence: ";
     }
 
 }

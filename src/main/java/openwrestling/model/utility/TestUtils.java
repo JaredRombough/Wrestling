@@ -4,8 +4,8 @@ import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.OutcomeType;
-import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segment.constants.OutcomeType;
+import openwrestling.model.segment.constants.SegmentType;
 
 import java.util.ArrayList;
 import java.util.List;

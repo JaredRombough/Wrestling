@@ -15,7 +15,7 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,13 +32,13 @@ import static openwrestling.model.utility.PromotionUtils.idealRosterSize;
 @Builder
 public class DailyContractUpdate extends Logging {
 
-    private PromotionManager promotionManager;
-    private DateManager dateManager;
-    private WorkerManager workerManager;
-    private ContractManager contractManager;
-    private ContractFactory contractFactory;
-    private NewsManager newsManager;
-    private TitleManager titleManager;
+    private final PromotionManager promotionManager;
+    private final DateManager dateManager;
+    private final WorkerManager workerManager;
+    private final ContractManager contractManager;
+    private final ContractFactory contractFactory;
+    private final NewsManager newsManager;
+    private final TitleManager titleManager;
 
     private List<Worker> freeAgents;
 

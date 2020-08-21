@@ -5,7 +5,7 @@ import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.TransactionType;
 import org.junit.Before;
 import org.junit.Test;
 

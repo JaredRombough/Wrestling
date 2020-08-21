@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.JoinTeamType;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.PromoType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.SegmentValidation;
-import openwrestling.model.segmentEnum.ShowType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.JoinTeamType;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.PromoType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.SegmentValidation;
+import openwrestling.model.segment.constants.ShowType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
@@ -66,7 +66,7 @@ public class Segment extends GameObject implements Serializable {
     private List<NewsItem> segmentNewsItems = new ArrayList<>();
 
     private MatchFinish matchFinish = MatchFinish.CLEAN;
-    private MatchRule matchRule = MatchRule.DEFAULT;
+    private MatchRules matchRules;
 
     public Segment(SegmentType segmentType) {
         this.segmentType = segmentType;

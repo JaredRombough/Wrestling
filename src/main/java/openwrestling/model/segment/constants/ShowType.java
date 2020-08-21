@@ -1,13 +1,13 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum PromoType implements Description {
+public enum ShowType implements Description {
 
-    PROMO {
+    TONIGHT {
         @Override
         public String description() {
-            return "Promo";
+            return "Tonight";
         }
 
         @Override
@@ -16,10 +16,10 @@ public enum PromoType implements Description {
         }
 
     },
-    OFFER {
+    NEXT_SHOW {
         @Override
         public String description() {
-            return "Offer";
+            return "Next Show";
         }
 
         @Override
@@ -28,22 +28,10 @@ public enum PromoType implements Description {
         }
 
     },
-    CHALLENGE {
+    NEXT_BIG_SHOW {
         @Override
         public String description() {
-            return "Challenge";
-        }
-
-        @Override
-        public String result() {
-            return "";
-        }
-
-    },
-    ANNOUNCEMENT {
-        @Override
-        public String description() {
-            return "Announcement";
+            return "Next Big Show";
         }
 
         @Override
@@ -52,14 +40,14 @@ public enum PromoType implements Description {
         }
 
     };
-    
+
+    public static String label() {
+        return "Show: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-    
-    public static String label() {
-        return "Promo: ";
     }
 
 }

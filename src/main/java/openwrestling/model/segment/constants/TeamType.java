@@ -1,4 +1,4 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Stable;
@@ -501,6 +501,10 @@ public enum TeamType implements Description, iTeamType {
         }
     };
 
+    private static boolean workerDroppable(SegmentItem segmentItem) {
+        return segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof Stable;
+    }
+
     @Override
     public String toString() {
         return description();
@@ -508,10 +512,6 @@ public enum TeamType implements Description, iTeamType {
 
     public boolean isMatch() {
         return this.equals(WINNER) || this.equals(LOSER) || this.equals(DRAW);
-    }
-
-    private static boolean workerDroppable(SegmentItem segmentItem) {
-        return segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof Stable;
     }
 
 }

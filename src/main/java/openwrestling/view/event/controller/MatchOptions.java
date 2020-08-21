@@ -1,9 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,15 +7,20 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.opitons.MatchRules;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class MatchOptions extends ControllerBase implements Initializable {
 
     @FXML
-    private ComboBox<MatchRule> matchRules;
+    private ComboBox<MatchRules> matchRules;
 
     @FXML
     private Button rulesHelp;
@@ -53,7 +54,7 @@ public class MatchOptions extends ControllerBase implements Initializable {
     }
 
     private void initializeMatchRulesCombobox() {
-        matchRules.setItems(FXCollections.observableArrayList(MatchRule.values()));
+        matchRules.setItems(FXCollections.observableArrayList(gameController.getMatchRulesManager().getMatchRules()));
         matchRules.getSelectionModel().selectFirst();
         ViewUtils.initializeButtonHover(rulesLabel, rulesHelp);
         StringBuilder sb = new StringBuilder();
@@ -85,14 +86,14 @@ public class MatchOptions extends ControllerBase implements Initializable {
     }
 
     private void updateMatchRulesCombobox() {
-        MatchRule current = (MatchRule) getMatchRules().getSelectionModel().getSelectedItem();
+        MatchRules current = (MatchRules) getMatchRules().getSelectionModel().getSelectedItem();
         MatchFinish lastFinish = (MatchFinish) getMatchFinishes().getSelectionModel().getSelectedItem();
         List<MatchFinish> finishes = new ArrayList<>();
         for (MatchFinish f : MatchFinish.values()) {
 
-            if (current.nodq() && f.nodq()) {
+            if (current.isNoDQ() && f.nodq()) {
                 finishes.add(f);
-            } else if (!current.nodq()) {
+            } else if (!current.isNoDQ()) {
                 finishes.add(f);
             }
         }
@@ -105,8 +106,8 @@ public class MatchOptions extends ControllerBase implements Initializable {
         }
     }
 
-    public MatchRule getMatchRule() {
-        return (MatchRule) getMatchRules().getSelectionModel().getSelectedItem();
+    public MatchRules getMatchRule() {
+        return (MatchRules) getMatchRules().getSelectionModel().getSelectedItem();
     }
 
     public MatchFinish getMatchFinish() {

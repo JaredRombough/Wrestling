@@ -1,13 +1,13 @@
 package openwrestling.model.interfaces;
 
 import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.segmentEnum.JoinTeamType;
-import openwrestling.model.segmentEnum.MatchRule;
+import openwrestling.model.segment.constants.JoinTeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 
 public interface SegmentParams {
 
-    default MatchRule getMatchRule() {
-        return MatchRule.DEFAULT;
+    default MatchRules getMatchRule() {
+        return new MatchRules();
     }
 
     default Stable getJoinStable() {

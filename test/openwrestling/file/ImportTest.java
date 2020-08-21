@@ -9,8 +9,8 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerRelationship;
-import openwrestling.model.segmentEnum.ActiveType;
-import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segment.constants.ActiveType;
+import openwrestling.model.segment.constants.Gender;
 import org.junit.Before;
 import org.junit.Test;
 

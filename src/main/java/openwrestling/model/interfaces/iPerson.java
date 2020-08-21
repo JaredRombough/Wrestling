@@ -1,8 +1,9 @@
 package openwrestling.model.interfaces;
 
-import java.util.List;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segment.constants.Gender;
+
+import java.util.List;
 
 public interface iPerson {
 

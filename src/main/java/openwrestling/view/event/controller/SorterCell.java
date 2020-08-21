@@ -1,7 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.util.Collections;
-import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,9 +15,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
 import openwrestling.manager.SegmentManager;
-import openwrestling.model.segmentEnum.SegmentValidation;
+import openwrestling.model.segment.constants.SegmentValidation;
 import openwrestling.view.utility.LocalDragboard;
 import openwrestling.view.utility.ViewUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> {
 
@@ -137,9 +138,9 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
 
             myLabel = new Label(
                     segmentManager.getSegmentTitle(item.segment.get())
-                    + String.format(" (%d min)", item.segment.get().getSegmentLength())
-                    + "\n"
-                    + segmentManager.getSegmentString(item.segment.get()));
+                            + String.format(" (%d min)", item.segment.get().getSegmentLength())
+                            + "\n"
+                            + segmentManager.getSegmentString(item.segment.get()));
             myLabel.setTextAlignment(TextAlignment.CENTER);
 
             myLabel.setWrapText(true);

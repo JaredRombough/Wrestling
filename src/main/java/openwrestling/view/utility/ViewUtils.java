@@ -56,7 +56,7 @@ import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.RegionWrapper;
 import openwrestling.view.utility.comparators.NameComparator;

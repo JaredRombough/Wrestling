@@ -12,7 +12,7 @@ import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.BankAccount;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.utility.ContractUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;

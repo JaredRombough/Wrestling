@@ -1,9 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,15 +12,21 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.gameObjects.Title;
-import openwrestling.model.segmentEnum.ActiveType;
-import openwrestling.model.segmentEnum.BrowseMode;
+import openwrestling.model.gameObjects.TitleReign;
+import openwrestling.model.segment.constants.ActiveType;
+import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
-import static openwrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+import static openwrestling.view.utility.ViewUtils.updateRosterSplitComboBox;
 
 public class TitleViewController extends ControllerBase implements Initializable {
 

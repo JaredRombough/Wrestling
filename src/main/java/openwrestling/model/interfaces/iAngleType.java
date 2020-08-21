@@ -1,6 +1,6 @@
 package openwrestling.model.interfaces;
 
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
 
 public interface iAngleType {
 

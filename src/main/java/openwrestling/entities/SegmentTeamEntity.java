@@ -8,12 +8,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.segmentEnum.OutcomeType;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.ResponseType;
-import openwrestling.model.segmentEnum.SuccessType;
-import openwrestling.model.segmentEnum.TeamType;
-import openwrestling.model.segmentEnum.TimingType;
+import openwrestling.model.segment.constants.OutcomeType;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.ResponseType;
+import openwrestling.model.segment.constants.SuccessType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.constants.TimingType;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
