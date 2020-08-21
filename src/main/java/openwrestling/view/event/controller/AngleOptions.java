@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.JoinTeamType;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.PromoType;
-import openwrestling.model.segmentEnum.ShowType;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.JoinTeamType;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.PromoType;
+import openwrestling.model.segment.constants.ShowType;
 
 @Getter
 @Setter

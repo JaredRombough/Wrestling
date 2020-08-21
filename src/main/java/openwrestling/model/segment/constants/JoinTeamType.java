@@ -1,53 +1,53 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum TimingType implements Description {
+public enum JoinTeamType implements Description {
 
-    BEFORE {
+    TAG_TEAM {
         @Override
         public String description() {
-            return "Before";
+            return "New Tag Team";
         }
 
         @Override
         public String result() {
-            return "before";
+            return "";
         }
 
     },
-    DURING {
+    NEW_STABLE {
         @Override
         public String description() {
-            return "During";
+            return "New Stable";
         }
 
         @Override
         public String result() {
-            return "during";
+            return "";
         }
 
     },
-    AFTER {
+    STABLE {
         @Override
         public String description() {
-            return "After";
+            return "Existing Stable";
         }
 
         @Override
         public String result() {
-            return "after";
+            return "";
         }
 
     };
 
+    public static String label() {
+        return "Join: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-    
-    public static String label() {
-        return "Timing: ";
     }
 
 }

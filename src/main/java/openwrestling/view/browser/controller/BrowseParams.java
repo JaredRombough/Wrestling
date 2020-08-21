@@ -1,8 +1,8 @@
 package openwrestling.view.browser.controller;
 
-import openwrestling.model.interfaces.iSortFilter;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.segmentEnum.BrowseMode;
+import openwrestling.model.interfaces.iSortFilter;
+import openwrestling.model.segment.constants.BrowseMode;
 
 public class BrowseParams {
 

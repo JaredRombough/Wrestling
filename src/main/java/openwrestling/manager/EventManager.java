@@ -7,7 +7,7 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.SegmentType;
+import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;

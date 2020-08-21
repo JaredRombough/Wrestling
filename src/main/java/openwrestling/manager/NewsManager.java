@@ -5,7 +5,6 @@ import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Injury;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.utility.ModelUtils;
@@ -25,9 +24,9 @@ import static openwrestling.model.constants.Words.BODY_PARTS;
 
 public class NewsManager extends GameObjectManager implements Serializable {
 
-    private List<NewsItem> newsItems = new ArrayList<>();
     private final Map<LocalDate, NewsItem> newsItemByDateMap = new HashMap();
     private final Map<Object, Map<LocalDate, List<NewsItem>>> newsItemBySegmentItemMap = new HashMap();
+    private List<NewsItem> newsItems = new ArrayList<>();
 
     public NewsManager(Database database) {
         super(database);
@@ -130,17 +129,6 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .promotions(List.of(contract.getPromotion()))
                 .workers(List.of(contract.getWorker()))
                 .build();
-    }
-
-    public void addTrainingNewsItem(Worker worker, StaffMember trainer, Promotion promotion, String stat, LocalDate date) {
-        addNews(NewsItem.builder()
-                .headline(String.format("%s training", worker.getLongName()))
-                .summary(String.format("%s increased %s working with %s trainer %s.",
-                        worker.toString(), stat, promotion.getShortName(), trainer.toString()))
-                .date(date)
-                .promotions(List.of(promotion))
-                .workers(List.of(worker))
-                .build());
     }
 
     public void addMatchInjuryNewsItem(Injury injury, Event event) {

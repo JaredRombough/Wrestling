@@ -10,7 +10,7 @@ import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
-import openwrestling.model.segmentEnum.BrowseMode;
+import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;

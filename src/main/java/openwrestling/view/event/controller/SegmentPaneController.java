@@ -21,17 +21,17 @@ import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iSegmentLength;
-import openwrestling.model.segmentEnum.AngleLength;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.JoinTeamType;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchLength;
-import openwrestling.model.segmentEnum.OutcomeType;
-import openwrestling.model.segmentEnum.ResponseType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.SegmentValidation;
-import openwrestling.model.segmentEnum.ShowType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.AngleLength;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.JoinTeamType;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.MatchLength;
+import openwrestling.model.segment.constants.OutcomeType;
+import openwrestling.model.segment.constants.ResponseType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.SegmentValidation;
+import openwrestling.model.segment.constants.ShowType;
+import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.event.helper.TeamPaneHelper;
@@ -548,7 +548,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         );
         if (segmentType.equals(SegmentType.MATCH)) {
             segment.setMatchFinish(matchOptions.getMatchFinish());
-            segment.setMatchRule(matchOptions.getMatchRule());
+            segment.setMatchRules(matchOptions.getMatchRule());
         } else {
             AngleOptions angleOptions = angleOptionsController.getAngleOptions();
 

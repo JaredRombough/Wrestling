@@ -19,8 +19,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
-import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventVenueSize;
+import openwrestling.model.segment.constants.EventFrequency;
+import openwrestling.model.segment.constants.EventVenueSize;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
@@ -43,16 +43,12 @@ public class BookShowController extends ControllerBase implements Initializable 
 
     @FXML
     public ScrollPane scrollPane;
-
-    @FXML
-    private Button confirmButton;
-
-    @FXML
-    private Button cancelButton;
-
     @FXML
     public AnchorPane anchorPane;
-
+    @FXML
+    private Button confirmButton;
+    @FXML
+    private Button cancelButton;
     private LocalDate currentDate;
     private boolean rescheduling;
     private Event eventToReschedule;

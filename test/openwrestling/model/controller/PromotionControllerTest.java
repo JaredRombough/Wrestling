@@ -2,8 +2,7 @@ package openwrestling.model.controller;
 
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.StaffManager;
+import openwrestling.manager.MatchRulesManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
@@ -26,8 +25,7 @@ public class PromotionControllerTest {
                 mock(DateManager.class),
                 mock(TitleManager.class),
                 mock(WorkerManager.class),
-                mock(NewsManager.class),
-                mock(StaffManager.class)
+                mock(MatchRulesManager.class)
         );
     }
 

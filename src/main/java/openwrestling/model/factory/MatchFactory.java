@@ -8,12 +8,12 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.AngleLength;
-import openwrestling.model.segmentEnum.MatchLength;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.AngleLength;
+import openwrestling.model.segment.constants.MatchLength;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.StaffType;
+import openwrestling.model.segment.opitons.MatchRules;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -48,7 +48,7 @@ public class MatchFactory implements Serializable {
         boolean isMatch = segment.getSegmentType().equals(SegmentType.MATCH);
 
         for (SegmentTeam team : segment.getSegmentTeams()) {
-            workRatingTotal += getWorkRating(team, segment.getMatchRule());
+            workRatingTotal += getWorkRating(team, segment.getMatchRules());
         }
 
         int segmentRating = workRatingTotal / segment.getSegmentTeams().size();
@@ -153,12 +153,12 @@ public class MatchFactory implements Serializable {
         segment.setCrowdRating(crowdRating);
     }
 
-    private int getWorkRating(SegmentTeam segmentTeam, MatchRule matchRule) {
+    private int getWorkRating(SegmentTeam segmentTeam, MatchRules matchRules) {
         if (CollectionUtils.isEmpty(segmentTeam.getWorkers())) {
             return 0;
         }
 
-        int totalTeamScore = getTotalTeamScore(segmentTeam, matchRule);
+        int totalTeamScore = getTotalTeamScore(segmentTeam, matchRules);
         int entourageTotalScore = getTotalEntourageScore(segmentTeam);
 
         if (entourageTotalScore > 0) {
@@ -169,7 +169,7 @@ public class MatchFactory implements Serializable {
         return totalTeamScore / segmentTeam.getWorkers().size();
     }
 
-    private int getTotalTeamScore(SegmentTeam segmentTeam, MatchRule matchRule) {
+    private int getTotalTeamScore(SegmentTeam segmentTeam, MatchRules matchRules) {
         if (CollectionUtils.isEmpty(segmentTeam.getWorkers())) {
             return 0;
         }
@@ -195,7 +195,7 @@ public class MatchFactory implements Serializable {
                 }
                 break;
                 default:
-                    totalTeamScore += ModelUtils.getMatchWorkRating(worker, matchRule);
+                    totalTeamScore += ModelUtils.getMatchWorkRating(worker, matchRules);
                     break;
             }
         }
@@ -242,7 +242,7 @@ public class MatchFactory implements Serializable {
         List<Worker> matchWorkers = segment.getMatchParticipants();
         matchWorkers.forEach((w) -> {
             int medicModifier = 100;
-            int injuryRate = BASE_INJURY_RATE - segment.getMatchRule().getInjuryModifier() * BASE_INJURY_RATE / 100;
+            int injuryRate = BASE_INJURY_RATE - segment.getMatchRules().getInjuryModifier() * BASE_INJURY_RATE / 100;
             if (RandomUtils.nextInt(0, injuryRate) == 1 && RandomUtils.nextInt(0, injuryRate) > medicModifier) {
                 int injuryDays = RandomUtils.nextInt(0, MAX_INJURY_DAYS);
                 int duration = injuryDays - (medicModifier / 10);

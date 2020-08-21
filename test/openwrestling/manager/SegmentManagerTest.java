@@ -10,13 +10,12 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.ResponseType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.ShowType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.ResponseType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.ShowType;
+import openwrestling.model.segment.constants.TeamType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,12 +38,15 @@ public class SegmentManagerTest {
     private PromotionManager promotionManager;
     private Promotion promotion;
     private Database database;
+    private MatchRulesManager matchRulesManager;
 
     @Before
     public void setUp() {
         database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
+        matchRulesManager = new MatchRulesManager(database);
+        matchRulesManager.selectData();
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
         workerManager = new WorkerManager(database, mock(ContractManager.class));
         segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
@@ -62,7 +64,7 @@ public class SegmentManagerTest {
 
         Segment segment = Segment.builder()
                 .segmentType(SegmentType.MATCH)
-                .matchRule(MatchRule.DEFAULT)
+                .matchRules(matchRulesManager.getDefaultRules())
                 .matchFinish(MatchFinish.CLEAN)
                 .build();
         Worker winnerWorker = workerManager.createWorker(PersonFactory.randomWorker());
@@ -105,7 +107,7 @@ public class SegmentManagerTest {
         assertThat(savedSegment.getSegmentID()).isNotNull().isPositive();
         assertThat(savedSegment.getSegmentType()).isEqualTo(SegmentType.MATCH);
         assertThat(savedSegment.getMatchFinish()).isEqualTo(MatchFinish.CLEAN);
-        assertThat(savedSegment.getMatchRule()).isEqualTo(MatchRule.DEFAULT);
+        assertThat(savedSegment.getMatchRules()).isEqualTo(matchRulesManager.getDefaultRules());
         assertThat(savedSegment.getEvent().getEventID()).isEqualTo(events.get(0).getEventID());
         assertThat(savedSegment.getSegmentTeams()).hasSize(2);
         assertThat(savedSegment.getSegmentTeams())

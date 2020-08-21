@@ -7,30 +7,34 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import openwrestling.model.segment.constants.TransactionType;
-
-import java.util.Date;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@DatabaseTable(tableName = "transactions")
-public class TransactionEntity extends Entity {
+@DatabaseTable(tableName = "match_rules")
+public class MatchRulesEntity extends Entity {
 
     @DatabaseField(generatedId = true)
-    private long transactionID;
-
-    @DatabaseField(foreign = true)
-    private PromotionEntity promotion;
+    private long matchRulesID;
 
     @DatabaseField
-    private long amount;
+    private boolean noDQ;
 
     @DatabaseField
-    private TransactionType type;
+    private String description;
 
     @DatabaseField
-    private Date date;
+    private int strikingModifier;
+
+    @DatabaseField
+    private int flyingModifier;
+
+    @DatabaseField
+    private int wrestingModifier;
+
+    @DatabaseField
+    private int injuryModifier;
+
 }

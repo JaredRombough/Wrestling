@@ -17,14 +17,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.SegmentTeam;
-import openwrestling.model.segmentEnum.OutcomeType;
-import openwrestling.model.segmentEnum.PresenceType;
-import openwrestling.model.segmentEnum.ResponseType;
-import openwrestling.model.segmentEnum.SuccessType;
-import openwrestling.model.segmentEnum.TeamType;
-import openwrestling.model.segmentEnum.TimingType;
+import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.segment.constants.OutcomeType;
+import openwrestling.model.segment.constants.PresenceType;
+import openwrestling.model.segment.constants.ResponseType;
+import openwrestling.model.segment.constants.SuccessType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.constants.TimingType;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.ButtonWrapper;
 import openwrestling.view.utility.GameScreen;
@@ -72,42 +72,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     private OutcomeType outcomeType;
 
     private boolean autoSet;
-
-    public void setTeamType(TeamType newTeamType) {
-        if (teamType != newTeamType) {
-            vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header);
-            teamPane.controller.setCurrent(newTeamType);
-
-            teamType = newTeamType;
-            setTeamTypeLabel(newTeamType.toString());
-            switch (teamType) {
-                case PROMO_TARGET:
-                    setPromoTarget();
-                    break;
-                case OFFEREE:
-                case CHALLENGED:
-                    setResponse();
-                    break;
-                case INTERFERENCE:
-                    vBox.getChildren().retainAll(teamPane.pane, header);
-                    setInterference();
-                    break;
-                case INTERVIEWER:
-                    break;
-                case WINNER:
-                    break;
-                case LOSER:
-                    break;
-                case DRAW:
-                    break;
-                case REF:
-                case TITLES:
-                case BROADCAST:
-                    vBox.getChildren().retainAll(teamPane.pane, header);
-                    break;
-            }
-        }
-    }
 
     public void setTargets(List<SegmentTeam> teams) {
         targets = teams;
@@ -306,8 +270,50 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return teamType == null ? TeamType.DEFAULT : teamType;
     }
 
+    public void setTeamType(TeamType newTeamType) {
+        if (teamType != newTeamType) {
+            vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header);
+            teamPane.controller.setCurrent(newTeamType);
+
+            teamType = newTeamType;
+            setTeamTypeLabel(newTeamType.toString());
+            switch (teamType) {
+                case PROMO_TARGET:
+                    setPromoTarget();
+                    break;
+                case OFFEREE:
+                case CHALLENGED:
+                    setResponse();
+                    break;
+                case INTERFERENCE:
+                    vBox.getChildren().retainAll(teamPane.pane, header);
+                    setInterference();
+                    break;
+                case INTERVIEWER:
+                    break;
+                case WINNER:
+                    break;
+                case LOSER:
+                    break;
+                case DRAW:
+                    break;
+                case REF:
+                case TITLES:
+                case BROADCAST:
+                    vBox.getChildren().retainAll(teamPane.pane, header);
+                    break;
+            }
+        }
+    }
+
     public List<SegmentItem> getSegmentItems() {
         return teamPaneController.getSegmentItems();
+    }
+
+    public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
+        List<SegmentItem> toRemove = new ArrayList<>(teamPaneController.getSegmentItems());
+        toRemove.forEach(item -> removeSegmentItem(item));
+        segmentItems.forEach(item -> addSegmentItem(item));
     }
 
     public List<SegmentItem> getEntourage() {
@@ -380,12 +386,6 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
     }
 
     public void addSegmentItems(List<? extends SegmentItem> segmentItems) {
-        segmentItems.forEach(item -> addSegmentItem(item));
-    }
-
-    public void setSegmentItems(List<? extends SegmentItem> segmentItems) {
-        List<SegmentItem> toRemove = new ArrayList<>(teamPaneController.getSegmentItems());
-        toRemove.forEach(item -> removeSegmentItem(item));
         segmentItems.forEach(item -> addSegmentItem(item));
     }
 

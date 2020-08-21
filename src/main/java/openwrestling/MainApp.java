@@ -15,7 +15,7 @@ import openwrestling.database.Database;
 import openwrestling.file.Import;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
-import openwrestling.model.segmentEnum.Gender;
+import openwrestling.model.segment.constants.Gender;
 import openwrestling.view.RootLayoutController;
 import openwrestling.view.calendar.controller.CalendarController;
 import openwrestling.view.news.controller.NewsScreenController;
@@ -40,12 +40,11 @@ import java.util.ResourceBundle;
 public class MainApp extends Application {
 
     public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    public static final String VERSION = "0.4.5";
+    public static final String VERSION = "0.4.6";
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
-    public static String dbURL;
     private final transient Logger logger;
     private final List<GameScreen> screens;
     private final boolean cssEnabled;

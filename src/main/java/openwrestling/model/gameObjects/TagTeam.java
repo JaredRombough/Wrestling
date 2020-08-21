@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segment.constants.ActiveType;
 
 import java.io.Serializable;
 import java.util.ArrayList;

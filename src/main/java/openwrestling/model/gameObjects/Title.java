@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.interfaces.iRosterSplit;
-import openwrestling.model.segmentEnum.ActiveType;
+import openwrestling.model.segment.constants.ActiveType;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;

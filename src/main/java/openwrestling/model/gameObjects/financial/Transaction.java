@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.TransactionType;
 
 import java.time.LocalDate;
 

@@ -8,9 +8,9 @@ import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 import openwrestling.view.event.controller.TeamPaneWrapper;
 import openwrestling.view.utility.GameScreen;
 
@@ -146,10 +146,10 @@ public final class ModelUtils {
         });
     }
 
-    public static int getMatchWorkRating(Worker worker, MatchRule matchRule) {
-        int flying = worker.getFlying() + (matchRule.getFlyingModifier() * worker.getFlying() / 100);
-        int wrestling = worker.getWrestling() + (matchRule.getWrestingModifier() * worker.getWrestling() / 100);
-        int striking = worker.getStriking() + (matchRule.getStrikingModifier() * worker.getStriking() / 100);
+    public static int getMatchWorkRating(Worker worker, MatchRules matchRules) {
+        int flying = worker.getFlying() + (matchRules.getFlyingModifier() * worker.getFlying() / 100);
+        int wrestling = worker.getWrestling() + (matchRules.getWrestingModifier() * worker.getWrestling() / 100);
+        int striking = worker.getStriking() + (matchRules.getStrikingModifier() * worker.getStriking() / 100);
         return getWeightedScore(new Integer[]{
                 flying,
                 wrestling,

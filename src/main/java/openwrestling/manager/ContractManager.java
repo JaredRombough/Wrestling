@@ -8,7 +8,7 @@ import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iContract;
 import openwrestling.model.interfaces.iPerson;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 
 import java.io.Serializable;

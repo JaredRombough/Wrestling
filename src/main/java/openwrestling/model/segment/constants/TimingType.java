@@ -1,53 +1,53 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum ResponseType implements Description {
+public enum TimingType implements Description {
 
-    YES {
+    BEFORE {
         @Override
         public String description() {
-            return "Yes";
+            return "Before";
         }
 
         @Override
         public String result() {
-            return "";
+            return "before";
         }
 
     },
-    NO {
+    DURING {
         @Override
         public String description() {
-            return "No";
+            return "During";
         }
 
         @Override
         public String result() {
-            return "";
+            return "during";
         }
 
     },
-    PUSH {
+    AFTER {
         @Override
         public String description() {
-            return "Push";
+            return "After";
         }
 
         @Override
         public String result() {
-            return "";
+            return "after";
         }
 
     };
 
+    public static String label() {
+        return "Timing: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-
-    public static String label() {
-        return "Show: ";
     }
 
 }

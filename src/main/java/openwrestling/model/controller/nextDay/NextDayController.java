@@ -18,8 +18,8 @@ import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.EventFrequency;
+import openwrestling.model.segment.constants.TransactionType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Level;
 

@@ -1,10 +1,12 @@
 package openwrestling.model.interfaces;
 
-import java.util.List;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
+
+import java.util.List;
 
 public interface iTeamType {
     public boolean droppable(SegmentItem segmentItem);
+
     public List<TeamType> getShared();
 }

@@ -5,7 +5,7 @@ import openwrestling.database.Database;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.StaffType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;

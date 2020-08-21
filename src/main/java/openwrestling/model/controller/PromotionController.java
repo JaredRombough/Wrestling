@@ -3,8 +3,7 @@ package openwrestling.model.controller;
 import openwrestling.Logging;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
-import openwrestling.manager.NewsManager;
-import openwrestling.manager.StaffManager;
+import openwrestling.manager.MatchRulesManager;
 import openwrestling.manager.TitleManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
@@ -15,8 +14,8 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -36,8 +35,7 @@ public class PromotionController extends Logging implements Serializable {
     private final DateManager dateManager;
     private final TitleManager titleManager;
     private final WorkerManager workerManager;
-    private final NewsManager newsManager;
-    private final StaffManager staffManager;
+    private final MatchRulesManager matchRulesManager;
 
     public PromotionController(
             ContractFactory contractFactory,
@@ -46,16 +44,14 @@ public class PromotionController extends Logging implements Serializable {
             DateManager dateManager,
             TitleManager titleManager,
             WorkerManager workerManager,
-            NewsManager newsManager,
-            StaffManager staffManager) {
+            MatchRulesManager matchRulesManager) {
         this.contractFactory = contractFactory;
         this.eventFactory = eventFactory;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
         this.titleManager = titleManager;
         this.workerManager = workerManager;
-        this.newsManager = newsManager;
-        this.staffManager = staffManager;
+        this.matchRulesManager = matchRulesManager;
     }
 
     private int maxPushListSize(Promotion promotion) {
@@ -269,7 +265,10 @@ public class PromotionController extends Logging implements Serializable {
         }
 
         if (CollectionUtils.isNotEmpty(segments)) {
-            segments.forEach(segment -> segment.setSegmentLength(duration / segments.size()));
+            segments.forEach(segment -> {
+                segment.setSegmentLength(duration / segments.size());
+                segment.setMatchRules(matchRulesManager.getDefaultRules());
+            });
         }
 
         return segments;

@@ -35,5 +35,7 @@ public class GameConstants {
 
     public static final LocalDate DEFAULT_START_DATE = LocalDate.of(2015, 1, 5);
 
+    public static final long DEFAULT_MATCH_RULE = 1;
+
 
 }

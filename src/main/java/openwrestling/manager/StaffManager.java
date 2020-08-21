@@ -4,7 +4,7 @@ package openwrestling.manager;
 import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.StaffType;
 
 import java.io.Serializable;
 import java.time.LocalDate;

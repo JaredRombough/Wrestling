@@ -1,4 +1,4 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.iSortFilter;
 

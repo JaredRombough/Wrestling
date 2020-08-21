@@ -3,10 +3,10 @@ package openwrestling.model.utility;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.AngleType;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.ShowType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.AngleType;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.ShowType;
+import openwrestling.model.segment.constants.TeamType;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Comparator;

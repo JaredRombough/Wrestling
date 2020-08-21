@@ -9,13 +9,13 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.EventBroadcast;
-import openwrestling.model.segmentEnum.EventFrequency;
-import openwrestling.model.segmentEnum.EventVenueSize;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.EventBroadcast;
+import openwrestling.model.segment.constants.EventFrequency;
+import openwrestling.model.segment.constants.EventVenueSize;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +78,6 @@ public class EventManagerTest {
 
         Segment segment = Segment.builder()
                 .segmentType(SegmentType.MATCH)
-                .matchRule(MatchRule.DEFAULT)
                 .matchFinish(MatchFinish.CLEAN)
                 .build();
         Worker winnerWorker = PersonFactory.randomWorker();

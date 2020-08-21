@@ -1,10 +1,10 @@
 package openwrestling.model.factory;
 
-import openwrestling.model.interfaces.iPerson;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.Gender;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.interfaces.iPerson;
+import openwrestling.model.segment.constants.Gender;
+import openwrestling.model.segment.constants.StaffType;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 

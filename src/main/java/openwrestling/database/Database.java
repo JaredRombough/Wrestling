@@ -21,6 +21,7 @@ import openwrestling.entities.EventEntity;
 import openwrestling.entities.EventTemplateEntity;
 import openwrestling.entities.GameSettingEntity;
 import openwrestling.entities.InjuryEntity;
+import openwrestling.entities.MatchRulesEntity;
 import openwrestling.entities.MatchTitleEntity;
 import openwrestling.entities.MonthlyReviewEntity;
 import openwrestling.entities.MoraleRelationshipEntity;
@@ -73,6 +74,7 @@ import openwrestling.model.gameObjects.WorkerRelationship;
 import openwrestling.model.gameObjects.financial.BankAccount;
 import openwrestling.model.gameObjects.financial.Transaction;
 import openwrestling.model.gameObjects.gamesettings.GameSetting;
+import openwrestling.model.segment.opitons.MatchRules;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -113,6 +115,7 @@ public class Database extends Logging {
         put(NewsItem.class, NewsItemEntity.class);
         put(GameSetting.class, GameSettingEntity.class);
         put(MonthlyReview.class, MonthlyReviewEntity.class);
+        put(MatchRules.class, MatchRulesEntity.class);
     }};
 
     //Test constructor
@@ -421,14 +424,17 @@ public class Database extends Logging {
                     NewsItemWorkerEntity.class,
                     NewsItemPromotionEntity.class,
                     GameSettingEntity.class,
-                    MonthlyReviewEntity.class);
+                    MonthlyReviewEntity.class,
+                    MatchRulesEntity.class);
 
             for (Class entityClass : classes) {
                 Dao dao = DaoManager.createDao(connectionSource, entityClass);
                 TableUtils.dropTable(dao, true);
                 TableUtils.createTable(connectionSource, entityClass);
-
             }
+
+            StaticDataHelper staticDataHelper = new StaticDataHelper();
+            staticDataHelper.insertStaticData(connectionSource);
 
         } catch (Exception e) {
             e.printStackTrace();

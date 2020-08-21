@@ -2,7 +2,7 @@ package openwrestling.model.utility;
 
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.segmentEnum.StaffType;
+import openwrestling.model.segment.constants.StaffType;
 
 public final class StaffUtils {
     public static boolean isRef(SegmentItem segmentItem) {

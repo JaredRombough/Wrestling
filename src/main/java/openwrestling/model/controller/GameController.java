@@ -12,6 +12,7 @@ import openwrestling.manager.EventManager;
 import openwrestling.manager.GameObjectManager;
 import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.InjuryManager;
+import openwrestling.manager.MatchRulesManager;
 import openwrestling.manager.MonthlyReviewManager;
 import openwrestling.manager.NewsManager;
 import openwrestling.manager.PromotionManager;
@@ -70,6 +71,7 @@ public final class GameController extends Logging implements Serializable {
     private final BroadcastTeamManager broadcastTeamManager;
     private final GameSettingManager gameSettingManager;
     private final MonthlyReviewManager monthlyReviewManager;
+    private final MatchRulesManager matchRulesManager;
     private final NextDayController nextDayController;
     private final DailyEventBooker dailyEventBooker;
     private final DailyContractUpdate dailyContractUpdate;
@@ -108,6 +110,9 @@ public final class GameController extends Logging implements Serializable {
         injuryManager = new InjuryManager(database, newsManager, workerManager, dateManager);
         monthlyReviewManager = new MonthlyReviewManager(database);
 
+        matchRulesManager = new MatchRulesManager(database);
+        matchRulesManager.selectData();
+
         eventManager = new EventManager(database,
                 contractManager,
                 dateManager,
@@ -134,8 +139,7 @@ public final class GameController extends Logging implements Serializable {
                 dateManager,
                 titleManager,
                 workerManager,
-                newsManager,
-                staffManager);
+                matchRulesManager);
 
         dailyEventBooker = DailyEventBooker.builder()
                 .eventManager(eventManager)
@@ -152,6 +156,7 @@ public final class GameController extends Logging implements Serializable {
                 .dateManager(dateManager)
                 .workerManager(workerManager)
                 .newsManager(newsManager)
+                .titleManager(titleManager)
                 .build();
 
         dailyTransactions = DailyTransactions.builder()
@@ -218,7 +223,8 @@ public final class GameController extends Logging implements Serializable {
                 rosterSplitManager,
                 tagTeamManager,
                 titleManager,
-                monthlyReviewManager
+                monthlyReviewManager,
+                matchRulesManager
         );
 
     }

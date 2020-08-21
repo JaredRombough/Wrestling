@@ -1,53 +1,53 @@
-package openwrestling.model.segmentEnum;
+package openwrestling.model.segment.constants;
 
 import openwrestling.model.interfaces.Description;
 
-public enum SuccessType implements Description {
+public enum ResponseType implements Description {
 
-    WIN {
+    YES {
         @Override
         public String description() {
-            return "Win";
+            return "Yes";
         }
 
         @Override
         public String result() {
-            return "and getting the better of the exchange.";
+            return "";
         }
 
     },
-    LOSE {
+    NO {
         @Override
         public String description() {
-            return "Lose";
+            return "No";
         }
 
         @Override
         public String result() {
-            return "but got run off to the back.";
+            return "";
         }
 
     },
-    DRAW {
+    PUSH {
         @Override
         public String description() {
-            return "Draw";
+            return "Push";
         }
 
         @Override
         public String result() {
-            return "and proceeding to brawl.";
+            return "";
         }
 
     };
 
+    public static String label() {
+        return "Show: ";
+    }
+
     @Override
     public String toString() {
         return description();
-    }
-
-    public static String label() {
-        return "Result: ";
     }
 
 }

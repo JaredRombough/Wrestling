@@ -7,10 +7,10 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segmentEnum.MatchFinish;
-import openwrestling.model.segmentEnum.MatchRule;
-import openwrestling.model.segmentEnum.SegmentType;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.MatchFinish;
+import openwrestling.model.segment.constants.SegmentType;
+import openwrestling.model.segment.constants.TeamType;
+import openwrestling.model.segment.opitons.MatchRules;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.time.LocalDate;
@@ -37,7 +37,7 @@ public class TestUtils {
 
         Segment segment = Segment.builder()
                 .segmentType(SegmentType.MATCH)
-                .matchRule(MatchRule.DEFAULT)
+                .matchRules(new MatchRules())
                 .matchFinish(MatchFinish.CLEAN)
                 .build();
         Worker winnerWorker = PersonFactory.randomWorker();

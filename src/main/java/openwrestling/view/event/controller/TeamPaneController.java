@@ -1,9 +1,5 @@
 package openwrestling.view.event.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,35 +13,32 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.SegmentItem;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
 import openwrestling.view.utility.LocalDragboard;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 public class TeamPaneController extends ControllerBase implements Initializable {
 
     private static final double CELL_HEIGHT = 33;
-
+    boolean toggle = true;
     @FXML
     private ListView teamListView;
-
     @FXML
     private AnchorPane mainPane;
-
     @FXML
     private GridPane gridPane;
-
     @FXML
     private Label teamNameLabel;
-
     private double defaultMainPaneHeight;
-
     private int teamNumber;
-
     private TeamType teamType;
 
-
-    boolean toggle = true;
     public int getTeamNumber() {
         return this.teamNumber;
     }
@@ -142,20 +135,20 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         updateLabels();
     }
 
-    public void setVisible(boolean visible) {
-        if (mainPane.getChildren().isEmpty() && visible) {
-            mainPane.getChildren().add(gridPane);
-        } else if (teamListView.getItems().isEmpty() && !visible) {
-            mainPane.getChildren().clear();
-        }
-    }
-
     public void setLabelAction(EventHandler<MouseEvent> mouseEvent) {
         teamNameLabel.setOnMouseClicked(mouseEvent);
     }
 
     public boolean getVisible() {
         return !mainPane.getChildren().isEmpty();
+    }
+
+    public void setVisible(boolean visible) {
+        if (mainPane.getChildren().isEmpty() && visible) {
+            mainPane.getChildren().add(gridPane);
+        } else if (teamListView.getItems().isEmpty() && !visible) {
+            mainPane.getChildren().clear();
+        }
     }
 
     public ObservableList<SegmentItem> getItems() {

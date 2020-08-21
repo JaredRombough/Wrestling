@@ -6,7 +6,7 @@ import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.financial.Transaction;
-import openwrestling.model.segmentEnum.TransactionType;
+import openwrestling.model.segment.constants.TransactionType;
 
 import java.util.ArrayList;
 import java.util.List;

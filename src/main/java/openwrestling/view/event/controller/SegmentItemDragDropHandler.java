@@ -5,7 +5,7 @@ import javafx.scene.input.DragEvent;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
-import openwrestling.model.segmentEnum.TeamType;
+import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.StaffUtils;
 import openwrestling.view.utility.LocalDragboard;
 
