@@ -220,10 +220,6 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getSegmentString(segment));
         stringBuilder.append("\t ");
-        stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
-                ? ViewUtils.intToStars(segment.getWorkRating())
-                : "Rating: " + segment.getWorkRating() + "%");
-        stringBuilder.append("\t ");
         stringBuilder.append(event.getVerboseEventTitle());
         return stringBuilder.toString();
     }
