@@ -251,6 +251,7 @@ public final class GameController extends Logging implements Serializable {
 
     public void loadGameDataFromDatabase() {
         managers.forEach(GameObjectManager::selectData);
+        eventManager.refreshSegmentEvents();
     }
 
     //only called by MainApp

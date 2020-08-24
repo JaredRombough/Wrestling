@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         this.segmentTemplates = getDatabase().selectAll(SegmentTemplate.class);
     }
 
-    public List<Segment> createSegments(List<Segment> segments) {
+    public List<Segment> createSegments(List<Segment> segments, List<Event> events) {
         List<SegmentTemplate> segmentTemplates = segments.stream()
                 .filter(segment -> SegmentType.ANGLE.equals(segment.getSegmentType()) &&
                         AngleType.CHALLENGE.equals(segment.getAngleType()) &&
@@ -112,9 +113,14 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                             .filter(segmentTeam -> segment.equals(segmentTeam.getSegment()))
                             .collect(Collectors.toList())
             );
+            segment.setEvent(
+                    events.stream()
+                            .filter(event -> event.equals(segment.getEvent()))
+                            .findFirst()
+                            .orElseThrow()
+            );
             segmentMap.put(segment.getSegmentID(), segment);
         });
-
 
         return savedSegments;
     }
@@ -122,6 +128,15 @@ public class SegmentManager extends GameObjectManager implements Serializable {
     public List<Segment> getSegments(Event event) {
         return getSegments().stream()
                 .filter(segment -> segment.getEvent().getEventID() == event.getEventID())
+                .collect(Collectors.toList());
+    }
+
+    public List<Segment> getRecentSegments(Worker worker) {
+        int segmentLimit = 10;
+        return getSegments().stream()
+                .filter(segment -> CollectionUtils.isNotEmpty(segment.getWorkers()) && segment.getWorkers().contains(worker))
+                .sorted(Comparator.comparing(segment -> ((Segment) segment).getEvent().getDate()).reversed())
+                .limit(segmentLimit)
                 .collect(Collectors.toList());
     }
 
@@ -198,6 +213,18 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 ? ViewUtils.intToStars(segment.getWorkRating())
                 : "Rating: " + segment.getWorkRating() + "%");
 
+        return stringBuilder.toString();
+    }
+
+    public String getSegmentStringForWorkerOverview(Segment segment, Event event) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getSegmentString(segment));
+        stringBuilder.append("\t ");
+        stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
+                ? ViewUtils.intToStars(segment.getWorkRating())
+                : "Rating: " + segment.getWorkRating() + "%");
+        stringBuilder.append("\t ");
+        stringBuilder.append(event.getVerboseEventTitle());
         return stringBuilder.toString();
     }
 

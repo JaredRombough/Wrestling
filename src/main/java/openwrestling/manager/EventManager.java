@@ -35,8 +35,8 @@ public class EventManager extends GameObjectManager implements Serializable {
     private final SegmentManager segmentManager;
     private final ContractManager contractManager;
     private final transient Logger logger = LogManager.getLogger(getClass());
-    private Map<Long, EventTemplate> eventTemplateMap;
-    private Map<Long, Event> eventMap;
+    private final Map<Long, EventTemplate> eventTemplateMap;
+    private final Map<Long, Event> eventMap;
 
     public EventManager(Database database,
                         ContractManager contractManager,
@@ -127,11 +127,15 @@ public class EventManager extends GameObjectManager implements Serializable {
             segmentsToSave.addAll(segments);
         }
 
-        segmentManager.createSegments(segmentsToSave);
+        segmentManager.createSegments(segmentsToSave, savedEventsWithSegments);
     }
 
     public Event refreshEvent(Event event) {
         return eventMap.get(event.getEventID());
+    }
+
+    public void refreshSegmentEvents() {
+        segmentManager.getSegments().forEach(segment -> segment.setEvent(refreshEvent(segment.getEvent())));
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -52,7 +53,12 @@ public class Event extends GameObject implements Serializable, iEvent, iDate {
                     toString(),
                     date);
         }
+    }
 
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Event &&
+                Objects.equals(((Event) object).getEventID(), eventID);
     }
 
 }

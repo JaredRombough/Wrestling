@@ -46,7 +46,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public ScrollPane displayPane;
 
     @FXML
-    public ListView rankingsListView;
+    public ListView<Segment> rankingsListView;
 
     @FXML
     public Button weekButton;
@@ -172,7 +172,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
         rankingsListView.setItems(items);
 
-        rankingsListView.setCellFactory(param -> new ListCell<Segment>() {
+        rankingsListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Segment segment, boolean empty) {
                 super.updateItem(segment, empty);
@@ -180,8 +180,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
                 if (empty || segment == null) {
                     setGraphic(null);
                 } else {
-                    Event event = gameController.getEventManager().refreshEvent(segment.getEvent());
-                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segment, event));
+                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segment, segment.getEvent()));
                     text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
                     text.setTextAlignment(TextAlignment.CENTER);
                     setGraphic(text);
