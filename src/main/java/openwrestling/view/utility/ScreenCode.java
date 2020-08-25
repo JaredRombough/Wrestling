@@ -311,6 +311,17 @@ public enum ScreenCode implements ScreenCodeInterface {
             return false;
         }
     },
+    WORKER_INFO {
+        @Override
+        public String resourcePath() {
+            return "view/event/WorkerInfo.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
     SORT_CONTROL {
         @Override
         public String resourcePath() {

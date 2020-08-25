@@ -1,7 +1,5 @@
 package openwrestling.view.results.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -14,6 +12,9 @@ import javafx.scene.text.Text;
 import openwrestling.model.SegmentItem;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ResultsCardController extends ControllerBase implements Initializable {
 
@@ -32,22 +33,27 @@ public class ResultsCardController extends ControllerBase implements Initializab
     private int width;
     private int height;
     private int padding;
-    private SegmentItem segmentItem;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         width = 180;
         height = 180;
         padding = 20;
-        imageView.setPreserveRatio(true);
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
+    }
 
+    public void setWorkerInfoMode() {
+        width = 60;
+        height = 60;
+        padding = 5;
+        imageView.setFitWidth(width);
+        imageView.setFitHeight(height);
+        nameLabel.setVisible(false);
     }
 
     @Override
     public void setCurrent(Object obj) {
-
         if (obj instanceof SegmentItem) {
             setCurrentWorker((SegmentItem) obj);
         } else if (obj instanceof String) {
@@ -56,12 +62,11 @@ public class ResultsCardController extends ControllerBase implements Initializab
     }
 
     private void setCurrentWorker(SegmentItem segmentItem) {
-        this.segmentItem = segmentItem;
         String imgString = segmentItem.getImageString();
         nameLabel.setText(segmentItem.getLongName());
         border.setMinSize(width + padding, height + padding);
         border.setPrefSize(width + padding, height + padding);
-        ViewUtils.showImage(String.format(mainApp.getPicsFolder().toString() + "\\" + imgString),
+        ViewUtils.showImage(mainApp.getPicsFolder().toString() + "\\" + imgString,
                 border,
                 imageView,
                 mainApp.getDefaultWorkerImage(segmentItem));
@@ -71,7 +76,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
     }
 
     private void setCurrentString(String string) {
-        Text text = new Text((String) string);
+        Text text = new Text(string);
         anchorPane.getChildren().clear();
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
@@ -83,7 +88,7 @@ public class ResultsCardController extends ControllerBase implements Initializab
         anchorPane.setMaxHeight(text.getBoundsInParent().getHeight());
     }
 
-    public void setNameLabelVisibile(boolean visible) {
+    public void setNameLabelVisible(boolean visible) {
         nameLabel.setVisible(visible);
     }
 

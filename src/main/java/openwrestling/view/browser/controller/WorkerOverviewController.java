@@ -280,7 +280,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             imageAnchor.getChildren().clear();
             GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
             card.controller.setCurrent(worker);
-            ((ResultsCardController) card.controller).setNameLabelVisibile(false);
+            ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
             List<Label> statLabels = Arrays.asList(
                     wrestlingLabel,

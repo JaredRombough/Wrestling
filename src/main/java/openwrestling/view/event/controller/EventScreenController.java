@@ -22,7 +22,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -83,7 +82,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private AnchorPane segmentPaneHolder;
     @FXML
-    private Label eventTitleLabel;
+    private AnchorPane workerInfoPane;
     @FXML
     private AnchorPane sortControlPane;
     @FXML
@@ -105,12 +104,13 @@ public class EventScreenController extends ControllerBase implements Initializab
     private ComboBox<BrowseMode> bookingBrowseComboBox;
     private boolean updatingChallenge = false;
 
+    private WorkerInfoController workerInfoController;
+
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
             if (!Objects.equals(currentEvent, obj)) {
                 currentEvent = (Event) obj;
-                eventTitleLabel.setText("Now booking: " + getCurrentEvent().toString());
                 if (currentEvent.getEventTemplate().getRosterSplit() != null) {
                     sortControl.setFilter(currentEvent.getEventTemplate().getRosterSplit());
                 } else {
@@ -489,6 +489,9 @@ public class EventScreenController extends ControllerBase implements Initializab
         GameScreen sortControlscreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlscreen.controller;
 
+        GameScreen workerInfoScreen = ViewUtils.loadScreenFromResource(ScreenCode.WORKER_INFO, mainApp, gameController, workerInfoPane);
+        workerInfoController = (WorkerInfoController) workerInfoScreen.controller;
+
         bookingBrowseComboBox.setItems((FXCollections.observableArrayList(
                 BrowseMode.WORKERS,
                 BrowseMode.TAG_TEAMS,
@@ -535,19 +538,23 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentItemListView.setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
-        segmentItemListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent click) {
-                if (click.getButton() == MouseButton.SECONDARY) {
-                    currentSegmentPaneController().addTeam(
-                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), false);
-                } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
-                    currentSegmentPaneController().addTeam(
-                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
-                }
-                updateLabels();
+        segmentItemListView.setOnMouseClicked(click -> {
+            if (click.getButton() == MouseButton.SECONDARY) {
+                currentSegmentPaneController().addTeam(
+                        segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), false);
+            } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
+                currentSegmentPaneController().addTeam(
+                        segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
             }
+            SegmentItem item = segmentItemListView.getSelectionModel().getSelectedItem();
+            if (item instanceof Worker) {
+                workerInfoController.setWorker((Worker) item);
+            } else {
+                workerInfoController.clearText();
+            }
+            updateLabels();
         });
+
 
     }
 
