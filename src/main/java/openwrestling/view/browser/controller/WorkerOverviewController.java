@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,10 +54,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label popularityLabel;
 
     @FXML
-    private Label behaviourLabel;
+    private Label moraleLabel;
 
     @FXML
     private Label charismaLabel;
+
+    @FXML
+    private Label behaviourLabel;
 
     @FXML
     private Label workrate;
@@ -77,9 +79,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Label manager;
-
-    @FXML
-    private Label moraleLabel;
 
     @FXML
     private Label managedLabel;
@@ -282,44 +281,14 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             card.controller.setCurrent(worker);
             ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
-            List<Label> statLabels = Arrays.asList(
-                    wrestlingLabel,
+            ViewUtils.updateWorkerMoraleLabel(moraleLabel);
+
+            ViewUtils.updateWorkerStatLabels(List.of(wrestlingLabel,
                     flyingLabel,
                     strikingLabel,
                     behaviourLabel,
                     charismaLabel,
-                    popularityLabel,
-                    moraleLabel);
-
-            List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
-
-            for (Label l : statLabels) {
-                styleList.stream().filter((s) -> (l.getStyleClass().contains(s))).forEach((s) -> {
-                    l.getStyleClass().remove(s);
-                });
-
-                String style;
-
-                int lowBound = 50;
-                int midBound = 75;
-
-                if (Objects.equals(moraleLabel, l)) {
-                    lowBound = -50;
-                    midBound = -1;
-                }
-
-                if (Integer.parseInt(l.getText()) < lowBound) {
-                    style = "lowStat";
-                } else if (Integer.parseInt(l.getText()) >= lowBound
-                        && Integer.parseInt(l.getText()) < midBound) {
-                    style = "midStat";
-                } else {
-                    style = "highStat";
-                }
-
-                l.getStyleClass().add(style);
-            }
-
+                    popularityLabel));
         }
 
         feedPaneScreen.controller.updateLabels();

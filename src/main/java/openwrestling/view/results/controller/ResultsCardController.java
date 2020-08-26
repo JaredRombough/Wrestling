@@ -32,23 +32,17 @@ public class ResultsCardController extends ControllerBase implements Initializab
 
     private int width;
     private int height;
-    private int padding;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        width = 180;
-        height = 180;
-        padding = 20;
-        imageView.setFitWidth(width);
-        imageView.setFitHeight(height);
     }
 
     public void setWorkerInfoMode() {
         width = 60;
         height = 60;
-        padding = 5;
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
+        imageView.setPreserveRatio(true);
         nameLabel.setVisible(false);
     }
 
@@ -64,8 +58,6 @@ public class ResultsCardController extends ControllerBase implements Initializab
     private void setCurrentWorker(SegmentItem segmentItem) {
         String imgString = segmentItem.getImageString();
         nameLabel.setText(segmentItem.getLongName());
-        border.setMinSize(width + padding, height + padding);
-        border.setPrefSize(width + padding, height + padding);
         ViewUtils.showImage(mainApp.getPicsFolder().toString() + "\\" + imgString,
                 border,
                 imageView,

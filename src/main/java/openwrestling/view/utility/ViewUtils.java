@@ -617,4 +617,35 @@ public final class ViewUtils {
         });
     }
 
+    public static void updateWorkerStatLabels(List<Label> statLabels) {
+        statLabels.forEach(l -> updateWorkerLabel(l, 50, 75));
+    }
+
+    public static void updateWorkerMoraleLabel(Label moraleLabel) {
+        updateWorkerLabel(moraleLabel, -50, -1);
+    }
+
+    private static void updateWorkerLabel(Label label, int lowBound, int midBound) {
+        List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
+
+
+        styleList.stream().filter((s) -> (label.getStyleClass().contains(s))).forEach((s) -> {
+            label.getStyleClass().remove(s);
+        });
+
+        String style;
+
+        if (Integer.parseInt(label.getText()) < lowBound) {
+            style = "lowStat";
+        } else if (Integer.parseInt(label.getText()) >= lowBound
+                && Integer.parseInt(label.getText()) < midBound) {
+            style = "midStat";
+        } else {
+            style = "highStat";
+        }
+
+        label.getStyleClass().add(style);
+
+    }
+
 }
