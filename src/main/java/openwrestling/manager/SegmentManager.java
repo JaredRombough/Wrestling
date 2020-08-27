@@ -6,6 +6,7 @@ import openwrestling.database.queries.SegmentTeamQuery;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
@@ -138,6 +139,17 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 .sorted(Comparator.comparing(segment -> ((Segment) segment).getEvent().getDate()).reversed())
                 .limit(segmentLimit)
                 .collect(Collectors.toList());
+    }
+
+    public Segment getLastSegment(Worker worker, Promotion promotion) {
+        int segmentLimit = 1;
+        return getSegments().stream()
+                .filter(segment -> CollectionUtils.isNotEmpty(segment.getWorkers()) && segment.getWorkers().contains(worker))
+                .filter(segment -> promotion.equals(segment.getPromotion()))
+                .sorted(Comparator.comparing(segment -> ((Segment) segment).getEvent().getDate()).reversed())
+                .limit(segmentLimit)
+                .findFirst()
+                .orElse(null);
     }
 
     public List<SegmentTemplate> getSegmentTemplates(EventTemplate eventTemplate) {

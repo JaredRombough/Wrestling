@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.results.controller.ResultsCardController;
 import openwrestling.view.utility.GameScreen;
@@ -37,6 +38,9 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
     private Label moraleLabel;
 
     @FXML
+    private Label lastMatchLabel;
+
+    @FXML
     private Label charismaLabel;
 
     public void setWorker(Worker worker) {
@@ -60,6 +64,16 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
         GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
         ((ResultsCardController) card.controller).setWorkerInfoMode();
         card.controller.setCurrent(worker);
+
+        Segment lastMatch = gameController.getSegmentManager().getLastSegment(worker, playerPromotion());
+        String lastMatchLabelText = "Last match:\n";
+        if (lastMatch != null) {
+            lastMatchLabelText += gameController.getSegmentManager().getIsolatedSegmentString(lastMatch, lastMatch.getEvent());
+        } else {
+            lastMatchLabelText += "None";
+        }
+
+        lastMatchLabel.setText(lastMatchLabelText);
     }
 
     public void clearText() {

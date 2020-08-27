@@ -49,7 +49,7 @@
                     </styleClass>
                 </ListView>
                 <AnchorPane fx:id="segmentPaneHolder" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
-                            GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2147483647"/>
+                            GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2147483647"/>
                 <VBox GridPane.rowSpan="2147483647">
                     <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -89,7 +89,12 @@
                         <Insets left="10.0"/>
                     </GridPane.margin>
                 </VBox>
-                <AnchorPane fx:id="workerInfoPane" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+                <AnchorPane fx:id="workerInfoPane" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                            GridPane.rowSpan="2">
+                    <GridPane.margin>
+                        <Insets bottom="10.0"/>
+                    </GridPane.margin>
+                </AnchorPane>
             </children>
         </GridPane>
     </children>

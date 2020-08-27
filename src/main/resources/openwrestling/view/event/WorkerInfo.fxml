@@ -16,6 +16,7 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES"/>
@@ -28,7 +29,7 @@
                         <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
                     </GridPane.margin>
                 </AnchorPane>
-                <GridPane GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
+                <GridPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2147483647">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
@@ -41,20 +42,44 @@
                         <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <children>
-                        <Label text="STR"/>
-                        <Label text="WRE" GridPane.rowIndex="1"/>
-                        <Label text="FLY" GridPane.rowIndex="2"/>
-                        <Label text="POP" GridPane.columnIndex="2"/>
-                        <Label text="CHA" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                        <Label text="MOR" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                        <Label fx:id="strikingLabel" text="Striking" GridPane.columnIndex="1"/>
-                        <Label fx:id="wrestlingLabel" text="Wrestling" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label fx:id="flyingLabel" text="Flying" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <Label fx:id="popularityLabel" text="Popularity" GridPane.columnIndex="3"/>
-                        <Label fx:id="charismaLabel" text="Charisma" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                        <Label fx:id="moraleLabel" text="Morale" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="STR"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="WRE"
+                               GridPane.rowIndex="1"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="FLY"
+                               GridPane.rowIndex="2"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="POP"
+                               GridPane.columnIndex="2"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="CHA"
+                               GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStatLabel" text="MOR"
+                               GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                        <Label fx:id="strikingLabel" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Striking"
+                               GridPane.columnIndex="1"/>
+                        <Label fx:id="wrestlingLabel" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Wrestling"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label fx:id="flyingLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="workerStat" text="Flying" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label fx:id="popularityLabel" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Popularity"
+                               GridPane.columnIndex="3"/>
+                        <Label fx:id="charismaLabel" maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308" styleClass="workerStat" text="Charisma"
+                               GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                        <Label fx:id="moraleLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="workerStat" text="Morale" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
                     </children>
                 </GridPane>
+                <Label fx:id="lastMatchLabel" alignment="CENTER" maxHeight="1.7976931348623157E308"
+                       maxWidth="1.7976931348623157E308" text="Last match" textAlignment="CENTER"
+                       GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowSpan="3"/>
             </children>
         </GridPane>
     </children>

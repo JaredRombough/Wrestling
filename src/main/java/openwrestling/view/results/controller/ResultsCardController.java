@@ -38,8 +38,8 @@ public class ResultsCardController extends ControllerBase implements Initializab
     }
 
     public void setWorkerInfoMode() {
-        width = 60;
-        height = 60;
+        width = 100;
+        height = 100;
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
         imageView.setPreserveRatio(true);
