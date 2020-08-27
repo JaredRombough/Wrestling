@@ -110,7 +110,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             );
         }
 
-        ObservableList list = FXCollections.observableArrayList(targets);
+        ObservableList<SegmentTeam> list = FXCollections.observableArrayList(targets);
 
         targetComboBox.setItems(list);
 
@@ -270,7 +270,8 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         return teamType == null ? TeamType.DEFAULT : teamType;
     }
 
-    public void setTeamType(TeamType newTeamType) {
+    public void setTeamType(TeamType newTeamType, WorkerInfoController workerInfoController) {
+        teamPaneController.setWorkerInfoController(workerInfoController);
         if (teamType != newTeamType) {
             vBox.getChildren().retainAll(teamPane.pane, entouragePane.pane, header);
             teamPane.controller.setCurrent(newTeamType);

@@ -1,6 +1,5 @@
 package openwrestling.view.event.controller;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -10,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import lombok.Setter;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.BroadcastTeamMember;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -101,10 +101,14 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private GameScreen refScreen;
     private TeamPaneWrapper broadcastTeamController;
 
-    private EventScreenController eventScreenController;
 
     private SegmentType segmentType;
     private Segment challengeSource;
+
+    @Setter
+    private WorkerInfoController workerInfoController;
+    @Setter
+    private EventScreenController eventScreenController;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -155,7 +159,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void initializeTitlesWrapper() {
         titlesWrapper = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         titlesController = ((TeamPaneWrapper) titlesWrapper.controller);
-        titlesController.setTeamType(TeamType.TITLES);
+        titlesController.setTeamType(TeamType.TITLES, workerInfoController);
         titlesController.setDragDroppedHandler(this);
         titlesController.setHeaderVisible(false);
 
@@ -166,7 +170,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void initializeRef() {
         refScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         refsController = ((TeamPaneWrapper) refScreen.controller);
-        refsController.setTeamType(TeamType.REF);
+        refsController.setTeamType(TeamType.REF, workerInfoController);
         refsController.setDragDroppedHandler(this);
         refsController.setHeaderVisible(false);
         ringsideVBox.getChildren().add(refScreen.pane);
@@ -177,7 +181,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
     private void initializeBroadcastTeam() {
         GameScreen broadcastTeamScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TEAM_PANE_WRAPPER, mainApp, gameController);
         broadcastTeamController = ((TeamPaneWrapper) broadcastTeamScreen.controller);
-        broadcastTeamController.setTeamType(TeamType.BROADCAST);
+        broadcastTeamController.setTeamType(TeamType.BROADCAST, workerInfoController);
         broadcastTeamController.setDragDroppedHandler(this);
         broadcastTeamController.setHeaderVisible(false);
 
@@ -194,13 +198,10 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         angleOptionsScreen = ViewUtils.loadScreenFromFXML(ScreenCode.ANGLE_OPTIONS, mainApp, gameController);
         angleOptionsController = (AngleOptionsController) angleOptionsScreen.controller;
 
-        angleOptionsController.setAngleTypeListener(new ChangeListener<AngleType>() {
-            @Override
-            public void changed(ObservableValue ov, AngleType oldType, AngleType newType) {
-                if (newType != null) {
-                    titlesWrapper.pane.setVisible(newType.equals(AngleType.CHALLENGE));
-                    eventScreenController.updateLabels();
-                }
+        angleOptionsController.setAngleTypeListener((ov, oldType, newType) -> {
+            if (newType != null) {
+                titlesWrapper.pane.setVisible(newType.equals(AngleType.CHALLENGE));
+                eventScreenController.updateLabels();
             }
         });
 
@@ -223,11 +224,6 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             addTeam(TeamType.DEFAULT);
 
         }
-    }
-
-    public void setEventScreenController(EventScreenController eventScreenController) {
-        this.eventScreenController = eventScreenController;
-
     }
 
     private void angleOptionChanged(Object obj) {
@@ -396,7 +392,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
             teamType = getTeamType(wrapperScreen);
         }
 
-        wrapperController.setTeamType(teamType);
+        wrapperController.setTeamType(teamType, workerInfoController);
         wrapperController.setOutcomeType(getOutcomeType(wrapperScreen));
 
         TeamPaneHelper.initTeamPaneForSorting(wrapperScreen.pane, wrapperController.getDraggingTab(), this);
@@ -490,7 +486,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
         for (GameScreen screen : workerTeamWrappers) {
             TeamPaneWrapper controller = (TeamPaneWrapper) screen.controller;
             controller.setTargets(getOtherTeams(workerTeamWrappers.indexOf(screen)));
-            controller.setTeamType(getTeamType(screen));
+            controller.setTeamType(getTeamType(screen), workerInfoController);
             controller.setXButtonVisible(getXButtonVisible(workerTeamWrappers.indexOf(screen), controller.getTeamType()));
             screen.controller.updateLabels();
         }

@@ -391,6 +391,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentPaneControllers.add(controller);
 
             controller.setEventScreenController(this);
+            controller.setWorkerInfoController(workerInfoController);
             controller.setDependencies(mainApp, gameController);
 
             controller.setBroadcastTeam(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(currentEvent.getEventTemplate()).isEmpty()
@@ -533,6 +534,16 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentItemListView.setOnDragOver(dragOverHandler);
 
+        segmentItemListView.getSelectionModel()
+                .selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            SegmentItem item = segmentItemListView.getSelectionModel().getSelectedItem();
+            if (item instanceof Worker) {
+                workerInfoController.setWorker((Worker) item);
+            } else {
+                workerInfoController.clearText();
+            }
+        });
+
         //do this last as it is dependent on currentSegment
         updateSegmentItemListView();
 
@@ -545,12 +556,6 @@ public class EventScreenController extends ControllerBase implements Initializab
             } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
                 currentSegmentPaneController().addTeam(
                         segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
-            }
-            SegmentItem item = segmentItemListView.getSelectionModel().getSelectedItem();
-            if (item instanceof Worker) {
-                workerInfoController.setWorker((Worker) item);
-            } else {
-                workerInfoController.clearText();
             }
             updateLabels();
         });
