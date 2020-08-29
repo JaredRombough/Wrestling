@@ -135,6 +135,7 @@ public class DailyContractUpdate extends Logging {
     }
 
     public void updateExpiringContracts() {
+        //TODO batch update these for performance
         contractManager.getContracts().stream()
                 .filter(Contract::isActive)
                 .filter(contract -> contract.getEndDate().equals(dateManager.today()))
