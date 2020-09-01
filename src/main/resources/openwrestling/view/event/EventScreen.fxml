@@ -39,7 +39,7 @@
             </rowConstraints>
             <children>
                 <ListView fx:id="segmentListView" GridPane.columnIndex="3" GridPane.columnSpan="2147483647"
-                          GridPane.rowIndex="1" GridPane.rowSpan="8">
+                          GridPane.rowIndex="2" GridPane.rowSpan="7">
                     <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </GridPane.margin>
@@ -64,7 +64,6 @@
                         <ListView fx:id="segmentItemListView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
-                <Label fx:id="totalCostLabel" text="Total Cost" GridPane.columnIndex="3" GridPane.rowIndex="10"/>
                 <Button fx:id="runEventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#handleButtonAction" text="Run the event"
                         GridPane.columnIndex="4" GridPane.rowIndex="10">
@@ -79,17 +78,16 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </GridPane.margin>
                 </Button>
-                <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3">
+                <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="10">
                     <children>
-                        <Label fx:id="totalTimeLabel" maxWidth="1.7976931348623157E308" text="Label"/>
-                        <Label fx:id="maxTimeLabel" maxWidth="1.7976931348623157E308" text="Label"/>
-                        <Label fx:id="remainingTimeLabel" maxWidth="1.7976931348623157E308" text="Label"/>
+                        <Label fx:id="remainingTimeLabel" maxWidth="1.7976931348623157E308" text="Remaining time"/>
+                        <Label fx:id="totalCostLabel" text="Total Cost"/>
                     </children>
                     <GridPane.margin>
                         <Insets left="10.0"/>
                     </GridPane.margin>
                 </VBox>
-                <AnchorPane fx:id="workerInfoPane" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                <AnchorPane fx:id="workerInfoPane" GridPane.columnIndex="1" GridPane.columnSpan="2147483647"
                             GridPane.rowSpan="2">
                     <GridPane.margin>
                         <Insets bottom="10.0"/>

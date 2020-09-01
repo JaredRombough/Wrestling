@@ -54,7 +54,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -86,12 +85,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private AnchorPane sortControlPane;
     @FXML
-    private Label totalTimeLabel;
-    @FXML
-    private Label maxTimeLabel;
-    @FXML
     private Label remainingTimeLabel;
-    private List<Label> timeLabels;
     private SortControl sortControl;
 
     private Event currentEvent;
@@ -301,7 +295,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             currentSegmentPaneController().updateLabels();
         }
 
-        totalCostLabel.setText("Total Cost: $" + currentCost());
+        totalCostLabel.setText("Total Cost:\t$" + currentCost());
         totalCostLabel.setVisible(currentCost() != 0);
 
         List<Segment> segments = getSegments();
@@ -314,12 +308,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             int duration = getDuration();
 
-            int remaining = duration - eventLength;
             int remainingHours = (duration - eventLength) / 60;
             int remainingMinutes = (duration - eventLength) % 60;
 
-            totalTimeLabel.setText("Total:\t\t" + ModelUtils.timeString(eventLength));
-            maxTimeLabel.setText("Max:\t\t\t" + ModelUtils.timeString(duration));
             if (remainingHours < 0 || remainingMinutes < 0) {
                 remainingTimeLabel.setText("Remaining:\t-"
                         + ModelUtils.timeString(Math.abs(duration - eventLength)));
@@ -327,21 +318,10 @@ public class EventScreenController extends ControllerBase implements Initializab
                 remainingTimeLabel.setText("Remaining:\t"
                         + ModelUtils.timeString(Math.abs(duration - eventLength)));
             }
-            totalTimeLabel.getStyleClass().clear();
-            if (Math.abs(remaining) <= 10) {
-                totalTimeLabel.getStyleClass().add("highStat");
-            } else if (Math.abs(remaining) <= 30) {
-                totalTimeLabel.getStyleClass().add("midStat");
-            } else {
-                totalTimeLabel.getStyleClass().add("lowStat");
-            }
 
         }
 
         updateSegmentItemListView();
-
-//        ((RefreshSkin) segmentListView.getSkin()).refresh();
-
     }
 
     private int getDuration() {
@@ -645,8 +625,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         browseMode = BrowseMode.WORKERS;
 
         eventLength = 0;
-
-        timeLabels = new ArrayList<>(Arrays.asList(totalTimeLabel, maxTimeLabel, remainingTimeLabel));
 
         logger = LogManager.getLogger(this.getClass());
 
