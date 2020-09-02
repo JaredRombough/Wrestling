@@ -3,24 +3,16 @@ package openwrestling.manager;
 import lombok.Getter;
 import openwrestling.database.Database;
 import openwrestling.database.queries.SegmentTeamQuery;
-import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
-import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segment.constants.AngleType;
-import openwrestling.model.segment.constants.MatchFinish;
 import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.segment.constants.ShowType;
-import openwrestling.model.segment.constants.TeamType;
-import openwrestling.model.utility.ModelUtils;
-import openwrestling.model.utility.SegmentStringUtils;
-import openwrestling.view.utility.ViewUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
@@ -35,24 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static openwrestling.model.utility.ModelUtils.slashShortNames;
+import static openwrestling.model.segment.constants.SegmentType.MATCH;
 
 @Getter
 public class SegmentManager extends GameObjectManager implements Serializable {
 
     private final DateManager dateManager;
-    private final TagTeamManager tagTeamManager;
-    private final StableManager stableManager;
     private final Map<Long, Segment> segmentMap;
     private List<SegmentTemplate> segmentTemplates;
 
-    public SegmentManager(Database database, DateManager dateManager, TagTeamManager tagTeamManager, StableManager stableManager) {
+    public SegmentManager(Database database, DateManager dateManager) {
         super(database);
         segmentMap = new HashMap<>();
         segmentTemplates = new ArrayList<>();
         this.dateManager = dateManager;
-        this.tagTeamManager = tagTeamManager;
-        this.stableManager = stableManager;
     }
 
     @Override
@@ -132,6 +120,14 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Segment> getMatches(Worker worker, Promotion promotion) {
+        return getSegments().stream()
+                .filter(segment -> promotion.equals(segment.getPromotion()))
+                .filter(segment -> MATCH.equals(segment.getSegmentType()))
+                .filter(segment -> CollectionUtils.isNotEmpty(segment.getWorkers()) && segment.getWorkers().contains(worker))
+                .collect(Collectors.toList());
+    }
+
     public List<Segment> getRecentSegments(Worker worker) {
         int segmentLimit = 10;
         return getSegments().stream()
@@ -192,7 +188,7 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         }
         List<Segment> weekMatches = new ArrayList<>();
         for (Segment segment : getSegments()) {
-            if (segment.getDate().isAfter(earliestDate) && segment.getSegmentType().equals(SegmentType.MATCH)) {
+            if (segment.getDate().isAfter(earliestDate) && segment.getSegmentType().equals(MATCH)) {
                 weekMatches.add(segment);
             }
         }
@@ -204,214 +200,4 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         return new ArrayList<>(weekMatches.subList(0, actualTotal));
     }
 
-    public String getSegmentTitle(Segment segment) {
-        if (segment.getSegmentType().equals(SegmentType.MATCH)) {
-            return SegmentStringUtils.getMatchTitle(segment);
-        }
-        return getAngleTitle(segment);
-    }
-
-    private String getAngleTitle(Segment segment) {
-        return segment.getAngleType().description();
-    }
-
-    public String getIsolatedSegmentString(Segment segment, Event event) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(event.getVerboseEventTitle());
-        stringBuilder.append("\n");
-        stringBuilder.append(getSegmentString(segment));
-        stringBuilder.append("\n");
-        stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
-                ? ViewUtils.intToStars(segment.getWorkRating())
-                : "Rating: " + segment.getWorkRating() + "%");
-
-        return stringBuilder.toString();
-    }
-
-    public String getSegmentStringForWorkerOverview(Segment segment, Event event) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getSegmentString(segment));
-        stringBuilder.append("\t ");
-        stringBuilder.append(event.getVerboseEventTitle());
-        return stringBuilder.toString();
-    }
-
-    public String getSegmentString(Segment segment) {
-        return segment.getSegmentType().equals(SegmentType.MATCH)
-                ? getMatchString(segment)
-                : getAngleString(segment);
-    }
-
-    public String getAngleString(Segment segment) {
-        AngleType angleType = segment.getAngleType();
-        List<SegmentTeam> mainTeam = segment.getSegmentTeams(angleType.mainTeamType());
-        String mainTeamString;
-        String pluralString;
-        if (mainTeam.isEmpty()) {
-            mainTeamString = "?";
-            pluralString = "";
-        } else {
-            mainTeamString = generateTeamName(mainTeam.get(0).getWorkers(), true, mainTeam.get(0).getType());
-            pluralString = mainTeam.get(0).getWorkers().size() > 1 ? "" : "s";
-        }
-        List<String> andTeamNames = new ArrayList<>();
-        for (SegmentTeam tesm : segment.getSegmentTeams(angleType.addTeamType())) {
-            andTeamNames.add(generateTeamName(tesm.getWorkers()));
-        }
-
-        String string = String.format(angleType.resultString(),
-                mainTeamString,
-                pluralString,
-                ModelUtils.joinGrammatically(andTeamNames));
-
-        if (angleType.equals(AngleType.PROMO) && segment.getSegmentTeams(TeamType.PROMO_TARGET).isEmpty()) {
-            string = string.split("targeting")[0];
-            string = string.replace(" targeting", "");
-        }
-
-        if (angleType.equals(AngleType.OFFER)) {
-            string += SegmentStringUtils.getOfferString(segment);
-        } else if (angleType.equals(AngleType.CHALLENGE)) {
-            string += SegmentStringUtils.getChallengeString(segment);
-        }
-
-        return string;
-
-    }
-
-    public String generateTeamName(List<? extends SegmentItem> segmentItems, TeamType teamType) {
-        return generateTeamName(segmentItems, false, teamType);
-    }
-
-    public String generateTeamName(List<? extends SegmentItem> segmentItems) {
-        return generateTeamName(segmentItems, false, TeamType.DEFAULT);
-    }
-
-    public String generateTeamName(List<? extends SegmentItem> segmentItems, boolean verbose) {
-        return generateTeamName(segmentItems, verbose, TeamType.DEFAULT);
-    }
-
-    public String generateTeamName(List<? extends SegmentItem> segmentItems, boolean verbose, TeamType teamType) {
-        if (!segmentItems.isEmpty()) {
-            if (segmentItems.size() == 2) {
-                String tagTeam = getTagTeamName(segmentItems);
-                if (!tagTeam.isEmpty()) {
-                    return tagTeam;
-                }
-            } else if (segmentItems.size() > 1 && !TeamType.OFFEREE.equals(teamType) && !TeamType.OFFERER.equals(teamType)) {
-                for (Stable stable : stableManager.getStables()) {
-                    if (stable.getWorkers().containsAll(segmentItems)) {
-                        return stable.getName();
-                    }
-                }
-            }
-            return verbose ? ModelUtils.slashNames(segmentItems) : slashShortNames(segmentItems);
-        } else {
-            return "(Empty Team)";
-        }
-    }
-
-    public String getTagTeamName(List<? extends SegmentItem> segmentItems) {
-        for (TagTeam tagTeam : tagTeamManager.getTagTeams()) {
-            if (tagTeam.getSegmentItems().containsAll(segmentItems)) {
-                return tagTeam.getName();
-            }
-        }
-        return String.format("");
-    }
-
-    public String getVsMatchString(Segment segment) {
-        List<SegmentTeam> teams = segment.getSegmentTeams();
-        int teamsSize = segment.getMatchParticipantTeams().size();
-        String matchString = "";
-
-        if (teamsSize > 1) {
-
-            for (int t = 0; t < teamsSize; t++) {
-                List<Worker> team = teams.get(t).getWorkers();
-
-                matchString += generateTeamName(team, false, teams.get(t).getType());
-
-                if (CollectionUtils.isNotEmpty(teams.get(t).getEntourage())) {
-                    matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
-                }
-
-                if (t == 0 && !matchString.isEmpty()) {
-                    matchString += " vs ";
-
-                } else if (t < teamsSize - 1 && !matchString.isEmpty()) {
-                    matchString += ", ";
-                }
-
-            }
-        } else {
-            //probable placeholder
-            matchString += !teams.isEmpty() ? teams.get(0) : "";
-        }
-
-        if (matchString.isEmpty()) {
-
-            matchString += "Empty Match";
-        }
-
-        return matchString;
-
-    }
-
-    public String getMatchString(Segment segment) {
-        List<SegmentTeam> teams = segment.getSegmentTeams();
-        MatchFinish finish = segment.getMatchFinish();
-        int teamsSize = segment.getMatchParticipantTeams().size();
-        String matchString = "";
-
-        if (teamsSize > 1) {
-
-            for (int t = 0; t < teamsSize; t++) {
-                List<Worker> team = teams.get(t).getWorkers();
-
-                matchString += generateTeamName(team, false, teams.get(t).getType());
-
-                if (CollectionUtils.isNotEmpty(teams.get(t).getEntourage())) {
-                    matchString += " w/ " + slashShortNames(teams.get(t).getEntourage());
-                }
-
-                if (t == 0 && !matchString.isEmpty()) {
-                    matchString += " def. ";
-
-                } else if (t < teamsSize - 1 && !matchString.isEmpty()) {
-                    matchString += ", ";
-                }
-
-            }
-
-            switch (finish) {
-                case COUNTOUT:
-                    matchString += " by Countout";
-                    break;
-                case DQINTERFERENCE:
-                case DQ:
-                    matchString += " by DQ";
-                    break;
-                default:
-                    break;
-
-            }
-
-        } else {
-            //probable placeholder
-            matchString += !teams.isEmpty() ? teams.get(0) : "";
-        }
-
-        if (finish != null && finish.equals(MatchFinish.DRAW)) {
-            matchString = matchString.replace("def.", "drew");
-        }
-
-        if (matchString.isEmpty()) {
-
-            matchString += "Empty Match";
-        }
-
-        return matchString;
-
-    }
 }

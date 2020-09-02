@@ -12,8 +12,6 @@ import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -34,20 +32,24 @@ public class EventManager extends GameObjectManager implements Serializable {
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
     private final ContractManager contractManager;
-    private final transient Logger logger = LogManager.getLogger(getClass());
+    private final SegmentStringService segmentStringService;
     private final Map<Long, EventTemplate> eventTemplateMap;
     private final Map<Long, Event> eventMap;
 
     public EventManager(Database database,
                         ContractManager contractManager,
                         DateManager dateManager,
-                        SegmentManager segmentManager) {
+                        SegmentManager segmentManager,
+                        SegmentStringService segmentStringService) {
         super(database);
-        eventTemplateMap = new HashMap<>();
-        eventMap = new HashMap<>();
+
         this.segmentManager = segmentManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
+        this.segmentStringService = segmentStringService;
+
+        eventTemplateMap = new HashMap<>();
+        eventMap = new HashMap<>();
     }
 
     public List<Event> getEvents() {
@@ -431,7 +433,7 @@ public class EventManager extends GameObjectManager implements Serializable {
         List<Segment> segments = segmentManager.getSegments(event);
         for (Segment segment : segments) {
             if (!segment.getWorkers().isEmpty()) {
-                sb.append(segmentManager.getIsolatedSegmentString(segment, event));
+                sb.append(segmentStringService.getIsolatedSegmentString(segment, event));
             } else {
                 logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
             }

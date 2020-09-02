@@ -17,7 +17,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
@@ -180,7 +179,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
                 if (empty || segment == null) {
                     setGraphic(null);
                 } else {
-                    Text text = new Text(gameController.getSegmentManager().getIsolatedSegmentString(segment, segment.getEvent()));
+                    Text text = new Text(gameController.getSegmentStringService().getIsolatedSegmentString(segment, segment.getEvent()));
                     text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
                     text.setTextAlignment(TextAlignment.CENTER);
                     setGraphic(text);

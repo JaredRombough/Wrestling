@@ -19,6 +19,7 @@ import openwrestling.manager.PromotionManager;
 import openwrestling.manager.RelationshipManager;
 import openwrestling.manager.RosterSplitManager;
 import openwrestling.manager.SegmentManager;
+import openwrestling.manager.SegmentStringService;
 import openwrestling.manager.StableManager;
 import openwrestling.manager.StaffManager;
 import openwrestling.manager.TagTeamManager;
@@ -79,6 +80,7 @@ public final class GameController extends Logging implements Serializable {
     private final DailyRelationshipUpdate dailyRelationshipUpdate;
     private final MonthlyReviewController monthlyReviewController;
     private final PromotionController promotionController;
+    private final SegmentStringService segmentStringService;
     private final int EVENT_MONTHS = 6;
     private List<GameObjectManager> managers;
 
@@ -106,9 +108,11 @@ public final class GameController extends Logging implements Serializable {
         stableManager = new StableManager(database, workerManager);
         entourageManager = new EntourageManager(database, workerManager);
         tagTeamManager = new TagTeamManager(database, workerManager);
-        segmentManager = new SegmentManager(database, dateManager, tagTeamManager, stableManager);
         injuryManager = new InjuryManager(database, newsManager, workerManager, dateManager);
         monthlyReviewManager = new MonthlyReviewManager(database);
+
+        segmentManager = new SegmentManager(database, dateManager);
+        segmentStringService = new SegmentStringService(segmentManager, tagTeamManager, stableManager);
 
         matchRulesManager = new MatchRulesManager(database);
         matchRulesManager.selectData();
@@ -116,7 +120,8 @@ public final class GameController extends Logging implements Serializable {
         eventManager = new EventManager(database,
                 contractManager,
                 dateManager,
-                segmentManager);
+                segmentManager,
+                segmentStringService);
 
         contractFactory = new ContractFactory(contractManager);
 

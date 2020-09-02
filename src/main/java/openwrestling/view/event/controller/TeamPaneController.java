@@ -88,7 +88,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                         teamNameLabel.setText(teamType.description());
                         break;
                     default:
-                        teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems(), teamType));
+                        teamNameLabel.setText(gameController.getSegmentStringService().generateTeamName(getSegmentItems(), teamType));
                         break;
                 }
             }

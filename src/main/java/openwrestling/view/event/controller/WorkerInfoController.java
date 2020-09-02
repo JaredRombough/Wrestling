@@ -43,6 +43,10 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
     @FXML
     private Label charismaLabel;
 
+    @FXML
+    private Label workerRecordLabel;
+
+
     public void setWorker(Worker worker) {
         wrestlingLabel.setText(Integer.toString(worker.getWrestling()));
         flyingLabel.setText(Integer.toString(worker.getFlying()));
@@ -65,15 +69,16 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
         ((ResultsCardController) card.controller).setWorkerInfoMode();
         card.controller.setCurrent(worker);
 
-        Segment lastMatch = gameController.getSegmentManager().getLastSegment(worker, playerPromotion());
-        String lastMatchLabelText = "Last match:\n";
-        if (lastMatch != null) {
-            lastMatchLabelText += gameController.getSegmentManager().getIsolatedSegmentString(lastMatch, lastMatch.getEvent());
+        Segment lastSegment = gameController.getSegmentManager().getLastSegment(worker, playerPromotion());
+        String lastMatchLabelText = "Last appearance:\n";
+        if (lastSegment != null) {
+            lastMatchLabelText += gameController.getSegmentStringService().getSegmentStringForWorkerInfo(lastSegment, lastSegment.getEvent());
         } else {
             lastMatchLabelText += "None";
         }
 
         lastMatchLabel.setText(lastMatchLabelText);
+        workerRecordLabel.setText(gameController.getSegmentStringService().getWorkerRecord(worker, playerPromotion()));
     }
 
     public void clearText() {

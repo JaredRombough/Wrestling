@@ -1,8 +1,5 @@
 package openwrestling.view.event.controller;
 
-import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,7 +22,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import openwrestling.MainApp;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
@@ -224,7 +220,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segment.getChallengeSegment());
                 if (!challengeForTonightIsPresent(challengeMatch, i)) {
                     warnings.append(String.format("%s\nA challenge for this match was made and accepted tonight, but it is not present.\n",
-                            gameController.getSegmentManager().getVsMatchString(challengeMatch)));
+                            gameController.getSegmentStringService().getVsMatchString(challengeMatch)));
                 }
             }
             for (Title title : segment.getTitles()) {
@@ -242,7 +238,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
             if (!challengeForTonightIsPresent(challengeMatch, 0)) {
                 warnings.append(String.format("%s\nA challenge for this match was made and accepted on %s at %s, but it is not present.\n",
-                        gameController.getSegmentManager().getVsMatchString(challengeMatch),
+                        gameController.getSegmentStringService().getVsMatchString(challengeMatch),
                         segmentTemplate.getSourceEventDate().toString(),
                         segmentTemplate.getSourceEventName()));
             }
@@ -448,7 +444,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 segmentPaneControllers,
                 segmentListView,
                 this,
-                gameController.getSegmentManager()
+                gameController.getSegmentStringService()
         ));
 
         segmentListView.setItems(items);
@@ -733,14 +729,5 @@ public class EventScreenController extends ControllerBase implements Initializab
         return currentEvent;
     }
 
-    public static class SegmentNameItem {
-
-        ObjectProperty<Segment> segment = new SimpleObjectProperty();
-
-        public static Callback<SegmentNameItem, Observable[]> extractor() {
-            return (SegmentNameItem param) -> new Observable[]{param.segment};
-        }
-
-    }
 
 }

@@ -681,7 +681,7 @@ public class SegmentPaneController extends ControllerBase implements Initializab
                 List<SegmentItem> potentialTeam = new ArrayList<>();
                 potentialTeam.addAll(offerer.getSegmentItems());
                 potentialTeam.addAll(offerees.get(0).getSegmentItems());
-                if (potentialTeam.size() != 2 || StringUtils.isEmpty(gameController.getSegmentManager().getTagTeamName(potentialTeam))) {
+                if (potentialTeam.size() != 2 || StringUtils.isEmpty(gameController.getSegmentStringService().getTagTeamName(potentialTeam))) {
                     offers.add(JoinTeamType.TAG_TEAM);
                 }
             }

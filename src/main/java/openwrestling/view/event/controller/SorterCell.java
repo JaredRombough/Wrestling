@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
-import openwrestling.manager.SegmentManager;
+import openwrestling.manager.SegmentStringService;
 import openwrestling.model.segment.constants.SegmentValidation;
 import openwrestling.view.utility.LocalDragboard;
 import openwrestling.view.utility.ViewUtils;
@@ -22,23 +22,21 @@ import openwrestling.view.utility.ViewUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> {
+public class SorterCell extends ListCell<SegmentNameItem> {
 
-    private Label myLabel;
-    private ListView segmentListView;
-
-    private Button xButton;
-    private SegmentManager segmentManager;
+    private final ListView<SegmentNameItem> segmentListView;
+    private final Button xButton;
+    private final SegmentStringService segmentStringService;
 
     public SorterCell(
             List<Pane> segmentPanes,
             List<SegmentPaneController> segmentPaneControllers,
-            ListView listView,
+            ListView<SegmentNameItem> listView,
             EventScreenController eventScreenController,
-            SegmentManager segmentManager) {
-        ListCell thisCell = this;
+            SegmentStringService segmentStringService) {
+        ListCell<SegmentNameItem> thisCell = this;
         segmentListView = listView;
-        this.segmentManager = segmentManager;
+        this.segmentStringService = segmentStringService;
         xButton = ViewUtils.getXButton();
         xButton.setOnAction(e -> {
             eventScreenController.removeSegment(getListView().getItems().indexOf(getItem()));
@@ -54,7 +52,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             ClipboardContent content = new ClipboardContent();
 
             content.putString(getText());
-            LocalDragboard.getINSTANCE().putValue(EventScreenController.SegmentNameItem.class, getItem());
+            LocalDragboard.getINSTANCE().putValue(SegmentNameItem.class, getItem());
             content.putString(getItem().segment.get().toString());
 
             dragboard.setContent(content);
@@ -97,9 +95,9 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             boolean success = false;
 
             LocalDragboard ldb = LocalDragboard.getINSTANCE();
-            if (ldb.hasType(EventScreenController.SegmentNameItem.class)) {
-                EventScreenController.SegmentNameItem segmentNameItem = ldb.getValue(EventScreenController.SegmentNameItem.class);
-                ObservableList<EventScreenController.SegmentNameItem> items = getListView().getItems();
+            if (ldb.hasType(SegmentNameItem.class)) {
+                SegmentNameItem segmentNameItem = ldb.getValue(SegmentNameItem.class);
+                ObservableList<SegmentNameItem> items = getListView().getItems();
                 int draggedIdx = items.indexOf(segmentNameItem);
                 int thisIdx = items.indexOf(getItem());
 
@@ -123,7 +121,7 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
     }
 
     @Override
-    protected void updateItem(EventScreenController.SegmentNameItem item, boolean empty) {
+    protected void updateItem(SegmentNameItem item, boolean empty) {
 
         super.updateItem(item, empty);
 
@@ -136,11 +134,11 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             Label validation = new Label(segmentValidation.getSymbol());
             validation.getStyleClass().add(segmentValidation.getCss());
 
-            myLabel = new Label(
-                    segmentManager.getSegmentTitle(item.segment.get())
+            Label myLabel = new Label(
+                    segmentStringService.getSegmentTitle(item.segment.get())
                             + String.format(" (%d min)", item.segment.get().getSegmentLength())
                             + "\n"
-                            + segmentManager.getSegmentString(item.segment.get()));
+                            + segmentStringService.getSegmentString(item.segment.get()));
             myLabel.setTextAlignment(TextAlignment.CENTER);
 
             myLabel.setWrapText(true);
@@ -153,7 +151,6 @@ public class SorterCell extends ListCell<EventScreenController.SegmentNameItem> 
             hBox.getChildren().add(myLabel);
             hBox.getChildren().add(xButton);
             setGraphic(hBox);
-
         }
 
     }

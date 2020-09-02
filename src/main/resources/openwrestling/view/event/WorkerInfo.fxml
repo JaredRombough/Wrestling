@@ -81,10 +81,10 @@
                                styleClass="workerStat" text="Morale" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
                     </children>
                 </GridPane>
-                <Label fx:id="lastMatchLabel" alignment="CENTER" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" text="Last match" textAlignment="CENTER"
-                       GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowSpan="3"/>
-                <Label text="Record: 1-3-0" GridPane.columnIndex="3" GridPane.columnSpan="2"/>
+                <Label fx:id="lastMatchLabel" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308"
+                       maxWidth="1.7976931348623157E308" text="Last match" GridPane.columnIndex="3"
+                       GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2"/>
+                <Label fx:id="workerRecordLabel" text="Record: 1-3-0" GridPane.columnIndex="3" GridPane.columnSpan="2"/>
             </children>
         </GridPane>
     </children>

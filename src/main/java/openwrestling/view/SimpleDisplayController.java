@@ -62,7 +62,7 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             List<Segment> recentSegments = gameController.getSegmentManager().getRecentSegments((Worker) obj);
             StringBuilder sb = new StringBuilder();
             recentSegments.forEach(segment -> {
-                sb.append(gameController.getSegmentManager().getSegmentStringForWorkerOverview(segment, segment.getEvent()));
+                sb.append(gameController.getSegmentStringService().getSegmentStringForWorkerOverview(segment, segment.getEvent()));
                 sb.append("\n");
             });
             newText = sb.toString();
