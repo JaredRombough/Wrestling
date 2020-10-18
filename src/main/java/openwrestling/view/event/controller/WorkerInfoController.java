@@ -18,6 +18,8 @@ import java.util.ResourceBundle;
 
 public class WorkerInfoController extends ControllerBase implements Initializable {
 
+    @FXML
+    private AnchorPane anchorPane;
 
     @FXML
     private AnchorPane imageAnchor;
@@ -48,6 +50,8 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
 
 
     public void setWorker(Worker worker) {
+        anchorPane.setVisible(true);
+
         wrestlingLabel.setText(Integer.toString(worker.getWrestling()));
         flyingLabel.setText(Integer.toString(worker.getFlying()));
         strikingLabel.setText(Integer.toString(worker.getStriking()));
@@ -82,7 +86,7 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
     }
 
     public void clearText() {
-        //aka hide?
+        anchorPane.setVisible(false);
     }
 
     @Override

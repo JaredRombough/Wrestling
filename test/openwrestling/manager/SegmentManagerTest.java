@@ -49,8 +49,8 @@ public class SegmentManagerTest {
         matchRulesManager.selectData();
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
         workerManager = new WorkerManager(database, mock(ContractManager.class));
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager);
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager, mock(SegmentStringService.class));
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
 
@@ -87,8 +87,8 @@ public class SegmentManagerTest {
         verify(winnerWorker, teamSize);
 
 
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager, mock(SegmentStringService.class));
 
         segmentManager.selectData();
         eventManager.selectData();
@@ -131,8 +131,8 @@ public class SegmentManagerTest {
         verify(winnerWorker, teamSize);
 
 
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager, mock(SegmentStringService.class));
 
         segmentManager.selectData();
         eventManager.selectData();

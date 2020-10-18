@@ -42,7 +42,7 @@ public class EventManagerTest {
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, mock(SegmentManager.class), mock(SegmentStringService.class));
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
 
