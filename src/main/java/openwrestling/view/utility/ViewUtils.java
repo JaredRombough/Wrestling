@@ -33,7 +33,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -209,20 +208,7 @@ public final class ViewUtils {
         GameScreen screen = new GameScreen();
         loader.setLocation(MainApp.class.getResource(code.resourcePath()));
         try {
-            switch (code) {
-                case ROOT: {
-                    screen.pane = (BorderPane) loader.load();
-                    break;
-                }
-                case DEPARTMENT:
-                case CONTRACT: {
-                    screen.pane = (GridPane) loader.load();
-                    break;
-                }
-                default:
-                    screen.pane = (AnchorPane) loader.load();
-                    break;
-            }
+            screen.pane = loader.load();
         } catch (IOException ex) {
             logger.log(Level.FATAL, String.format("Error loading Screen from %s", code.resourcePath()), ex);
         }

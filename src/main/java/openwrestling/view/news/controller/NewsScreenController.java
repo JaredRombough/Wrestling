@@ -1,11 +1,7 @@
 package openwrestling.view.news.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,13 +17,12 @@ import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.segment.constants.NewsFilter;
+import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.utility.MonthlyReviewUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.SortControl;
 import openwrestling.view.utility.ViewUtils;
-import openwrestling.view.utility.comparators.NewsItemComparator;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -63,8 +58,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     private AnchorPane sortControlPane;
     private List<Button> timeButtons;
     private ChronoUnit chronoUnit;
-    private GameScreen sortControl;
-    private SortControl sortControlController;
+    private SortControl sortControl;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -79,21 +73,17 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         updateTopMatches(ChronoUnit.WEEKS, 1);
         ViewUtils.updateSelectedButton(weekButton, timeButtons);
 
-        sortControl = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
-        sortControlController = (SortControl) sortControl.controller;
-        sortControlController.setUpdateAction(e -> {
+        GameScreen sortControlScreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
+        sortControl = (SortControl) sortControlScreen.controller;
+        sortControl.setUpdateAction(e -> {
             updateLabels();
         });
-        sortControlController.setFilter(NewsFilter.ALL);
-        sortControlController.setNewsMode();
-        newsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<iNewsItem>() {
-            @Override
-            public void changed(ObservableValue<? extends iNewsItem> observable, iNewsItem oldValue, iNewsItem newValue) {
-                if (newValue != null) {
-                    Text text = new Text(newValue.getSummary());
-                    text.wrappingWidthProperty().bind(displayPane.widthProperty());
-                    displayPane.setContent(text);
-                }
+        sortControl.setBrowseMode(BrowseMode.NEWS);
+        newsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Text text = new Text(newValue.getSummary());
+                text.wrappingWidthProperty().bind(displayPane.widthProperty());
+                displayPane.setContent(text);
             }
         });
 
@@ -120,10 +110,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(gameController.getNewsManager().getNewsItems()),
-                p -> !((SortControl) sortControl.controller).isNewsItemFiltered(p));
+        List news = BrowseMode.NEWS.listToBrowse(gameController, playerPromotion());
 
-        newsListView.setItems(new SortedList<>(filteredList, new NewsItemComparator()));
+        newsListView.setItems(sortControl.getSortedList(news));
         newsListView.getSelectionModel().selectFirst();
         ownerMessageText.setText(getOwnerMessageText());
     }

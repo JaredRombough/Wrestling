@@ -1,10 +1,6 @@
 package openwrestling.view.browser.controller;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,11 +26,9 @@ import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -86,7 +80,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private AnchorPane sortControlPane;
 
     @FXML
-    private ListView mainListView;
+    private ListView<SegmentItem> mainListView;
 
     @FXML
     private AnchorPane mainDisplayPane;
@@ -132,18 +126,14 @@ public class BrowserController extends ControllerBase implements Initializable {
                     + "\tFunds: " + ModelUtils.currencyString(funds));
         }
 
-        List currentListToBrowse = currentListToBrowse();
+        List<SegmentItem> currentListToBrowse = currentListToBrowse();
+
         if (currentListToBrowse != null) {
-
-            Comparator comparator = sortControl != null ? ((SortControl) sortControl.controller).getCurrentComparator() : null;
-            FilteredList filteredList = new FilteredList<>(FXCollections.observableArrayList(currentListToBrowse), p
-                    -> !((SortControl) sortControl.controller).isFiltered(p));
-
-            mainListView.setItems(new SortedList<>(filteredList, comparator));
+            mainListView.setItems(sortControlController.getSortedList(currentListToBrowse));
 
             if (mainListView.getSelectionModel().getSelectedItem() == null && !mainListView.getItems().isEmpty()) {
                 mainListView.getSelectionModel().selectFirst();
-            } else if (mainListView.getItems().isEmpty()) {
+            } else if (displaySubScreen != null && mainListView.getItems().isEmpty()) {
                 displaySubScreen.controller.setCurrent(null);
             }
         }
@@ -154,7 +144,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     }
 
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException {
+    private void handleButtonAction(ActionEvent event) {
 
         Button button = (Button) event.getSource();
 
@@ -187,7 +177,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     }
 
-    private List currentListToBrowse() {
+    private List<SegmentItem> currentListToBrowse() {
         Promotion promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
                 ? playerPromotion() : currentPromotion;
         return currentBrowseMode.listToBrowse(gameController, promotion);
@@ -256,15 +246,12 @@ public class BrowserController extends ControllerBase implements Initializable {
                 updateLabels();
             });
 
-            mainListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
-                @Override
-                public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-                    if (displaySubScreen != null && newValue != null) {
-                        if (displaySubScreen.controller instanceof WorkerOverviewController && currentPromotion != null) {
-                            ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
-                        }
-                        displaySubScreen.controller.setCurrent(newValue);
+            mainListView.getSelectionModel().selectedItemProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> {
+                if (displaySubScreen != null && newValue != null) {
+                    if (displaySubScreen.controller instanceof WorkerOverviewController && currentPromotion != null) {
+                        ((WorkerOverviewController) displaySubScreen.controller).setPromotion(currentPromotion);
                     }
+                    displaySubScreen.controller.setCurrent(newValue);
                 }
             });
 

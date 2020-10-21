@@ -3,6 +3,7 @@ package openwrestling.view.utility;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,15 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import openwrestling.model.NewsItem;
-import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.gameObjects.TagTeam;
-import openwrestling.model.gameObjects.Title;
-import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.segment.constants.ActiveType;
 import openwrestling.model.segment.constants.BrowseMode;
@@ -36,7 +31,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -62,13 +56,8 @@ public class SortControl extends ControllerBase implements Initializable {
     private List<ButtonWrapper> buttonWrappers;
     private List<ComboBox> filterComboBoxes;
 
-    private Gender genderFilter;
-    private ActiveType activeTypeFilter;
-    private StaffType staffTypeFilter;
-    private NewsFilter newsFilter;
+    private FilterService filterService;
 
-    private Stable stableFilter;
-    private RosterSplit rosterSplitFilter;
     private ComboBox stablesCombobox;
     private ComboBox rosterSplitCombobox;
 
@@ -77,9 +66,9 @@ public class SortControl extends ControllerBase implements Initializable {
 
     private EventHandler<ActionEvent> updateAction;
 
-    private final ChangeListener filterChangeListener = new ChangeListener<Object>() {
+    private final ChangeListener<?> filterChangeListener = new ChangeListener<>() {
         @Override
-        public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+        public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
             setFilter(newValue);
             updateAction.handle(new ActionEvent());
         }
@@ -97,9 +86,6 @@ public class SortControl extends ControllerBase implements Initializable {
         rosterSplits = new ArrayList<>();
         stablesCombobox = new ComboBox();
         rosterSplitCombobox = new ComboBox();
-        genderFilter = Gender.ALL;
-        activeTypeFilter = ActiveType.ALL;
-        staffTypeFilter = StaffType.ALL;
 
         comparatorsComboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null && updateAction != null) {
@@ -115,8 +101,13 @@ public class SortControl extends ControllerBase implements Initializable {
         });
     }
 
-    private List<Enum> getActiveFilters() {
-        return Arrays.asList(genderFilter, activeTypeFilter, staffTypeFilter);
+    @Override
+    public void initializeMore() {
+        filterService = new FilterService(playerPromotion());
+    }
+
+    public <T> SortedList<T> getSortedList(List<T> inputList) {
+        return filterService.getSortedList(inputList, getCurrentComparator());
     }
 
     public void clearFilters() {
@@ -130,33 +121,33 @@ public class SortControl extends ControllerBase implements Initializable {
 
     public void setFilter(Object obj) {
         if (obj instanceof Gender) {
-            genderFilter = (Gender) obj;
+            filterService.setGenderFilter((Gender) obj);
         } else if (obj instanceof ActiveType) {
-            activeTypeFilter = (ActiveType) obj;
+            filterService.setActiveTypeFilter((ActiveType) obj);
         } else if (obj instanceof StaffType) {
-            staffTypeFilter = (StaffType) obj;
+            filterService.setStaffTypeFilter((StaffType) obj);
         } else if (obj instanceof NewsFilter) {
-            newsFilter = (NewsFilter) obj;
+            filterService.setNewsFilter((NewsFilter) obj);
         } else if (obj instanceof Stable) {
             Stable stable = (Stable) obj;
             if (stables != null && stables.contains(stable)) {
-                stableFilter = stable;
+                filterService.setStableFilter((Stable) obj);
             }
         } else if (obj instanceof RosterSplit) {
             RosterSplit stable = (RosterSplit) obj;
             if (rosterSplits != null && rosterSplits.contains(stable)) {
-                rosterSplitFilter = stable;
+                filterService.setRosterSplitFilter((RosterSplit) obj);
             }
         } else if (obj instanceof String) {
             String string = (String) obj;
             if (StringUtils.equals(string, ALL_STABLES)) {
-                stableFilter = null;
+                filterService.setStableFilter(null);
             } else if (StringUtils.equals(string, ALL_ROSTER_SPLITS)) {
-                rosterSplitFilter = null;
+                filterService.setRosterSplitFilter(null);
             }
         }
 
-        filterComboBoxes.stream().forEach(comboBox -> {
+        filterComboBoxes.forEach(comboBox -> {
             if (comboBox.getItems().contains(obj)
                     && !comboBox.getSelectionModel().getSelectedItem().equals(obj)) {
                 comboBox.getSelectionModel().select(obj);
@@ -164,9 +155,38 @@ public class SortControl extends ControllerBase implements Initializable {
         });
     }
 
-    public void setNewsMode() {
-        addButtonWrapper(EnumSet.allOf(NewsFilter.class));
-        gridPane.setVisible(false);
+
+    public void setBrowseMode(iBrowseMode browseMode) {
+        this.browseMode = browseMode;
+        if (browseMode.equals(BrowseMode.NEWS)) {
+            addButtonWrapper(EnumSet.allOf(NewsFilter.class));
+            gridPane.setVisible(false);
+        } else {
+            comparatorsComboBox.setItems(browseMode.comparators());
+            comparatorsComboBox.getSelectionModel().selectFirst();
+            updateWorkerGroups();
+            updateFilters();
+        }
+    }
+
+    public void setCurrentPromotion(Promotion promotion) {
+        this.promotion = promotion;
+        updateWorkerGroups();
+        updateFilters();
+    }
+
+    public void setUpdateAction(EventHandler<ActionEvent> action) {
+        this.updateAction = action;
+    }
+
+    private void updateWorkerGroups() {
+        stables = gameController.getStableManager().getStables().stream()
+                .filter(s -> s.getOwner().equals(promotion))
+                .collect(Collectors.toList());
+
+        rosterSplits = gameController.getRosterSplitManager().getRosterSplits().stream()
+                .filter(s -> s.getOwner().equals(promotion))
+                .collect(Collectors.toList());
     }
 
     private void addButtonWrapper(EnumSet set) {
@@ -180,8 +200,10 @@ public class SortControl extends ControllerBase implements Initializable {
                 updateAction.handle(e);
             });
         });
-        if (selectedEnum(set) != null) {
-            wrapper.updateSelected(selectedEnum(set));
+        Enum selectedEnum = filterService.selectedEnum(set);
+
+        if (selectedEnum != null) {
+            wrapper.updateSelected(selectedEnum);
         } else {
             wrapper.updateSelected(0);
         }
@@ -197,8 +219,10 @@ public class SortControl extends ControllerBase implements Initializable {
 
         comboBox.getSelectionModel().selectedItemProperty().addListener(filterChangeListener);
 
-        if (selectedEnum(set) != null) {
-            comboBox.getSelectionModel().select(selectedEnum(set));
+        Enum selectedEnum = filterService.selectedEnum(set);
+
+        if (selectedEnum != null) {
+            comboBox.getSelectionModel().select(selectedEnum);
         } else {
             comboBox.getSelectionModel().selectFirst();
         }
@@ -226,15 +250,6 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     }
 
-    private Enum selectedEnum(EnumSet set) {
-        for (Enum e : getActiveFilters()) {
-            if (set.contains(e)) {
-                return e;
-            }
-        }
-        return null;
-    }
-
     private void updateFilters() {
         if (browseMode == null) {
             return;
@@ -259,116 +274,10 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     }
 
-    /**
-     * @return the currentComparator
-     */
-    public Comparator getCurrentComparator() {
+    private Comparator getCurrentComparator() {
         return reverseButton.getText().equals(DOWN_ARROW)
                 ? comparatorsComboBox.getSelectionModel().getSelectedItem()
                 : comparatorsComboBox.getSelectionModel().getSelectedItem().reversed();
-    }
-
-    public boolean isFiltered(Object object) {
-        if (object instanceof SegmentItem) {
-            SegmentItem segmentItem = (SegmentItem) object;
-            return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || isStaffTypeFiltered(segmentItem) || isWorkerGroupFiltered(segmentItem);
-        }
-        return true;
-    }
-
-    public boolean isNewsItemFiltered(NewsItem newsItem) {
-        if (newsFilter.equals(NewsFilter.ALL)) {
-            return false;
-        }
-        return !newsItem.getPromotions().contains(playerPromotion());
-    }
-
-    private boolean isActiveFiltered(SegmentItem segmentItem) {
-        if (activeTypeFilter.equals(ActiveType.ALL)
-                || segmentItem.getActiveType().equals(ActiveType.ALL)) {
-            return false;
-        }
-        return !activeTypeFilter.equals(segmentItem.getActiveType());
-    }
-
-    private boolean isGenderFiltered(SegmentItem segmentItem) {
-        if (!genderFilter.equals(Gender.ALL)) {
-            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof Worker
-                        && !((Worker) subItem).getGender().equals(genderFilter)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isWorkerGroupFiltered(SegmentItem segmentItem) {
-        return isStableFiltered(segmentItem) || isRosterSplitFiltered(segmentItem);
-    }
-
-    private boolean isStableFiltered(SegmentItem segmentItem) {
-        if (stableFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam)) {
-            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (!stableFilter.getWorkers().contains((Worker) subItem)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isRosterSplitFiltered(SegmentItem segmentItem) {
-        if (rosterSplitFilter != null && (segmentItem instanceof Worker || segmentItem instanceof TagTeam || segmentItem instanceof Title)) {
-            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (segmentItem instanceof Title) {
-                    return !Objects.equals(((Title) segmentItem).getRosterSplit(), rosterSplitFilter);
-                } else if (!rosterSplitFilter.getWorkers().contains(subItem)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isStaffTypeFiltered(SegmentItem segmentItem) {
-        if (!staffTypeFilter.equals(StaffType.ALL)) {
-            for (SegmentItem subItem : segmentItem.getSegmentItems()) {
-                if (subItem instanceof StaffMember
-                        && !((StaffMember) subItem).getStaffType().equals(staffTypeFilter)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void setBrowseMode(iBrowseMode browseMode) {
-        this.browseMode = browseMode;
-        comparatorsComboBox.setItems(browseMode.comparators());
-        comparatorsComboBox.getSelectionModel().selectFirst();
-        updateWorkerGroups();
-        updateFilters();
-    }
-
-    public void setCurrentPromotion(Promotion promotion) {
-        this.promotion = promotion;
-        updateWorkerGroups();
-        updateFilters();
-    }
-
-    public void setUpdateAction(EventHandler<ActionEvent> action) {
-        this.updateAction = action;
-    }
-
-    private void updateWorkerGroups() {
-        stables = gameController.getStableManager().getStables().stream()
-                .filter(s -> s.getOwner().equals(promotion))
-                .collect(Collectors.toList());
-
-        rosterSplits = gameController.getRosterSplitManager().getRosterSplits().stream()
-                .filter(s -> s.getOwner().equals(promotion))
-                .collect(Collectors.toList());
     }
 
 }

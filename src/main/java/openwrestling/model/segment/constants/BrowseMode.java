@@ -8,6 +8,7 @@ import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NameComparator;
+import openwrestling.view.utility.comparators.NewsItemComparator;
 import openwrestling.view.utility.comparators.TitlePrestigeComparator;
 
 import java.util.Arrays;
@@ -127,11 +128,6 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
-        }
-
-        @Override
         public String toString() {
             return "Referees";
         }
@@ -150,11 +146,6 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getStaffManager().getStaff(StaffType.BROADCAST, promotion);
-        }
-
-        @Override
-        public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
         }
 
         @Override
@@ -236,11 +227,6 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
-        }
-
-        @Override
         public String toString() {
             return "Stables";
         }
@@ -264,11 +250,6 @@ public enum BrowseMode implements iBrowseMode {
         }
 
         @Override
-        public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
-        }
-
-        @Override
         public String toString() {
             return "Roster splits";
         }
@@ -288,11 +269,17 @@ public enum BrowseMode implements iBrowseMode {
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getEventManager().getEventTemplates(promotion);
         }
+    },
+    NEWS {
+        @Override
+        public ObservableList comparators() {
+            return FXCollections.observableArrayList(new NewsItemComparator());
+        }
 
         @Override
-        public List<EnumSet> getSortFilters() {
-            return Arrays.asList();
+        public List listToBrowse(GameController gameController, Promotion promotion) {
+            return gameController.getNewsManager().getNewsItems();
         }
-    };
+    }
 
 }

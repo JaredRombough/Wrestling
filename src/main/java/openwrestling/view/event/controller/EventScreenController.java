@@ -4,8 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -540,32 +538,22 @@ public class EventScreenController extends ControllerBase implements Initializab
     }
 
     public void updateSegmentItemListView() {
-        List<SegmentItem> segmentItems = new ArrayList<>();
-
         int previousIndex = segmentItemListView.getSelectionModel().getSelectedIndex();
 
-        for (SegmentItem segmentItem : browseMode.listToBrowse(gameController, playerPromotion())) {
-            if (!segmentItemIsBookedForCurrentSegment(segmentItem)) {
-                segmentItems.add(segmentItem);
-            }
-        }
+        boolean isMatch = currentSegmentPaneController() != null && currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH);
 
-        boolean isMatch = currentSegmentPaneController() != null
-                ? currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH)
-                : true;
+        List<SegmentItem> availableItems = browseMode.listToBrowse(gameController, playerPromotion()).stream()
+                .filter(segmentItem -> !segmentItemIsBookedForCurrentSegment(segmentItem))
+                .filter(segmentItem -> !isMatch || !hasInjury(segmentItem))
+                .collect(Collectors.toList());
 
-        Comparator comparator = sortControl != null ? sortControl.getCurrentComparator() : null;
-        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), segmentItem
-                -> !(sortControl.isFiltered(segmentItem) || (isMatch && filterInjured(segmentItem))));
-
-        segmentItemListView.setItems(new SortedList<>(filteredList, comparator));
+        segmentItemListView.setItems(sortControl.getSortedList(availableItems));
 
         if (previousIndex > 0) {
             segmentItemListView.getSelectionModel().select(previousIndex);
         } else {
             segmentItemListView.getSelectionModel().selectFirst();
         }
-
     }
 
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
@@ -669,7 +657,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    private boolean filterInjured(SegmentItem segmentItem) {
+    private boolean hasInjury(SegmentItem segmentItem) {
         if (!(segmentItem instanceof Worker)) {
             return false;
         }

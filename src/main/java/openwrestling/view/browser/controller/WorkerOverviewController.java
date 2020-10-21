@@ -249,6 +249,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void updateLabels() {
+
         List<Worker> roster = gameController.getWorkerManager().getRoster(promotion);
         if (worker != null && roster.stream().anyMatch(w -> w.getWorkerID() == worker.getWorkerID())
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
