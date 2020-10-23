@@ -7,6 +7,9 @@ import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
+import openwrestling.view.utility.comparators.DateComparator;
+import openwrestling.view.utility.comparators.MatchPromotionComparator;
+import openwrestling.view.utility.comparators.MatchRatingComparator;
 import openwrestling.view.utility.comparators.NameComparator;
 import openwrestling.view.utility.comparators.NewsItemComparator;
 import openwrestling.view.utility.comparators.TitlePrestigeComparator;
@@ -279,6 +282,31 @@ public enum BrowseMode implements iBrowseMode {
         @Override
         public List listToBrowse(GameController gameController, Promotion promotion) {
             return gameController.getNewsManager().getNewsItems();
+        }
+    },
+    MATCHES {
+        @Override
+        public List listToBrowse(GameController gameController, Promotion promotion) {
+            return gameController.getSegmentManager().getMatches();
+        }
+
+        @Override
+        public ObservableList comparators() {
+            return FXCollections.observableArrayList(
+                    new MatchRatingComparator(),
+                    new MatchPromotionComparator(),
+                    new DateComparator()
+            );
+        }
+
+        @Override
+        public List<EnumSet> getSortFilters() {
+            return Arrays.asList(EnumSet.allOf(TopMatchFilter.class));
+        }
+
+        @Override
+        public String toString() {
+            return "Matches";
         }
     }
 

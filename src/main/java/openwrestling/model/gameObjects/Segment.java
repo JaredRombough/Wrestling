@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.interfaces.iDate;
 import openwrestling.model.segment.constants.AngleType;
 import openwrestling.model.segment.constants.JoinTeamType;
 import openwrestling.model.segment.constants.MatchFinish;
@@ -33,7 +34,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Segment extends GameObject implements Serializable {
+public class Segment extends GameObject implements Serializable, iDate {
 
     private long segmentID;
 

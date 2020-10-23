@@ -1,11 +1,7 @@
 package openwrestling.view.news.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -28,9 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
-import java.time.DayOfWeek;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -43,41 +37,35 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public ListView<Segment> rankingsListView;
 
     @FXML
-    public Button weekButton;
-
-    @FXML
-    public Button monthButton;
-
-    @FXML
-    public Button yearButton;
-    @FXML
     public ListView<iNewsItem> newsListView;
+
     @FXML
     public Label ownerMessageText;
+
     @FXML
     private AnchorPane sortControlPane;
-    private List<Button> timeButtons;
+
+    @FXML
+    private AnchorPane topListSortControlPane;
+
     private ChronoUnit chronoUnit;
     private SortControl sortControl;
+    private SortControl topListSortControlController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
-        timeButtons = Arrays.asList(weekButton, monthButton, yearButton);
-        rankingsListView.setPlaceholder(new Label("No matches for selected time period"));
+        rankingsListView.setPlaceholder(new Label("No data for selected time period"));
         chronoUnit = ChronoUnit.WEEKS;
     }
 
     @Override
     public void initializeMore() {
-        updateTopMatches(ChronoUnit.WEEKS, 1);
-        ViewUtils.updateSelectedButton(weekButton, timeButtons);
+
 
         GameScreen sortControlScreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlScreen.controller;
-        sortControl.setUpdateAction(e -> {
-            updateLabels();
-        });
+        sortControl.setUpdateAction(e -> updateLabels());
         sortControl.setBrowseMode(BrowseMode.NEWS);
         newsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -88,24 +76,11 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         });
 
 
-    }
-
-    @FXML
-    private void handleButtonAction(ActionEvent event) {
-        Button button = (Button) event.getSource();
-        if (timeButtons.contains(button)) {
-            if (button.equals(weekButton)) {
-                chronoUnit = ChronoUnit.WEEKS;
-            } else if (button.equals(monthButton)) {
-                chronoUnit = ChronoUnit.MONTHS;
-            } else if (button.equals(yearButton)) {
-                chronoUnit = ChronoUnit.YEARS;
-            }
-            updateTopMatches(chronoUnit, 1);
-            ViewUtils.updateSelectedButton(button, timeButtons);
-        }
-
-        updateLabels();
+        GameScreen sortControl2 = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, topListSortControlPane);
+        topListSortControlController = (SortControl) sortControl2.controller;
+        topListSortControlController.setUpdateAction(e -> updateLabels());
+        topListSortControlController.setBrowseMode(BrowseMode.MATCHES);
+        updateTopMatches();
     }
 
     @Override
@@ -115,6 +90,8 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         newsListView.setItems(sortControl.getSortedList(news));
         newsListView.getSelectionModel().selectFirst();
         ownerMessageText.setText(getOwnerMessageText());
+
+        updateTopMatches();
     }
 
     private String getOwnerMessageText() {
@@ -137,29 +114,12 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     }
 
     public void nextDay() {
-        updateTopMatches(chronoUnit, 1);
+        updateTopMatches();
     }
 
-    public void updateTopMatches(ChronoUnit unit, int units) {
-
-        int matchesToShow = 10;
-
-        if (unit.equals(ChronoUnit.WEEKS) && units == 1
-                && gameController.getDateManager().today().getDayOfWeek().equals(DayOfWeek.MONDAY)) {
-            units++;
-        }
-
-        List<Segment> topMatches
-                = gameController.getSegmentManager().getTopMatches(
-                gameController.getDateManager().today(),
-                unit,
-                units,
-                matchesToShow);
-
-        ObservableList<Segment> items = FXCollections.observableArrayList(topMatches);
-
-        rankingsListView.setItems(items);
-
+    public void updateTopMatches() {
+        List matches = BrowseMode.MATCHES.listToBrowse(gameController, playerPromotion());
+        rankingsListView.setItems(topListSortControlController.getSortedList(matches));
         rankingsListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Segment segment, boolean empty) {

@@ -59,6 +59,12 @@ public class SegmentManager extends GameObjectManager implements Serializable {
         return new ArrayList<>(segmentMap.values());
     }
 
+    public List<Segment> getMatches() {
+        return segmentMap.values().stream()
+                .filter(segment -> segment.getSegmentType().equals(MATCH))
+                .collect(Collectors.toList());
+    }
+
     public void deleteSegmentTemplates(EventTemplate eventTemplate) {
         getSegmentTemplates(eventTemplate)
                 .forEach(segmentTemplate ->

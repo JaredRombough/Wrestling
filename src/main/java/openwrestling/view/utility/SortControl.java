@@ -21,6 +21,7 @@ import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.segment.constants.Gender;
 import openwrestling.model.segment.constants.NewsFilter;
 import openwrestling.model.segment.constants.StaffType;
+import openwrestling.model.segment.constants.TopMatchFilter;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +104,7 @@ public class SortControl extends ControllerBase implements Initializable {
 
     @Override
     public void initializeMore() {
-        filterService = new FilterService(playerPromotion());
+        filterService = new FilterService(playerPromotion(), gameController.getDateManager());
     }
 
     public <T> SortedList<T> getSortedList(List<T> inputList) {
@@ -145,6 +146,8 @@ public class SortControl extends ControllerBase implements Initializable {
             } else if (StringUtils.equals(string, ALL_ROSTER_SPLITS)) {
                 filterService.setRosterSplitFilter(null);
             }
+        } else if (obj instanceof TopMatchFilter) {
+            filterService.setTopMatchFilter((TopMatchFilter) obj);
         }
 
         filterComboBoxes.forEach(comboBox -> {
@@ -154,7 +157,6 @@ public class SortControl extends ControllerBase implements Initializable {
             }
         });
     }
-
 
     public void setBrowseMode(iBrowseMode browseMode) {
         this.browseMode = browseMode;

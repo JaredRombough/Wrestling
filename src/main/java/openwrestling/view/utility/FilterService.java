@@ -4,10 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import lombok.Setter;
+import openwrestling.manager.DateManager;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
@@ -17,7 +19,9 @@ import openwrestling.model.segment.constants.ActiveType;
 import openwrestling.model.segment.constants.Gender;
 import openwrestling.model.segment.constants.NewsFilter;
 import openwrestling.model.segment.constants.StaffType;
+import openwrestling.model.segment.constants.TopMatchFilter;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -28,19 +32,24 @@ import java.util.Objects;
 public class FilterService {
 
     private final Promotion playerPromotion;
+    private DateManager dateManager;
+
     private Gender genderFilter;
     private ActiveType activeTypeFilter;
     private StaffType staffTypeFilter;
     private NewsFilter newsFilter;
     private Stable stableFilter;
     private RosterSplit rosterSplitFilter;
+    private TopMatchFilter topMatchFilter;
 
-    public FilterService(Promotion playerPromotion) {
+    public FilterService(Promotion playerPromotion, DateManager dateManager) {
         this.playerPromotion = playerPromotion;
+        this.dateManager = dateManager;
         genderFilter = Gender.ALL;
         activeTypeFilter = ActiveType.ALL;
         staffTypeFilter = StaffType.ALL;
         newsFilter = NewsFilter.ALL;
+        topMatchFilter = TopMatchFilter.YEAR;
     }
 
     public Enum selectedEnum(EnumSet set) {
@@ -67,6 +76,8 @@ public class FilterService {
             return isActiveFiltered(segmentItem) || isGenderFiltered(segmentItem) || isStaffTypeFiltered(segmentItem) || isWorkerGroupFiltered(segmentItem);
         } else if (object instanceof NewsItem) {
             return isNewsItemFiltered((NewsItem) object);
+        } else if (object instanceof Segment) {
+            return isMatchFiltered((Segment) object);
         }
         return true;
     }
@@ -135,6 +146,18 @@ public class FilterService {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    public boolean isMatchFiltered(Segment match) {
+        LocalDate date = dateManager.today();
+        if (topMatchFilter.equals(TopMatchFilter.WEEK)) {
+            return match.getDate().isBefore(date.minusWeeks(1));
+        } else if (topMatchFilter.equals(TopMatchFilter.MONTH)) {
+            return match.getDate().isBefore(date.minusMonths(1));
+        } else if (topMatchFilter.equals(TopMatchFilter.YEAR)) {
+            return match.getDate().isBefore(date.minusYears(1));
         }
         return false;
     }
