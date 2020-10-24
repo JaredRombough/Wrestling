@@ -59,15 +59,6 @@ import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.RegionWrapper;
 import openwrestling.view.utility.comparators.NameComparator;
-import openwrestling.view.utility.comparators.SegmentItemAgeComparator;
-import openwrestling.view.utility.comparators.SegmentItemBehaviourComparator;
-import openwrestling.view.utility.comparators.StaffSkillComparator;
-import openwrestling.view.utility.comparators.WorkerCharismaComparator;
-import openwrestling.view.utility.comparators.WorkerFlyingComparator;
-import openwrestling.view.utility.comparators.WorkerPopularityComparator;
-import openwrestling.view.utility.comparators.WorkerStrikingComparator;
-import openwrestling.view.utility.comparators.WorkerWrestlingComparator;
-import openwrestling.view.utility.comparators.WorkrateComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -495,27 +486,6 @@ public final class ViewUtils {
             }
         }
         return sb.toString();
-    }
-
-    public static ObservableList getWorkerComparators() {
-        return FXCollections.observableArrayList(new NameComparator(),
-                new WorkerPopularityComparator(),
-                new WorkrateComparator(),
-                new WorkerCharismaComparator(),
-                new WorkerWrestlingComparator(),
-                new WorkerFlyingComparator(),
-                new WorkerStrikingComparator(),
-                new SegmentItemBehaviourComparator(),
-                new SegmentItemAgeComparator()
-        );
-    }
-
-    public static ObservableList getStaffComparators() {
-        return FXCollections.observableArrayList(new NameComparator(),
-                new StaffSkillComparator(),
-                new SegmentItemBehaviourComparator(),
-                new SegmentItemAgeComparator()
-        );
     }
 
     public static boolean releaseWorkerDialog(iPerson person, Promotion promotion, iContract contract, LocalDate date) {

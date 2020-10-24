@@ -16,7 +16,7 @@ import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;
-import openwrestling.model.segment.constants.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -162,7 +162,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
         mainDisplayPane.getChildren().clear();
         displaySubScreen = ViewUtils.loadScreenFromResource(
-                currentBrowseMode.subScreenCode(), mainApp, gameController, mainDisplayPane);
+                currentBrowseMode.getScreenCode(), mainApp, gameController, mainDisplayPane);
 
         if (displaySubScreen.controller instanceof StableController) {
             ((StableController) displaySubScreen.controller).setBrowseMode(currentBrowseMode);

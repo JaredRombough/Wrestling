@@ -13,7 +13,7 @@ import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.interfaces.iNewsItem;
-import openwrestling.model.segment.constants.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.utility.MonthlyReviewUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;

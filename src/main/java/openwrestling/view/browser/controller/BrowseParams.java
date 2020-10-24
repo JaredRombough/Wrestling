@@ -2,7 +2,7 @@ package openwrestling.view.browser.controller;
 
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.interfaces.iSortFilter;
-import openwrestling.model.segment.constants.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 
 public class BrowseParams {
 

@@ -15,13 +15,13 @@ import javafx.scene.layout.VBox;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Stable;
-import openwrestling.model.interfaces.iBrowseMode;
 import openwrestling.model.segment.constants.ActiveType;
-import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.segment.constants.Gender;
 import openwrestling.model.segment.constants.NewsFilter;
 import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.segment.constants.TopMatchFilter;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.iBrowseMode;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -158,13 +158,13 @@ public class SortControl extends ControllerBase implements Initializable {
         });
     }
 
-    public void setBrowseMode(iBrowseMode browseMode) {
+    public void setBrowseMode(BrowseMode browseMode) {
         this.browseMode = browseMode;
         if (browseMode.equals(BrowseMode.NEWS)) {
             addButtonWrapper(EnumSet.allOf(NewsFilter.class));
             gridPane.setVisible(false);
         } else {
-            comparatorsComboBox.setItems(browseMode.comparators());
+            comparatorsComboBox.setItems(FXCollections.observableArrayList(browseMode.getComparators()));
             comparatorsComboBox.getSelectionModel().selectFirst();
             updateWorkerGroups();
             updateFilters();

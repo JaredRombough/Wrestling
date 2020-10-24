@@ -10,7 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segment.constants.ActiveType;
-import openwrestling.model.segment.constants.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
