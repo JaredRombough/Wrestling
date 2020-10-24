@@ -9,11 +9,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import openwrestling.model.NewsItem;
 import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.interfaces.iNewsItem;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.MonthlyReviewUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -24,7 +25,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,7 +37,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public ListView<Segment> rankingsListView;
 
     @FXML
-    public ListView<iNewsItem> newsListView;
+    public ListView<NewsItem> newsListView;
 
     @FXML
     public Label ownerMessageText;
@@ -48,20 +48,19 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     @FXML
     private AnchorPane topListSortControlPane;
 
-    private ChronoUnit chronoUnit;
     private SortControl sortControl;
     private SortControl topListSortControlController;
+    private GameObjectQueryHelper queryHelper;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger = LogManager.getLogger(getClass());
         rankingsListView.setPlaceholder(new Label("No data for selected time period"));
-        chronoUnit = ChronoUnit.WEEKS;
     }
 
     @Override
     public void initializeMore() {
-
+        queryHelper = new GameObjectQueryHelper(gameController);
 
         GameScreen sortControlScreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlScreen.controller;
@@ -85,7 +84,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        List news = BrowseMode.NEWS.listToBrowse(gameController, playerPromotion());
+        List news = queryHelper.listToBrowse(BrowseMode.NEWS, playerPromotion());
 
         newsListView.setItems(sortControl.getSortedList(news));
         newsListView.getSelectionModel().selectFirst();
@@ -118,7 +117,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     }
 
     public void updateTopMatches() {
-        List matches = BrowseMode.MATCHES.listToBrowse(gameController, playerPromotion());
+        List matches = queryHelper.listToBrowse(BrowseMode.MATCHES, playerPromotion());
         rankingsListView.setItems(topListSortControlController.getSortedList(matches));
         rankingsListView.setCellFactory(param -> new ListCell<>() {
             @Override
@@ -137,7 +136,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
         });
     }
 
-    public void addNews(iNewsItem newsItem) {
+    public void addNews(NewsItem newsItem) {
         newsListView.getItems().add(0, newsItem);
     }
 

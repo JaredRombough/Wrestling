@@ -21,7 +21,6 @@ import openwrestling.model.segment.constants.NewsFilter;
 import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.segment.constants.TopMatchFilter;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
-import openwrestling.model.segment.constants.browse.mode.iBrowseMode;
 import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +74,7 @@ public class SortControl extends ControllerBase implements Initializable {
         }
     };
 
-    private iBrowseMode browseMode;
+    private BrowseMode browseMode;
     private Promotion promotion;
 
     @Override
@@ -259,7 +258,8 @@ public class SortControl extends ControllerBase implements Initializable {
         vBox.getChildren().retainAll(Arrays.asList(gridPane));
         buttonWrappers.clear();
         filterComboBoxes.clear();
-        for (EnumSet set : browseMode.getSortFilters()) {
+        for (Class<? extends Enum> filterEnum : browseMode.getSortFilters()) {
+            EnumSet set = EnumSet.allOf(filterEnum);
             if (set.size() > 5) {
                 addComboboxFilter(set);
             } else {

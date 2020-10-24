@@ -17,6 +17,7 @@ import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -80,7 +81,7 @@ public class BrowserController extends ControllerBase implements Initializable {
     private AnchorPane sortControlPane;
 
     @FXML
-    private ListView<SegmentItem> mainListView;
+    private ListView mainListView;
 
     @FXML
     private AnchorPane mainDisplayPane;
@@ -94,6 +95,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     private BrowseMode currentBrowseMode;
     private SortControl sortControlController;
+    private GameObjectQueryHelper queryHelper;
 
     private void setCurrentPromotion(Promotion newPromotion) {
         currentPromotion = gameController.getPromotionManager().getPromotion(newPromotion.getPromotionID());
@@ -126,7 +128,7 @@ public class BrowserController extends ControllerBase implements Initializable {
                     + "\tFunds: " + ModelUtils.currencyString(funds));
         }
 
-        List<SegmentItem> currentListToBrowse = currentListToBrowse();
+        List<? extends SegmentItem> currentListToBrowse = currentListToBrowse();
 
         if (currentListToBrowse != null) {
             mainListView.setItems(sortControlController.getSortedList(currentListToBrowse));
@@ -177,10 +179,10 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     }
 
-    private List<SegmentItem> currentListToBrowse() {
+    private List<? extends SegmentItem> currentListToBrowse() {
         Promotion promotion = currentBrowseMode.equals(BrowseMode.FREE_AGENTS)
                 ? playerPromotion() : currentPromotion;
-        return currentBrowseMode.listToBrowse(gameController, promotion);
+        return queryHelper.segmentItemsToBrowse(currentBrowseMode, promotion);
     }
 
     @Override
@@ -237,6 +239,7 @@ public class BrowserController extends ControllerBase implements Initializable {
 
     @Override
     public void initializeMore() {
+        queryHelper = new GameObjectQueryHelper(gameController);
         try {
             initializePromotionComboBox();
 

@@ -33,6 +33,7 @@ import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.segment.constants.SegmentValidation;
 import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.SegmentUtils;
 import openwrestling.model.utility.TestUtils;
@@ -87,6 +88,7 @@ public class EventScreenController extends ControllerBase implements Initializab
     private int eventLength;
 
     private BrowseMode browseMode;
+    private GameObjectQueryHelper queryHelper;
 
     @FXML
     private ComboBox<BrowseMode> bookingBrowseComboBox;
@@ -460,6 +462,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initializeMore() {
+        queryHelper = new GameObjectQueryHelper(gameController);
 
         GameScreen sortControlscreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlscreen.controller;
@@ -542,7 +545,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         boolean isMatch = currentSegmentPaneController() != null && currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH);
 
-        List<SegmentItem> availableItems = browseMode.listToBrowse(gameController, playerPromotion()).stream()
+        List<SegmentItem> availableItems = queryHelper.segmentItemsToBrowse(browseMode, playerPromotion()).stream()
                 .filter(segmentItem -> !segmentItemIsBookedForCurrentSegment(segmentItem))
                 .filter(segmentItem -> !isMatch || !hasInjury(segmentItem))
                 .collect(Collectors.toList());
