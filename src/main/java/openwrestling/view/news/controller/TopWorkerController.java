@@ -59,21 +59,33 @@ public class TopWorkerController extends ControllerBase implements Initializable
         int statValue;
         switch (browseMode) {
             case TOP_POPULARITY:
+            case TOP_POPULARITY_MEN:
+            case TOP_POPULARITY_WOMEN:
                 statValue = worker.getPopularity();
                 break;
             case TOP_STRIKING:
+            case TOP_STRIKING_MEN:
+            case TOP_STRIKING_WOMEN:
                 statValue = worker.getStriking();
                 break;
             case TOP_WRESTLING:
+            case TOP_WRESTLING_MEN:
+            case TOP_WRESTLING_WOMEN:
                 statValue = worker.getWrestling();
                 break;
             case TOP_FLYING:
+            case TOP_FLYING_MEN:
+            case TOP_FLYING_WOMEN:
                 statValue = worker.getFlying();
                 break;
             case TOP_CHARISMA:
+            case TOP_CHARISMA_MEN:
+            case TOP_CHARISMA_WOMEN:
                 statValue = worker.getCharisma();
                 break;
             case TOP_WORKRATE:
+            case TOP_WORKRATE_MEN:
+            case TOP_WORKRATE_WOMEN:
                 return ViewUtils.intToStars(ModelUtils.getMatchWorkRating(worker));
             default:
                 statValue = 0;

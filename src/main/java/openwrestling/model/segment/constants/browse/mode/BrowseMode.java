@@ -26,7 +26,19 @@ public enum BrowseMode {
     TOP_WRESTLING("Top 100 Wrestling"),
     TOP_FLYING("Top 100 Flying"),
     TOP_CHARISMA("Top 100 Most Charismatic"),
-    TOP_WORKRATE("Top 100 Workrate");
+    TOP_WORKRATE("Top 100 Workrate"),
+    TOP_POPULARITY_MEN("Men - 100 Most Popular"),
+    TOP_STRIKING_MEN("Men - 100 Striking"),
+    TOP_WRESTLING_MEN("Men - 100 Wrestling"),
+    TOP_FLYING_MEN("Men - 100 Flying"),
+    TOP_CHARISMA_MEN("Men - 100 Most Charismatic"),
+    TOP_WORKRATE_MEN("Men - 100 Workrate"),
+    TOP_POPULARITY_WOMEN("Women - 100 Most Popular"),
+    TOP_STRIKING_WOMEN("Women - 100 Striking"),
+    TOP_WRESTLING_WOMEN("Women - 100 Wrestling"),
+    TOP_FLYING_WOMEN("Women - 100 Flying"),
+    TOP_CHARISMA_WOMEN("Women - 100 Most Charismatic"),
+    TOP_WORKRATE_WOMEN("Women - 100 Workrate");
 
 
     private final String name;

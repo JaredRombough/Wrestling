@@ -7,13 +7,18 @@ import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.segment.constants.Gender;
 import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static openwrestling.model.segment.constants.Gender.FEMALE;
+import static openwrestling.model.segment.constants.Gender.MALE;
 
 public class GameObjectQueryHelper extends Logging {
 
@@ -99,6 +104,30 @@ public class GameObjectQueryHelper extends Logging {
                 return getTop100Workers(Comparator.comparingInt(Worker::getCharisma));
             case TOP_WORKRATE:
                 return getTop100Workers(Comparator.comparingInt(ModelUtils::getMatchWorkRating));
+            case TOP_POPULARITY_MEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getPopularity), MALE);
+            case TOP_STRIKING_MEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getStriking), MALE);
+            case TOP_WRESTLING_MEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getWrestling), MALE);
+            case TOP_FLYING_MEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getFlying), MALE);
+            case TOP_CHARISMA_MEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getCharisma), MALE);
+            case TOP_WORKRATE_MEN:
+                return getTop100Workers(Comparator.comparingInt(ModelUtils::getMatchWorkRating), MALE);
+            case TOP_POPULARITY_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getPopularity), FEMALE);
+            case TOP_STRIKING_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getStriking), FEMALE);
+            case TOP_WRESTLING_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getWrestling), FEMALE);
+            case TOP_FLYING_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getFlying), FEMALE);
+            case TOP_CHARISMA_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(Worker::getCharisma), FEMALE);
+            case TOP_WORKRATE_WOMEN:
+                return getTop100Workers(Comparator.comparingInt(ModelUtils::getMatchWorkRating), FEMALE);
             default:
                 break;
         }
@@ -108,6 +137,18 @@ public class GameObjectQueryHelper extends Logging {
 
     private List<Worker> getTop100Workers(Comparator<Worker> comparator) {
         return gameController.getWorkerManager().getWorkers().stream()
+                .sorted(comparator.reversed())
+                .limit(100)
+                .collect(Collectors.toList());
+    }
+
+    private List<Worker> getTop100Workers(Comparator<Worker> comparator, Gender gender) {
+        return getTop100Workers(comparator, worker -> gender.equals(worker.getGender()));
+    }
+
+    private List<Worker> getTop100Workers(Comparator<Worker> comparator, Predicate<Worker> filter) {
+        return gameController.getWorkerManager().getWorkers().stream()
+                .filter(filter)
                 .sorted(comparator.reversed())
                 .limit(100)
                 .collect(Collectors.toList());

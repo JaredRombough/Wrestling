@@ -15,7 +15,7 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
@@ -33,7 +33,7 @@
                         <Insets left="10.0"/>
                     </GridPane.margin>
                 </Label>
-                <Label fx:id="nameLabel" text="Worker name" GridPane.columnIndex="2">
+                <Label fx:id="nameLabel" text="Worker name" wrapText="true" GridPane.columnIndex="2">
                     <GridPane.margin>
                         <Insets left="10.0"/>
                     </GridPane.margin>
