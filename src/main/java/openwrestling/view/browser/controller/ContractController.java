@@ -87,7 +87,7 @@ public class ContractController extends ControllerBase {
                 contractDurationLabel.setVisible(false);
             }
 
-            contractText.setText(gameController.getContractManager().contractPromotionsString(person, gameController.getDateManager().today()));
+            contractText.setText(gameController.getContractManager().contractPromotionsString(person));
 
             if (gameController.getContractManager().canNegotiate(person, playerPromotion())) {
                 contractButton.setVisible(true);

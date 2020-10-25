@@ -365,5 +365,16 @@ public enum ScreenCode implements ScreenCodeInterface {
         public boolean alwaysUpdate() {
             return false;
         }
-    }
+    },
+    TOP_WORKER {
+        @Override
+        public String resourcePath() {
+            return "view/news/TopWorker.fxml";
+        }
+
+        @Override
+        public boolean alwaysUpdate() {
+            return false;
+        }
+    },
 }

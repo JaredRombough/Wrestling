@@ -159,15 +159,14 @@ public class SortControl extends ControllerBase implements Initializable {
 
     public void setBrowseMode(BrowseMode browseMode) {
         this.browseMode = browseMode;
-        if (browseMode.equals(BrowseMode.NEWS)) {
-            addButtonWrapper(EnumSet.allOf(NewsFilter.class));
+        if (browseMode.equals(BrowseMode.NEWS) || CollectionUtils.isEmpty(browseMode.getComparators())) {
             gridPane.setVisible(false);
-        } else {
-            comparatorsComboBox.setItems(FXCollections.observableArrayList(browseMode.getComparators()));
-            comparatorsComboBox.getSelectionModel().selectFirst();
-            updateWorkerGroups();
-            updateFilters();
         }
+
+        comparatorsComboBox.setItems(FXCollections.observableArrayList(browseMode.getComparators()));
+        comparatorsComboBox.getSelectionModel().selectFirst();
+        updateWorkerGroups();
+        updateFilters();
     }
 
     public void setCurrentPromotion(Promotion promotion) {

@@ -2,6 +2,7 @@ package openwrestling.model.segment.constants.browse.mode;
 
 import openwrestling.model.segment.constants.ActiveType;
 import openwrestling.model.segment.constants.Gender;
+import openwrestling.model.segment.constants.NewsFilter;
 import openwrestling.model.segment.constants.StaffType;
 import openwrestling.model.segment.constants.TopMatchFilter;
 
@@ -21,6 +22,7 @@ public class BrowseModeFilter {
             put(TITLES, List.of(ActiveType.class));
             put(TAG_TEAMS, List.of(Gender.class, ActiveType.class));
             put(MATCHES, List.of(TopMatchFilter.class));
+            put(NEWS, List.of(NewsFilter.class));
         }
     };
 

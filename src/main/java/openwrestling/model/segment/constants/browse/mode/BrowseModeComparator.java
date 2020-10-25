@@ -79,7 +79,10 @@ public class BrowseModeComparator {
     };
 
     public static List<Comparator> getComparators(BrowseMode browseMode) {
-        return COMPARATOR_MAP.get(browseMode);
+        if (COMPARATOR_MAP.containsKey(browseMode)) {
+            return COMPARATOR_MAP.get(browseMode);
+        }
+        return List.of();
     }
 
 }

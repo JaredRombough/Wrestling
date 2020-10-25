@@ -20,7 +20,14 @@ public enum BrowseMode {
     ROSTER_SPLIT("Roster splits", ScreenCode.STABLE),
     EVENTS("Events", ScreenCode.EVENT_TEMPLATE),
     NEWS("News"),
-    MATCHES("Matches");
+    MATCHES("Best Matches"),
+    TOP_POPULARITY("Top 100 Most Popular"),
+    TOP_STRIKING("Top 100 Striking"),
+    TOP_WRESTLING("Top 100 Wrestling"),
+    TOP_FLYING("Top 100 Flying"),
+    TOP_CHARISMA("Top 100 Most Charismatic"),
+    TOP_WORKRATE("Top 100 Workrate");
+
 
     private final String name;
     private final ScreenCode screenCode;

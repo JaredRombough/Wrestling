@@ -1,7 +1,9 @@
 package openwrestling.view.news.controller;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -10,9 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.MonthlyReviewUtils;
@@ -34,7 +38,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public ScrollPane displayPane;
 
     @FXML
-    public ListView<Segment> rankingsListView;
+    public ListView<GameObject> rankingsListView;
 
     @FXML
     public ListView<NewsItem> newsListView;
@@ -47,6 +51,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @FXML
     private AnchorPane topListSortControlPane;
+
+    @FXML
+    private ComboBox<BrowseMode> topListBrowseMode;
 
     private SortControl sortControl;
     private SortControl topListSortControlController;
@@ -74,6 +81,22 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             }
         });
 
+        topListBrowseMode.setItems(FXCollections.observableArrayList(List.of(
+                BrowseMode.MATCHES,
+                BrowseMode.TOP_POPULARITY,
+                BrowseMode.TOP_CHARISMA,
+                BrowseMode.TOP_WORKRATE,
+                BrowseMode.TOP_STRIKING,
+                BrowseMode.TOP_WRESTLING,
+                BrowseMode.TOP_FLYING
+        )));
+        topListBrowseMode.setValue(BrowseMode.MATCHES);
+        topListBrowseMode.setOnAction((event) -> {
+            if (topListBrowseMode.getValue() != null) {
+                topListSortControlController.setBrowseMode(topListBrowseMode.getValue());
+                updateTopMatches();
+            }
+        });
 
         GameScreen sortControl2 = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, topListSortControlPane);
         topListSortControlController = (SortControl) sortControl2.controller;
@@ -117,20 +140,31 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     }
 
     public void updateTopMatches() {
-        List matches = queryHelper.listToBrowse(BrowseMode.MATCHES, playerPromotion());
-        rankingsListView.setItems(topListSortControlController.getSortedList(matches));
+        List list = queryHelper.listToBrowse(topListBrowseMode.getValue(), playerPromotion());
+        rankingsListView.setItems(topListSortControlController.getSortedList(list));
         rankingsListView.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Segment segment, boolean empty) {
-                super.updateItem(segment, empty);
+            protected void updateItem(GameObject gameObject, boolean empty) {
+                super.updateItem(gameObject, empty);
 
-                if (empty || segment == null) {
+                if (empty || gameObject == null) {
                     setGraphic(null);
                 } else {
-                    Text text = new Text(gameController.getSegmentStringService().getIsolatedSegmentString(segment, segment.getEvent()));
-                    text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
-                    text.setTextAlignment(TextAlignment.CENTER);
-                    setGraphic(text);
+                    if (gameObject instanceof Worker) {
+                        Worker worker = (Worker) gameObject;
+                        GameScreen topWorkerScreen = ViewUtils.loadScreenFromFXML(ScreenCode.TOP_WORKER, mainApp, gameController);
+                        TopWorkerController cotroller = (TopWorkerController) topWorkerScreen.controller;
+                        cotroller.setWorker(topListBrowseMode.getValue(), worker, rankingsListView.getItems().indexOf(worker) + 1);
+                        setGraphic(topWorkerScreen.pane);
+                    } else if (gameObject instanceof Segment) {
+                        Segment segment = (Segment) gameObject;
+                        String string = gameController.getSegmentStringService().getIsolatedSegmentString(segment, segment.getEvent());
+                        Text text = new Text(string);
+                        text.wrappingWidthProperty().bind(rankingsListView.widthProperty());
+                        text.setTextAlignment(TextAlignment.CENTER);
+                        setGraphic(text);
+                    }
+
                 }
             }
         });

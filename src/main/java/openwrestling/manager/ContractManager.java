@@ -261,7 +261,7 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return canNegotiate;
     }
 
-    public String contractPromotionsString(iPerson person, LocalDate date) {
+    public String contractPromotionsString(iPerson person) {
         StringBuilder bld = new StringBuilder();
         for (iContract current : getContracts(person)) {
             if (!bld.toString().isEmpty()) {
