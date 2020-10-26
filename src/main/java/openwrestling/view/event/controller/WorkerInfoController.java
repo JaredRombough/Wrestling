@@ -48,8 +48,11 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
     @FXML
     private Label workerRecordLabel;
 
+    private Worker worker;
+
 
     public void setWorker(Worker worker) {
+        this.worker = worker;
         anchorPane.setVisible(true);
 
         wrestlingLabel.setText(Integer.toString(worker.getWrestling()));
@@ -61,7 +64,7 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
 
         ViewUtils.updateWorkerMoraleLabel(moraleLabel);
 
-        ViewUtils.updateWorkerStatLabels(List.of(wrestlingLabel,
+        ViewUtils.updateWorkerStatLabelStyle(List.of(wrestlingLabel,
                 flyingLabel,
                 strikingLabel,
                 charismaLabel,
@@ -73,16 +76,8 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
         ((ResultsCardController) card.controller).setWorkerInfoMode();
         card.controller.setCurrent(worker);
 
-        Segment lastSegment = gameController.getSegmentManager().getLastSegment(worker, playerPromotion());
-        String lastMatchLabelText = "Last appearance:\n";
-        if (lastSegment != null) {
-            lastMatchLabelText += gameController.getSegmentStringService().getSegmentStringForWorkerInfo(lastSegment, lastSegment.getEvent());
-        } else {
-            lastMatchLabelText += "None";
-        }
-
-        lastMatchLabel.setText(lastMatchLabelText);
-        workerRecordLabel.setText(gameController.getSegmentStringService().getWorkerRecord(worker, playerPromotion()));
+        lastMatchLabel.setText(getAppearanceString());
+        workerRecordLabel.setText(getRecordString());
     }
 
     public void clearText() {
@@ -93,4 +88,47 @@ public class WorkerInfoController extends ControllerBase implements Initializabl
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
+
+    private String getRecordString() {
+        String overallRecord = gameController.getSegmentStringService().getOverallWorkerRecord(worker, playerPromotion());
+        String singlesRecord = gameController.getSegmentStringService().getWorkerRecord(worker, playerPromotion(), 1);
+        String tagTeamRecord = gameController.getSegmentStringService().getWorkerRecord(worker, playerPromotion(), 2);
+        String streak = gameController.getSegmentStringService().getWorkerStreak(worker, playerPromotion());
+        return String.format("Singles:\t\t%s\nTag Team:\t%s\nOverall:\t\t%s\nStreak:\t\t%s",
+                singlesRecord,
+                tagTeamRecord,
+                overallRecord,
+                streak
+        );
+    }
+
+    private String getAppearanceString() {
+        Segment lastSegment = gameController.getSegmentManager().getLastSegment(worker, playerPromotion());
+        String lastMatchString = "Last appearance:\n";
+        if (lastSegment != null) {
+            lastMatchString += gameController.getSegmentStringService().getSegmentStringForWorkerInfo(lastSegment,
+                    lastSegment.getEvent(),
+                    gameController.getDateManager().today()
+            );
+        } else {
+            lastMatchString += "None";
+        }
+
+        String percentOfShowsString = gameController.getSegmentStringService().getPercentOfShowsString(worker,
+                playerPromotion(),
+                gameController.getDateManager().today()
+        );
+
+        String missedShowStreakString = gameController.getSegmentStringService().getMissedShowStreakString(worker,
+                playerPromotion(),
+                gameController.getDateManager().today()
+        );
+
+        return String.format("%s\n%s\n%s",
+                lastMatchString,
+                percentOfShowsString,
+                missedShowStreakString
+        );
+    }
+
 }

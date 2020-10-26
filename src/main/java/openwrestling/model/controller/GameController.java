@@ -112,7 +112,7 @@ public final class GameController extends Logging implements Serializable {
         monthlyReviewManager = new MonthlyReviewManager(database);
 
         segmentManager = new SegmentManager(database, dateManager);
-        segmentStringService = new SegmentStringService(segmentManager, tagTeamManager, stableManager);
+
 
         matchRulesManager = new MatchRulesManager(database);
         matchRulesManager.selectData();
@@ -120,8 +120,7 @@ public final class GameController extends Logging implements Serializable {
         eventManager = new EventManager(database,
                 contractManager,
                 dateManager,
-                segmentManager,
-                segmentStringService);
+                segmentManager);
 
         contractFactory = new ContractFactory(contractManager);
 
@@ -197,6 +196,14 @@ public final class GameController extends Logging implements Serializable {
                 .promotionManager(promotionManager)
                 .monthlyReviewController(monthlyReviewController)
                 .build();
+
+        segmentStringService = new SegmentStringService(
+                segmentManager,
+                tagTeamManager,
+                stableManager,
+                eventManager,
+                contractManager
+        );
 
         if (randomGame) {
             RandomGameAssetGenerator randomGameAssetGenerator = new RandomGameAssetGenerator(

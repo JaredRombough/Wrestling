@@ -50,7 +50,7 @@ public class SegmentManagerTest {
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
         workerManager = new WorkerManager(database, mock(ContractManager.class));
         segmentManager = new SegmentManager(database, mock(DateManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager, mock(SegmentStringService.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager);
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
 
@@ -88,7 +88,7 @@ public class SegmentManagerTest {
 
 
         segmentManager = new SegmentManager(database, mock(DateManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager, mock(SegmentStringService.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
 
         segmentManager.selectData();
         eventManager.selectData();
@@ -132,7 +132,7 @@ public class SegmentManagerTest {
 
 
         segmentManager = new SegmentManager(database, mock(DateManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager, mock(SegmentStringService.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
 
         segmentManager.selectData();
         eventManager.selectData();

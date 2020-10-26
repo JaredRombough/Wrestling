@@ -143,6 +143,21 @@ public class SegmentManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Segment> getSegments(Worker worker) {
+        return getSegments().stream()
+                .filter(segment -> CollectionUtils.isNotEmpty(segment.getWorkers()) && segment.getWorkers().contains(worker))
+                .collect(Collectors.toList());
+    }
+
+    public List<Segment> getSegmentsBetweenDates(Worker worker, Promotion promotion, LocalDate startInclusive, LocalDate end) {
+        return getSegments(worker).stream()
+                .filter(segment -> segment.getPromotion().equals(promotion))
+                .filter(segment -> segment.getDate().equals(startInclusive) || segment.getDate().isAfter(startInclusive))
+                .filter(segment -> segment.getDate().isBefore(end))
+                .sorted(Comparator.comparing(segment -> ((Segment) segment).getEvent().getDate()).reversed())
+                .collect(Collectors.toList());
+    }
+
     public Segment getLastSegment(Worker worker, Promotion promotion) {
         int segmentLimit = 1;
         return getSegments().stream()

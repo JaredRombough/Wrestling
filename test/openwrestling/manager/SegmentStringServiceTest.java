@@ -3,19 +3,16 @@ package openwrestling.manager;
 import openwrestling.TestUtils;
 import openwrestling.database.Database;
 import openwrestling.model.factory.PersonFactory;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segment.constants.EventBroadcast;
-import openwrestling.model.segment.constants.EventFrequency;
-import openwrestling.model.segment.constants.EventVenueSize;
 import openwrestling.model.segment.constants.MatchFinish;
 import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.segment.constants.TeamType;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,50 +24,73 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EventManagerTest {
-
+public class SegmentStringServiceTest {
 
     private EventManager eventManager;
+    private SegmentManager segmentManager;
+    private WorkerManager workerManager;
     private PromotionManager promotionManager;
     private Promotion promotion;
+    private Worker worker;
+    private Worker worker2;
     private Database database;
+    private ContractManager contractManager;
+    private SegmentStringService service;
+    private LocalDate date;
 
     @Before
     public void setUp() {
+        date = LocalDate.now();
         database = new Database(TEST_DB_PATH);
         DateManager mockDateManager = mock(DateManager.class);
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
-        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, mock(SegmentManager.class));
+        workerManager = new WorkerManager(database, mock(ContractManager.class));
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager);
+        contractManager = new ContractManager(database, mock(BankAccountManager.class));
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
+
+        worker = workerManager.createWorker(PersonFactory.randomWorker());
+        worker2 = workerManager.createWorker(PersonFactory.randomWorker());
+
+        service = new SegmentStringService(
+                segmentManager,
+                mock(TagTeamManager.class),
+                mock(StableManager.class),
+                eventManager,
+                contractManager
+        );
     }
 
     @Test
-    public void createEventTemplates() {
-        String name = RandomStringUtils.random(10);
+    public void getPercentOfShowsString() {
+        createEvent(worker2, date.minusDays(1));
+        createEvent(worker2, date.minusDays(5));
+        createEvent(worker, date.minusDays(6));
 
-        EventTemplate eventTemplate = EventTemplate.builder()
-                .name(name)
-                .eventBroadcast(EventBroadcast.TELEVISION)
-                .eventFrequency(EventFrequency.WEEKLY)
-                .eventVenueSize(EventVenueSize.LARGE)
-                .build();
+        Contract contract1 = Contract.builder().promotion(promotion).worker(worker).startDate(date.minusDays(6)).active(true).build();
+        contractManager.createContracts(List.of(contract1));
 
-        eventManager.createEventTemplates(List.of(eventTemplate));
+        String noShows = service.getPercentOfShowsString(worker, promotion, date.minusDays(10));
+        assertThat(noShows).isEqualTo("");
 
-        List<EventTemplate> eventTemplates = database.selectAll(EventTemplate.class);
+        String onlyShowIsToday = service.getPercentOfShowsString(worker, promotion, date.minusDays(6));
+        assertThat(onlyShowIsToday).isEqualTo("");
 
-        assertThat(eventTemplates).isNotNull().hasOnlyOneElementSatisfying(savedTemplate -> {
-            assertThat(savedTemplate.getName()).isEqualTo(name);
-            assertThat(savedTemplate.getEventBroadcast()).isEqualTo(EventBroadcast.TELEVISION);
-            assertThat(savedTemplate.getEventFrequency()).isEqualTo(EventFrequency.WEEKLY);
-        });
+        String oneOfOne = service.getPercentOfShowsString(worker, promotion, date.minusDays(5));
+        assertThat(oneOfOne).isEqualTo("Appears on 100% of shows");
+
+        String oneOfTwo = service.getPercentOfShowsString(worker, promotion, date.minusDays(4));
+        assertThat(oneOfTwo).isEqualTo("Appears on 50% of shows");
+
+        String oneOfThree = service.getPercentOfShowsString(worker, promotion, date);
+        assertThat(oneOfThree).isEqualTo("Appears on 33% of shows");
     }
 
-    @Test
-    public void createEvents() {
+    private void createEvent(Worker worker, LocalDate date) {
         Event event = new Event();
-        event.setDate(LocalDate.now());
+        event.setDate(date);
         EventTemplate eventTemplate = EventTemplate.builder().build();
         eventTemplate = database.insertList(List.of(eventTemplate)).get(0);
         event.setEventTemplate(eventTemplate);
@@ -78,11 +98,11 @@ public class EventManagerTest {
         Segment segment = Segment.builder()
                 .segmentType(SegmentType.MATCH)
                 .matchFinish(MatchFinish.CLEAN)
+                .date(date)
                 .build();
-        Worker winnerWorker = PersonFactory.randomWorker();
         Worker loserWorker = PersonFactory.randomWorker();
         SegmentTeam winnerTeam = SegmentTeam.builder()
-                .workers(List.of(winnerWorker))
+                .workers(List.of(worker))
                 .type(TeamType.WINNER)
                 .build();
         SegmentTeam loserTeam = SegmentTeam.builder()
@@ -93,12 +113,6 @@ public class EventManagerTest {
         event.setSegments(List.of(segment));
         event.setPromotion(promotion);
         eventManager.createEvents(List.of(event));
-        List<Event> events = eventManager.getEvents();
-        assertThat(events).hasSize(1);
-        Event savedEvent = events.get(0);
-        assertThat(savedEvent.getDate()).isEqualTo(event.getDate());
-        assertThat(savedEvent.getPromotion().getPromotionID()).isEqualTo(event.getPromotion().getPromotionID());
-        assertThat(savedEvent.getEventTemplate()).isNotNull();
-        assertThat(savedEvent.getEventTemplate().getEventTemplateID()).isEqualTo(eventTemplate.getEventTemplateID());
     }
+
 }

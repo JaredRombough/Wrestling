@@ -284,7 +284,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             ViewUtils.updateWorkerMoraleLabel(moraleLabel);
 
-            ViewUtils.updateWorkerStatLabels(List.of(wrestlingLabel,
+            ViewUtils.updateWorkerStatLabelStyle(List.of(wrestlingLabel,
                     flyingLabel,
                     strikingLabel,
                     behaviourLabel,

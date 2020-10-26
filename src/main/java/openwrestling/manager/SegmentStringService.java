@@ -19,10 +19,18 @@ import openwrestling.view.utility.ViewUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static openwrestling.model.segment.constants.MatchFinish.DRAW;
+import static openwrestling.model.segment.constants.TeamType.LOSER;
+import static openwrestling.model.segment.constants.TeamType.WINNER;
+import static openwrestling.model.utility.ModelUtils.currencyString;
 import static openwrestling.model.utility.ModelUtils.slashShortNames;
 
 @Getter
@@ -31,14 +39,58 @@ public class SegmentStringService implements Serializable {
     private final SegmentManager segmentManager;
     private final TagTeamManager tagTeamManager;
     private final StableManager stableManager;
+    private final EventManager eventManager;
+    private final ContractManager contractManager;
 
-    public SegmentStringService(SegmentManager segmentManager, TagTeamManager tagTeamManager, StableManager stableManager) {
+    public SegmentStringService(SegmentManager segmentManager,
+                                TagTeamManager tagTeamManager,
+                                StableManager stableManager,
+                                EventManager eventManager,
+                                ContractManager contractManager) {
         this.segmentManager = segmentManager;
         this.tagTeamManager = tagTeamManager;
         this.stableManager = stableManager;
+        this.eventManager = eventManager;
+        this.contractManager = contractManager;
     }
 
-    public String getWorkerRecord(Worker worker, Promotion promotion) {
+
+    public String generateSummaryString(Event event, LocalDate today) {
+        StringBuilder sb = new StringBuilder();
+
+        if (event.getDate().isAfter(today)) {
+            return sb.append("This event is in the future.\n").toString();
+        }
+
+        if (event.getDate().equals(today)) {
+            return sb.append("This event is scheduled for later today.\n").toString();
+        }
+
+
+        List<Segment> segments = segmentManager.getSegments(event);
+        for (Segment segment : segments) {
+            if (!segment.getWorkers().isEmpty()) {
+                sb.append(getIsolatedSegmentString(segment, event));
+            }
+
+            sb.append("\n");
+        }
+
+        sb.append("\n");
+
+        sb.append(String.format("Total cost: %s", currencyString(event.getCost())));
+        sb.append("\n");
+        sb.append("Attendance: ").append(event.getAttendance());
+        sb.append("\n");
+        sb.append(String.format("Gross profit: %s", currencyString(event.getGate())));
+        sb.append("\n");
+        sb.append("Rating: ").append(event.getRating());
+
+        return sb.toString();
+    }
+
+
+    public String getOverallWorkerRecord(Worker worker, Promotion promotion) {
         List<Segment> matches = segmentManager.getMatches(worker, promotion);
 
         int wins = 0;
@@ -58,6 +110,146 @@ public class SegmentStringService implements Serializable {
         }
 
         return String.format("Record: %d-%d-%d", wins, losses, draw);
+    }
+
+    public String getWorkerRecord(Worker worker, Promotion promotion, int teamSize) {
+        List<Segment> matches = segmentManager.getMatches(worker, promotion).stream()
+                .filter(segment -> segment.isMatchWithTwoTeamsOfSize(teamSize))
+                .collect(Collectors.toList());
+
+        int wins = 0;
+        int losses = 0;
+        int draw = 0;
+
+        for (Segment match : matches) {
+            if (DRAW.equals(match.getMatchFinish())) {
+                draw++;
+            } else {
+                if (match.getWinners().contains(worker)) {
+                    wins++;
+                } else {
+                    losses++;
+                }
+            }
+        }
+
+        return String.format("Record: %d-%d-%d", wins, losses, draw);
+    }
+
+    public String getWorkerStreak(Worker worker, Promotion promotion) {
+        List<Segment> matches = segmentManager.getMatches(worker, promotion).stream()
+                .sorted(Comparator.comparing(Segment::getDate).reversed())
+                .collect(Collectors.toList());
+
+        int wins = 0;
+        int losses = 0;
+        int draw = 0;
+        TeamType lastTeamType = null;
+
+        for (Segment match : matches) {
+            if (DRAW.equals(match.getMatchFinish())) {
+                if (lastTeamType != null && !DRAW.equals(lastTeamType)) {
+                    break;
+                }
+                draw++;
+                lastTeamType = TeamType.DRAW;
+            } else {
+                if (match.getWinners().contains(worker)) {
+                    if (lastTeamType != null && !WINNER.equals(lastTeamType)) {
+                        break;
+                    }
+                    wins++;
+                    lastTeamType = WINNER;
+                } else {
+                    if (lastTeamType != null && !LOSER.equals(lastTeamType)) {
+                        break;
+                    }
+                    losses++;
+                    lastTeamType = LOSER;
+                }
+            }
+        }
+
+        if (lastTeamType == null) {
+            return "";
+        }
+
+        int streakTotal;
+        String description;
+
+        switch (lastTeamType) {
+            case LOSER:
+                streakTotal = losses;
+                description = streakTotal > 1 ? "losses" : "loss";
+                break;
+            case WINNER:
+                streakTotal = wins;
+                description = streakTotal > 1 ? "wins" : "win";
+                break;
+            case DRAW:
+                streakTotal = draw;
+                description = streakTotal > 1 ? "draws" : "draw";
+                break;
+            default:
+                streakTotal = 0;
+                description = "matches";
+        }
+
+        return String.format("%d %s", streakTotal, description);
+    }
+
+    public String getPercentOfShowsString(Worker worker, Promotion promotion, LocalDate today) {
+        LocalDate contractStartDate = contractManager.getContract(worker, promotion).getStartDate();
+
+        float totalEvents = eventManager.getEventsBetweenDates(promotion, contractStartDate, today).size();
+
+        if (totalEvents == 0) {
+            return "";
+        }
+
+        float totalAppearances = segmentManager.getSegmentsBetweenDates(worker, promotion, contractStartDate, today).stream()
+                .map(segment -> segment.getEvent().getEventID())
+                .collect(Collectors.toCollection(HashSet::new))
+                .size();
+
+        float percentOfTotal = 100 * totalAppearances / totalEvents;
+
+        return String.format("Appears on %.0f%% of shows", percentOfTotal);
+    }
+
+    public String getMissedShowStreakString(Worker worker, Promotion promotion, LocalDate today) {
+        LocalDate contractStartDate = contractManager.getContract(worker, promotion).getStartDate();
+
+        float totalEvents = eventManager.getEventsBetweenDates(promotion, contractStartDate, today).size();
+
+        if (totalEvents == 0) {
+            return "";
+        }
+
+        HashSet<Long> appearedAtEventIDs = segmentManager.getSegmentsBetweenDates(worker, promotion, contractStartDate, today).stream()
+                .map(segment -> segment.getEvent().getEventID())
+                .collect(Collectors.toCollection(HashSet::new));
+
+        List<Event> events = eventManager.getEventsBetweenDates(promotion, contractStartDate, today).stream()
+                .sorted(Comparator.comparing(Event::getDate).reversed())
+                .collect(Collectors.toList());
+
+        int missedStreak = 0;
+
+        for (Event event : events) {
+            if (!appearedAtEventIDs.contains(event.getEventID())) {
+                missedStreak++;
+            } else break;
+        }
+
+        if (missedStreak == 0) {
+            return "";
+        }
+
+        return String.format("Missed %d show%s in a row",
+                missedStreak,
+                missedStreak > 1 ? "s" : ""
+        );
     }
 
     public String getSegmentTitle(Segment segment) {
@@ -88,15 +280,16 @@ public class SegmentStringService implements Serializable {
         return stringBuilder.toString();
     }
 
-    public String getSegmentStringForWorkerInfo(Segment segment, Event event) {
+    public String getSegmentStringForWorkerInfo(Segment segment, Event event, LocalDate date) {
+        long daysAgo = DAYS.between(segment.getDate(), date);
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("%s (%s)", event.getName(), event.getDate()));
+        stringBuilder.append(String.format("%s (%d day%s ago)",
+                event.getName(),
+                daysAgo,
+                daysAgo > 1 ? "s" : ""
+        ));
         stringBuilder.append("\n");
         stringBuilder.append(getSegmentString(segment));
-        stringBuilder.append("\n");
-        stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
-                ? ViewUtils.intToStars(segment.getWorkRating())
-                : "Rating: " + segment.getWorkRating() + "%");
 
         return stringBuilder.toString();
     }

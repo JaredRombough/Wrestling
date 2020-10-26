@@ -54,7 +54,9 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         String newText;
 
         if (obj instanceof Event) {
-            newText = eventManager.generateSummaryString((Event) obj);
+            newText = gameController.getSegmentStringService().generateSummaryString((Event) obj,
+                    gameController.getDateManager().today()
+            );
         } else if (obj instanceof Title) {
             newText = gameController.getTitleManager().getTitleReignStrings(((Title) obj));
         } else if (obj instanceof Worker) {

@@ -573,7 +573,7 @@ public final class ViewUtils {
         });
     }
 
-    public static void updateWorkerStatLabels(List<Label> statLabels) {
+    public static void updateWorkerStatLabelStyle(List<Label> statLabels) {
         statLabels.forEach(l -> updateWorkerLabel(l, 50, 75));
     }
 
