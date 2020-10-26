@@ -288,8 +288,6 @@ public class SegmentStringService implements Serializable {
                 daysAgo,
                 daysAgo > 1 ? "s" : ""
         ));
-        stringBuilder.append("\n");
-        stringBuilder.append(getSegmentString(segment));
 
         return stringBuilder.toString();
     }
