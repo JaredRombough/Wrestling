@@ -156,7 +156,7 @@ public class ImportHelper {
             promotion.setImportKey(hexStringToInt(hexLine.get(1)));
             promotion.setName(textLine.substring(3, 43).trim());
             promotion.setShortName(textLine.substring(43, 49).trim());
-            promotion.setImagePath(textLine.substring(49, 65).trim());
+            promotion.setImageFileName(textLine.substring(49, 65).trim());
             promotion.setLevel(6 - hexStringToInt(hexLine.get(89)));
 
             promotions.add(promotion);
@@ -231,7 +231,7 @@ public class ImportHelper {
             String textLine = hexLineToTextString(hexLine);
             StaffMember staff = new StaffMember();
             staff.setName(textLine.substring(3, 27).trim());
-            staff.setImageString(textLine.substring(34, 53).trim());
+            staff.setImageFileName(textLine.substring(34, 53).trim());
             staff.setGender(
                     textLine.charAt(28) == 'ÿ'
                             ? Gender.MALE : Gender.FEMALE);
@@ -389,7 +389,7 @@ public class ImportHelper {
 
             worker.setName(currentLine.substring(3, 27).trim());
             worker.setShortName(currentLine.substring(28, 38).trim());
-            worker.setImageString(currentLine.substring(45, 65).trim());
+            worker.setImageFileName(currentLine.substring(45, 65).trim());
             worker.setFlying(hexStringToInt(hexLine.get(151)));
             worker.setStriking(hexStringToInt(hexLine.get(147)));
             worker.setWrestling(hexStringToInt(hexLine.get(149)));

@@ -12,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
@@ -41,7 +42,7 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public ListView<GameObject> topListView;
 
     @FXML
-    public ListView<NewsItem> newsListView;
+    public ListView newsListView;
 
     @FXML
     public Label ownerMessageText;
@@ -51,6 +52,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @FXML
     private AnchorPane topListSortControlPane;
+
+    @FXML
+    private ComboBox<BrowseMode> newsFeedBrowseMode;
 
     @FXML
     private ComboBox<BrowseMode> topListBrowseMode;
@@ -69,13 +73,31 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public void initializeMore() {
         queryHelper = new GameObjectQueryHelper(gameController);
 
+        newsFeedBrowseMode.setItems(FXCollections.observableList(List.of(BrowseMode.PAST_EVENTS, BrowseMode.NEWS)));
+        newsFeedBrowseMode.setValue(BrowseMode.PAST_EVENTS);
+        newsFeedBrowseMode.setOnAction((event) -> {
+            if (newsFeedBrowseMode.getValue() != null) {
+                sortControl.setBrowseMode(newsFeedBrowseMode.getValue());
+                updateLabels();
+            }
+        });
+
         GameScreen sortControlScreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlScreen.controller;
-        sortControl.setBrowseMode(BrowseMode.NEWS);
+        sortControl.setBrowseMode(BrowseMode.PAST_EVENTS);
         sortControl.setUpdateAction(e -> updateLabels());
         newsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                Text text = new Text(newValue.getSummary());
+                String string = "";
+                if (newValue instanceof Event) {
+                    string = gameController.getSegmentStringService().generateSummaryString(
+                            (Event) newValue,
+                            gameController.getDateManager().today()
+                    );
+                } else if (newValue instanceof NewsItem) {
+                    string = ((NewsItem) newValue).getSummary();
+                }
+                Text text = new Text(string);
                 text.wrappingWidthProperty().bind(displayPane.widthProperty());
                 displayPane.setContent(text);
             }
@@ -119,9 +141,9 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        List news = queryHelper.listToBrowse(BrowseMode.NEWS, playerPromotion());
+        List news = queryHelper.listToBrowse(newsFeedBrowseMode.getValue(), playerPromotion());
 
-        newsListView.setItems(sortControl.getSortedList(news));
+        newsListView.setItems(FXCollections.observableList(news));
         newsListView.getSelectionModel().selectFirst();
         ownerMessageText.setText(getOwnerMessageText());
 

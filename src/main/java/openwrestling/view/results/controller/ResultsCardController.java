@@ -4,12 +4,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
 
@@ -52,23 +55,32 @@ public class ResultsCardController extends ControllerBase implements Initializab
 
     @Override
     public void setCurrent(Object obj) {
-        if (obj instanceof SegmentItem) {
-            setCurrentWorker((SegmentItem) obj);
+        if (obj instanceof Promotion) {
+            setCurrentItem((Promotion) obj,
+                    mainApp.getLogosFolder().toString(),
+                    null);
+        }
+        if (obj instanceof Worker) {
+            setCurrentItem((Worker) obj,
+                    mainApp.getPicsFolder().toString(),
+                    mainApp.getDefaultWorkerImage((Worker) obj)
+            );
         } else if (obj instanceof String) {
             setCurrentString((String) obj);
         }
     }
 
-    private void setCurrentWorker(SegmentItem segmentItem) {
-        String imgString = segmentItem.getImageString();
+
+    private void setCurrentItem(SegmentItem segmentItem, String imageFolderName, Image defaultImage) {
+        String imgString = segmentItem.getImageFileName();
         nameLabel.setText(segmentItem.getLongName());
-        ViewUtils.showImage(mainApp.getPicsFolder().toString() + "\\" + imgString,
+        ViewUtils.showImage(imageFolderName + "\\" + imgString,
                 border,
                 imageView,
-                mainApp.getDefaultWorkerImage(segmentItem));
-        if (!border.isVisible()) {
-            border.setVisible(true);
-        }
+                defaultImage);
+//        if (!border.isVisible()) {
+//            border.setVisible(true);
+//        }
     }
 
     private void setCurrentString(String string) {

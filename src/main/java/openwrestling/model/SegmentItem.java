@@ -22,7 +22,7 @@ public interface SegmentItem {
         return this.toString();
     }
 
-    default String getImageString() {
+    default String getImageFileName() {
         return "";
     }
 

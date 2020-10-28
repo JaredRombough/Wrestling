@@ -19,7 +19,7 @@ public final class TestUtils {
             int imagesAvailable = 8;
             for (int i = 1; i <= imagesAvailable; i++) {
                 String path = String.format(imagePath, i);
-                roster.get(i - 1).setImageString(path);
+                roster.get(i - 1).setImageFileName(path);
             }
         }
 

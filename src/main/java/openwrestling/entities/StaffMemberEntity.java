@@ -43,7 +43,7 @@ public class StaffMemberEntity extends Entity {
     private StaffType staffType;
 
     @DatabaseField
-    private String imageString;
+    private String imageFileName;
 
     @DatabaseField(foreign = true)
     private StaffContractEntity staffContract;

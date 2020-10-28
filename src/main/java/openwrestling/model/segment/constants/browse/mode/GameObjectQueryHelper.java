@@ -4,6 +4,7 @@ import openwrestling.Logging;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.Worker;
@@ -53,6 +54,8 @@ public class GameObjectQueryHelper extends Logging {
             case ROSTER_SPLIT:
                 return gameController.getRosterSplitManager().getRosterSplits()
                         .stream().filter((split) -> split.getOwner().equals(promotion)).collect(Collectors.toList());
+            case EVENTS:
+                return gameController.getEventManager().getEventTemplates(promotion);
             default:
                 break;
         }
@@ -128,6 +131,10 @@ public class GameObjectQueryHelper extends Logging {
                 return getTop100Workers(Comparator.comparingInt(Worker::getCharisma), FEMALE);
             case TOP_WORKRATE_WOMEN:
                 return getTop100Workers(Comparator.comparingInt(ModelUtils::getMatchWorkRating), FEMALE);
+            case PAST_EVENTS:
+                return gameController.getEventManager().getPastEvents(gameController.getDateManager().today()).stream()
+                        .sorted(Comparator.comparing(Event::getDate).reversed())
+                        .collect(Collectors.toList());
             default:
                 break;
         }

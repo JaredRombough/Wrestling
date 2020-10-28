@@ -119,6 +119,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
         if (obj instanceof Worker) {
             worker = (Worker) obj;
 
+            imageAnchor.getChildren().clear();
+            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+            card.controller.setCurrent(worker);
+            ((ResultsCardController) card.controller).setNameLabelVisible(false);
+
             feedPaneScreen.controller.setCurrent(worker);
             contractScreen.controller.setCurrent(worker);
 
@@ -277,10 +282,10 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             injury.setVisible(workerInjury != null);
             injuryLabel.setVisible(workerInjury != null);
 
-            imageAnchor.getChildren().clear();
-            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
-            card.controller.setCurrent(worker);
-            ((ResultsCardController) card.controller).setNameLabelVisible(false);
+//            imageAnchor.getChildren().clear();
+//            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+//            card.controller.setCurrent(worker);
+//            ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
             ViewUtils.updateWorkerMoraleLabel(moraleLabel);
 

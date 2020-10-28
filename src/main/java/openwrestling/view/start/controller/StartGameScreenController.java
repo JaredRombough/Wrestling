@@ -70,7 +70,7 @@ public class StartGameScreenController extends ControllerBase implements Initial
     private void initializePromotionsListView() {
         promotionListView.getSelectionModel().selectedItemProperty().addListener((ChangeListener<Promotion>) (observable, oldValue, newValue) -> {
             updateWorkersListView(newValue);
-            ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImagePath()),
+            ViewUtils.showImage(String.format(mainApp.getLogosFolder().toString() + "\\" + newValue.getImageFileName()),
                     promotionImageBorder,
                     imageView);
 

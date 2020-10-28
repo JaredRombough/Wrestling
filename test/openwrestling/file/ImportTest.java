@@ -118,7 +118,7 @@ public class ImportTest {
             assertThat(worker.getImportKey()).isNotNull().isNotNegative();
             assertThat(worker.getName()).isNotNull();
             assertThat(worker.getShortName()).isNotNull();
-            assertThat(worker.getImageString()).isNotNull();
+            assertThat(worker.getImageFileName()).isNotNull();
             assertThat(worker.getGender()).isNotNull();
         });
     }
