@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import openwrestling.manager.EventManager;
-import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
@@ -52,12 +51,8 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
         String newText;
-
-        if (obj instanceof Event) {
-            newText = gameController.getSegmentStringService().generateSummaryString((Event) obj,
-                    gameController.getDateManager().today()
-            );
-        } else if (obj instanceof Title) {
+        Text text = new Text();
+        if (obj instanceof Title) {
             newText = gameController.getTitleManager().getTitleReignStrings(((Title) obj));
         } else if (obj instanceof Worker) {
             displayTitle.setText("");
@@ -72,7 +67,6 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = obj == null ? "" : obj.toString();
         }
 
-        Text text = new Text();
         text.setText(newText);
         text.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(20));
 

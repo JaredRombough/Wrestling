@@ -590,11 +590,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (segment1.getMatchParticipantTeams().size() != segment2.getMatchParticipantTeams().size()) {
             return false;
         }
-        return segment1.getMatchParticipantTeams().stream().allMatch(actualTeam -> {
-            return segment2.getMatchParticipantTeams().stream().anyMatch(expectedTeam -> {
-                return teamsMatch(actualTeam, expectedTeam);
-            });
-        });
+        return segment1.getMatchParticipantTeams().stream()
+                .allMatch(actualTeam -> segment2.getMatchParticipantTeams().stream()
+                        .anyMatch(expectedTeam -> teamsMatch(actualTeam, expectedTeam))
+                );
     }
 
     private boolean teamsMatch(SegmentTeam segment1, SegmentTeam segment2) {

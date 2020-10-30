@@ -19,7 +19,7 @@ public enum BrowseMode {
     STABLES("Stables", ScreenCode.STABLE),
     ROSTER_SPLIT("Roster splits", ScreenCode.STABLE),
     EVENTS("Events", ScreenCode.EVENT_TEMPLATE),
-    PAST_EVENTS("Events"),
+    PAST_EVENTS("Event History"),
     NEWS("News"),
     MATCHES("Best Matches"),
     TOP_POPULARITY("Top 100 Most Popular"),

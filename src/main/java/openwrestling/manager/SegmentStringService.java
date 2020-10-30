@@ -67,28 +67,47 @@ public class SegmentStringService implements Serializable {
         }
 
 
+        return generateSummaryString(event);
+    }
+
+    public String generateSummaryString(Event event) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(event.toString());
+        stringBuilder.append("\n");
+        stringBuilder.append(ModelUtils.dateString(event.getDate()));
+        stringBuilder.append("\n");
+        stringBuilder.append("\n");
+        stringBuilder.append("\n");
+
         List<Segment> segments = segmentManager.getSegments(event);
         for (Segment segment : segments) {
             if (!segment.getWorkers().isEmpty()) {
-                sb.append(getIsolatedSegmentString(segment, event));
+                stringBuilder.append(getSegmentString(segment));
+                stringBuilder.append("\n");
+                stringBuilder.append(segment.getSegmentType().equals(SegmentType.MATCH)
+                        ? ViewUtils.intToStars(segment.getWorkRating())
+                        : "Rating: " + segment.getWorkRating() + "%");
+                stringBuilder.append("\n");
+                stringBuilder.append("\n");
             }
-
-            sb.append("\n");
         }
 
-        sb.append("\n");
+        stringBuilder.append("\n");
 
-        sb.append(String.format("Total cost: %s", currencyString(event.getCost())));
-        sb.append("\n");
-        sb.append("Attendance: ").append(event.getAttendance());
-        sb.append("\n");
-        sb.append(String.format("Gross profit: %s", currencyString(event.getGate())));
-        sb.append("\n");
-        sb.append("Rating: ").append(event.getRating());
+        stringBuilder.append(String.format("Total cost: %s", currencyString(event.getCost())));
+        stringBuilder.append("\n");
+        stringBuilder.append("Attendance: ").append(event.getAttendance());
+        stringBuilder.append("\n");
+        stringBuilder.append(String.format("Gross profit: %s", currencyString(event.getGate())));
+        stringBuilder.append("\n");
+        stringBuilder.append("Rating: ").append(event.getRating());
 
-        return sb.toString();
+        stringBuilder.append("\n");
+        stringBuilder.append("\n");
+
+        return stringBuilder.toString();
     }
-
 
     public String getOverallWorkerRecord(Worker worker, Promotion promotion) {
         List<Segment> matches = segmentManager.getMatches(worker, promotion);

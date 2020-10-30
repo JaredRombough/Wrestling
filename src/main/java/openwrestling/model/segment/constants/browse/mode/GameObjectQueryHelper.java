@@ -131,15 +131,18 @@ public class GameObjectQueryHelper extends Logging {
                 return getTop100Workers(Comparator.comparingInt(Worker::getCharisma), FEMALE);
             case TOP_WORKRATE_WOMEN:
                 return getTop100Workers(Comparator.comparingInt(ModelUtils::getMatchWorkRating), FEMALE);
-            case PAST_EVENTS:
-                return gameController.getEventManager().getPastEvents(gameController.getDateManager().today()).stream()
-                        .sorted(Comparator.comparing(Event::getDate).reversed())
-                        .collect(Collectors.toList());
+
             default:
                 break;
         }
         logger.log(Level.WARN, "Unknown browse mode {}", browseMode);
         return List.of();
+    }
+
+    public List<Event> getPastEventsToBrowse() {
+        return gameController.getEventManager().getPastEvents(gameController.getDateManager().today()).stream()
+                .sorted(Comparator.comparing(Event::getDate).reversed())
+                .collect(Collectors.toList());
     }
 
     private List<Worker> getTop100Workers(Comparator<Worker> comparator) {

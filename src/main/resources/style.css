@@ -248,6 +248,13 @@ GREY
     -fx-text-fill: #757575;
 }
 
+
+.grey-background.list-cell
+{
+    -fx-text-fill: black;
+    -fx-background-color: #757575;
+}
+
 .imageBorder {
     -fx-background-color: #424242;
 }

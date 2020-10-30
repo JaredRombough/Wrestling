@@ -37,8 +37,11 @@ public class Event extends GameObject implements Serializable, iEvent, iDate {
 
     @Override
     public String toString() {
-        return StringUtils.containsIgnoreCase(name, promotion.getShortName())
-                ? name : promotion.getShortName() + " " + name;
+        if (promotion != null) {
+            return StringUtils.containsIgnoreCase(name, promotion.getShortName())
+                    ? name : promotion.getShortName() + " " + name;
+        }
+        return name;
     }
 
 

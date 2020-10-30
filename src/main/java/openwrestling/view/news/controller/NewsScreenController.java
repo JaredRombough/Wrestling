@@ -20,6 +20,7 @@ import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
+import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.MonthlyReviewUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -30,8 +31,15 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static openwrestling.model.segment.constants.browse.mode.BrowseMode.PAST_EVENTS;
 
 public class NewsScreenController extends ControllerBase implements Initializable {
 
@@ -73,8 +81,8 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public void initializeMore() {
         queryHelper = new GameObjectQueryHelper(gameController);
 
-        newsFeedBrowseMode.setItems(FXCollections.observableList(List.of(BrowseMode.PAST_EVENTS, BrowseMode.NEWS)));
-        newsFeedBrowseMode.setValue(BrowseMode.PAST_EVENTS);
+        newsFeedBrowseMode.setItems(FXCollections.observableList(List.of(PAST_EVENTS, BrowseMode.NEWS)));
+        newsFeedBrowseMode.setValue(PAST_EVENTS);
         newsFeedBrowseMode.setOnAction((event) -> {
             if (newsFeedBrowseMode.getValue() != null) {
                 sortControl.setBrowseMode(newsFeedBrowseMode.getValue());
@@ -84,22 +92,42 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
         GameScreen sortControlScreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlScreen.controller;
-        sortControl.setBrowseMode(BrowseMode.PAST_EVENTS);
+        sortControl.setBrowseMode(PAST_EVENTS);
         sortControl.setUpdateAction(e -> updateLabels());
         newsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
+                Text text = new Text();
                 String string = "";
                 if (newValue instanceof Event) {
-                    string = gameController.getSegmentStringService().generateSummaryString(
-                            (Event) newValue,
-                            gameController.getDateManager().today()
-                    );
+                    Event event = (Event) newValue;
+                    if (event.getEventID() < 1) {
+                        string = ModelUtils.dateString(event.getDate());
+                    } else {
+                        string = gameController.getSegmentStringService().generateSummaryString((Event) newValue);
+                        text.setTextAlignment(TextAlignment.CENTER);
+                    }
                 } else if (newValue instanceof NewsItem) {
                     string = ((NewsItem) newValue).getSummary();
                 }
-                Text text = new Text(string);
+                text.setText(string);
                 text.wrappingWidthProperty().bind(displayPane.widthProperty());
                 displayPane.setContent(text);
+            }
+        });
+        newsListView.setCellFactory(lv -> new ListCell<Object>() {
+
+            @Override
+            public void updateItem(final Object object, boolean empty) {
+                super.updateItem(object, empty);
+                getStyleClass().remove("grey-background");
+                if (object instanceof Event) {
+                    if (((Event) object).getEventID() < 1) {
+                        getStyleClass().add("grey-background");
+                    }
+                }
+                if (object != null) {
+                    setText(object.toString());
+                }
             }
         });
 
@@ -141,9 +169,35 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        List news = queryHelper.listToBrowse(newsFeedBrowseMode.getValue(), playerPromotion());
+        List listToBrowse = new ArrayList();
 
-        newsListView.setItems(FXCollections.observableList(news));
+        if (newsFeedBrowseMode.getValue().equals(PAST_EVENTS)) {
+
+            List<Event> sortedEvents = queryHelper.getPastEventsToBrowse().stream()
+                    .sorted(Comparator.comparing(Event::getDate).reversed())
+                    .collect(Collectors.toList());
+
+            LocalDate lastDate = null;
+            for (Event event : sortedEvents) {
+                if (!event.getDate().equals(lastDate)) {
+                    lastDate = event.getDate();
+                    long daysAgo = DAYS.between(event.getDate(), gameController.getDateManager().today());
+                    String dateString = daysAgo == 1 ? "Yesterday" : String.format("%d days ago", daysAgo);
+                    Event dateRowEvent = Event.builder()
+                            .date(event.getDate())
+                            .name(dateString)
+                            .eventID(-listToBrowse.size())
+                            .build();
+                    listToBrowse.add(dateRowEvent);
+                }
+                listToBrowse.add(event);
+            }
+
+        } else {
+            listToBrowse = queryHelper.listToBrowse(newsFeedBrowseMode.getValue(), playerPromotion());
+        }
+
+        newsListView.setItems(FXCollections.observableList(listToBrowse));
         newsListView.getSelectionModel().selectFirst();
         ownerMessageText.setText(getOwnerMessageText());
 
