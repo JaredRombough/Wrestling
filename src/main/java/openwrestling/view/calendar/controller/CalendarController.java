@@ -29,43 +29,6 @@ import java.util.ResourceBundle;
 public class CalendarController extends ControllerBase implements Initializable {
 
     private final ArrayList<CalendarNode> allCalendarDays = new ArrayList<>(35);
-
-    @FXML
-    private Text calendarTitle;
-
-    @FXML
-    private Button nextMonth;
-
-    @FXML
-    private Button previousMonth;
-
-    @FXML
-    private GridPane calendar;
-
-    @FXML
-    private GridPane dayLabels;
-
-    @FXML
-    private GridPane baseGridPane;
-
-    @FXML
-    private ListView<Event> listView;
-
-    @FXML
-    private ScrollPane eventSummaryScrollPane;
-
-    @FXML
-    private Button eventSeriesButton;
-
-    @FXML
-    private AnchorPane bookingPaneBase;
-
-    private LocalDate selectedDate;
-    private YearMonth currentYearMonth;
-
-    private GameScreen bookShowScreen;
-    private BookShowController bookShowController;
-
     private final String SELECTED_CALENDAR_NODE = "selectedCalendarNode";
     private final String CURRENT_DATE = "currentDate";
     private final String DIFFERENT_MONTH = "differentMonth";
@@ -74,9 +37,6 @@ public class CalendarController extends ControllerBase implements Initializable 
     private final String GREEN_BORDER = "greenBorder";
     private final int WEEK_DAYS = 7;
     private final int WEEKS = 6;
-
-    private Event currentEvent;
-
     private final Text[] dayNames = new Text[]{
             new Text("SUN"),
             new Text("MON"),
@@ -85,6 +45,31 @@ public class CalendarController extends ControllerBase implements Initializable 
             new Text("THU"),
             new Text("FRI"),
             new Text("SAT")};
+    @FXML
+    private Text calendarTitle;
+    @FXML
+    private Button nextMonth;
+    @FXML
+    private Button previousMonth;
+    @FXML
+    private GridPane calendar;
+    @FXML
+    private GridPane dayLabels;
+    @FXML
+    private GridPane baseGridPane;
+    @FXML
+    private ListView<Event> listView;
+    @FXML
+    private ScrollPane eventSummaryScrollPane;
+    @FXML
+    private Button eventSeriesButton;
+    @FXML
+    private AnchorPane bookingPaneBase;
+    private LocalDate selectedDate;
+    private YearMonth currentYearMonth;
+    private GameScreen bookShowScreen;
+    private BookShowController bookShowController;
+    private Event currentEvent;
 
     @Override
     public void initializeMore() {
