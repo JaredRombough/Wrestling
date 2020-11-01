@@ -65,6 +65,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
     @FXML
     private ComboBox rosterSplitComboBox;
 
+    @FXML
+    private Button editDefaultBroadcastTeamButton;
+
     private EditLabel editLabel;
 
     @Override
@@ -87,6 +90,19 @@ public class EventTemplateController extends ControllerBase implements Initializ
     public void initializeMore() {
         GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
         editLabel = (EditLabel) screen.controller;
+
+        editDefaultBroadcastTeamButton.setOnAction(e -> {
+            EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
+            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
+                    gameController.getStaffManager().getStaff(StaffType.BROADCAST, playerPromotion()),
+                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion()),
+                    playerPromotion().getLongName()
+            ).showAndWait();
+            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
+                gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(playerPromotion(), broadcastTeam);
+                updateLabels();
+            });
+        });
     }
 
     @Override
@@ -129,6 +145,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
             broadcastTeamLabel.setText(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
                     ? ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate.getPromotion()), "None")
                     : ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate)));
+
+            editBroadcastTeamButton.setDisable(!eventTemplate.getPromotion().equals(playerPromotion()));
+            editDefaultBroadcastTeamButton.setVisible(eventTemplate.getPromotion().equals(playerPromotion()));
         } else {
             editLabel.setCurrent(BrowseMode.EVENTS);
         }
