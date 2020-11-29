@@ -8,6 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segment.constants.EventVenueSize;
@@ -136,9 +137,17 @@ public class EventTemplateController extends ControllerBase implements Initializ
                     eventTemplate.getPromotion(),
                     playerPromotion());
 
-            nextEventLabel.setText(ModelUtils.dateString(
-                    gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today()).getDate())
-            );
+            Event nextEvent = gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today());
+            String nextEventLabelText = "";
+            if (nextEvent != null) {
+                nextEventLabelText = ModelUtils.dateString(nextEvent.getDate());
+                calendarButton.setDisable(false);
+            } else {
+                nextEventLabelText = "No future event booked";
+                calendarButton.setDisable(true);
+            }
+            nextEventLabel.setText(nextEventLabelText);
+
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());

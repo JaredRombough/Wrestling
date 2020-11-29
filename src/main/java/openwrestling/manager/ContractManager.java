@@ -255,6 +255,16 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return canNegotiate;
     }
 
+    public boolean hasActiveContract(StaffMember staffMember) {
+        for (StaffContract contract : getStaffContracts()) {
+            if (contract.getStaff().equals(staffMember) && contract.isActive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean canNegotiate(Worker worker, Promotion promotion) {
         boolean canNegotiate = true;
 

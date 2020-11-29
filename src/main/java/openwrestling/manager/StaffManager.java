@@ -56,13 +56,13 @@ public class StaffManager extends GameObjectManager implements Serializable {
     }
 
     public List<StaffMember> getAvailableStaff() {
-        List<StaffMember> availableStaff = new ArrayList<>();
+        List<StaffMember> freeAgents = new ArrayList<>();
         for (StaffMember staff : staffMembers) {
-            if (staff.getStaffContract() == null) {
-                availableStaff.add(staff);
+            if (!contractManager.hasActiveContract(staff)) {
+                freeAgents.add(staff);
             }
         }
-        return availableStaff;
+        return freeAgents;
     }
 
     public int getStaffSkillAverage(StaffType staffType, Promotion promotion) {
