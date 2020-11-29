@@ -22,6 +22,8 @@ public enum BrowseMode {
     PAST_EVENTS("Event History"),
     NEWS("News"),
     MATCHES("Best Matches"),
+    CONTRACTS_SIGNED("Contracts (New)"),
+    CONTRACTS_EXPIRED("Contracts (Expired)"),
     TOP_POPULARITY("Top 100 Most Popular"),
     TOP_STRIKING("Top 100 Striking"),
     TOP_WRESTLING("Top 100 Wrestling"),

@@ -161,6 +161,7 @@ public final class GameController extends Logging implements Serializable {
                 .workerManager(workerManager)
                 .newsManager(newsManager)
                 .titleManager(titleManager)
+                .bankAccountManager(bankAccountManager)
                 .build();
 
         dailyTransactions = DailyTransactions.builder()

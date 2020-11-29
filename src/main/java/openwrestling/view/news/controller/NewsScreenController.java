@@ -12,12 +12,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import openwrestling.model.NewsItem;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.interfaces.iDate;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.ModelUtils;
@@ -33,13 +35,11 @@ import org.apache.logging.log4j.LogManager;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static openwrestling.model.segment.constants.browse.mode.BrowseMode.PAST_EVENTS;
+import static openwrestling.model.segment.constants.browse.mode.BrowseMode.*;
 
 public class NewsScreenController extends ControllerBase implements Initializable {
 
@@ -81,7 +81,12 @@ public class NewsScreenController extends ControllerBase implements Initializabl
     public void initializeMore() {
         queryHelper = new GameObjectQueryHelper(gameController);
 
-        newsFeedBrowseMode.setItems(FXCollections.observableList(List.of(PAST_EVENTS, BrowseMode.NEWS)));
+        newsFeedBrowseMode.setItems(FXCollections.observableList(List.of(
+                PAST_EVENTS,
+                CONTRACTS_SIGNED,
+                CONTRACTS_EXPIRED,
+                NEWS
+        )));
         newsFeedBrowseMode.setValue(PAST_EVENTS);
         newsFeedBrowseMode.setOnAction((event) -> {
             if (newsFeedBrowseMode.getValue() != null) {
@@ -98,32 +103,39 @@ public class NewsScreenController extends ControllerBase implements Initializabl
             if (newValue != null) {
                 Text text = new Text();
                 String string = "";
-                if (newValue instanceof Event) {
-                    Event event = (Event) newValue;
-                    if (event.getEventID() < 1) {
-                        string = ModelUtils.dateString(event.getDate());
-                    } else {
-                        string = gameController.getSegmentStringService().generateSummaryString((Event) newValue);
-                        text.setTextAlignment(TextAlignment.CENTER);
-                    }
+                if (newValue instanceof DateRow) {
+                    string = ModelUtils.dateString(((DateRow) newValue).getDate());
+                } else if (newValue instanceof Event) {
+                    string = gameController.getSegmentStringService().generateSummaryString((Event) newValue);
+                    text.setTextAlignment(TextAlignment.CENTER);
                 } else if (newValue instanceof NewsItem) {
                     string = ((NewsItem) newValue).getSummary();
+                } else if (newValue instanceof Contract) {
+                    Contract contract = (Contract) newValue;
+                    string = contract.isActive() ?
+                            String.format("%s has signed a new contract with %s, starting %s. It expires on %s.",
+                                    contract.getWorker().getName(),
+                                    contract.getPromotion().getName(),
+                                    ModelUtils.dateString(contract.getStartDate()),
+                                    ModelUtils.dateString(contract.getEndDate())) :
+                            String.format("The contract between %s and %s has expired as of %s.",
+                                    contract.getWorker().getName(),
+                                    contract.getPromotion().getName(),
+                                    ModelUtils.dateString(contract.getEndDate()));
                 }
                 text.setText(string);
                 text.wrappingWidthProperty().bind(displayPane.widthProperty());
                 displayPane.setContent(text);
             }
         });
-        newsListView.setCellFactory(lv -> new ListCell<Object>() {
+        newsListView.setCellFactory(lv -> new ListCell<>() {
 
             @Override
             public void updateItem(final Object object, boolean empty) {
                 super.updateItem(object, empty);
                 getStyleClass().remove("grey-background");
-                if (object instanceof Event) {
-                    if (((Event) object).getEventID() < 1) {
-                        getStyleClass().add("grey-background");
-                    }
+                if (object instanceof DateRow) {
+                    getStyleClass().add("grey-background");
                 }
                 if (object != null) {
                     setText(object.toString());
@@ -169,35 +181,26 @@ public class NewsScreenController extends ControllerBase implements Initializabl
 
     @Override
     public void updateLabels() {
-        List listToBrowse = new ArrayList();
 
-        if (newsFeedBrowseMode.getValue().equals(PAST_EVENTS)) {
+        List rawList = queryHelper.listToBrowse(newsFeedBrowseMode.getValue(), playerPromotion());
+        List listWithDateRows = new ArrayList<>();
 
-            List<Event> sortedEvents = queryHelper.getPastEventsToBrowse().stream()
-                    .sorted(Comparator.comparing(Event::getDate).reversed())
-                    .collect(Collectors.toList());
-
-            LocalDate lastDate = null;
-            for (Event event : sortedEvents) {
-                if (!event.getDate().equals(lastDate)) {
-                    lastDate = event.getDate();
-                    long daysAgo = DAYS.between(event.getDate(), gameController.getDateManager().today());
+        LocalDate lastDate = null;
+        for (Object event : rawList) {
+            if (event instanceof iDate) {
+                LocalDate date = ((iDate) event).getDate();
+                if (!date.equals(lastDate)) {
+                    lastDate = date;
+                    long daysAgo = DAYS.between(date, gameController.getDateManager().today());
                     String dateString = daysAgo == 1 ? "Yesterday" : String.format("%d days ago", daysAgo);
-                    Event dateRowEvent = Event.builder()
-                            .date(event.getDate())
-                            .name(dateString)
-                            .eventID(-listToBrowse.size())
-                            .build();
-                    listToBrowse.add(dateRowEvent);
+                    DateRow dateRow = new DateRow(date, dateString);
+                    listWithDateRows.add(dateRow);
                 }
-                listToBrowse.add(event);
             }
-
-        } else {
-            listToBrowse = queryHelper.listToBrowse(newsFeedBrowseMode.getValue(), playerPromotion());
+            listWithDateRows.add(event);
         }
 
-        newsListView.setItems(FXCollections.observableList(listToBrowse));
+        newsListView.setItems(FXCollections.observableList(listWithDateRows));
         newsListView.getSelectionModel().selectFirst();
         ownerMessageText.setText(getOwnerMessageText());
 

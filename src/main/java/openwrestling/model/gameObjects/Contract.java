@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.interfaces.iContract;
+import openwrestling.model.interfaces.iDate;
 import openwrestling.model.interfaces.iPerson;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Contract extends GameObject implements Serializable, iContract {
+public class Contract extends GameObject implements Serializable, iContract, iDate {
 
     private long contractID;
     private Promotion promotion;
@@ -56,4 +57,16 @@ public class Contract extends GameObject implements Serializable, iContract {
         return lastShowDate;
     }
 
+    @Override
+    public LocalDate getDate() {
+        if (active) {
+            return startDate;
+        }
+        return endDate;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s/%s", promotion.getShortName(), worker.getName());
+    }
 }

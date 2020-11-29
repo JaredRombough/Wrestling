@@ -50,6 +50,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Contract> getExpiredContracts() {
+        return contractMap.values().stream()
+                .filter(contract -> !contract.isActive())
+                .collect(Collectors.toList());
+    }
+
     public List<StaffContract> getStaffContracts() {
         return new ArrayList<>(staffContractMap.values());
     }

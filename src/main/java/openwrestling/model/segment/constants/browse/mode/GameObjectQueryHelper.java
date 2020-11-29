@@ -4,6 +4,7 @@ import openwrestling.Logging;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.controller.GameController;
+import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.GameObject;
 import openwrestling.model.gameObjects.Promotion;
@@ -95,6 +96,16 @@ public class GameObjectQueryHelper extends Logging {
                         .collect(Collectors.toList());
             case MATCHES:
                 return gameController.getSegmentManager().getMatches();
+            case PAST_EVENTS:
+                return getPastEventsToBrowse();
+            case CONTRACTS_SIGNED:
+                return gameController.getContractManager().getActiveContracts().stream()
+                        .sorted(Comparator.comparing(Contract::getDate).reversed())
+                        .collect(Collectors.toList());
+            case CONTRACTS_EXPIRED:
+                return gameController.getContractManager().getExpiredContracts().stream()
+                        .sorted(Comparator.comparing(Contract::getDate).reversed())
+                        .collect(Collectors.toList());
             case TOP_POPULARITY:
                 return getTop100Workers(Comparator.comparingInt(Worker::getPopularity));
             case TOP_STRIKING:

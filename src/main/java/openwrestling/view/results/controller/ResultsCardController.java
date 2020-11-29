@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
@@ -59,11 +60,15 @@ public class ResultsCardController extends ControllerBase implements Initializab
             setCurrentItem((Promotion) obj,
                     mainApp.getLogosFolder().toString(),
                     null);
-        }
-        if (obj instanceof Worker) {
+        } else if (obj instanceof Worker) {
             setCurrentItem((Worker) obj,
                     mainApp.getPicsFolder().toString(),
                     mainApp.getDefaultWorkerImage((Worker) obj)
+            );
+        } else if (obj instanceof StaffMember) {
+            setCurrentItem((StaffMember) obj,
+                    mainApp.getPicsFolder().toString(),
+                    mainApp.getDefaultWorkerImage((StaffMember) obj)
             );
         } else if (obj instanceof String) {
             setCurrentString((String) obj);

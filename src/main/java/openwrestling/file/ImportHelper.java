@@ -1,6 +1,7 @@
 package openwrestling.file;
 
 import lombok.AllArgsConstructor;
+import openwrestling.Logging;
 import openwrestling.model.factory.PersonFactory;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EventTemplate;
@@ -25,6 +26,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.time.DayOfWeek;
@@ -41,7 +43,7 @@ import static openwrestling.model.constants.GameConstants.*;
 import static openwrestling.model.utility.ContractUtils.calculateWorkerContractCost;
 
 @AllArgsConstructor
-public class ImportHelper {
+public class ImportHelper extends Logging {
 
     private File importFolder;
 
@@ -174,8 +176,9 @@ public class ImportHelper {
             TagTeam tagTeam = new TagTeam();
             int id1 = hexStringToInt(hexLine.get(26) + hexLine.get(27));
             int id2 = hexStringToInt(hexLine.get(28) + hexLine.get(29));
+            String tagTeamName = textLine.substring(1, 18).trim();
 
-            tagTeam.setName(textLine.substring(1, 18).trim());
+            tagTeam.setName(tagTeamName);
             workers.forEach(worker -> {
                 if (worker.getImportKey() == id1 ||
                         worker.getImportKey() == id2) {
@@ -187,8 +190,11 @@ public class ImportHelper {
             tagTeam.setActiveType(hexLine.get(57).equals("FF")
                     ? ActiveType.ACTIVE : ActiveType.INACTIVE);
 
-            tagTeams.add(tagTeam);
-
+            if (CollectionUtils.isEmpty(tagTeam.getWorkers()) || tagTeam.getWorkers().size() != 2) {
+                logger.log(Level.ERROR, String.format("Invalid tag team %s will not be imported", tagTeamName));
+            } else {
+                tagTeams.add(tagTeam);
+            }
 
         });
         return tagTeams;
