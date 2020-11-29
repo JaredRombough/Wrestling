@@ -15,7 +15,6 @@ import openwrestling.view.utility.interfaces.ControllerBase;
 import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ResultsScreenController extends ControllerBase implements Initializable {
@@ -47,7 +46,6 @@ public class ResultsScreenController extends ControllerBase implements Initializ
             if (currentSegmentIndex < this.event.getSegments().size()) {
                 nextSegment();
             } else if (this.event.getAttendance() == 0) {
-                System.out.println("show summ");
                 showSummary();
             } else {
                 mainApp.nextDay();
