@@ -139,6 +139,8 @@ public class NewsScreenController extends ControllerBase implements Initializabl
                 }
                 if (object != null) {
                     setText(object.toString());
+                } else {
+                    setText("");
                 }
             }
         });
