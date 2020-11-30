@@ -110,11 +110,13 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             currentEvent = newValue;
-            Text eventSummaryText = new Text(gameController.getSegmentStringService().generateSummaryString(newValue,
-                    gameController.getDateManager().today()));
-            eventSummaryText.setTextAlignment(TextAlignment.CENTER);
-            eventSummaryText.wrappingWidthProperty().bind(eventSummaryScrollPane.widthProperty());
-            eventSummaryScrollPane.setContent(eventSummaryText);
+            if (currentEvent != null) {
+                Text eventSummaryText = new Text(gameController.getSegmentStringService().generateSummaryString(newValue,
+                        gameController.getDateManager().today()));
+                eventSummaryText.setTextAlignment(TextAlignment.CENTER);
+                eventSummaryText.wrappingWidthProperty().bind(eventSummaryScrollPane.widthProperty());
+                eventSummaryScrollPane.setContent(eventSummaryText);
+            }
         });
     }
 
