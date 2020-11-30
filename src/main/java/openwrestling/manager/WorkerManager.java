@@ -45,6 +45,9 @@ public class WorkerManager extends GameObjectManager implements Serializable {
 
     public List<Worker> getRoster(Promotion promotion) {
         List<Worker> roster = new ArrayList<>();
+        if (promotion == null) {
+            return roster;
+        }
         contractManager.getContracts().forEach(contract -> {
             if (contract.isActive() && contract.getPromotion().getPromotionID() == promotion.getPromotionID()) {
                 roster.add(contract.getWorker());

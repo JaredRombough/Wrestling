@@ -8,8 +8,6 @@ import openwrestling.manager.DateManager;
 import openwrestling.manager.GameSettingManager;
 import openwrestling.manager.PromotionManager;
 import openwrestling.manager.SegmentManager;
-import openwrestling.manager.StableManager;
-import openwrestling.manager.TagTeamManager;
 import openwrestling.manager.WorkerManager;
 import openwrestling.model.factory.ContractFactory;
 import openwrestling.model.factory.PersonFactory;
@@ -54,7 +52,7 @@ public class DailyContractUpdateTest {
         when(mockDateManager.today()).thenReturn(LocalDate.now());
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
 
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
         contractManager = new ContractManager(database, mock(BankAccountManager.class));
         workerManager = new WorkerManager(database, contractManager);
 

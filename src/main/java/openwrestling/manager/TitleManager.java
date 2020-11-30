@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
 
 public class TitleManager extends GameObjectManager implements Serializable {
 
-    @Getter
-    private List<Title> titles;
-
     private final DateManager dateManager;
     private final WorkerManager workerManager;
+    @Getter
+    private List<Title> titles;
 
     public TitleManager(Database database, DateManager dateManager, WorkerManager workerManager) {
         super(database);
@@ -56,6 +55,7 @@ public class TitleManager extends GameObjectManager implements Serializable {
     }
 
     public void createTitles(List<Title> titles) {
+        List<TitleReign> titleReigns = new ArrayList<>();
         titles.forEach(title -> {
             if (CollectionUtils.isEmpty(title.getTitleReigns())) {
                 TitleReign vacant = TitleReign.builder()
@@ -68,8 +68,9 @@ public class TitleManager extends GameObjectManager implements Serializable {
             TitleReign titleReign = title.getTitleReigns().get(0);
             Title saved = getDatabase().insertGameObject(title);
             titleReign.setTitle(saved);
-            getDatabase().insertGameObject(titleReign);
+            titleReigns.add(titleReign);
         });
+        getDatabase().insertList(titleReigns);
         selectTitles();
     }
 

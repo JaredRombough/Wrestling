@@ -11,9 +11,6 @@ import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -26,28 +23,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static openwrestling.model.utility.ModelUtils.currencyString;
-
 @Getter
 public class EventManager extends GameObjectManager implements Serializable {
 
     private final DateManager dateManager;
     private final SegmentManager segmentManager;
     private final ContractManager contractManager;
-    private final transient Logger logger = LogManager.getLogger(getClass());
-    private Map<Long, EventTemplate> eventTemplateMap;
-    private Map<Long, Event> eventMap;
+    private final Map<Long, EventTemplate> eventTemplateMap;
+    private final Map<Long, Event> eventMap;
 
     public EventManager(Database database,
                         ContractManager contractManager,
                         DateManager dateManager,
                         SegmentManager segmentManager) {
         super(database);
-        eventTemplateMap = new HashMap<>();
-        eventMap = new HashMap<>();
+
         this.segmentManager = segmentManager;
         this.contractManager = contractManager;
         this.dateManager = dateManager;
+
+        eventTemplateMap = new HashMap<>();
+        eventMap = new HashMap<>();
     }
 
     public List<Event> getEvents() {
@@ -67,10 +63,23 @@ public class EventManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Event> getPastEvents(LocalDate date) {
+        return new ArrayList<>(eventMap.values()).stream()
+                .filter(event -> event.getDate().isBefore(date))
+                .collect(Collectors.toList());
+    }
+
     public List<Event> getFutureEvents(Promotion promotion, LocalDate date) {
         return new ArrayList<>(eventMap.values()).stream()
                 .filter(event -> event.getPromotion().equals(promotion))
                 .filter(event -> event.getDate().isAfter(date) || event.getDate().equals(date))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getEventsBetweenDates(Promotion promotion, LocalDate startInclusive, LocalDate end) {
+        return getEvents(promotion).stream()
+                .filter(event -> event.getDate().isBefore(end))
+                .filter(event -> event.getDate().isAfter(startInclusive) || event.getDate().equals(startInclusive))
                 .collect(Collectors.toList());
     }
 
@@ -127,11 +136,15 @@ public class EventManager extends GameObjectManager implements Serializable {
             segmentsToSave.addAll(segments);
         }
 
-        segmentManager.createSegments(segmentsToSave);
+        segmentManager.createSegments(segmentsToSave, savedEventsWithSegments);
     }
 
     public Event refreshEvent(Event event) {
         return eventMap.get(event.getEventID());
+    }
+
+    public void refreshSegmentEvents() {
+        segmentManager.getSegments().forEach(segment -> segment.setEvent(refreshEvent(segment.getEvent())));
     }
 
     public void rescheduleEvent(Event event, LocalDate newDate) {
@@ -410,42 +423,6 @@ public class EventManager extends GameObjectManager implements Serializable {
                 .reduce(0, Integer::sum);
 
         return (totalCrowd + totalWork) / duration / 2;
-    }
-
-    public String generateSummaryString(Event event) {
-        StringBuilder sb = new StringBuilder();
-
-        if (event.getDate().isAfter(dateManager.today())) {
-            return sb.append("This event is in the future.\n").toString();
-        }
-
-        if (event.getDate().equals(dateManager.today())) {
-            return sb.append("This event is scheduled for later today.\n").toString();
-        }
-
-
-        List<Segment> segments = segmentManager.getSegments(event);
-        for (Segment segment : segments) {
-            if (!segment.getWorkers().isEmpty()) {
-                sb.append(segmentManager.getIsolatedSegmentString(segment, event));
-            } else {
-                logger.log(Level.ERROR, "Encountered empty segment when constructing event summary string");
-            }
-
-            sb.append("\n");
-        }
-
-        sb.append("\n");
-
-        sb.append(String.format("Total cost: %s", currencyString(event.getCost())));
-        sb.append("\n");
-        sb.append("Attendance: ").append(event.getAttendance());
-        sb.append("\n");
-        sb.append(String.format("Gross profit: %s", currencyString(event.getGate())));
-        sb.append("\n");
-        sb.append("Rating: ").append(event.getRating());
-
-        return sb.toString();
     }
 
     public boolean canReschedule(Event event) {

@@ -33,7 +33,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -60,15 +59,6 @@ import openwrestling.model.segment.constants.TeamType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.view.RegionWrapper;
 import openwrestling.view.utility.comparators.NameComparator;
-import openwrestling.view.utility.comparators.SegmentItemAgeComparator;
-import openwrestling.view.utility.comparators.SegmentItemBehaviourComparator;
-import openwrestling.view.utility.comparators.StaffSkillComparator;
-import openwrestling.view.utility.comparators.WorkerCharismaComparator;
-import openwrestling.view.utility.comparators.WorkerFlyingComparator;
-import openwrestling.view.utility.comparators.WorkerPopularityComparator;
-import openwrestling.view.utility.comparators.WorkerStrikingComparator;
-import openwrestling.view.utility.comparators.WorkerWrestlingComparator;
-import openwrestling.view.utility.comparators.WorkrateComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -209,20 +199,7 @@ public final class ViewUtils {
         GameScreen screen = new GameScreen();
         loader.setLocation(MainApp.class.getResource(code.resourcePath()));
         try {
-            switch (code) {
-                case ROOT: {
-                    screen.pane = (BorderPane) loader.load();
-                    break;
-                }
-                case DEPARTMENT:
-                case CONTRACT: {
-                    screen.pane = (GridPane) loader.load();
-                    break;
-                }
-                default:
-                    screen.pane = (AnchorPane) loader.load();
-                    break;
-            }
+            screen.pane = loader.load();
         } catch (IOException ex) {
             logger.log(Level.FATAL, String.format("Error loading Screen from %s", code.resourcePath()), ex);
         }
@@ -511,27 +488,6 @@ public final class ViewUtils {
         return sb.toString();
     }
 
-    public static ObservableList getWorkerComparators() {
-        return FXCollections.observableArrayList(new NameComparator(),
-                new WorkerPopularityComparator(),
-                new WorkrateComparator(),
-                new WorkerCharismaComparator(),
-                new WorkerWrestlingComparator(),
-                new WorkerFlyingComparator(),
-                new WorkerStrikingComparator(),
-                new SegmentItemBehaviourComparator(),
-                new SegmentItemAgeComparator()
-        );
-    }
-
-    public static ObservableList getStaffComparators() {
-        return FXCollections.observableArrayList(new NameComparator(),
-                new StaffSkillComparator(),
-                new SegmentItemBehaviourComparator(),
-                new SegmentItemAgeComparator()
-        );
-    }
-
     public static boolean releaseWorkerDialog(iPerson person, Promotion promotion, iContract contract, LocalDate date) {
         String prompt;
         if (!contract.isExclusive()) {
@@ -615,6 +571,37 @@ public final class ViewUtils {
                 item.setRosterSplit((RosterSplit) comboBox.getSelectionModel().getSelectedItem());
             }
         });
+    }
+
+    public static void updateWorkerStatLabelStyle(List<Label> statLabels) {
+        statLabels.forEach(l -> updateWorkerLabel(l, 50, 75));
+    }
+
+    public static void updateWorkerMoraleLabel(Label moraleLabel) {
+        updateWorkerLabel(moraleLabel, -50, -1);
+    }
+
+    private static void updateWorkerLabel(Label label, int lowBound, int midBound) {
+        List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
+
+
+        styleList.stream().filter((s) -> (label.getStyleClass().contains(s))).forEach((s) -> {
+            label.getStyleClass().remove(s);
+        });
+
+        String style;
+
+        if (Integer.parseInt(label.getText()) < lowBound) {
+            style = "lowStat";
+        } else if (Integer.parseInt(label.getText()) >= lowBound
+                && Integer.parseInt(label.getText()) < midBound) {
+            style = "midStat";
+        } else {
+            style = "highStat";
+        }
+
+        label.getStyleClass().add(style);
+
     }
 
 }

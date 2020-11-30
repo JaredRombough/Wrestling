@@ -49,7 +49,7 @@ public class SegmentManagerTest {
         matchRulesManager.selectData();
         promotionManager = new PromotionManager(database, new BankAccountManager(database), mock(GameSettingManager.class));
         workerManager = new WorkerManager(database, mock(ContractManager.class));
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
         eventManager = new EventManager(database, mock(ContractManager.class), mockDateManager, segmentManager);
         promotion = promotionManager.createPromotions(List.of(TestUtils.randomPromotion())).get(0);
     }
@@ -57,6 +57,7 @@ public class SegmentManagerTest {
 
     @Test
     public void createSegments() {
+        int teamSize = 1;
         Event event = new Event();
         event.setDate(LocalDate.now());
         EventTemplate eventTemplate = eventManager.createEventTemplates(List.of(EventTemplate.builder().build())).get(0);
@@ -83,20 +84,64 @@ public class SegmentManagerTest {
         event.setPromotion(promotion);
         eventManager.createEvents(List.of(event));
 
-        verify(winnerWorker);
+        verify(winnerWorker, teamSize);
 
 
-        segmentManager = new SegmentManager(database, mock(DateManager.class), mock(TagTeamManager.class), mock(StableManager.class));
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
         eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
 
         segmentManager.selectData();
         eventManager.selectData();
 
-        verify(winnerWorker);
+        verify(winnerWorker, teamSize);
 
     }
 
-    private void verify(Worker winnerWorker) {
+    @Test
+    public void createSegments_tagTeams() {
+        int teamSize = 2;
+        Event event = new Event();
+        event.setDate(LocalDate.now());
+        EventTemplate eventTemplate = eventManager.createEventTemplates(List.of(EventTemplate.builder().build())).get(0);
+        event.setEventTemplate(eventTemplate);
+
+        Segment segment = Segment.builder()
+                .segmentType(SegmentType.MATCH)
+                .matchRules(matchRulesManager.getDefaultRules())
+                .matchFinish(MatchFinish.CLEAN)
+                .build();
+        Worker winnerWorker = workerManager.createWorker(PersonFactory.randomWorker());
+        Worker winnerWorker2 = workerManager.createWorker(PersonFactory.randomWorker());
+        Worker loserWorker = workerManager.createWorker(PersonFactory.randomWorker());
+        Worker loserWorker2 = workerManager.createWorker(PersonFactory.randomWorker());
+        SegmentTeam winnerTeam = SegmentTeam.builder()
+                .workers(List.of(winnerWorker, winnerWorker2))
+                .type(TeamType.WINNER)
+                .build();
+        SegmentTeam loserTeam = SegmentTeam.builder()
+                .workers(List.of(loserWorker, loserWorker2))
+                .type(TeamType.LOSER)
+                .build();
+        segment.setSegmentTeams(List.of(winnerTeam, loserTeam));
+
+        event.setSegments(List.of(segment));
+        event.setPromotion(promotion);
+        eventManager.createEvents(List.of(event));
+
+        verify(winnerWorker, teamSize);
+
+
+        segmentManager = new SegmentManager(database, mock(DateManager.class));
+        eventManager = new EventManager(database, mock(ContractManager.class), mock(DateManager.class), segmentManager);
+
+        segmentManager.selectData();
+        eventManager.selectData();
+
+        verify(winnerWorker, teamSize);
+
+    }
+
+    private void verify(Worker winnerWorker, int teamSize) {
         List<Event> events = eventManager.getEvents();
 
         List<Segment> segments = segmentManager.getSegments();
@@ -120,7 +165,7 @@ public class SegmentManagerTest {
                 .orElse(null);
         assertThat(winner).isNotNull();
         assertThat(winner.getSegmentTeamID()).isNotNull().isPositive();
-        assertThat(winner.getWorkers()).hasSize(1);
+        assertThat(winner.getWorkers()).hasSize(teamSize);
         assertThat(winner.getWorkers().get(0).getWorkerID()).isEqualTo(winnerWorker.getWorkerID());
         assertThat(winner.getWorkers().get(0).getName()).isEqualTo(winnerWorker.getName());
     }

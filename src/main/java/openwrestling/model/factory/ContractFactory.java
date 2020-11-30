@@ -59,10 +59,11 @@ public class ContractFactory {
 
     public Contract contractForNextDay(Worker worker, Promotion promotion, LocalDate startDate) {
         boolean exclusive = promotion.getLevel() == 5;
+        int length = exclusive ? 365 : 180;
 
         Contract contract = new Contract(startDate, worker, promotion);
         contract.setExclusive(exclusive);
-        contract.setEndDate(startDate.plusDays(90));
+        contract.setEndDate(startDate.plusDays(length));
 
         if (exclusive) {
             contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));

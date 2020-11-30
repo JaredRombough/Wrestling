@@ -15,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.segment.constants.ActiveType;
-import openwrestling.model.segment.constants.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;

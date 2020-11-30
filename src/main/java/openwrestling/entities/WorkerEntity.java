@@ -23,53 +23,61 @@ public class WorkerEntity extends Entity {
 
     @ForeignCollectionField(eager = true)
     public ForeignCollection<ContractEntity> contractEntities;
+
     @ForeignCollectionField(eager = true)
     public Collection<StableWorkerEntity> workerGroups;
+
     @DatabaseField(generatedId = true)
     private long workerID;
+
     @DatabaseField
     private long importKey;
+
     @DatabaseField
     private String name;
+
     @DatabaseField
     private String shortName;
+
     @DatabaseField
-    private String imageString;
+    private String imageFileName;
+
     @DatabaseField
     private int striking;
+
     @DatabaseField
     private int flying;
+
     @DatabaseField
     private int wrestling;
+
     @DatabaseField
     private int charisma;
+
     @DatabaseField
     private int behaviour;
+
     @DatabaseField
     private int popularity;
+
     @DatabaseField
     private int age;
+
     @DatabaseField
     private Gender gender;
+
     @DatabaseField
     private boolean fullTime;
+
     @DatabaseField
     private boolean mainRoster;
-//
-//    public List<ContractEntity> contracts;
 
-//    @DatabaseField(foreign = true)
-//    private Injury injury;
     @DatabaseField
     private int minimumPopularity;
 
-//    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-//    private Entourage entourage;
-
-//    @ForeignCollectionField
-//    private Collection<Worker> entourage;
     @DatabaseField(foreign = true)
     private WorkerEntity manager;
+
     @ForeignCollectionField
     private Collection<SegmentTeamWorkerEntity> segmentTeams;
 

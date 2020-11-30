@@ -1,19 +1,19 @@
 package openwrestling.view;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
-import openwrestling.model.gameObjects.Event;
-import openwrestling.model.NewsItem;
 import openwrestling.manager.EventManager;
+import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.view.utility.interfaces.ControllerBase;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class SimpleDisplayController extends ControllerBase implements Initializable {
 
@@ -51,17 +51,15 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
         displayTitle.setText(obj != null ? obj.toString() : defaultTitle);
 
         String newText;
-
-        if (obj instanceof Event) {
-            newText = eventManager.generateSummaryString((Event) obj);
-        } else if (obj instanceof Title) {
+        Text text = new Text();
+        if (obj instanceof Title) {
             newText = gameController.getTitleManager().getTitleReignStrings(((Title) obj));
         } else if (obj instanceof Worker) {
             displayTitle.setText("");
-            List<NewsItem> newsItems = gameController.getNewsManager().getNews(obj, gameController.getDateManager().today().minusMonths(12), gameController.getDateManager().today());
+            List<Segment> recentSegments = gameController.getSegmentManager().getRecentSegments((Worker) obj);
             StringBuilder sb = new StringBuilder();
-            newsItems.forEach(item -> {
-                sb.append(item.getSummary());
+            recentSegments.forEach(segment -> {
+                sb.append(gameController.getSegmentStringService().getSegmentStringForWorkerOverview(segment, segment.getEvent()));
                 sb.append("\n");
             });
             newText = sb.toString();
@@ -69,7 +67,6 @@ public class SimpleDisplayController extends ControllerBase implements Initializ
             newText = obj == null ? "" : obj.toString();
         }
 
-        Text text = new Text();
         text.setText(newText);
         text.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(20));
 

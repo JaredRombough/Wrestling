@@ -2,6 +2,7 @@ package openwrestling.model.controller.nextDay;
 
 import lombok.Builder;
 import openwrestling.Logging;
+import openwrestling.manager.BankAccountManager;
 import openwrestling.manager.ContractManager;
 import openwrestling.manager.DateManager;
 import openwrestling.manager.NewsManager;
@@ -19,6 +20,7 @@ import openwrestling.model.segment.constants.TransactionType;
 import openwrestling.model.utility.ContractUtils;
 import openwrestling.model.utility.ModelUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class DailyContractUpdate extends Logging {
     private final ContractFactory contractFactory;
     private final NewsManager newsManager;
     private final TitleManager titleManager;
+    private final BankAccountManager bankAccountManager;
 
     private List<Worker> freeAgents;
 
@@ -98,24 +101,23 @@ public class DailyContractUpdate extends Logging {
                 .collect(Collectors.toList());
     }
 
-    public List<NewsItem> getExpiringContractsNewsItems(List<Contract> updatedContracts) {
-        List<NewsItem> expiringContractNewsItems = new ArrayList<>();
-        updatedContracts.forEach(contract -> {
-            if (contract.getEndDate().equals(dateManager.today())) {
-                expiringContractNewsItems.add(
-                        newsManager.getExpiringContractNewsItem(contract, dateManager.today())
-                );
-            }
-        });
-        return expiringContractNewsItems;
-    }
-
     public List<Transaction> getNewContractTransactions(List<Contract> newContracts) {
         return newContracts.stream()
                 .map(contract -> Transaction.builder()
                         .type(TransactionType.WORKER_MONTHLY)
                         .date(dateManager.today())
                         .amount(ContractUtils.calculateSigningFee(contract.getWorker(), dateManager.today()))
+                        .promotion(contract.getPromotion())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<Transaction> getNewStaffContractTransactions(List<StaffContract> newContracts) {
+        return newContracts.stream()
+                .map(contract -> Transaction.builder()
+                        .type(TransactionType.WORKER_MONTHLY)
+                        .date(dateManager.today())
+                        .amount(ContractUtils.calculateSigningFee(contract.getStaff(), dateManager.today()))
                         .promotion(contract.getPromotion())
                         .build())
                 .collect(Collectors.toList());
@@ -134,19 +136,47 @@ public class DailyContractUpdate extends Logging {
         return contracts;
     }
 
-    public void updateExpiringContracts() {
-        contractManager.getContracts().stream()
+    public void renewExpiringContracts() {
+        List<Contract> expiring = contractManager.getContracts().stream()
                 .filter(Contract::isActive)
                 .filter(contract -> contract.getEndDate().equals(dateManager.today()))
-                .forEach(contract -> {
-                    contractManager.terminateContract(contract, dateManager.today());
-                    titleManager.stripTitlesForExpiringContract(contract);
-                });
+                .collect(Collectors.toList());
 
-        contractManager.getStaffContracts().stream()
+        expiring.forEach(contract -> contract.setActive(false));
+
+        List<Contract> newContracts = expiring.stream()
+                .map(expiringContract -> contractFactory.contractForNextDay(
+                        expiringContract.getWorker(), expiringContract.getPromotion(),
+                        dateManager.today()
+                )).collect(Collectors.toList());
+
+        contractManager.updateContracts(expiring);
+        contractManager.createContracts(newContracts);
+
+
+        List<StaffContract> expiringStaff = contractManager.getStaffContracts().stream()
                 .filter(StaffContract::isActive)
                 .filter(contract -> contract.getEndDate().equals(dateManager.today()))
-                .forEach(contract -> contractManager.terminateStaffContract(contract, dateManager.today()));
+                .collect(Collectors.toList());
+
+        expiringStaff.forEach(contract -> contract.setActive(false));
+
+        List<StaffContract> newStaffContracts = expiringStaff.stream()
+                .map(expiringContract -> contractFactory.createContract(
+                        expiringContract.getStaff(),
+                        expiringContract.getPromotion(),
+                        dateManager.today().plusDays(180))
+                ).collect(Collectors.toList());
+
+        contractManager.updateStaffContracts(expiringStaff);
+        contractManager.createStaffContracts(newStaffContracts);
+
+
+        List<Transaction> newContractTransactions = getNewContractTransactions(newContracts);
+        List<Transaction> newStaffContractTransactions = getNewStaffContractTransactions(newStaffContracts);
+
+        bankAccountManager.insertTransactions(ListUtils.union(newContractTransactions, newStaffContractTransactions));
+
     }
 
 }

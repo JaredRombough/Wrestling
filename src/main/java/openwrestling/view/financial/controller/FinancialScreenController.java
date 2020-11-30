@@ -30,8 +30,6 @@ public class FinancialScreenController extends ControllerBase implements Initial
     private List<Label> sheetLabels;
 
     @FXML
-    private Button editDefaultBroadcastTeamButton;
-    @FXML
     private GridPane balanceSheetGrid;
 
     @Override
@@ -58,18 +56,7 @@ public class FinancialScreenController extends ControllerBase implements Initial
                 gameController.getStaffManager().getStaffPayrollForMonth(gameController.getDateManager().today().plusMonths(1), playerPromotion()),
                 STAFF_EXPENSE_ROW);
 
-        editDefaultBroadcastTeamButton.setOnAction(e -> {
-            EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
-            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
-                    gameController.getStaffManager().getStaff(StaffType.BROADCAST, playerPromotion()),
-                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion()),
-                    playerPromotion().getLongName()
-            ).showAndWait();
-            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
-                gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(playerPromotion(), broadcastTeam);
-                updateLabels();
-            });
-        });
+
     }
 
     private int sheetCell(TransactionType type, int monthsAgo) {

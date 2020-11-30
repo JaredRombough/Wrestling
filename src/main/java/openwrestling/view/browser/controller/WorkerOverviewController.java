@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,10 +54,13 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     private Label popularityLabel;
 
     @FXML
-    private Label behaviourLabel;
+    private Label moraleLabel;
 
     @FXML
     private Label charismaLabel;
+
+    @FXML
+    private Label behaviourLabel;
 
     @FXML
     private Label workrate;
@@ -77,9 +79,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @FXML
     private Label manager;
-
-    @FXML
-    private Label moraleLabel;
 
     @FXML
     private Label managedLabel;
@@ -119,6 +118,11 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
     public void setCurrent(Object obj) {
         if (obj instanceof Worker) {
             worker = (Worker) obj;
+
+            imageAnchor.getChildren().clear();
+            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+            card.controller.setCurrent(worker);
+            ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
             feedPaneScreen.controller.setCurrent(worker);
             contractScreen.controller.setCurrent(worker);
@@ -250,6 +254,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
     @Override
     public void updateLabels() {
+
         List<Worker> roster = gameController.getWorkerManager().getRoster(promotion);
         if (worker != null && roster.stream().anyMatch(w -> w.getWorkerID() == worker.getWorkerID())
                 || gameController.getWorkerManager().freeAgents(promotion).contains(worker)) {
@@ -277,49 +282,19 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             injury.setVisible(workerInjury != null);
             injuryLabel.setVisible(workerInjury != null);
 
-            imageAnchor.getChildren().clear();
-            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
-            card.controller.setCurrent(worker);
-            ((ResultsCardController) card.controller).setNameLabelVisibile(false);
+//            imageAnchor.getChildren().clear();
+//            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
+//            card.controller.setCurrent(worker);
+//            ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
-            List<Label> statLabels = Arrays.asList(
-                    wrestlingLabel,
+            ViewUtils.updateWorkerMoraleLabel(moraleLabel);
+
+            ViewUtils.updateWorkerStatLabelStyle(List.of(wrestlingLabel,
                     flyingLabel,
                     strikingLabel,
                     behaviourLabel,
                     charismaLabel,
-                    popularityLabel,
-                    moraleLabel);
-
-            List<String> styleList = Arrays.asList("lowStat", "midStat", "highStat");
-
-            for (Label l : statLabels) {
-                styleList.stream().filter((s) -> (l.getStyleClass().contains(s))).forEach((s) -> {
-                    l.getStyleClass().remove(s);
-                });
-
-                String style;
-
-                int lowBound = 50;
-                int midBound = 75;
-
-                if (Objects.equals(moraleLabel, l)) {
-                    lowBound = -50;
-                    midBound = -1;
-                }
-
-                if (Integer.parseInt(l.getText()) < lowBound) {
-                    style = "lowStat";
-                } else if (Integer.parseInt(l.getText()) >= lowBound
-                        && Integer.parseInt(l.getText()) < midBound) {
-                    style = "midStat";
-                } else {
-                    style = "highStat";
-                }
-
-                l.getStyleClass().add(style);
-            }
-
+                    popularityLabel));
         }
 
         feedPaneScreen.controller.updateLabels();

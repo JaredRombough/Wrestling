@@ -68,7 +68,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     public void updateLabels() {
 
         if (segment != null) {
-            segmentTitle.setText(gameController.getSegmentManager().getSegmentTitle(segment));
+            segmentTitle.setText(gameController.getSegmentStringService().getSegmentTitle(segment));
             StringBuilder sb = new StringBuilder();
 
             for (SegmentTeam team : segment.getSegmentTeams(TeamType.INTERFERENCE)) {
@@ -77,7 +77,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
                 }
             }
 
-            sb.append(gameController.getSegmentManager().getSegmentString(segment));
+            sb.append(gameController.getSegmentStringService().getSegmentString(segment));
             sb.append("\n");
 
             for (SegmentTeam team : segment.getSegmentTeams(TeamType.INTERFERENCE)) {
@@ -179,7 +179,7 @@ public class ResultsDisplayController extends ControllerBase implements Initiali
     private String getInterferenceNote(SegmentTeam team) {
         String segmentTypeString = segment.getSegmentType().equals(SegmentType.MATCH)
                 ? "match"
-                : gameController.getSegmentManager().getSegmentTitle(segment);
+                : gameController.getSegmentStringService().getSegmentTitle(segment);
 
         return String.format("%s interfered %s the %s, attacking %s %s\n",
                 ModelUtils.slashNames(team.getWorkers()),

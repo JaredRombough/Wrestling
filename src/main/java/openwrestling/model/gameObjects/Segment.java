@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import openwrestling.model.NewsItem;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.interfaces.iDate;
 import openwrestling.model.segment.constants.AngleType;
 import openwrestling.model.segment.constants.JoinTeamType;
 import openwrestling.model.segment.constants.MatchFinish;
@@ -28,12 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static openwrestling.model.segment.constants.SegmentType.MATCH;
+import static openwrestling.model.segment.constants.TeamType.LOSER;
+import static openwrestling.model.segment.constants.TeamType.WINNER;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Segment extends GameObject implements Serializable {
+public class Segment extends GameObject implements Serializable, iDate {
 
     private long segmentID;
 
@@ -112,8 +117,8 @@ public class Segment extends GameObject implements Serializable {
     public List<SegmentTeam> getMatchParticipantTeams() {
         List<SegmentTeam> participants = new ArrayList<>();
         for (SegmentTeam team : segmentTeams) {
-            if (team.getType().equals(TeamType.WINNER)
-                    || team.getType().equals(TeamType.LOSER)
+            if (team.getType().equals(WINNER)
+                    || team.getType().equals(LOSER)
                     || team.getType().equals(TeamType.DRAW)) {
                 participants.add(team);
             }
@@ -124,8 +129,8 @@ public class Segment extends GameObject implements Serializable {
     public List<Worker> getMatchParticipants() {
         List<Worker> participants = new ArrayList<>();
         for (SegmentTeam team : segmentTeams) {
-            if (team.getType().equals(TeamType.WINNER)
-                    || team.getType().equals(TeamType.LOSER)
+            if (team.getType().equals(WINNER)
+                    || team.getType().equals(LOSER)
                     || team.getType().equals(TeamType.DRAW)) {
                 participants.addAll(team.getWorkers());
             }
@@ -144,7 +149,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public SegmentTeam getWinner() {
-        List<SegmentTeam> defaultTeams = getSegmentTeams(TeamType.WINNER);
+        List<SegmentTeam> defaultTeams = getSegmentTeams(WINNER);
         if (!defaultTeams.isEmpty()) {
             return defaultTeams.get(0);
         }
@@ -152,7 +157,7 @@ public class Segment extends GameObject implements Serializable {
     }
 
     public List<Worker> getWinners() {
-        List<SegmentTeam> defaultTeams = getSegmentTeams(TeamType.WINNER);
+        List<SegmentTeam> defaultTeams = getSegmentTeams(WINNER);
         if (!defaultTeams.isEmpty()) {
             return defaultTeams.get(0).getWorkers();
         }
@@ -189,6 +194,32 @@ public class Segment extends GameObject implements Serializable {
         }
 
         return SegmentValidation.COMPLETE;
+    }
+
+    public boolean isMatchWithTwoTeamsOfSize(int teamSize) {
+        if (!MATCH.equals(segmentType)) {
+            return false;
+        }
+
+        if (MatchFinish.DRAW.equals(matchFinish)) {
+            List<SegmentTeam> drawTeams = getSegmentTeams(TeamType.DRAW);
+            if (drawTeams.size() != 2) {
+                return false;
+            }
+
+            return drawTeams.stream()
+                    .allMatch(drawTeam -> drawTeam.getWorkers().size() == teamSize);
+        }
+
+        List<SegmentTeam> winners = getSegmentTeams(WINNER);
+        List<SegmentTeam> losers = getSegmentTeams(LOSER);
+
+        if (winners.size() != 1 || losers.size() != 1) {
+            return false;
+        }
+
+        return winners.stream().allMatch(segmentTeam -> segmentTeam.getWorkers().size() == teamSize) &&
+                losers.stream().allMatch(segmentTeam -> segmentTeam.getWorkers().size() == teamSize);
     }
 
     /**

@@ -23,6 +23,7 @@ import openwrestling.view.start.controller.TitleScreenController;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -40,11 +41,12 @@ import java.util.ResourceBundle;
 public class MainApp extends Application {
 
     public static final String CONTACT = "OpenWrestling@gmail.com or /u/OpenWrestling on Reddit";
-    public static final String VERSION = "0.4.6";
+    public static final String VERSION = "0.5.0";
 
     private static final int WINDOW_MIN_WIDTH = 1600;
     private static final int WINDOW_MIN_HEIGHT = 900;
     private static final int PRE_RUN_DAYS = 0;
+    private static final int DEMO_WORKER_IMAGES = 0;
     private final transient Logger logger;
     private final List<GameScreen> screens;
     private final boolean cssEnabled;
@@ -202,6 +204,11 @@ public class MainApp extends Application {
 
     public Image getDefaultWorkerImage(SegmentItem segmentItem) {
         if (segmentItem.getGender().equals(Gender.MALE)) {
+            if (DEMO_WORKER_IMAGES > 0) {
+                int randomImageNumber = RandomUtils.nextInt(1, DEMO_WORKER_IMAGES + 1);
+                String imagePath = String.format("images/demo/%d.jpg", randomImageNumber);
+                return loadImageFromPath(imagePath);
+            }
             return loadImageFromPath("images/workerDefaultMale.jpg");
         } else {
             return loadImageFromPath("images/workerDefaultFemale.jpg");

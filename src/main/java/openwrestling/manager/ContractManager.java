@@ -50,6 +50,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Contract> getExpiredContracts() {
+        return contractMap.values().stream()
+                .filter(contract -> !contract.isActive())
+                .collect(Collectors.toList());
+    }
+
     public List<StaffContract> getStaffContracts() {
         return new ArrayList<>(staffContractMap.values());
     }
@@ -249,6 +255,16 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return canNegotiate;
     }
 
+    public boolean hasActiveContract(StaffMember staffMember) {
+        for (StaffContract contract : getStaffContracts()) {
+            if (contract.getStaff().equals(staffMember) && contract.isActive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean canNegotiate(Worker worker, Promotion promotion) {
         boolean canNegotiate = true;
 
@@ -261,7 +277,7 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return canNegotiate;
     }
 
-    public String contractPromotionsString(iPerson person, LocalDate date) {
+    public String contractPromotionsString(iPerson person) {
         StringBuilder bld = new StringBuilder();
         for (iContract current : getContracts(person)) {
             if (!bld.toString().isEmpty()) {

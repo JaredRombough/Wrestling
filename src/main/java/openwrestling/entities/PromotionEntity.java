@@ -18,37 +18,24 @@ import lombok.Setter;
 @DatabaseTable(tableName = "promotions")
 public class PromotionEntity extends Entity {
 
-    @DatabaseField(generatedId = true)
-    private long promotionID;
-
-    @DatabaseField
-    private int importKey;
-
-    @DatabaseField
-    private String name;
-
-    @DatabaseField
-    private String shortName;
-
-    @DatabaseField
-    private String imagePath;
-
-    @DatabaseField
-    private int popularity;
-
-    @DatabaseField
-    private int level;
-
     @ForeignCollectionField(eager = true)
     public ForeignCollection<ContractEntity> contractEntities;
-
     @ForeignCollectionField(eager = true)
     public ForeignCollection<TransactionEntity> transactionEntities;
-
     @DatabaseField(foreign = true)
     public BankAccountEntity bankAccount;
-
-
-//    private List<StaffView> allStaff;
-//    private List<EventTemplate> eventTemplates;
+    @DatabaseField(generatedId = true)
+    private long promotionID;
+    @DatabaseField
+    private int importKey;
+    @DatabaseField
+    private String name;
+    @DatabaseField
+    private String shortName;
+    @DatabaseField
+    private String imageFileName;
+    @DatabaseField
+    private int popularity;
+    @DatabaseField
+    private int level;
 }

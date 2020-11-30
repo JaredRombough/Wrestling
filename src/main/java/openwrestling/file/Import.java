@@ -28,16 +28,14 @@ import java.util.List;
 
 public class Import {
 
-    private GameController gameController;
-
     private final transient Logger logger = LogManager.getLogger(getClass());
-
     private final List<String> filesNeeded = new ArrayList<>(Arrays.asList(
             "promos",
             "belt",
             "teams",
             "wrestler"
     ));
+    private GameController gameController;
 
     public String tryImport(File dbFile, File importFolder) throws Exception {
         long start = System.currentTimeMillis();
@@ -151,7 +149,7 @@ public class Import {
                         && advancedImportData.size() >= i + 3) {
                     promotion.setName(advancedImportData.get(i + 1));
                     promotion.setShortName(advancedImportData.get(i + 2));
-                    promotion.setImagePath(advancedImportData.get(i + 3));
+                    promotion.setImageFileName(advancedImportData.get(i + 3));
                     break;
                 }
             }

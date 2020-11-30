@@ -56,7 +56,6 @@ public class NextDayController extends Logging {
 
     private List<Transaction> cachedTransactions;
     private Map<Long, Contract> cachedContractsMap;
-    private List<Contract> cachedNewContracts;
     private List<NewsItem> cachedNewsItems;
     private Map<Worker, MoraleRelationship> cachedMoraleRelationshipMap;
     private List<Promotion> cachedPromotions;
@@ -67,7 +66,7 @@ public class NextDayController extends Logging {
         long start = System.currentTimeMillis();
         logger.log(Level.DEBUG, "nextDay" + dateManager.todayString());
 
-        dailyContractUpdate.updateExpiringContracts();
+        dailyContractUpdate.renewExpiringContracts();
         logger.log(Level.DEBUG, String.format("updateExpiringContracts took %d ms", System.currentTimeMillis() - start));
 
         processEvents(dailyEventBooker.getEvents());
@@ -76,16 +75,11 @@ public class NextDayController extends Logging {
         cachedTransactions.addAll(dailyTransactions.getPayDayTransactions());
         logger.log(Level.DEBUG, String.format("cachedTransactions took %d ms", System.currentTimeMillis() - start));
 
-        cachedNewContracts.addAll(dailyContractUpdate.getNewContracts(dateManager.today()));
         logger.log(Level.DEBUG, String.format("cachedNewContracts took %d ms", System.currentTimeMillis() - start));
-
-        cachedNewsItems.addAll(dailyContractUpdate.getExpiringContractsNewsItems(new ArrayList<>(cachedContractsMap.values())));
-        cachedNewsItems.addAll(dailyContractUpdate.getNewContractsNewsItems(cachedNewContracts));
 
         List<MoraleRelationship> updatedRelationshipsAfterDailyMoraleCheck = dailyRelationshipUpdate.getUpdatedRelationshipsForDailyMoraleCheck();
         cachedNewsItems.addAll(dailyRelationshipUpdate.getUpdatedMoraleRelationshipNewsItems(updatedRelationshipsAfterDailyMoraleCheck));
         dailyRelationshipUpdate.updateRelationshipMap(cachedMoraleRelationshipMap, updatedRelationshipsAfterDailyMoraleCheck);
-        cachedTransactions.addAll(dailyContractUpdate.getNewContractTransactions(cachedNewContracts));
 
         if (dateManager.isLastDayOfMonth()) {
             monthlyReviewController.createMonthlyReview(promotionManager.getPlayerPromotion(), dateManager.today());
@@ -196,7 +190,6 @@ public class NextDayController extends Logging {
     private void processCache() {
         bankAccountManager.insertTransactions(cachedTransactions);
         contractManager.updateContracts(new ArrayList<>(cachedContractsMap.values()));
-        contractManager.createContracts(cachedNewContracts);
         newsManager.addNewsItems(cachedNewsItems);
         relationshipManager.createOrUpdateMoraleRelationships(new ArrayList<>(cachedMoraleRelationshipMap.values()));
         promotionManager.updatePromotions(cachedPromotions);
@@ -208,7 +201,6 @@ public class NextDayController extends Logging {
         cachedContractsMap = new HashMap<>();
         cachedNewsItems = new ArrayList<>();
         cachedMoraleRelationshipMap = new HashMap<>();
-        cachedNewContracts = new ArrayList<>();
         cachedPromotions = new ArrayList<>();
     }
 }

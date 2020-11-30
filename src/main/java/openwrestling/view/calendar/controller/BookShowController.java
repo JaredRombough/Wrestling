@@ -112,7 +112,7 @@ public class BookShowController extends ControllerBase implements Initializable 
         boolean confirmButtonVisible = true;
         Event eventOnDate = gameController.getEventManager().getEventOnDate(playerPromotion(), currentDate);
 
-        if (currentDate.isBefore(gameController.getDateManager().today())) {
+        if (eventOnDate != null && currentDate.isBefore(gameController.getDateManager().today())) {
             cancelButtonVisible = false;
             cancelButtonDisable = true;
             confirmButtonVisible = false;

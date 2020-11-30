@@ -30,6 +30,6 @@ public class SegmentTeamQuery extends GameObjectQuery {
         QueryBuilder<SegmentTeamWorkerEntity, String> segmentTeamWorkerQb = segmentTeamWorkerDao.queryBuilder();
         QueryBuilder<WorkerEntity, String> workerQb = workerDao.queryBuilder();
 
-        return segmentTeamQb.join(segmentTeamWorkerQb.join(workerQb));
+        return segmentTeamQb.join(segmentTeamWorkerQb.join(workerQb)).distinct();
     }
 }

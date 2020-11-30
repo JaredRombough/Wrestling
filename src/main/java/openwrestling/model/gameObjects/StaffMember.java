@@ -25,7 +25,7 @@ public class StaffMember extends GameObject implements Serializable, SegmentItem
     private long importKey;
     private int behaviour;
     private StaffType staffType;
-    private String imageString;
+    private String imageFileName;
     private StaffContract staffContract;
 
     @Override

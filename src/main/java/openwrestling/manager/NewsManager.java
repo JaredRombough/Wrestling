@@ -106,6 +106,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build();
     }
 
+    //TODO list of expired contracts sorted by date
     public NewsItem getExpiringContractNewsItem(iContract contract, LocalDate date) {
         return NewsItem.builder()
                 .headline(String.format("%s contract expires", contract.getWorker().getShortName()))
@@ -118,6 +119,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build();
     }
 
+    //TODO list of new contracts sorted by date
     public NewsItem getNewContractNewsItem(iContract contract, LocalDate date) {
         return NewsItem.builder()
                 .headline(String.format("%s signs %s", contract.getPromotion().getShortName(), contract.getWorker().getShortName()))
@@ -131,6 +133,7 @@ public class NewsManager extends GameObjectManager implements Serializable {
                 .build();
     }
 
+    //TODO list of injuries by date
     public void addMatchInjuryNewsItem(Injury injury, Event event) {
         addNews(NewsItem.builder()
                 .headline(String.format("%s injured", injury.getWorker().getLongName()))

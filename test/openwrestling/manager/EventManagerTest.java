@@ -15,7 +15,6 @@ import openwrestling.model.segment.constants.EventVenueSize;
 import openwrestling.model.segment.constants.MatchFinish;
 import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.segment.constants.TeamType;
-import openwrestling.model.segment.opitons.MatchRules;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;

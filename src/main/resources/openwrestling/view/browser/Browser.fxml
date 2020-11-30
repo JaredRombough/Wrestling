@@ -10,103 +10,108 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-
-<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openwrestling.view.browser.controller.BrowserController">
-   <children>
-      <GridPane fx:id="gridPane" minHeight="400.0" minWidth="500.0" prefHeight="90.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label fx:id="currentPromotionLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="5" GridPane.columnSpan="2147483647" />
-            <VBox GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2147483647">
-               <GridPane.margin>
-                  <Insets bottom="5.0" top="5.0" />
-               </GridPane.margin>
-               <children>
-                  <AnchorPane fx:id="sortControlPane" />
-                  <ListView fx:id="mainListView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
-            <AnchorPane fx:id="mainDisplayPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.rowSpan="2147483647" />
-            <Button fx:id="freeAgentsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Free Agents" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <ComboBox fx:id="promotionComboBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3">
-               <GridPane.margin>
-                  <Insets bottom="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </ComboBox>
-            <Button fx:id="myPromotionButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="My Promotion" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="staffButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Staff" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-          <Button fx:id="stablesButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Stables" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="titlesButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Titles" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-          <Button fx:id="rosterButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Roster" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="teamsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Teams" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="eventsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Events" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets bottom="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="hireStaffButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Hire Staff" GridPane.columnIndex="1">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="rosterSplitButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" text="Roster Split" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets bottom="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Button>
-         </children>
-      </GridPane>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1"
+            fx:controller="openwrestling.view.browser.controller.BrowserController">
+    <children>
+        <GridPane fx:id="gridPane" minHeight="400.0" minWidth="500.0" prefHeight="90.0" prefWidth="200.0"
+                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
+                                   prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" percentHeight="100.0"
+                                prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Label fx:id="currentPromotionLabel" maxWidth="1.7976931348623157E308" text="Label"
+                       GridPane.columnIndex="4" GridPane.columnSpan="2147483647"/>
+                <VBox GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
+                    <GridPane.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </GridPane.margin>
+                    <children>
+                        <AnchorPane fx:id="sortControlPane"/>
+                        <ListView fx:id="mainListView" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <AnchorPane fx:id="mainDisplayPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
+                            GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647"/>
+                <ComboBox fx:id="promotionComboBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                          GridPane.columnSpan="2">
+                    <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </GridPane.margin>
+                </ComboBox>
+                <Button fx:id="myPromotionButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#handleButtonAction" text="M" GridPane.columnIndex="2" GridPane.halignment="LEFT"
+                        GridPane.valignment="CENTER">
+                    <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </GridPane.margin>
+                </Button>
+                <ComboBox fx:id="browseModeComboBox" maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </GridPane.margin>
+                </ComboBox>
+                <GridPane GridPane.columnIndex="3">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <AnchorPane fx:id="imageAnchor" GridPane.columnIndex="1">
+                            <GridPane.margin>
+                                <Insets left="10.0" right="10.0"/>
+                            </GridPane.margin>
+                        </AnchorPane>
+                    </children>
+                </GridPane>
+            </children>
+        </GridPane>
+    </children>
 </AnchorPane>

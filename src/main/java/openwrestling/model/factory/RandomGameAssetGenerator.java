@@ -17,6 +17,7 @@ import openwrestling.model.utility.ContractUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -135,10 +136,11 @@ public class RandomGameAssetGenerator {
                     int rosterSize = 10 + (promotion.getLevel() * 10);
                     List<Contract> contracts = new ArrayList<>();
                     for (int i = 0; i < rosterSize; i++) {
+                        LocalDate startDate = dateManager.today().minusDays(RandomUtils.nextInt(0, 150));
                         Worker worker = PersonFactory.randomWorker(RandomUtils.nextInt(promotion.getLevel() - 1, promotion.getLevel() + 1));
-                        Contract contract = new Contract(dateManager.today(), worker, promotion);
+                        Contract contract = new Contract(startDate, worker, promotion);
                         contract.setExclusive(promotion.getLevel() == 5);
-                        contract.setEndDate(ContractUtils.contractEndDate(dateManager.today(), 1));
+                        contract.setEndDate(startDate.plusDays(180));
 
                         if (contract.isExclusive()) {
                             contract.setMonthlyCost(ContractUtils.calculateWorkerContractCost(worker, true));

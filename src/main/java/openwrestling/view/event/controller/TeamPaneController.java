@@ -13,6 +13,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.SegmentItem;
+import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.segment.constants.TeamType;
 import openwrestling.view.utility.LocalDragboard;
 import openwrestling.view.utility.ViewUtils;
@@ -28,7 +29,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     private static final double CELL_HEIGHT = 33;
     boolean toggle = true;
     @FXML
-    private ListView teamListView;
+    private ListView<SegmentItem> teamListView;
     @FXML
     private AnchorPane mainPane;
     @FXML
@@ -87,7 +88,7 @@ public class TeamPaneController extends ControllerBase implements Initializable 
                         teamNameLabel.setText(teamType.description());
                         break;
                     default:
-                        teamNameLabel.setText(gameController.getSegmentManager().generateTeamName(getSegmentItems(), teamType));
+                        teamNameLabel.setText(gameController.getSegmentStringService().generateTeamName(getSegmentItems(), teamType));
                         break;
                 }
             }
@@ -113,18 +114,22 @@ public class TeamPaneController extends ControllerBase implements Initializable 
     @Override
     public void initializeMore() {
 
-        final EventHandler<DragEvent> dragOverHandler = new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent dragEvent) {
-                LocalDragboard ldb = LocalDragboard.getINSTANCE();
-                if (ldb.hasInterface(SegmentItem.class) && teamType != null
-                        && teamType.droppable(ldb.getValue(SegmentItem.class))) {
-                    dragEvent.acceptTransferModes(TransferMode.MOVE);
-                }
+        final EventHandler<DragEvent> dragOverHandler = dragEvent -> {
+            LocalDragboard ldb = LocalDragboard.getINSTANCE();
+            if (ldb.hasInterface(SegmentItem.class) && teamType != null
+                    && teamType.droppable(ldb.getValue(SegmentItem.class))) {
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
             }
         };
 
-        setSegmentItemCellFactory(teamListView);
+        teamListView.setCellFactory(lv -> new ListCell<>() {
+
+            @Override
+            public void updateItem(final SegmentItem segmentItem, boolean empty) {
+                super.updateItem(segmentItem, empty);
+                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty, teamType);
+            }
+        });
 
         teamListView.setOnDragOver(dragOverHandler);
 
@@ -137,6 +142,15 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     public void setLabelAction(EventHandler<MouseEvent> mouseEvent) {
         teamNameLabel.setOnMouseClicked(mouseEvent);
+    }
+
+    public void setWorkerInfoController(WorkerInfoController workerInfoController) {
+        teamListView.setOnMouseClicked(event -> {
+            SegmentItem item = teamListView.getSelectionModel().getSelectedItem();
+            if (item instanceof Worker) {
+                workerInfoController.setWorker((Worker) item);
+            }
+        });
     }
 
     public boolean getVisible() {
@@ -157,17 +171,6 @@ public class TeamPaneController extends ControllerBase implements Initializable 
 
     public void setDragDroppedHandler(SegmentPaneController segmentPaneController, TeamPaneWrapper teamPaneWrapper) {
         teamListView.setOnDragDropped(new SegmentItemDragDropHandler(segmentPaneController, teamPaneWrapper, teamType));
-    }
-
-    private void setSegmentItemCellFactory(ListView listView) {
-        listView.setCellFactory(lv -> new ListCell<SegmentItem>() {
-
-            @Override
-            public void updateItem(final SegmentItem segmentItem, boolean empty) {
-                super.updateItem(segmentItem, empty);
-                ViewUtils.initListCellForSegmentItemDragAndDrop(this, segmentItem, empty, teamType);
-            }
-        });
     }
 
     public List<SegmentItem> getSegmentItems() {
@@ -203,11 +206,5 @@ public class TeamPaneController extends ControllerBase implements Initializable 
         return teamNameLabel;
     }
 
-    /**
-     * @return the mainPane
-     */
-    public AnchorPane getMainPane() {
-        return mainPane;
-    }
 
 }

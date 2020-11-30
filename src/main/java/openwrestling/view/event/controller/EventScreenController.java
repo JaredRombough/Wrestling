@@ -1,14 +1,9 @@
 package openwrestling.view.event.controller;
 
-import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,11 +17,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import openwrestling.MainApp;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.Event;
@@ -36,10 +29,11 @@ import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.Worker;
-import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.segment.constants.SegmentType;
 import openwrestling.model.segment.constants.SegmentValidation;
 import openwrestling.model.segment.constants.StaffType;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
+import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.model.utility.SegmentUtils;
 import openwrestling.model.utility.TestUtils;
@@ -55,7 +49,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -83,16 +76,11 @@ public class EventScreenController extends ControllerBase implements Initializab
     @FXML
     private AnchorPane segmentPaneHolder;
     @FXML
-    private Label eventTitleLabel;
+    private AnchorPane workerInfoPane;
     @FXML
     private AnchorPane sortControlPane;
     @FXML
-    private Label totalTimeLabel;
-    @FXML
-    private Label maxTimeLabel;
-    @FXML
     private Label remainingTimeLabel;
-    private List<Label> timeLabels;
     private SortControl sortControl;
 
     private Event currentEvent;
@@ -100,17 +88,19 @@ public class EventScreenController extends ControllerBase implements Initializab
     private int eventLength;
 
     private BrowseMode browseMode;
+    private GameObjectQueryHelper queryHelper;
 
     @FXML
     private ComboBox<BrowseMode> bookingBrowseComboBox;
     private boolean updatingChallenge = false;
+
+    private WorkerInfoController workerInfoController;
 
     @Override
     public void setCurrent(Object obj) {
         if (obj instanceof Event) {
             if (!Objects.equals(currentEvent, obj)) {
                 currentEvent = (Event) obj;
-                eventTitleLabel.setText("Now booking: " + getCurrentEvent().toString());
                 if (currentEvent.getEventTemplate().getRosterSplit() != null) {
                     sortControl.setFilter(currentEvent.getEventTemplate().getRosterSplit());
                 } else {
@@ -230,7 +220,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segment.getChallengeSegment());
                 if (!challengeForTonightIsPresent(challengeMatch, i)) {
                     warnings.append(String.format("%s\nA challenge for this match was made and accepted tonight, but it is not present.\n",
-                            gameController.getSegmentManager().getVsMatchString(challengeMatch)));
+                            gameController.getSegmentStringService().getVsMatchString(challengeMatch)));
                 }
             }
             for (Title title : segment.getTitles()) {
@@ -248,7 +238,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             Segment challengeMatch = ModelUtils.getSegmentFromTemplate(segmentTemplate);
             if (!challengeForTonightIsPresent(challengeMatch, 0)) {
                 warnings.append(String.format("%s\nA challenge for this match was made and accepted on %s at %s, but it is not present.\n",
-                        gameController.getSegmentManager().getVsMatchString(challengeMatch),
+                        gameController.getSegmentStringService().getVsMatchString(challengeMatch),
                         segmentTemplate.getSourceEventDate().toString(),
                         segmentTemplate.getSourceEventName()));
             }
@@ -301,7 +291,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             currentSegmentPaneController().updateLabels();
         }
 
-        totalCostLabel.setText("Total Cost: $" + currentCost());
+        totalCostLabel.setText("Total Cost:\t$" + currentCost());
         totalCostLabel.setVisible(currentCost() != 0);
 
         List<Segment> segments = getSegments();
@@ -314,12 +304,9 @@ public class EventScreenController extends ControllerBase implements Initializab
 
             int duration = getDuration();
 
-            int remaining = duration - eventLength;
             int remainingHours = (duration - eventLength) / 60;
             int remainingMinutes = (duration - eventLength) % 60;
 
-            totalTimeLabel.setText("Total:\t\t" + ModelUtils.timeString(eventLength));
-            maxTimeLabel.setText("Max:\t\t\t" + ModelUtils.timeString(duration));
             if (remainingHours < 0 || remainingMinutes < 0) {
                 remainingTimeLabel.setText("Remaining:\t-"
                         + ModelUtils.timeString(Math.abs(duration - eventLength)));
@@ -327,21 +314,10 @@ public class EventScreenController extends ControllerBase implements Initializab
                 remainingTimeLabel.setText("Remaining:\t"
                         + ModelUtils.timeString(Math.abs(duration - eventLength)));
             }
-            totalTimeLabel.getStyleClass().clear();
-            if (Math.abs(remaining) <= 10) {
-                totalTimeLabel.getStyleClass().add("highStat");
-            } else if (Math.abs(remaining) <= 30) {
-                totalTimeLabel.getStyleClass().add("midStat");
-            } else {
-                totalTimeLabel.getStyleClass().add("lowStat");
-            }
 
         }
 
         updateSegmentItemListView();
-
-//        ((RefreshSkin) segmentListView.getSkin()).refresh();
-
     }
 
     private int getDuration() {
@@ -391,6 +367,7 @@ public class EventScreenController extends ControllerBase implements Initializab
             segmentPaneControllers.add(controller);
 
             controller.setEventScreenController(this);
+            controller.setWorkerInfoController(workerInfoController);
             controller.setDependencies(mainApp, gameController);
 
             controller.setBroadcastTeam(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(currentEvent.getEventTemplate()).isEmpty()
@@ -467,7 +444,7 @@ public class EventScreenController extends ControllerBase implements Initializab
                 segmentPaneControllers,
                 segmentListView,
                 this,
-                gameController.getSegmentManager()
+                gameController.getSegmentStringService()
         ));
 
         segmentListView.setItems(items);
@@ -485,9 +462,13 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     @Override
     public void initializeMore() {
+        queryHelper = new GameObjectQueryHelper(gameController);
 
         GameScreen sortControlscreen = ViewUtils.loadScreenFromResource(ScreenCode.SORT_CONTROL, mainApp, gameController, sortControlPane);
         sortControl = (SortControl) sortControlscreen.controller;
+
+        GameScreen workerInfoScreen = ViewUtils.loadScreenFromResource(ScreenCode.WORKER_INFO, mainApp, gameController, workerInfoPane);
+        workerInfoController = (WorkerInfoController) workerInfoScreen.controller;
 
         bookingBrowseComboBox.setItems((FXCollections.observableArrayList(
                 BrowseMode.WORKERS,
@@ -530,54 +511,52 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         segmentItemListView.setOnDragOver(dragOverHandler);
 
+        segmentItemListView.getSelectionModel()
+                .selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            SegmentItem item = segmentItemListView.getSelectionModel().getSelectedItem();
+            if (item instanceof Worker) {
+                workerInfoController.setWorker((Worker) item);
+            } else {
+                workerInfoController.clearText();
+            }
+        });
+
         //do this last as it is dependent on currentSegment
         updateSegmentItemListView();
 
         segmentItemListView.setOnDragDropped(new WorkersListViewDragDropHandler(this));
 
-        segmentItemListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent click) {
-                if (click.getButton() == MouseButton.SECONDARY) {
-                    currentSegmentPaneController().addTeam(
-                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), false);
-                } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
-                    currentSegmentPaneController().addTeam(
-                            segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
-                }
-                updateLabels();
+        segmentItemListView.setOnMouseClicked(click -> {
+            if (click.getButton() == MouseButton.SECONDARY) {
+                currentSegmentPaneController().addTeam(
+                        segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), false);
+            } else if (click.getButton() == MouseButton.PRIMARY && click.getClickCount() == 2) {
+                currentSegmentPaneController().addTeam(
+                        segmentItemListView.getSelectionModel().getSelectedItem().getSegmentItems(), 0);
             }
+            updateLabels();
         });
+
 
     }
 
     public void updateSegmentItemListView() {
-        List<SegmentItem> segmentItems = new ArrayList<>();
-
         int previousIndex = segmentItemListView.getSelectionModel().getSelectedIndex();
 
-        for (SegmentItem segmentItem : browseMode.listToBrowse(gameController, playerPromotion())) {
-            if (!segmentItemIsBookedForCurrentSegment(segmentItem)) {
-                segmentItems.add(segmentItem);
-            }
-        }
+        boolean isMatch = currentSegmentPaneController() != null && currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH);
 
-        boolean isMatch = currentSegmentPaneController() != null
-                ? currentSegmentPaneController().getSegmentType().equals(SegmentType.MATCH)
-                : true;
+        List<SegmentItem> availableItems = queryHelper.segmentItemsToBrowse(browseMode, playerPromotion()).stream()
+                .filter(segmentItem -> !segmentItemIsBookedForCurrentSegment(segmentItem))
+                .filter(segmentItem -> !isMatch || !hasInjury(segmentItem))
+                .collect(Collectors.toList());
 
-        Comparator comparator = sortControl != null ? sortControl.getCurrentComparator() : null;
-        FilteredList filteredList = new FilteredList<>((FXCollections.observableArrayList(segmentItems)), segmentItem
-                -> !(sortControl.isFiltered(segmentItem) || (isMatch && filterInjured(segmentItem))));
-
-        segmentItemListView.setItems(new SortedList<>(filteredList, comparator));
+        segmentItemListView.setItems(sortControl.getSortedList(availableItems));
 
         if (previousIndex > 0) {
             segmentItemListView.getSelectionModel().select(previousIndex);
         } else {
             segmentItemListView.getSelectionModel().selectFirst();
         }
-
     }
 
     private boolean segmentItemIsBookedForCurrentSegment(SegmentItem segmentItem) {
@@ -611,11 +590,10 @@ public class EventScreenController extends ControllerBase implements Initializab
         if (segment1.getMatchParticipantTeams().size() != segment2.getMatchParticipantTeams().size()) {
             return false;
         }
-        return segment1.getMatchParticipantTeams().stream().allMatch(actualTeam -> {
-            return segment2.getMatchParticipantTeams().stream().anyMatch(expectedTeam -> {
-                return teamsMatch(actualTeam, expectedTeam);
-            });
-        });
+        return segment1.getMatchParticipantTeams().stream()
+                .allMatch(actualTeam -> segment2.getMatchParticipantTeams().stream()
+                        .anyMatch(expectedTeam -> teamsMatch(actualTeam, expectedTeam))
+                );
     }
 
     private boolean teamsMatch(SegmentTeam segment1, SegmentTeam segment2) {
@@ -633,8 +611,6 @@ public class EventScreenController extends ControllerBase implements Initializab
         browseMode = BrowseMode.WORKERS;
 
         eventLength = 0;
-
-        timeLabels = new ArrayList<>(Arrays.asList(totalTimeLabel, maxTimeLabel, remainingTimeLabel));
 
         logger = LogManager.getLogger(this.getClass());
 
@@ -683,7 +659,7 @@ public class EventScreenController extends ControllerBase implements Initializab
 
     }
 
-    private boolean filterInjured(SegmentItem segmentItem) {
+    private boolean hasInjury(SegmentItem segmentItem) {
         if (!(segmentItem instanceof Worker)) {
             return false;
         }
@@ -743,14 +719,5 @@ public class EventScreenController extends ControllerBase implements Initializab
         return currentEvent;
     }
 
-    public static class SegmentNameItem {
-
-        ObjectProperty<Segment> segment = new SimpleObjectProperty();
-
-        public static Callback<SegmentNameItem, Observable[]> extractor() {
-            return (SegmentNameItem param) -> new Observable[]{param.segment};
-        }
-
-    }
 
 }

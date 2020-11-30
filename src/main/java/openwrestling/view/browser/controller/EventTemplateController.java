@@ -8,11 +8,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.StaffMember;
-import openwrestling.model.segment.constants.BrowseMode;
 import openwrestling.model.segment.constants.EventVenueSize;
 import openwrestling.model.segment.constants.StaffType;
+import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.utility.ModelUtils;
 import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
@@ -65,6 +66,9 @@ public class EventTemplateController extends ControllerBase implements Initializ
     @FXML
     private ComboBox rosterSplitComboBox;
 
+    @FXML
+    private Button editDefaultBroadcastTeamButton;
+
     private EditLabel editLabel;
 
     @Override
@@ -87,6 +91,19 @@ public class EventTemplateController extends ControllerBase implements Initializ
     public void initializeMore() {
         GameScreen screen = ViewUtils.loadScreenFromResource(ScreenCode.EDIT_LABEL, mainApp, gameController, nameAnchor);
         editLabel = (EditLabel) screen.controller;
+
+        editDefaultBroadcastTeamButton.setOnAction(e -> {
+            EditBroadcastTeamDialog dialog = new EditBroadcastTeamDialog();
+            Optional<List<StaffMember>> optionalResult = dialog.getDialog(
+                    gameController.getStaffManager().getStaff(StaffType.BROADCAST, playerPromotion()),
+                    gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(playerPromotion()),
+                    playerPromotion().getLongName()
+            ).showAndWait();
+            optionalResult.ifPresent((List<StaffMember> broadcastTeam) -> {
+                gameController.getBroadcastTeamManager().setDefaultBroadcastTeam(playerPromotion(), broadcastTeam);
+                updateLabels();
+            });
+        });
     }
 
     @Override
@@ -120,15 +137,26 @@ public class EventTemplateController extends ControllerBase implements Initializ
                     eventTemplate.getPromotion(),
                     playerPromotion());
 
-            nextEventLabel.setText(ModelUtils.dateString(
-                    gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today()).getDate())
-            );
+            Event nextEvent = gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today());
+            String nextEventLabelText = "";
+            if (nextEvent != null) {
+                nextEventLabelText = ModelUtils.dateString(nextEvent.getDate());
+                calendarButton.setDisable(false);
+            } else {
+                nextEventLabelText = "No future event booked";
+                calendarButton.setDisable(true);
+            }
+            nextEventLabel.setText(nextEventLabelText);
+
             durationLabel.setText(ModelUtils.timeString(eventTemplate.getDefaultDuration()));
             frequencyLabel.setText(eventTemplate.getEventFrequency().toString());
             broadcastLabel.setText(eventTemplate.getEventBroadcast().toString());
             broadcastTeamLabel.setText(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate).isEmpty()
                     ? ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate.getPromotion()), "None")
                     : ModelUtils.slashNames(gameController.getBroadcastTeamManager().getDefaultBroadcastTeam(eventTemplate)));
+
+            editBroadcastTeamButton.setDisable(!eventTemplate.getPromotion().equals(playerPromotion()));
+            editDefaultBroadcastTeamButton.setVisible(eventTemplate.getPromotion().equals(playerPromotion()));
         } else {
             editLabel.setCurrent(BrowseMode.EVENTS);
         }
