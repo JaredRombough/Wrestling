@@ -72,7 +72,7 @@ public class ContractController extends ControllerBase {
                 contractLabel.setText(firstContract.isExclusive() ? "Exclusive Contract" : "Open Contract");
             }
 
-            iContract playerPromotionContract = gameController.getContractManager().getContract(person, playerPromotion());
+            iContract playerPromotionContract = gameController.getContractManager().getActiveContract(person, playerPromotion());
 
             if (playerPromotionContract != null) {
                 contractTypeLabel.setVisible(true);

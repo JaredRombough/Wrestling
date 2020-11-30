@@ -68,7 +68,7 @@ public class PromotionController extends Logging implements Serializable {
             List<Worker> roster = workerManager.getRoster(promotion);
             for (Worker worker : roster) {
                 if (!pushList.contains(worker) && worker.isFullTime()) {
-                    contractManager.getContract(worker, promotion).setPushed(true);
+                    contractManager.getActiveContract(worker, promotion).setPushed(true);
                 }
                 if (i >= diff) {
                     break;
@@ -77,7 +77,7 @@ public class PromotionController extends Logging implements Serializable {
             }
         } else if (diff < 0) {
             for (int i = 0; i < pushList.size(); i++) {
-                contractManager.getContract(pushList.get(i), promotion).setPushed(false);
+                contractManager.getActiveContract(pushList.get(i), promotion).setPushed(false);
                 if (i >= Math.abs(diff)) {
                     break;
                 }

@@ -121,9 +121,9 @@ public class ContractManager extends GameObjectManager implements Serializable {
         return contractsForStaff;
     }
 
-    public iContract getContract(iPerson person, Promotion promotion) {
+    public iContract getActiveContract(iPerson person, Promotion promotion) {
         if (person instanceof Worker) {
-            return getContract((Worker) person, promotion);
+            return getActiveContract((Worker) person, promotion);
         }
         return getStaffContract((StaffMember) person, promotion);
     }
@@ -137,7 +137,7 @@ public class ContractManager extends GameObjectManager implements Serializable {
                 .orElse(null);
     }
 
-    public Contract getContract(Worker worker, Promotion promotion) {
+    public Contract getActiveContract(Worker worker, Promotion promotion) {
         Contract workerContract = null;
         for (Contract contract : contractMap.values()) {
             if (contract.isActive() && contract.getWorker().equals(worker)

@@ -149,7 +149,7 @@ public class NextDayController extends Logging {
                 .flatMap(event ->
                         event.getSegments().stream()
                                 .flatMap(segment -> segment.getWorkers().stream())
-                                .map(worker -> contractManager.getContract(worker, event.getPromotion()))
+                                .map(worker -> contractManager.getActiveContract(worker, event.getPromotion()))
                 )
                 .filter(distinctByKey(Contract::getContractID))
                 .peek(contract -> contract.setLastShowDate(dateManager.today()))

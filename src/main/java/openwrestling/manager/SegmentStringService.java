@@ -218,7 +218,7 @@ public class SegmentStringService implements Serializable {
     }
 
     public String getPercentOfShowsString(Worker worker, Promotion promotion, LocalDate today) {
-        LocalDate contractStartDate = contractManager.getContract(worker, promotion).getStartDate();
+        LocalDate contractStartDate = contractManager.getActiveContract(worker, promotion).getStartDate();
 
         float totalEvents = eventManager.getEventsBetweenDates(promotion, contractStartDate, today).size();
 
@@ -237,7 +237,7 @@ public class SegmentStringService implements Serializable {
     }
 
     public String getMissedShowStreakString(Worker worker, Promotion promotion, LocalDate today) {
-        LocalDate contractStartDate = contractManager.getContract(worker, promotion).getStartDate();
+        LocalDate contractStartDate = contractManager.getActiveContract(worker, promotion).getStartDate();
 
         float totalEvents = eventManager.getEventsBetweenDates(promotion, contractStartDate, today).size();
 

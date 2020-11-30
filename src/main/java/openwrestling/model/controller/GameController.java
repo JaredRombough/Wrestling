@@ -106,7 +106,7 @@ public final class GameController extends Logging implements Serializable {
         staffManager = new StaffManager(database, contractManager);
         titleManager = new TitleManager(database, dateManager, workerManager);
         stableManager = new StableManager(database, workerManager);
-        entourageManager = new EntourageManager(database, workerManager);
+        entourageManager = new EntourageManager(database, workerManager, contractManager);
         tagTeamManager = new TagTeamManager(database, workerManager);
         injuryManager = new InjuryManager(database, newsManager, workerManager, dateManager);
         monthlyReviewManager = new MonthlyReviewManager(database);

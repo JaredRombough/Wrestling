@@ -65,7 +65,7 @@ public class DailyRelationshipUpdate extends Logging {
     public List<NewsItem> getUpdatedMoraleRelationshipNewsItems(List<MoraleRelationship> relationships) {
         return relationships.stream()
                 .map(relationship -> {
-                    Contract contract = contractManager.getContract(relationship.getWorker(), relationship.getPromotion());
+                    Contract contract = contractManager.getActiveContract(relationship.getWorker(), relationship.getPromotion());
                     long daysBetween = DAYS.between(contract.getLastShowDate(), dateManager.today());
                     int penalty = Math.round(daysBetween / MORALE_PENALTY_DAYS_BETWEEN);
                     return newsManager.getMoraleNewsItem(contract, daysBetween, penalty, dateManager.today());
