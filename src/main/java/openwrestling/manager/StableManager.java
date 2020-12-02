@@ -39,7 +39,6 @@ public class StableManager extends GameObjectManager {
     }
 
     public void removeStableMember(Worker worker, Stable stable) {
-
         StableMember stableMember = stableMembers.stream()
                 .filter(member -> member.getWorker().equals(worker))
                 .filter(member -> member.getStable().equals(stable))
@@ -53,7 +52,6 @@ public class StableManager extends GameObjectManager {
     }
 
     public void addMemberToStable(Worker worker, Stable stable) {
-
         StableMember stableMember = StableMember.builder()
                 .worker(worker)
                 .stable(stable)

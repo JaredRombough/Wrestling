@@ -19,8 +19,8 @@ public class RosterSplitWorkerEntity extends Entity {
     private long rosterSplitWorkerID;
 
     @DatabaseField(foreign = true)
-    private WorkerEntity workerEntity;
+    private WorkerEntity worker;
 
     @DatabaseField(foreign = true)
-    private RosterSplitEntity rosterSplitEntity;
+    private RosterSplitEntity rosterSplit;
 }

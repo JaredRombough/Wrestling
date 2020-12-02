@@ -60,6 +60,7 @@ import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.RosterSplitWorker;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
@@ -96,6 +97,7 @@ public class Database extends Logging {
         put(Stable.class, StableEntity.class);
         put(StableMember.class, StableMemberEntity.class);
         put(RosterSplit.class, RosterSplitEntity.class);
+        put(RosterSplitWorker.class, RosterSplitWorkerEntity.class);
         put(Contract.class, ContractEntity.class);
         put(TagTeam.class, TagTeamEntity.class);
         put(Title.class, TitleEntity.class);
