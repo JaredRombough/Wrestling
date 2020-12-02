@@ -13,15 +13,15 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@DatabaseTable(tableName = "stable_workers")
-public class StableWorkerEntity extends Entity {
+@DatabaseTable(tableName = "stable_members")
+public class StableMemberEntity extends Entity {
 
     @DatabaseField(generatedId = true)
-    private long stableWorkerID;
+    private long stableMemberID;
 
     @DatabaseField(foreign = true)
-    private WorkerEntity workerEntity;
+    private WorkerEntity worker;
 
     @DatabaseField(foreign = true)
-    private StableEntity stableEntity;
+    private StableEntity stable;
 }

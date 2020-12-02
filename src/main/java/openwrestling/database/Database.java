@@ -37,7 +37,7 @@ import openwrestling.entities.SegmentTeamEntourageEntity;
 import openwrestling.entities.SegmentTeamWorkerEntity;
 import openwrestling.entities.SegmentTemplateEntity;
 import openwrestling.entities.StableEntity;
-import openwrestling.entities.StableWorkerEntity;
+import openwrestling.entities.StableMemberEntity;
 import openwrestling.entities.StaffContractEntity;
 import openwrestling.entities.StaffMemberEntity;
 import openwrestling.entities.TagTeamEntity;
@@ -64,6 +64,7 @@ import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StableMember;
 import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
@@ -93,6 +94,7 @@ public class Database extends Logging {
         put(Promotion.class, PromotionEntity.class);
         put(Worker.class, WorkerEntity.class);
         put(Stable.class, StableEntity.class);
+        put(StableMember.class, StableMemberEntity.class);
         put(RosterSplit.class, RosterSplitEntity.class);
         put(Contract.class, ContractEntity.class);
         put(TagTeam.class, TagTeamEntity.class);
@@ -394,7 +396,7 @@ public class Database extends Logging {
                     WorkerEntity.class,
                     PromotionEntity.class,
                     StableEntity.class,
-                    StableWorkerEntity.class,
+                    StableMemberEntity.class,
                     RosterSplitEntity.class,
                     RosterSplitWorkerEntity.class,
                     ContractEntity.class,

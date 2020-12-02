@@ -138,16 +138,12 @@ public class ContractManager extends GameObjectManager implements Serializable {
     }
 
     public Contract getActiveContract(Worker worker, Promotion promotion) {
-        Contract workerContract = null;
-        for (Contract contract : contractMap.values()) {
-            if (contract.isActive() && contract.getWorker().equals(worker)
-                    && contract.getPromotion().equals(promotion)) {
-                workerContract = contract;
-                break;
-            }
-        }
-
-        return workerContract;
+        return contractMap.values().stream()
+                .filter(Contract::isActive)
+                .filter(contract -> contract.getWorker().equals(worker))
+                .filter(contract -> contract.getPromotion().equals(promotion))
+                .findFirst()
+                .orElse(null);
     }
 
     public List<Worker> getPushed(Promotion promotion) {

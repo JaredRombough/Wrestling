@@ -93,7 +93,7 @@ public class EditLabel extends ControllerBase implements Initializable {
                     if (StringUtils.isNotBlank(groupName)) {
                         if (stableMode) {
                             Stable stable = new Stable(groupName, playerPromotion());
-                            gameController.getStableManager().addStable(stable);
+                            stable = gameController.getStableManager().createStable(stable);
                             mainApp.show(ScreenCode.BROWSER, stable);
                         } else {
                             RosterSplit rosterSplit = new RosterSplit(groupName, playerPromotion());

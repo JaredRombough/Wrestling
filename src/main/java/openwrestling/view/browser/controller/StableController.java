@@ -8,6 +8,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerGroup;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
@@ -15,7 +16,6 @@ import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +62,11 @@ public class StableController extends ControllerBase {
                         String content = String.format("Really remove %s from %s?", worker.getName(), workerGroup.getName());
                         if (ViewUtils.generateConfirmationDialogue(header, content)) {
                             workerGroup.getWorkers().remove(worker);
+
+                            if (workerGroup instanceof Stable) {
+                                gameController.getStableManager().removeStableMember(worker, (Stable) workerGroup);
+                            }
+
                             updateLabels();
                         }
                     });
@@ -94,6 +99,11 @@ public class StableController extends ControllerBase {
 
             result.ifPresent(worker -> {
                 workerGroup.getWorkers().add(worker);
+
+                if (workerGroup instanceof Stable) {
+                    gameController.getStableManager().addMemberToStable(worker, (Stable) workerGroup);
+                }
+
                 updateLabels();
             });
         });
@@ -110,9 +120,7 @@ public class StableController extends ControllerBase {
     public void updateLabels() {
         if (workerGroup != null) {
             ownerLabel.setText(workerGroup.getOwner().getName());
-            if (CollectionUtils.isNotEmpty(workerGroup.getWorkers())) {
-                listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
-            }
+            listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
         }
 
         gridPane.setVisible(workerGroup != null);

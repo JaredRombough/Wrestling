@@ -23,15 +23,12 @@ import java.util.stream.Collectors;
 @DatabaseTable(tableName = "stables")
 public class StableEntity extends Entity {
 
+    @ForeignCollectionField(eager = true)
+    public ForeignCollection<StableMemberEntity> stableWorkers;
     @DatabaseField(generatedId = true)
     private long stableID;
-
     @DatabaseField
     private String name;
-
-    @ForeignCollectionField(eager = true)
-    public ForeignCollection<StableWorkerEntity> stableWorkers;
-
     @DatabaseField(foreign = true)
     private PromotionEntity owner;
 
@@ -42,16 +39,16 @@ public class StableEntity extends Entity {
             return List.of();
         }
         return workers.stream().map(worker ->
-                StableWorkerEntity.builder()
-                        .workerEntity(worker)
-                        .stableEntity(this)
+                StableMemberEntity.builder()
+                        .worker(worker)
+                        .stable(this)
                         .build()
         ).collect(Collectors.toList());
     }
 
     public void selectChildren() {
         workers = stableWorkers.stream()
-                .map(StableWorkerEntity::getWorkerEntity)
+                .map(StableMemberEntity::getWorker)
                 .collect(Collectors.toList());
     }
 
