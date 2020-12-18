@@ -35,9 +35,10 @@ public class TitleManager extends GameObjectManager implements Serializable {
         selectTitles();
     }
 
-    public void createTitle(Title title) {
-        createTitles(List.of(title));
+    public Title createTitle(Title title) {
+        Title savedTitle = createTitles(List.of(title)).get(0);
         selectTitles();
+        return savedTitle;
     }
 
     private void selectTitles() {
@@ -54,8 +55,9 @@ public class TitleManager extends GameObjectManager implements Serializable {
         });
     }
 
-    public void createTitles(List<Title> titles) {
+    public List<Title> createTitles(List<Title> titles) {
         List<TitleReign> titleReigns = new ArrayList<>();
+        List<Long> savedIDs = new ArrayList<>();
         titles.forEach(title -> {
             if (CollectionUtils.isEmpty(title.getTitleReigns())) {
                 TitleReign vacant = TitleReign.builder()
@@ -67,11 +69,16 @@ public class TitleManager extends GameObjectManager implements Serializable {
 
             TitleReign titleReign = title.getTitleReigns().get(0);
             Title saved = getDatabase().insertGameObject(title);
+            savedIDs.add(saved.getTitleID());
             titleReign.setTitle(saved);
             titleReigns.add(titleReign);
         });
         getDatabase().insertList(titleReigns);
         selectTitles();
+
+        return this.titles.stream()
+                .filter(title -> savedIDs.contains(title.getTitleID()))
+                .collect(Collectors.toList());
     }
 
     public void updateTitle(Title title) {

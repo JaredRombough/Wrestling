@@ -73,5 +73,13 @@ public class StableManager extends GameObjectManager {
         return saved;
     }
 
+    public void updateStables(List<Stable> stables) {
+        getDatabase().updateList(stables);
+        selectData();
+    }
+
+    public void updateStable(Stable stable) {
+        updateStables(List.of(stable));
+    }
 
 }

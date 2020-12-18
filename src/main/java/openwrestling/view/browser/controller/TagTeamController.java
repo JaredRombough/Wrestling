@@ -1,7 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -72,17 +70,16 @@ public class TagTeamController extends ControllerBase implements Initializable {
         editLabel.setCurrent(tagTeam);
 
         if (tagTeam != null) {
-            ComboBox comboBox = ViewUtils.updatePlayerComboBox(
+            ComboBox<ActiveType> comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     gameController.getWorkerManager().getRoster(playerPromotion()).containsAll(tagTeam.getWorkers()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     tagTeam.getActiveType());
-            comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {
-                @Override
-                public void changed(ObservableValue<? extends ActiveType> observable, ActiveType oldValue, ActiveType newValue) {
-                    tagTeam.setActiveType(newValue);
-                }
-            });
+            comboBox.getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        tagTeam.setActiveType(newValue);
+                        tagTeam = gameController.getTagTeamManager().updateTagTeam(tagTeam);
+                    });
 
             imageAnchor1.getChildren().clear();
             imageAnchor2.getChildren().clear();

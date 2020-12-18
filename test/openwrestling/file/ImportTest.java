@@ -1,5 +1,6 @@
 package openwrestling.file;
 
+import openwrestling.database.Database;
 import openwrestling.model.gameObjects.Contract;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
@@ -19,14 +20,17 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static openwrestling.TestUtils.TEST_DB_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ImportTest {
 
     private ImportHelper importHelper;
+    private Database database;
 
     @Before
     public void setUp() {
+        database = new Database(TEST_DB_PATH);
         importHelper = new ImportHelper(new File(".\\test_data"));
     }
 
@@ -174,17 +178,27 @@ public class ImportTest {
 
     @Test
     public void stablesDat() {
-        List<Worker> workers = importHelper.workersDat();
-        List<Promotion> promotions = importHelper.promotionsDat("promos");
-        List<Stable> stables = importHelper.stablesDat(workers, promotions);
+        List<Worker> workers = database.insertList(importHelper.workersDat());
+        List<Promotion> promotions = database.insertList(importHelper.promotionsDat("promos"));
+        List<Contract> contracts = database.insertList(importHelper.contracts(workers, promotions, LocalDate.now()));
+        List<Stable> stables = importHelper.stablesDat(workers, promotions, contracts);
         assertThat(stables).hasSize(12);
-        assertThat(stables.get(2).getWorkers()).hasSize(4);
+        assertThat(stables.get(2).getWorkers()).hasSize(3);
         stables.forEach(stable -> {
             assertThat(stable.getActiveType()).isNotNull();
             assertThat(stable.getName()).isNotNull();
             assertThat(stable.getWorkers()).isNotEmpty();
             assertThat(stable.getOwner()).isNotNull();
         });
+    }
+
+    @Test
+    public void stablesDat_noContractBetweenWorkerAndPromotion_doesNotAddToStable() {
+        List<Worker> workers = importHelper.workersDat();
+        List<Promotion> promotions = importHelper.promotionsDat("promos");
+        List<Stable> stables = importHelper.stablesDat(workers, promotions, List.of());
+        assertThat(stables).hasSize(12);
+        stables.forEach(stable -> assertThat(stable.getWorkers().isEmpty()));
     }
 
     @Test

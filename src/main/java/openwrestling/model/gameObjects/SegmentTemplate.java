@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,7 +18,7 @@ public class SegmentTemplate extends GameObject {
     private long segmentTemplateID;
     private EventTemplate eventTemplate;
     private Title title;
-    private List<SegmentTeam> segmentTeams = new ArrayList<>();
+    private List<SegmentTeam> segmentTeams;
     private LocalDate sourceEventDate;
     private String sourceEventName;
 }

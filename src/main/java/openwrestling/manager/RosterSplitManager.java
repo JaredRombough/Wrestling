@@ -2,6 +2,7 @@ package openwrestling.manager;
 
 import lombok.Getter;
 import openwrestling.database.Database;
+import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.RosterSplitWorker;
 import openwrestling.model.gameObjects.Worker;
@@ -69,4 +70,14 @@ public class RosterSplitManager extends GameObjectManager {
         selectData();
         return saved;
     }
+
+    public void updateRosterSplit(RosterSplit rosterSplit) {
+        updateRosterSplits(List.of(rosterSplit));
+    }
+
+    public void updateRosterSplits(List<RosterSplit> rosterSplits) {
+        getDatabase().updateList(rosterSplits);
+        selectData();
+    }
+
 }

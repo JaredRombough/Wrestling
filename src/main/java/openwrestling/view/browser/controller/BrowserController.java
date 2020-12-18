@@ -14,6 +14,8 @@ import javafx.scene.layout.GridPane;
 import openwrestling.model.SegmentItem;
 import openwrestling.model.gameObjects.EventTemplate;
 import openwrestling.model.gameObjects.Promotion;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
 import openwrestling.model.segment.constants.browse.mode.GameObjectQueryHelper;
@@ -245,12 +247,20 @@ public class BrowserController extends ControllerBase implements Initializable {
             } else {
                 for (Promotion promotion : gameController.getPromotionManager().getPromotions()) {
                     if (gameController.getTagTeamManager().getTagTeams(promotion).contains(tagTeam)) {
-                        setCurrentPromotion(playerPromotion());
+                        setCurrentPromotion(promotion);
                         break;
                     }
                 }
             }
             selectSegmentItem(BrowseMode.TAG_TEAMS, tagTeam);
+        } else if (obj instanceof Stable) {
+            Stable stable = (Stable) obj;
+            setCurrentPromotion(stable.getOwner());
+            selectSegmentItem(STABLES, stable);
+        } else if (obj instanceof RosterSplit) {
+            RosterSplit rosterSplit = (RosterSplit) obj;
+            setCurrentPromotion(rosterSplit.getOwner());
+            selectSegmentItem(ROSTER_SPLIT, rosterSplit);
         } else if (obj instanceof BrowseParams) {
             BrowseParams params = (BrowseParams) obj;
             setCurrentPromotion(params.promotion);

@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import openwrestling.model.controller.GameController;
 import openwrestling.model.gameObjects.TagTeam;
 import openwrestling.model.gameObjects.Worker;
+import openwrestling.model.segment.constants.ActiveType;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.comparators.NameComparator;
 
@@ -24,7 +25,7 @@ public class CreateTagTeamDialog {
 
     private boolean createDialogUpdating = false;
 
-    public Dialog<TagTeam> getDialog(GameController gameController) {
+    public TagTeam getDialog(GameController gameController) {
         Dialog<TagTeam> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField tagTeamName = new TextField();
@@ -66,15 +67,16 @@ public class CreateTagTeamDialog {
 
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                TagTeam newTagTeam = gameController.getTagTeamManager().createTagTeam(
-                        tagTeamName.getText(),
-                        workerA.getSelectionModel().getSelectedItem(),
-                        workerB.getSelectionModel().getSelectedItem());
-                return newTagTeam;
+                return TagTeam.builder()
+                        .name(tagTeamName.getText())
+                        .workers(List.of(workerA.getSelectionModel().getSelectedItem(), workerB.getSelectionModel().getSelectedItem()))
+                        .activeType(ActiveType.ACTIVE)
+                        .experience(0)
+                        .build();
             }
             return null;
         });
-        return dialog;
+        return dialog.showAndWait().orElse(null);
     }
 
     private void updateCreateTeamComboBox(Worker worker, List<Worker> workers, ComboBox<Worker> otherComboBox) {

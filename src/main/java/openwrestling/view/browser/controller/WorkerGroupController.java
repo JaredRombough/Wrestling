@@ -115,7 +115,9 @@ public class WorkerGroupController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        if (workerGroup != object) {
+        if (object == null) {
+            updateLabels();
+        } else if (workerGroup != object) {
             workerGroup = (WorkerGroup) object;
             workerGroup.setOwner(gameController.getPromotionManager().refreshPromotion(workerGroup.getOwner()));
             editLabel.setCurrent(object);

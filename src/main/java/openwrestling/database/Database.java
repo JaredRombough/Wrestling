@@ -195,12 +195,18 @@ public class Database extends Logging {
     }
 
     public void deleteByID(Class sourceClass, long id) {
+        long start = System.currentTimeMillis();
         try {
             Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
 
             dao.deleteById(id);
+            logger.log(Level.DEBUG,
+                    String.format("deleteByID class %s id %s took %d",
+                            sourceClass.getName(),
+                            id,
+                            (System.currentTimeMillis() - start)));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static openwrestling.model.constants.UIConstants.EDIT_ICON;
@@ -64,12 +63,17 @@ public class EditLabel extends ControllerBase implements Initializable {
                 } else if (segmentItem instanceof TagTeam) {
                     TagTeam tagTeam = (TagTeam) object;
                     tagTeam.setName(ViewUtils.editTextDialog(tagTeam.getName()));
+                    gameController.getTagTeamManager().updateTagTeam(tagTeam);
                 } else if (segmentItem instanceof Stable) {
                     Stable stable = (Stable) object;
                     stable.setName(ViewUtils.editTextDialog(stable.getName()));
+                    gameController.getStableManager().updateStable(stable);
+                } else if (segmentItem instanceof RosterSplit) {
+                    RosterSplit rosterSplit = (RosterSplit) object;
+                    rosterSplit.setName(ViewUtils.editTextDialog(rosterSplit.getName()));
+                    gameController.getRosterSplitManager().updateRosterSplit(rosterSplit);
                 }
-                updateLabels();
-                mainApp.updateLabels(ScreenCode.BROWSER);
+                mainApp.show(ScreenCode.BROWSER, segmentItem);
             });
 
         } else {
@@ -81,31 +85,35 @@ public class EditLabel extends ControllerBase implements Initializable {
             if (segmentItem instanceof EventTemplate || BrowseMode.EVENTS.equals(browseMode)) {
                 mainApp.show(ScreenCode.CALENDAR);
             } else {
-                Optional<? extends SegmentItem> optionalResult = Optional.empty();
+                SegmentItem newlyCreatedSegmentItem = null;
                 if (segmentItem instanceof Title || BrowseMode.TITLES.equals(browseMode)) {
-                    optionalResult = ViewUtils.createTitleViewDialog(gameController).showAndWait();
+                    Title title = ViewUtils.createTitleViewDialog(gameController);
+                    if (title != null) {
+                        newlyCreatedSegmentItem = gameController.getTitleManager().createTitle(title);
+                    }
                 } else if (segmentItem instanceof TagTeam || BrowseMode.TAG_TEAMS.equals(browseMode)) {
                     CreateTagTeamDialog createTagTeamDialog = new CreateTagTeamDialog();
-                    optionalResult = createTagTeamDialog.getDialog(gameController).showAndWait();
+                    TagTeam tagTeam = createTagTeamDialog.getDialog(gameController);
+                    if (tagTeam != null) {
+                        newlyCreatedSegmentItem = gameController.getTagTeamManager().createTagTeam(tagTeam);
+                    }
                 } else if (BrowseMode.STABLES.equals(browseMode) || BrowseMode.ROSTER_SPLIT.equals(browseMode)) {
                     boolean stableMode = BrowseMode.STABLES.equals(browseMode);
                     String groupName = ViewUtils.editTextDialog("", String.format("%s name:", stableMode ? "Stable" : "Roster split"));
                     if (StringUtils.isNotBlank(groupName)) {
                         if (stableMode) {
                             Stable stable = new Stable(groupName, playerPromotion());
-                            stable = gameController.getStableManager().createStable(stable);
-                            mainApp.show(ScreenCode.BROWSER, stable);
+                            newlyCreatedSegmentItem = gameController.getStableManager().createStable(stable);
                         } else {
                             RosterSplit rosterSplit = new RosterSplit(groupName, playerPromotion());
-                            gameController.getRosterSplitManager().createRosterSplits(List.of(rosterSplit));
-                            mainApp.show(ScreenCode.BROWSER, rosterSplit);
+                            newlyCreatedSegmentItem = gameController.getRosterSplitManager().createRosterSplits(List.of(rosterSplit)).get(0);
                         }
                     }
                 }
 
-                optionalResult.ifPresent((SegmentItem newSegmentItem) -> {
-                    mainApp.show(ScreenCode.BROWSER, newSegmentItem);
-                });
+                if (newlyCreatedSegmentItem != null) {
+                    mainApp.show(ScreenCode.BROWSER, newlyCreatedSegmentItem);
+                }
             }
         });
 

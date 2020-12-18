@@ -30,6 +30,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -86,11 +87,11 @@ public final class ViewUtils {
         return updatePlayerComboBox(anchorPane, isPlayerPromotion, Arrays.asList(objects), object);
     }
 
-    public static ComboBox updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
-                                                List objects, Object object) {
+    public static <T> ComboBox<T> updatePlayerComboBox(AnchorPane anchorPane, boolean isPlayerPromotion,
+                                                List<T> objects, T object) {
         anchorPane.getChildren().clear();
 
-        ComboBox comboBox = new ComboBox();
+        ComboBox<T> comboBox = new ComboBox<>();
         ViewUtils.anchorRegionToParent(anchorPane, comboBox);
         comboBox.setItems(FXCollections.observableArrayList(objects));
         comboBox.getSelectionModel().select(object);
@@ -283,6 +284,14 @@ public final class ViewUtils {
     public static String editTextDialog(String string, String header) {
         TextInputDialog dialog = new TextInputDialog(string);
         dialog.setHeaderText(header);
+        dialog.getEditor().setOnKeyPressed(ke -> {
+            KeyCode keyCode = ke.getCode();
+            if (keyCode.equals(KeyCode.ENTER)) {
+                Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+                okButton.fire();
+            }
+        });
+
         dialog.getDialogPane().getStylesheets().add("style.css");
 
         Optional<String> result = dialog.showAndWait();
@@ -311,7 +320,7 @@ public final class ViewUtils {
         return editTextDialog(string, "Edit this value");
     }
 
-    public static Dialog<Title> createTitleViewDialog(GameController gameController) {
+    public static Title createTitleViewDialog(GameController gameController) {
         Dialog<Title> dialog = new Dialog<>();
         DialogPane dialogPane = dialog.getDialogPane();
         TextField titleName = new TextField();
@@ -345,7 +354,8 @@ public final class ViewUtils {
             }
             return null;
         });
-        return dialog;
+
+        return dialog.showAndWait().orElse(null);
     }
 
     public static void anchorRegionToParent(AnchorPane parent, Region child) {
@@ -566,11 +576,6 @@ public final class ViewUtils {
         } else {
             comboBox.getSelectionModel().selectFirst();
         }
-        comboBox.setOnAction(e -> {
-            if (comboBox.getSelectionModel().getSelectedItem() instanceof Stable) {
-                item.setRosterSplit((RosterSplit) comboBox.getSelectionModel().getSelectedItem());
-            }
-        });
     }
 
     public static void updateWorkerStatLabelStyle(List<Label> statLabels) {
