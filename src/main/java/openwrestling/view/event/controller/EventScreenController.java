@@ -332,8 +332,10 @@ public class EventScreenController extends ControllerBase implements Initializab
 
         int currentCost = 0;
 
-        for (Worker worker : allWorkers()) {
-            currentCost += gameController.getContractManager().getContract(worker, playerPromotion()).getAppearanceCost();
+        List<Worker> allWorkers = allWorkers();
+
+        for (Worker worker : allWorkers) {
+            currentCost += gameController.getContractManager().getActiveContract(worker, playerPromotion()).getAppearanceCost();
 
         }
         return currentCost;

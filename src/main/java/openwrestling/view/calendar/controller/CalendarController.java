@@ -105,6 +105,7 @@ public class CalendarController extends ControllerBase implements Initializable 
 
         eventSeriesButton.setText("View Event Series");
         eventSeriesButton.setOnAction(e -> mainApp.show(ScreenCode.BROWSER, currentEvent.getEventTemplate()));
+        eventSeriesButton.setVisible(false);
 
         initializeButtons();
 
@@ -116,6 +117,9 @@ public class CalendarController extends ControllerBase implements Initializable 
                 eventSummaryText.setTextAlignment(TextAlignment.CENTER);
                 eventSummaryText.wrappingWidthProperty().bind(eventSummaryScrollPane.widthProperty());
                 eventSummaryScrollPane.setContent(eventSummaryText);
+                eventSeriesButton.setVisible(true);
+            } else {
+                eventSeriesButton.setVisible(false);
             }
         });
     }

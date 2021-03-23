@@ -8,6 +8,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.Stable;
 import openwrestling.model.gameObjects.Worker;
 import openwrestling.model.gameObjects.WorkerGroup;
 import openwrestling.model.segment.constants.browse.mode.BrowseMode;
@@ -15,7 +17,6 @@ import openwrestling.view.utility.GameScreen;
 import openwrestling.view.utility.ScreenCode;
 import openwrestling.view.utility.ViewUtils;
 import openwrestling.view.utility.interfaces.ControllerBase;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class StableController extends ControllerBase {
+public class WorkerGroupController extends ControllerBase {
 
     @FXML
     private AnchorPane nameAnchor;
@@ -46,7 +47,7 @@ public class StableController extends ControllerBase {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        listView.setCellFactory(c -> new ListCell<Worker>() {
+        listView.setCellFactory(c -> new ListCell<>() {
             @Override
             public void updateItem(Worker worker, boolean empty) {
                 super.updateItem(worker, empty);
@@ -54,19 +55,26 @@ public class StableController extends ControllerBase {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    GameScreen stableMemberScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
-                    GroupMemberController cotroller = (GroupMemberController) stableMemberScreen.controller;
-                    cotroller.setCurrent(worker);
-                    cotroller.getxButton().setOnAction(a -> {
+                    GameScreen groupMemberScreen = ViewUtils.loadScreenFromFXML(ScreenCode.GROUP_MEMBER, mainApp, gameController);
+                    GroupMemberController controller = (GroupMemberController) groupMemberScreen.controller;
+                    controller.setCurrent(worker);
+                    controller.getxButton().setOnAction(a -> {
                         String header = String.format("Removing worker from %s", workerGroup.getName());
                         String content = String.format("Really remove %s from %s?", worker.getName(), workerGroup.getName());
                         if (ViewUtils.generateConfirmationDialogue(header, content)) {
                             workerGroup.getWorkers().remove(worker);
+
+                            if (workerGroup instanceof Stable) {
+                                gameController.getStableManager().removeStableMember(worker, (Stable) workerGroup);
+                            } else if (workerGroup instanceof RosterSplit) {
+                                gameController.getRosterSplitManager().removeFromRosterSplit(worker, (RosterSplit) workerGroup);
+                            }
+
                             updateLabels();
                         }
                     });
-                    cotroller.setEditable(workerGroup.getOwner().equals(playerPromotion()));
-                    setGraphic(stableMemberScreen.pane);
+                    controller.setEditable(workerGroup.getOwner().equals(playerPromotion()));
+                    setGraphic(groupMemberScreen.pane);
                 }
             }
         });
@@ -82,7 +90,6 @@ public class StableController extends ControllerBase {
         editLabel = (EditLabel) screen.controller;
 
         addButton.setOnAction(a -> {
-
             List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(playerPromotion()));
             workers.removeAll(workerGroup.getWorkers());
 
@@ -94,6 +101,13 @@ public class StableController extends ControllerBase {
 
             result.ifPresent(worker -> {
                 workerGroup.getWorkers().add(worker);
+
+                if (workerGroup instanceof Stable) {
+                    gameController.getStableManager().addMemberToStable(worker, (Stable) workerGroup);
+                } else if (workerGroup instanceof RosterSplit) {
+                    gameController.getRosterSplitManager().addWorkerToRosterSplit(worker, (RosterSplit) workerGroup);
+                }
+
                 updateLabels();
             });
         });
@@ -101,23 +115,25 @@ public class StableController extends ControllerBase {
 
     @Override
     public void setCurrent(Object object) {
-        workerGroup = (WorkerGroup) object;
-        editLabel.setCurrent(object);
-        updateLabels();
+        if (object == null) {
+            updateLabels();
+        } else if (workerGroup != object) {
+            workerGroup = (WorkerGroup) object;
+            workerGroup.setOwner(gameController.getPromotionManager().refreshPromotion(workerGroup.getOwner()));
+            editLabel.setCurrent(object);
+            updateLabels();
+        }
     }
 
     @Override
     public void updateLabels() {
         if (workerGroup != null) {
             ownerLabel.setText(workerGroup.getOwner().getName());
-            if (CollectionUtils.isNotEmpty(workerGroup.getWorkers())) {
-                listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
-            }
+            listView.setItems(FXCollections.observableArrayList(workerGroup.getWorkers()));
         }
 
         gridPane.setVisible(workerGroup != null);
         addButton.setVisible(workerGroup != null && workerGroup.getOwner().equals(playerPromotion()));
-        ownerLabel.setVisible(workerGroup != null && workerGroup.getOwner().equals(playerPromotion()));
     }
 
 }

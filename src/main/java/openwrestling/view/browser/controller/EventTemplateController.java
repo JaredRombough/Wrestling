@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import openwrestling.model.gameObjects.Event;
 import openwrestling.model.gameObjects.EventTemplate;
+import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.segment.constants.EventVenueSize;
 import openwrestling.model.segment.constants.StaffType;
@@ -136,6 +137,12 @@ public class EventTemplateController extends ControllerBase implements Initializ
                     eventTemplate,
                     eventTemplate.getPromotion(),
                     playerPromotion());
+            rosterSplitComboBox.setOnAction(e -> {
+                if (rosterSplitComboBox.getSelectionModel().getSelectedItem() instanceof RosterSplit) {
+                    eventTemplate.setRosterSplit((RosterSplit) rosterSplitComboBox.getSelectionModel().getSelectedItem());
+                    gameController.getEventManager().updateEventTemplates(List.of(eventTemplate));
+                }
+            });
 
             Event nextEvent = gameController.getEventManager().getNextEvent(eventTemplate, gameController.getDateManager().today());
             String nextEventLabelText = "";

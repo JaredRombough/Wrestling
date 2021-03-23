@@ -200,7 +200,7 @@ public class ImportHelper extends Logging {
         return tagTeams;
     }
 
-    List<Stable> stablesDat(List<Worker> workers, List<Promotion> promotions) {
+    List<Stable> stablesDat(List<Worker> workers, List<Promotion> promotions, List<Contract> contracts) {
         List<Stable> stables = new ArrayList<>();
         List<List<String>> hexLines = getHexLines(importFolder, "stables", 70);
 
@@ -217,9 +217,28 @@ public class ImportHelper extends Logging {
 
             for (int f = 28; f < hexLine.size() - 1; f += 2) {
                 int id = hexStringToInt(hexLine.get(f) + hexLine.get(f + 1));
-                Optional<Worker> worker = workers.stream().filter(worker1 -> worker1.getImportKey() == id).findFirst();
+                Optional<Worker> worker = workers.stream()
+                        .filter(worker1 -> worker1.getImportKey() == id)
+                        .filter(worker1 -> !stable.getWorkers().contains(worker1))
+                        .findFirst();
+
                 worker.ifPresent(worker1 -> {
-                    stable.getWorkers().add(worker1);
+                    Contract contract = contracts.stream()
+                            .filter(Contract::isActive)
+                            .filter(c -> c.getWorker().equals(worker1))
+                            .filter(c -> c.getPromotion().equals(stable.getOwner()))
+                            .findFirst()
+                            .orElse(null);
+                    if (contract == null) {
+                        logger.log(Level.WARN,
+                                String.format("Tried to add worker %s to stable %s, but contract with stable owner %s not found.",
+                                        worker1.getName(),
+                                        stable.getName(),
+                                        stable.getOwner().getName()
+                                ));
+                    } else {
+                        stable.getWorkers().add(worker1);
+                    }
                 });
             }
 

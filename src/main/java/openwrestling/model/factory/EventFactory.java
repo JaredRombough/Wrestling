@@ -233,7 +233,7 @@ public class EventFactory extends Logging {
             if (newMembers.size() > 1) {
                 Stable stable = new Stable(ModelUtils.slashNames(newMembers), segment.getPromotion());
                 stable.setWorkers(newMembers);
-                stableManager.addStable(stable);
+                stableManager.createStables(List.of(stable));
                 segment.setNewStable(stable);
             }
 

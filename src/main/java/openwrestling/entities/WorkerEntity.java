@@ -25,7 +25,7 @@ public class WorkerEntity extends Entity {
     public ForeignCollection<ContractEntity> contractEntities;
 
     @ForeignCollectionField(eager = true)
-    public Collection<StableWorkerEntity> workerGroups;
+    public Collection<StableMemberEntity> workerGroups;
 
     @DatabaseField(generatedId = true)
     private long workerID;

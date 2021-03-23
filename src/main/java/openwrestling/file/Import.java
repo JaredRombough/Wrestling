@@ -73,12 +73,12 @@ public class Import {
                 rosterSplits = gameController.getRosterSplitManager().createRosterSplits(rosterSplits);
 
                 List<Contract> contracts = importHelper.contracts(workers, promotions, gameController.getDateManager().today());
-                gameController.getContractManager().createContracts(contracts);
+                contracts = gameController.getContractManager().createContracts(contracts);
 
                 List<TagTeam> tagTeams = importHelper.teamsDat(workers);
                 gameController.getTagTeamManager().createTagTeams(tagTeams);
 
-                List<Stable> stables = importHelper.stablesDat(workers, promotions);
+                List<Stable> stables = importHelper.stablesDat(workers, promotions, contracts);
                 gameController.getStableManager().createStables(stables);
 
                 List<Title> titles = importHelper.beltDat(promotions, workers, gameController.getDateManager().today(), rosterSplits);

@@ -37,7 +37,7 @@ import openwrestling.entities.SegmentTeamEntourageEntity;
 import openwrestling.entities.SegmentTeamWorkerEntity;
 import openwrestling.entities.SegmentTemplateEntity;
 import openwrestling.entities.StableEntity;
-import openwrestling.entities.StableWorkerEntity;
+import openwrestling.entities.StableMemberEntity;
 import openwrestling.entities.StaffContractEntity;
 import openwrestling.entities.StaffMemberEntity;
 import openwrestling.entities.TagTeamEntity;
@@ -60,10 +60,12 @@ import openwrestling.model.gameObjects.MonthlyReview;
 import openwrestling.model.gameObjects.MoraleRelationship;
 import openwrestling.model.gameObjects.Promotion;
 import openwrestling.model.gameObjects.RosterSplit;
+import openwrestling.model.gameObjects.RosterSplitWorker;
 import openwrestling.model.gameObjects.Segment;
 import openwrestling.model.gameObjects.SegmentTeam;
 import openwrestling.model.gameObjects.SegmentTemplate;
 import openwrestling.model.gameObjects.Stable;
+import openwrestling.model.gameObjects.StableMember;
 import openwrestling.model.gameObjects.StaffContract;
 import openwrestling.model.gameObjects.StaffMember;
 import openwrestling.model.gameObjects.TagTeam;
@@ -93,7 +95,9 @@ public class Database extends Logging {
         put(Promotion.class, PromotionEntity.class);
         put(Worker.class, WorkerEntity.class);
         put(Stable.class, StableEntity.class);
+        put(StableMember.class, StableMemberEntity.class);
         put(RosterSplit.class, RosterSplitEntity.class);
+        put(RosterSplitWorker.class, RosterSplitWorkerEntity.class);
         put(Contract.class, ContractEntity.class);
         put(TagTeam.class, TagTeamEntity.class);
         put(Title.class, TitleEntity.class);
@@ -191,12 +195,18 @@ public class Database extends Logging {
     }
 
     public void deleteByID(Class sourceClass, long id) {
+        long start = System.currentTimeMillis();
         try {
             Class<? extends Entity> targetClass = daoClassMap.get(sourceClass);
             ConnectionSource connectionSource = new JdbcConnectionSource(dbUrl);
             Dao dao = DaoManager.createDao(connectionSource, targetClass);
 
             dao.deleteById(id);
+            logger.log(Level.DEBUG,
+                    String.format("deleteByID class %s id %s took %d",
+                            sourceClass.getName(),
+                            id,
+                            (System.currentTimeMillis() - start)));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -394,7 +404,7 @@ public class Database extends Logging {
                     WorkerEntity.class,
                     PromotionEntity.class,
                     StableEntity.class,
-                    StableWorkerEntity.class,
+                    StableMemberEntity.class,
                     RosterSplitEntity.class,
                     RosterSplitWorkerEntity.class,
                     ContractEntity.class,

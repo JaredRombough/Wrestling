@@ -379,7 +379,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
             entouragePaneController.removeSegmentItem(segmentItem);
             if (segmentItem instanceof Worker) {
                 Worker worker = (Worker) segmentItem;
-                gameController.getEntourageManager().getEntourage(worker)
+                gameController.getEntourageManager().getEntourage(worker, playerPromotion())
                         .forEach(item -> entouragePaneController.removeSegmentItem(item));
             }
         }
@@ -402,7 +402,7 @@ public class TeamPaneWrapper extends ControllerBase implements Initializable {
         teamPaneController.addSegmentItem(segmentItem);
         if (segmentItem instanceof Worker) {
             Worker worker = (Worker) segmentItem;
-            gameController.getEntourageManager().getEntourage(worker)
+            gameController.getEntourageManager().getEntourage(worker, playerPromotion())
                     .forEach(item -> entouragePaneController.addSegmentItem(item));
         }
     }

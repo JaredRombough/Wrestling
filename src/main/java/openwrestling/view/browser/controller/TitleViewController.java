@@ -1,7 +1,5 @@
 package openwrestling.view.browser.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,6 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import openwrestling.model.gameObjects.RosterSplit;
 import openwrestling.model.gameObjects.Title;
 import openwrestling.model.gameObjects.TitleReign;
 import openwrestling.model.segment.constants.ActiveType;
@@ -94,23 +93,29 @@ public class TitleViewController extends ControllerBase implements Initializable
         editLabel.setCurrent(title);
 
         if (title != null) {
-            ComboBox comboBox = ViewUtils.updatePlayerComboBox(
+            ComboBox<ActiveType> comboBox = ViewUtils.updatePlayerComboBox(
                     activeTypeAnchorPane,
                     playerPromotion().equals(title.getPromotion()),
                     Arrays.asList(ActiveType.ACTIVE, ActiveType.INACTIVE),
                     title.getActiveType());
-            comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActiveType>() {
-                @Override
-                public void changed(ObservableValue<? extends ActiveType> observable, ActiveType oldValue, ActiveType newValue) {
-                    title.setActiveType(newValue);
-                }
-            });
+            comboBox.getSelectionModel().select(title.getActiveType());
+            comboBox.getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        title.setActiveType(newValue);
+                        gameController.getTitleManager().updateTitle(title);
+                    });
 
             updateRosterSplitComboBox(rosterSplitComboBox,
                     gameController.getRosterSplitManager().getRosterSplits(),
                     title,
                     title.getPromotion(),
                     playerPromotion());
+            rosterSplitComboBox.setOnAction(e -> {
+                if (rosterSplitComboBox.getSelectionModel().getSelectedItem() instanceof RosterSplit) {
+                    title.setRosterSplit((RosterSplit) rosterSplitComboBox.getSelectionModel().getSelectedItem());
+                    gameController.getTitleManager().updateTitle(title);
+                }
+            });
 
             prestigeLabel.setText(String.valueOf(title.getPrestige()));
 

@@ -270,7 +270,7 @@ public class EventManager extends GameObjectManager implements Serializable {
                 .collect(Collectors.toList());
 
         for (Worker worker : allWorkers(matches)) {
-            currentCost += contractManager.getContract(worker, event.getPromotion()).getAppearanceCost();
+            currentCost += contractManager.getActiveContract(worker, event.getPromotion()).getAppearanceCost();
         }
         return currentCost;
     }
@@ -280,7 +280,7 @@ public class EventManager extends GameObjectManager implements Serializable {
         int currentCost = 0;
 
         for (Worker worker : allWorkers(segments)) {
-            currentCost += contractManager.getContract(worker, promotion).getAppearanceCost();
+            currentCost += contractManager.getActiveContract(worker, promotion).getAppearanceCost();
         }
         return currentCost;
     }

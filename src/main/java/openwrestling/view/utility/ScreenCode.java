@@ -83,7 +83,7 @@ public enum ScreenCode implements ScreenCodeInterface {
     STABLE {
         @Override
         public String resourcePath() {
-            return "view/browser/Stable.fxml";
+            return "view/browser/WorkerGroup.fxml";
         }
 
         @Override

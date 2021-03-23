@@ -170,7 +170,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
         entourageButton.setOnAction(a -> {
             List<Worker> workers = new ArrayList<>(gameController.getWorkerManager().getRoster(promotion));
-            workers.removeAll(gameController.getEntourageManager().getEntourage(worker));
+            workers.removeAll(gameController.getEntourageManager().getEntourage(worker, promotion));
             workers.remove(worker);
             Optional<Worker> result = ViewUtils.selectWorkerDialog(
                     workers,
@@ -272,7 +272,7 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
 
             updateManagerLabels();
             entourageListView.getItems().clear();
-            entourageListView.getItems().addAll(gameController.getEntourageManager().getEntourage(worker));
+            entourageListView.getItems().addAll(gameController.getEntourageManager().getEntourage(worker, promotion));
 
             Injury workerInjury = gameController.getInjuryManager().getInjury(worker);
             if (workerInjury != null) {
@@ -281,11 +281,6 @@ public class WorkerOverviewController extends ControllerBase implements Initiali
             }
             injury.setVisible(workerInjury != null);
             injuryLabel.setVisible(workerInjury != null);
-
-//            imageAnchor.getChildren().clear();
-//            GameScreen card = ViewUtils.loadScreenFromResource(ScreenCode.RESULTS_CARD, mainApp, gameController, imageAnchor);
-//            card.controller.setCurrent(worker);
-//            ((ResultsCardController) card.controller).setNameLabelVisible(false);
 
             ViewUtils.updateWorkerMoraleLabel(moraleLabel);
 

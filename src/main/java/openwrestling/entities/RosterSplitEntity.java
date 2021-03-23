@@ -43,15 +43,15 @@ public class RosterSplitEntity extends Entity {
         }
         return workers.stream().map(worker ->
                 RosterSplitWorkerEntity.builder()
-                        .workerEntity(worker)
-                        .rosterSplitEntity(this)
+                        .worker(worker)
+                        .rosterSplit(this)
                         .build()
         ).collect(Collectors.toList());
     }
 
     public void selectChildren() {
         workers = rosterSplitWorkers.stream()
-                .map(RosterSplitWorkerEntity::getWorkerEntity)
+                .map(RosterSplitWorkerEntity::getWorker)
                 .collect(Collectors.toList());
     }
 
